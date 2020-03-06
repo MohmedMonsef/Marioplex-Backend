@@ -1,0 +1,23 @@
+{
+  "name": "marioplex-backend",
+  "version": "1.0.0",
+  "description": "Software Engineering Project(Spotify)-the backend team repo.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MohmedMonsef/Marioplex-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MohmedMonsef/Marioplex-Backend/issues"
+  },
+  "homepage": "https://github.com/MohmedMonsef/Marioplex-Backend#readme",
+  "dependencies": {
+    "jest": "^25.1.0",
+    "mongoose": "^5.9.3"
+  }
+}

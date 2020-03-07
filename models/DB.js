@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
 
 const Image=new Schema({ 
-    height:Int8Array ,
-    wedth:Int8Array ,
+    height:Number ,
+    wedth:Number ,
     URL:String
 });
 
@@ -22,28 +22,28 @@ const Track=new Schema({
   link:Link ,
   externalId:ExternalId ,
   availableMarkets:[String] ,
-  discNumber:Int8Array ,
-  trackNumber:Int8Array ,
-  durationMs:Int32Array ,
+  discNumber:Number ,
+  trackNumber:Number ,
+  durationMs:Number ,
   explicit:Boolean ,
   previewURL:String ,
-  popularity:Int8Array ,
+  popularity:Number ,
   name:String ,
   type:String ,
   isPlayable:Boolean ,
-  acousticness:Float32Array ,
+  acousticness:Number ,
   analysisURL:String ,
-  danceability:Float32Array ,
-  energy:Float32Array ,
-  instrumentalness:Float32Array ,
-  key:Int8Array ,
-  liveness:Float32Array ,
-  loudness:Float32Array ,
-  mode:Int32Array ,
-  speechiness:Float32Array ,
-  tempo:Float32Array ,
-  timeSignature:Int32Array ,
-  valence:Float32Array
+  danceability:Number ,
+  energy:Number ,
+  instrumentalness:Number ,
+  key:Number ,
+  liveness:Number ,
+  loudness:Number ,
+  mode:Number ,
+  speechiness:Number ,
+  tempo:Number ,
+  timeSignature:Date ,
+  valence:Number
 });
 
 const Playlist=new Schema({
@@ -67,7 +67,7 @@ const Album=new Schema({
   name:String ,
   type:String ,
   albumType:String ,
-  popularity:Int8Array ,
+  popularity:Number ,
   genre:String ,
   releaseDate:Date ,
   availableMarkets: [String] ,
@@ -145,7 +145,7 @@ const User=new Schema({
 
 const Artist=new Schema({ 
     info:String ,
-    popularity:Int8Array,
+    popularity:Number,
     genre:[String] ,
     type:String ,
     user:{

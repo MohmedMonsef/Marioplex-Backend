@@ -9,7 +9,12 @@ module.exports = (passport) => {
             callbackURL: "/auth/facebook/callback"
         },
         function(accessToken, refreshToken, profile, done) {
-                console.log(profile);
+              // TO DO 
+              // CHECK IF USER IN DB IF TRUE THEN LOG HIM IN ELSE CREATE A NEW ACCOUNT FOR USER
+               if(profile){
+                   return done(null,profile);
+               }
+               return done(true,null);
         }
     ));
 }

@@ -1,14 +1,15 @@
 
-
-const mongoose=require('mongoose');
-mongoose.connect('mongodb://localhost/spotify', { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
-mongoose.Promise=global.Promise;
+const forgpass=require('./ForgetPassword/Forgpass-route');
+const connection=require('./DBconnection/connection');
 const express = require('express');
+const app=express();
+//connect to database
+connection(app);
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
-const app=express();
+
 const login=require('./routes/login');
 const signup=require('./routes/signup');
 require('./config/passport');
@@ -23,6 +24,8 @@ app.use(passport.initialize());
 
 app.use(login);
 app.use(signup);
+app.use('/login/forgetpassword',forgpass);
+
 
 //connect to db before test run
 const API_PORT= process.env.API_PORT||3000;

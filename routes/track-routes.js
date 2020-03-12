@@ -1,14 +1,13 @@
 const router = require('express').Router();
 const TrackClass = require('../public-api/track-api');
+
 const Track = new TrackClass();
 
 
 // get track
-router.get('/track/:track_id',async (req,res)=>{
-    
+router.put('/track_id',(req,res)=>{
     const trackID = req.params.track_id;
-   
-    const track = await Track.getTrack(trackID);
+    const track = Track.getTrack(trackID);
     if(!track) res.sendStatus(404); //not found
     else res.send(track); 
 
@@ -18,7 +17,7 @@ router.get('/track/:track_id',async (req,res)=>{
 router.put('/me/like/:track_id',(req,res)=>{
     const userID = ""; // get it from desierialize auth 
     const trackID = req.params.track_id;
-    const updatedUser=  Track.likeTrack();
+    const updatedUser= Track.likeTrack();
     // TO DO
     // SEND HTTP CODES AND IMPLEMENT ERROR OBJECT
     if(!updatedUser) res.send({error:"already liked the song"}); // if user already liked the song
@@ -27,7 +26,7 @@ router.put('/me/like/:track_id',(req,res)=>{
 });
 
 // user unlike track
-router.delete('/me/unlike/:track_id',(req,res)=>{
+router.put('/me/unlike/:track_id',(req,res)=>{
     const userID = ""; // get it from desierialize auth
     const trackID = req.params.track_id;
     const updatedUser= Track.likeTrack();

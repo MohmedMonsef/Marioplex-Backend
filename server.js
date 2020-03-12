@@ -30,7 +30,13 @@ app.use('/login/forgetpassword',forgpass);
 //connect to db before test run
 const API_PORT= process.env.API_PORT||3000;
 
-
+app.use(function(error,req,res,next){
+    res.status(500);
+    res.send({error:error.message});
+    
+});
 app.listen(process.env.port||5000,function(){
     console.log('listening for a request');
 });
+
+module.exports = app;

@@ -5,7 +5,7 @@ let users=spotify.user;
 
 module.exports= function(app){
 
-    mongoose.connect('mongodb://localhost/spotify' ,{ useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
+    mongoose.connect('mongodb+srv://Spotify:spotifyapp@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority' ,{ useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true });
     mongoose.connection.once('open',()=>{
     console.log("connection is made");
     }).on('error',function(error){

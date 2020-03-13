@@ -1,10 +1,43 @@
 {
   "name": "marioplex-backend",
   "version": "1.0.0",
-  "description": "Software Engineering Project(Spotify)-the backend team repo.",
-  "main": "index.js",
+  "description": "",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-validator": "^6.4.0",
+    "is-empty": "^1.2.0",
+    "joi": "^14.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.4",
+    "morgan": "^1.9.1",
+    "nodemailer": "^6.4.5",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "winston": "^3.2.1",
+    
+    "cookie-parser": "^1.4.4",
+    
+    "express-session": "^1.17.0",
+    "jest": "^25.1.0",
+   
+    
+    "passport-facebook": "^3.0.0"
+ 
+  },
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "supertest": "^4.0.2"
+  },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -16,17 +49,5 @@
     "url": "https://github.com/MohmedMonsef/Marioplex-Backend/issues"
   },
   "homepage": "https://github.com/MohmedMonsef/Marioplex-Backend#readme",
-  "dependencies": {
-    "bcrypt": "^4.0.1",
-    "body-parser": "^1.19.0",
-    "cookie-parser": "^1.4.4",
-    "express": "^4.17.1",
-    "express-session": "^1.17.0",
-    "jest": "^25.1.0",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.4",
-    "passport": "^0.4.1",
-    "passport-facebook": "^3.0.0",
-    "passport-jwt": "^4.0.0"
-  }
+ 
 }

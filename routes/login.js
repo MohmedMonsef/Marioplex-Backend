@@ -2,20 +2,16 @@ const spotifySchema = require('../models/DB');
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
 const passport =require('passport');
-User= spotifySchema.User
 var express = require('express');
 const validateLoginInput = require("../validation/login");
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
-require('../config/passport');
-
 const router=express.Router();
+require('../config/passport');
+User= spotifySchema.User
 
-
-
-
-
-router.post("/signin", (req, res) => {
+//request
+router.post("/login", (req, res) => {
     // Form validation
   
     const { errors, isValid } = validateLoginInput(req.body);
@@ -32,7 +28,7 @@ router.post("/signin", (req, res) => {
     spotifySchema.user.findOne({email:req.body.email}).exec().then(user=>{
        // Check if user exists
       if (!user) {
-        return res.status(400).json({ emailnotfound: "Email not found" });
+        return res.status(404).json({ emailnotfound: "Email not found" });
       }
   
       // Check password
@@ -42,27 +38,17 @@ router.post("/signin", (req, res) => {
           // Create JWT Payload
           const payload = {
             id: user.id,
-            name: user.name
+            
           };
-  
-          // Sign token
-          jwt.sign(
-            payload,
-            jwtSeret.secretOrKey,
-            {
-              expiresIn: 31556926 // 1 year in seconds
-            },
-            (err, token) => {
-              res.json({
-                success: true,
-                token: "Bearer " + token
-              });
-            }
-          );
+          var token = jwt.sign({ _id: user._id,product: user.product}, jwtSeret.secret, {
+            expiresIn: 60 // 1 week
+          });
+         
+          // return the information including token as JSON
+          //res.json({success: true, token: 'JWT ' + token});
+          res.send(token);
         } else {
-          return res
-            .status(400)
-            .json({ passwordincorrect: "Password incorrect" });
+          res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
         }
       });
     });

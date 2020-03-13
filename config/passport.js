@@ -1,4 +1,4 @@
-const jwtSecret =require('./jwtconfig');
+const jwtSecret =require('./jwt-key')
 const bcrypt=require('bcrypt');
 
 const BCRYPT_SALT_ROUNDS=12;
@@ -51,14 +51,16 @@ const opts ={
 module.exports = passport => {
     passport.use(
       new JwtStrategy(opts, (jwt_payload, done) => {
-        User.findById(jwt_payload.id)
-          .then(user => {
-            if (user) {
-              return done(null, user);
-            }
-            return done(null, false);
-          })
-          .catch(err => console.log(err));
+        // User.findById(jwt_payload.id)
+        //   .then(user => {
+        //     if (user) {
+        //       return done(null, user);
+        //     }
+        //     return done(null, false);
+        //   })
+        //   .catch(err => console.log(err));
+        console.log(jwt_payload);
+        return done(null,true);
       })
     );
   };

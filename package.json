@@ -21,15 +21,10 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "winston": "^3.2.1",
-    
     "cookie-parser": "^1.4.4",
-    
     "express-session": "^1.17.0",
     "jest": "^25.1.0",
-   
-    
     "passport-facebook": "^3.0.0"
- 
   },
   "devDependencies": {
     "jest": "^25.1.0",
@@ -48,6 +43,5 @@
   "bugs": {
     "url": "https://github.com/MohmedMonsef/Marioplex-Backend/issues"
   },
-  "homepage": "https://github.com/MohmedMonsef/Marioplex-Backend#readme",
- 
+  "homepage": "https://github.com/MohmedMonsef/Marioplex-Backend#readme"
 }

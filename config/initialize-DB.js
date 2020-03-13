@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {user,artist,album,track,playlist,category} = require('../models/DB');
+const {user,artist,album,track,playlist,category} = require('../models/db');
 
 const mongoURL = "mongodb://localhost:27017/test";
 mongoose.connect(mongoURL,{useNewUrlParser: true})

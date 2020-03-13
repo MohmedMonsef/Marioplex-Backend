@@ -163,6 +163,7 @@ const Artist=new Schema({
     }]
 
 });
+
 const user=mongoose.model('User',User);
 const artist=mongoose.model('Artist',Artist);
 const album=mongoose.model('Album',Album);

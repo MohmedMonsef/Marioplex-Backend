@@ -1,5 +1,5 @@
 
-const forgpass=require('./ForgetPassword/Forgpass-route');
+const forgpass=require('./routes/Forgpass-route');
 const connection=require('./DBconnection/connection');
 const express = require('express');
 const app=express();

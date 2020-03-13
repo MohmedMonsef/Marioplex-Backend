@@ -1,4 +1,4 @@
-var spotify =require('../models/DB');
+var spotify =require('../models/db');
 var users=spotify.user;
 const bcrypt=require('bcrypt');
 async function checkmail(email){

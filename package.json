@@ -20,10 +20,16 @@
     "nodemailer": "^6.4.5",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "cookie-parser": "^1.4.4",
+    "express-session": "^1.17.0",
+    "passport-facebook": "^3.0.0"
   },
   "devDependencies": {
-    "jest": "^25.1.0",
+    "jest": {"testEnvironment": "node",
+      "coveragePathIgnorePatterns": [
+        "/node_modules/"
+      ]},
     "supertest": "^4.0.2"
   },
   "scripts": {

@@ -2,7 +2,7 @@ const express=require('express');
 const router=express.Router();
 const bodyParser=require('body-parser');
 var users=require('../users/user');
-var sendmail=require('./sendmail');
+var sendmail=require('../ForgetPassword/sendmail');
 
 var jsonparser = bodyParser.json();
 
@@ -23,7 +23,7 @@ router.post('/',jsonparser,async function(req,res)
     {
 
        let newPass= await users.updateforgottenpassword(email);
-       if(!newPass){return res.status(403).send("user not found");}
+       if(!newPass){return res.status(403).send("THERE IS NO SUCH USER");}
        else
        {
        res.status(200).send("YOUR PASSWORD IS UPDATED");

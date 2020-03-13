@@ -6,7 +6,9 @@ const bcrypt = require('bcrypt');
 const joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
+const auth=require('../middlewares/isMe')
 require('../config/passport');
+
 const passport =require('passport');
 
 
@@ -89,8 +91,8 @@ router.post('/signup',(req,res)=>{
                                  
                                   // return the information including token as JSON
                                   //res.json({success: true, token: 'JWT ' + token});
-                                  res.send(token);
-                            res.redirect('/login');
+                                  res.send(token.sign(_id));
+                           // res.redirect('/login');
 
                         }
 
@@ -114,7 +116,7 @@ router.post('/signup',(req,res)=>{
 
 });
 
-router.get('/users/:id',(req,res,next)=>{
+router.get('/users/:id',auth.auth,(req,res,next)=>{
     spotifySchema.user.find({_id:req.params.id}).exec().then(user=>{
         if(user){
 

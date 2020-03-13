@@ -2,10 +2,10 @@ const router = require('express').Router();
 
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
-
+const {auth:checkAuth} = require('../middlewares/isMe');
 
 // get track
-router.get('/track/:track_id',async (req,res)=>{
+router.get('/track/:track_id',checkAuth,async (req,res)=>{
     
     const trackID = req.params.track_id;
    
@@ -16,8 +16,9 @@ router.get('/track/:track_id',async (req,res)=>{
 })
 
 // user like track
-router.put('/me/like/:track_id',async (req,res)=>{
-    const userID = ""; // get it from desierialize auth 
+router.put('/me/like/:track_id',checkAuth,async (req,res)=>{
+    
+    const userID = req.user._id; // get it from desierialize auth 
     const trackID = req.params.track_id;
     const updatedUser= await  User.likeTrack(userID,trackID);
     // TO DO
@@ -28,8 +29,8 @@ router.put('/me/like/:track_id',async (req,res)=>{
 });
 
 // user unlike track
-router.delete('/me/unlike/:track_id',async (req,res)=>{
-    const userID = ""; // get it from desierialize auth
+router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
+    const userID = req.user._id; // get it from desierialize auth
     const trackID = req.params.track_id;
     const updatedUser= await User.unlikeTrack(userID,trackID);
     // TO DO

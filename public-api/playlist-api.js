@@ -76,20 +76,21 @@ const Playlist =  {
         },
 
         //follow playlist
-        checkFollowPlaylistByUser:async function(user,playlistID){
+        checkFollowPlaylistByUser: function(user,playlistID){
         
             const followedplaylists = user.followPlaylist;
             
             if(followedplaylists){
-               const followed = await followedplaylists.find(playlist => playlist.playListId == playlistID);
+               const followed =  followedplaylists.find(playlist => playlist.playListId == playlistID);
+              
                 return followed
             }
             return 0;
         },
         //user follow playlist by playlist-id
         //params : user , playlist-id
-        followPlaylist:async function(user,playlistID){
-            const followedBefore=await this.checkFollowPlaylistByUser(user,playlistID)
+        followPlaylist: async function(user,playlistID){
+            const followedBefore= this.checkFollowPlaylistByUser(user,playlistID)
             if (followedBefore){
                 return 0;
             }
@@ -109,13 +110,18 @@ const Playlist =  {
         },
 
         unfollowPlaylist: async function(user,playlistID){
-            const followedBefore=await this.checkFollowPlaylistByUser(user,playlistID)
+            const followedBefore= this.checkFollowPlaylistByUser(user,playlistID)
+           
             if (!followedBefore){
+               
                 return 0;
             }
             if(user.followPlaylist){
+               
                 for(let i=0;i <user.followPlaylist.length;i++ ){
-                    if(user.followPlaylist[i].playlistId == playlistID){
+                  
+                    if(user.followPlaylist[i].playListId == playlistID){
+                       
                         user.followPlaylist.splice(i,1);
                         await user.save();
                         return 1;

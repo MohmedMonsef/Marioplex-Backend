@@ -19,14 +19,15 @@ router.get('/playlist/:playlist_id',checkAuth,async (req,res)=>{
 // user create playlist
 router.post('/users/playlists',checkAuth,async (req,res)=>{
     
-    const userID = req.user._id; // get it from desierialize auth 
+    const userID = req.user._id; // get it from desierialize auth
+    
     const { errors, isValid } = validatePlaylistInput(req.body);
     // Check validation
     if (!isValid) {
       return res.status(400).json(errors);
     }
     // to create playlist &add it to user
-    const createPlaylist= await  User. createdPlaylist(userID,req.body.name);
+    const createPlaylist= await  User.createdPlaylist(userID,req.body.name);
     if(createPlaylist) res.send( createPlaylist);
     else  res.send({error:"can not create"}); // if can not create for unexpected reason
     
@@ -34,10 +35,6 @@ router.post('/users/playlists',checkAuth,async (req,res)=>{
 })
 
 router.put('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
-    
-
-
-
     const userID = req.user._id; // get it from desierialize auth 
     const playlistID = req.params.playlist_id;
      const updatedUser= await  User.followPlaylist(userID,playlistID);

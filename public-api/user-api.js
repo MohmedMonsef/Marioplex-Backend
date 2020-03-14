@@ -34,14 +34,14 @@ const User =  {
     followPlaylist: async function(userID,playlistID){
         const user = await this.getUserById(userID);
         if(!user){ return 0; }
-        return  Playlist.followPlaylist(user,playlistID);
+        return  await Playlist.followPlaylist(user,playlistID);
      
     },
 
     unfollowPlaylist: async function(userID,playlistID){
         const user = await this.getUserById(userID);
         if(!user){ return 0; }
-        return  Playlist.unfollowPlaylist(user,playlistID);
+        return  await Playlist.unfollowPlaylist(user,playlistID);
     },
 
     deletePlaylist:async  function (userID,playlistID){

@@ -9,7 +9,7 @@ const cors = require('cors');
 const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
-
+const Artist=require('./routes/Artist-route');
 const login=require('./routes/login');
 const signup=require('./routes/signup');
 require('./config/passport');
@@ -21,10 +21,10 @@ app.use(bodyparser.json());
 app.use(logger('dev'));
 app.use(passport.initialize());
 
-
+app.use(Artist);
 app.use(login);
 app.use(signup);
-app.use('/login/forgetpassword',forgpass);
+app.use(forgpass);
 
 
 //connect to db before test run

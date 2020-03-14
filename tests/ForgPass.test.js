@@ -1,7 +1,5 @@
 const request = require('supertest');
 const app = require('../server');
-const users=require('../users/user');
-const bcrypt=require('bcrypt');
 
   it('ForgetPassword', (done) => {
     request(app).post('/login/forgetpassword')

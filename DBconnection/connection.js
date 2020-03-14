@@ -12,7 +12,12 @@ module.exports= function(app){
     }).on('error',function(error){
     console.log("connection got error : ",error);
     });
-
+let art=spotify.artist;
+artist=new art({
+    info:"this is nada",
+    popularity:100
+});
+artist.save();
 };
 
 

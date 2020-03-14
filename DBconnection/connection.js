@@ -1,10 +1,10 @@
 const mongoose=require('mongoose');
 mongoose.Promise=global.Promise;
 const spotify=require('../models/db');
-
+const bcrypt=require('bcrypt');
 mongoose.Promise=global.Promise;
 
-module.exports= function(app){
+module.exports= async function(app){
 
     mongoose.connect('mongodb+srv://nada:nada@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority' ,{  useNewUrlParser: true, useCreateIndex: true });
     mongoose.connection.once('open',()=>{
@@ -12,12 +12,7 @@ module.exports= function(app){
     }).on('error',function(error){
     console.log("connection got error : ",error);
     });
-let art=spotify.artist;
-artist=new art({
-    info:"this is nada",
-    popularity:100
-});
-artist.save();
+
 };
 
 

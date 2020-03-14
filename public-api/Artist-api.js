@@ -13,7 +13,21 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
                 return artist;
             }).catch((err)=> 0);
             return artist;
-    }
+    },
+
+    // create album for an artist
+    // params : artist-id
+    createAlbum  : async function(ArtistID,Album){
+        let album=new albumDocument(Album); 
+        await album.save();   
+        console.log(album);        
+        const artist = await artistDocument.findById(ArtistID);
+        artist.addAlbums.push({
+            albumId:album._id
+        });
+       await artist.save();
+         return album;
+}
 
 }
 

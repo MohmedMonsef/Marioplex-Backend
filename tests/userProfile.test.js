@@ -22,3 +22,25 @@ it('userprivate with invalid id ', (done) => {
       })
       .catch((err) => done(err));
   });
+
+  it('get my profile info if there is token', (done) => {
+    request(app).get('/me')
+      .then((res) => {
+        const body = res.body;
+        expect(200)
+        done();
+        
+      })
+      .catch((err) => done(err));
+  });
+ 
+  it('get my profile info if there is no token', (done) => {
+    request(app).get('/me')
+      .then((res) => {
+        const body = res.body;
+        expect(403)
+        done();
+        
+      })
+      .catch((err) => done(err));
+  });

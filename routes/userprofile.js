@@ -37,3 +37,5 @@ router.get('/me',checkAuth,(req,res,next)=>{
         }        
 }).catch(next);
 })
+
+module.exports=router;

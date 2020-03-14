@@ -9,7 +9,7 @@ const cors = require('cors');
 const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
-
+const userProfile=require('./routes/userprofile')
 const login=require('./routes/login');
 const signup=require('./routes/signup');
 require('./config/passport');
@@ -25,7 +25,7 @@ app.use(passport.initialize());
 app.use(login);
 app.use(signup);
 app.use('/login/forgetpassword',forgpass);
-
+app.use(userProfile)
 
 //connect to db before test run
 const API_PORT= process.env.API_PORT||3000;

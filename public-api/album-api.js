@@ -8,7 +8,13 @@ const track=require('./track-api');
 
  const Album =  {
     
-    
+    addTrack  : async function(AlbumId,Track){     
+        const album = await albumDocument.findById(AlbumId);
+        album.hasTracks.push({
+            trackId:Track._id
+        });
+       await album.save();
+},
     getAlbumById  : async function(albumID){
         
             // connect to db and find album with the same id then return it as json file

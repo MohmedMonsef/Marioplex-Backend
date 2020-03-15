@@ -17,7 +17,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 
     // create album for an artist
     // params : artist-id
-    createAlbum  : async function(ArtistID,Album){
+    addAlbum  : async function(ArtistID,Album){
         let album=new albumDocument(Album); 
         await album.save();   
         console.log(album);        
@@ -27,8 +27,17 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
         });
        await artist.save();
          return album;
+},
+   // create album for an artist
+    // params : artist-id
+    addTrack  : async function(ArtistID,trackid){   
+        const artist = await artistDocument.findById(ArtistID);
+        artist.addTracks.push({
+            trackId:trackid
+        });
+       await artist.save();
+         
 }
-
 }
 
 module.exports = Artist;

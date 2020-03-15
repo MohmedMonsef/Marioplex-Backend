@@ -34,6 +34,31 @@ const User =  {
         const unlikeTrack = await Track.unlikeTrack(user,trackID);
         return unlikeTrack;
     },
+    addTrack: async function (user,trackID,playlistID){
+        const Playlist = await playlist.findById(playlistID);
+        const Track = await track.findById(trackID);
+        if(!Playlist||!Track){ return 0; }
+        if(Playlist.hasTracks){
+            user.hasTracks.push({
+                trackId: trackID
+               
+            });
+            await Playlist.save();
+            return 1;
+            
+        }
+        Playlist.hasTracks = [];
+        Playlist.hasTracks.push({
+            trackId: trackID
+
+        });
+        await Playlist.save();
+        return 1;
+
+
+
+        
+    },
     AddTrackToPlaylist: async function (userID,trackID,playlistID){
         const user = await this.getUserById(userID);
         const userplaylist= await user.createPlaylist.find({playListId:playlistID});
@@ -44,7 +69,6 @@ const User =  {
     
 
 
-<<<<<<< HEAD
 
     followPlaylist: async function(userID,playlistID){
         const user = await this.getUserById(userID);
@@ -91,11 +115,10 @@ const User =  {
             await user.save().catch();
             return createdPlaylist;
     
-        }
+        },
            
           
 
-=======
     checkmail: async function (email){
     
         let user=await userDocument.findOne({email:email});
@@ -106,7 +129,6 @@ const User =  {
         }
         return user;
     },
->>>>>>> ab5caf6f5b53307ea986f73a6a8d9c18c77f2441
 
     updateforgottenpassword: async function (user){
       

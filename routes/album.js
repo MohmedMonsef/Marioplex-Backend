@@ -14,39 +14,67 @@ router.get('/albums/:album_id',checkAuth,async (req,res)=>{
     else res.send(album); 
 
 })
-router.get('/saveAlbum',checkAuth,async (req,res)=>{
+router.put('/unsaveAlbum/:id',checkAuth,async (req,res)=>{
     
-    const albumID = req.album_id;
-   
-    const album = await Album.saveAlbum(albumID);
-    if(!album) res.sendStatus(404).json({
-        message:"album has been already saved"
-    }); //not found
-    else res.sendStatus(200).json({
-        message:"album has been save suceesfully"
-    })
+    const albumID = req.params.album_id;
+    const userID= req.user._id;
+    const user= await User.getUserById(userID);
+    if(!user) res.status(404);
+    else{
+        const album = await Album.unsaveAlbum(user,albumID);
+        if(!album) res.status(404).json({
+            message:"album hasn't been saved before"
 
+        }); //not found
+        else res.status(200).json({
+            message:"album has been unsaved suceesfully"
+        })
+    }
+    
+})
+
+router.put('/saveAlbum/:id',checkAuth,async (req,res)=>{
+    
+    const albumID = req.params.album_id;
+    const userID= req.user._id;
+    const user= await User.getUserById(userID);
+    if(!user) res.status(404);
+    else{
+        const album = await Album.saveAlbum(user,albumID);
+        if(!album) res.status(404).json({
+            message:"album has been already saved"
+        }); //not found
+        else res.status(200).json({
+        message:"album has been save suceesfully"
+        })
+    }
+    
 })
 router.get('/albums',checkAuth,async (req,res)=>{
     
-    const albumIDs = req.ids;
+    var albumIDs = req.body.ids;
    
-    const album = await Album.getAlbums(albumIDs);
-    if(!album) res.sendStatus(404).json({
+    album = await Album.getAlbums(albumIDs);
+    if(!album) res.status(404).json({
         message:"no albums found"
     }); //not found
-    else res.send(album).sendStatus(200);
+    else res.status(200).send(album);
 
 })
 router.get('/albums/:id/tracks',checkAuth,async (req,res)=>{
     
     const albumID = req.params.id;
    
-    const tracks = await Album.getAlbums(albumID);
-    if(!tracks) res.sendStatus(404).json({
-        message:"no tracks found"
-    }); //not found
-    else res.send(tracks).sendStatus(200);
+    const tracks = await Album.getTracksAlbum(albumID);
+    if(!tracks) {
+        res.status(404).json({
+            message:"no tracks found"
+        });
+        } //not found
+    else {
+        res.status(200).json({tracks});
+    }
 
 })
 
+module.exports=router;

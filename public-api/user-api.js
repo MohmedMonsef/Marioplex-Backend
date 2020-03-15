@@ -34,6 +34,15 @@ const User =  {
         const unlikeTrack = await Track.unlikeTrack(user,trackID);
         return unlikeTrack;
     },
+    AddTrackToPlaylist: async function (userID,trackID,playlistID){
+        const user = await this.getUserById(userID);
+        const userplaylist= await user.createPlaylist.find({playListId:playlistID});
+        if(!user||userplaylist){ return 0; }
+        const addTrack = await this.addTrack(user,trackID,playlistID);
+        return addTrack;
+    },
+    
+
 
 <<<<<<< HEAD
 

@@ -1490,7 +1490,7 @@
 
 
 /**
- * @api {get} /audio-features/{id}  Get Audio Features for a Track
+ * @api {get} track/audio-features/{id}  Get Audio Features for a Track
  * @apiName Get Audio Features for a Track
  * @apiGroup Tracks
  * @apiDescription
@@ -1510,7 +1510,7 @@
  */
 
 /**
- * @api {get} /audio-features Get Audio Features for Several Tracks
+ * @api {get} tracks/audio-features Get Audio Features for Several Tracks
  * @apiName Get Audio Features for Several Tracks
  * @apiGroup Tracks
  * @apiDescription
@@ -1552,7 +1552,7 @@
 
 
 /**
- * @api {get} /tracks/{id} Get a Track
+ * @api {get} /track/{id} Get a Track
  * @apiName Get a Track
  * @apiGroup Tracks
  * @apiDescription
@@ -1565,8 +1565,7 @@
  * 
  * @apiHeader (Header)  Authorization Required. A valid access token from the Spotify Accounts service.
  * 
- *  @apiParam (PathParameters)  id 						The Spotify ID for the track.
- * @apiParam (QueryParameters)  market 				Optional. An ISO 3166-1 alpha-2 country code or the string from_token. Provide this parameter if you want to apply Track Relinking.
+ *  @apiParam (QueryParameters)  id 						The Spotify ID for the track.
  *
  * @apiParam (Response)  Format  On success, the HTTP status code in the response header is 200 OK and the response body contains a track object in JSON format. </br>On error, the header status code is an error code and the response body contains an error object.
  */

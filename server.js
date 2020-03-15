@@ -24,7 +24,7 @@ app.use(passport.initialize());
 
 app.use(login);
 app.use(signup);
-app.use('/login/forgetpassword',forgpass);
+app.use(forgpass);
 app.use(userProfile)
 
 //connect to db before test run

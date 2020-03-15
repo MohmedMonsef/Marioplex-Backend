@@ -3,6 +3,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 const Track =  require('./track-api');
 // initialize db 
 const connection=require('../DBconnection/connection');
+const bcrypt=require('bcrypt');
 
 const User =  {
     
@@ -28,8 +29,28 @@ const User =  {
         if(!user){ return 0; }
         const unlikeTrack = await Track.unlikeTrack(user,trackID);
         return unlikeTrack;
-    }
+    },
 
+    checkmail: async function (email){
+    
+        let user=await userDocument.findOne({email:email});
+        
+        if(!user)
+        {
+            return false;
+        }
+        return user;
+    },
+
+    updateforgottenpassword: async function (user){
+      
+        let password=user.displayName+"1234";
+        const salt=await bcrypt.genSalt(10);
+        let hashed=await bcrypt.hash(password,salt);
+            user.password=hashed;
+        await user.save();
+            return password;
+    }
 
 }
 

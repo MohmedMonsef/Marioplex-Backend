@@ -612,8 +612,7 @@
  * @apiHeader (Header)  Authorization Required. A valid access token from the Spotify Accounts service.</br> The access token must have been issued on behalf of the current user.</br> Modifying the list of artists or users the current user follows requires authorization of the user-follow-modify scope
  * @apiHeader (Header)  Content-Type Required if IDs are passed in the request body,</br> otherwise ignored. The content type of the request body: application/json.
  * 
- * @apiParam (QueryParameters)  id 		require. A comma-separated list of the tracks Spotify ID .
- * @apiParam (BodyParameters)  ids      require. A JSON array of the tracks IDs.
+ * @apiParam (QueryParameters)  id 		require.require.  track Spotify ID .
  * @apiParam (Response)  Format  On success, the HTTP status code in the response header is 204 No Content and the response body is empty.</br> On error, the header status code is an error code and the response body contains an error object.
  */
 /**
@@ -631,8 +630,7 @@
  * @apiHeader (Header)  Authorization Required. A valid access token from the Spotify Accounts service.</br> The access token must have been issued on behalf of the current user.</br> Modifying the list of artists or users the current user follows requires authorization of the user-follow-modify scope
  * @apiHeader (Header)  Content-Type Required if IDs are passed in the request body,</br> otherwise ignored. The content type of the request body: application/json.
  * 
- * @apiParam (QueryParameters)  id 		require. A comma-separated list of the tracks Spotify ID .
- * @apiParam (BodyParameters)  ids      require. A JSON array of the tracks ids.
+ * @apiParam (QueryParameters)  id 		require.  track Spotify ID .
  * @apiParam (Response)  Format  On success, the HTTP status code in the response header is 204 No Content and the response body is empty.</br> On error, the header status code is an error code and the response body contains an error object.
  */
 
@@ -1128,7 +1126,7 @@
  * @apiparam (Response) Format On success, the HTTP status code in the response header is 201 Created. The response body contains a snapshot_id in JSON format. The snapshot_id can be used to identify your playlist version in future requests. On error, the header status code is an error code and the response body contains an error object. Trying to add a track when you do not have the user’s authorization, or when there are more than 10.000 tracks in the playlist, returns error 403 Forbidden.
  */
 /**
- * @api {POST} /users/{user_id}/playlists Create a Playlist
+ * @api {POST} /users/playlists Create a Playlist
  * @apiName Create a Playlist
  * @apiGroup Playlist
  * @apiDescription
@@ -1138,8 +1136,6 @@
  * 
  * <h1> Request parameters</h1> 
  * </br></br><h1> Endpoint</h1>
- * 
- * @apiParam (Path Parameters) user_id	The user’s Spotify user ID.
  * 
  * @apiHeader (Header)  Authorization Required. A valid access token from the Spotify Accounts service
  * @apiHeader (Header)  Content-Type	Required. The content type of the request body: application/json

@@ -124,55 +124,6 @@ const Playlist =  {
             }
             return 0;
         },
-         /* followPlaylist : async function(user,playlistID){
-            // check if user already follow this playlist
-            // if not found then add playlist.playlistId to user follow and return the updated user
-            // else return 0 as he already follow this playlist
-            if( await this.checkIfUserFollowPlaylist(user,playlistID)){
-                return 0;
-            }
-            if(user.followPlaylist){
-                user.followPlaylist.push({
-                    playListId: playlistID
-                });
-                await user.save();
-                return 1;
-                
-            }
-            user.followPlaylist = [];
-            user.followPlaylist.push({
-                playListId: playlistID
-            });
-            await user.save().catch();
-            return 1;
-    
-        },
-    
-        //user unfollow playlist by playlistId
-        //params : user , playlist-id
-         unfollowPlaylist: async function(user,playlistID){
-            // check if user already followed the playlist
-            // if user.followPlaylist.contains({playlist_id:playlist.playlist_id})
-            // if  found then remove playlist.playlist_id from user follows and return the updated user
-            // else return 0 as he didn't follow this playlist
-            if(!this.checkIfUserFollowPlaylist(user,playlistID)){
-                return 0;
-            }
-            if(user.followPlaylist[3].playlistId==playlistID){
-                return 1;
-                for(let i=0;i <user.followPlaylist.length;i++ ){
-                
-                    if(user.followPlaylist[i].playlistId == playlistID){
-                        user.followPlaylist.splice(i,1);
-                        await  user.save().catch();
-                    
-                    }
-                } 
-            }
-           await user.save().catch();
-            return 1;
-        }
-     */
 
 
     }

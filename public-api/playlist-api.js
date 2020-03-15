@@ -76,22 +76,59 @@ const Playlist =  {
         },
 
         //follow playlist
-        checkIfUserFollowPlaylist: function(user,playlistID){
+        checkFollowPlaylistByUser:async function(user,playlistID){
         
-            const playlistUserfollowed = user.followPlaylist;
-           
-            if(playlistUserfollowed){
-               return  playlistUserfollowed.find(playlist => playlist. playListId == playlistID);
+            const followedplaylists = user.followPlaylist;
+            
+            if(followedplaylists){
+               const followed = await followedplaylists.find(playlist => playlist.playListId == playlistID);
+                return followed
             }
             return 0;
         },
         //user follow playlist by playlist-id
         //params : user , playlist-id
-         followPlaylist : async function(user,playlistID){
+        followPlaylist:async function(user,playlistID){
+            const followedBefore=await this.checkFollowPlaylistByUser(user,playlistID)
+            if (followedBefore){
+                return 0;
+            }
+            if(user.followPlaylist){
+                user.followPlaylist.push({
+                    playListId: playlistID
+                });
+                await user.save();
+                return 1;
+            }
+            user.followPlaylist = [];
+            user.followPlaylist.push({
+                playListId: playlistID
+            });
+            await user.save().catch();
+            return 1;
+        },
+
+        unfollowPlaylist: async function(user,playlistID){
+            const followedBefore=await this.checkFollowPlaylistByUser(user,playlistID)
+            if (!followedBefore){
+                return 0;
+            }
+            if(user.followPlaylist){
+                for(let i=0;i <user.followPlaylist.length;i++ ){
+                    if(user.followPlaylist[i].playlistId == playlistID){
+                        user.followPlaylist.splice(i,1);
+                        await user.save();
+                        return 1;
+                    }
+                }
+            }
+            return 0;
+        },
+         /* followPlaylist : async function(user,playlistID){
             // check if user already follow this playlist
             // if not found then add playlist.playlistId to user follow and return the updated user
             // else return 0 as he already follow this playlist
-            if(this.checkIfUserFollowPlaylist(user,playlistID)){
+            if( await this.checkIfUserFollowPlaylist(user,playlistID)){
                 return 0;
             }
             if(user.followPlaylist){
@@ -121,15 +158,21 @@ const Playlist =  {
             if(!this.checkIfUserFollowPlaylist(user,playlistID)){
                 return 0;
             }
-            for(let i=0;i <user.followPlaylist.length;i++ ){
-                if(user.followPlaylist[i].playlistId == playlistID){
-                    user.followPlaylist.splice(i,1);
-                }
+            if(user.followPlaylist[3].playlistId==playlistID){
+                return 1;
+                for(let i=0;i <user.followPlaylist.length;i++ ){
+                
+                    if(user.followPlaylist[i].playlistId == playlistID){
+                        user.followPlaylist.splice(i,1);
+                        await  user.save().catch();
+                    
+                    }
+                } 
             }
-            await await await user.save().catch();
+           await user.save().catch();
             return 1;
         }
-    
+     */
 
 
     }

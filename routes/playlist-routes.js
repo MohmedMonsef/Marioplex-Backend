@@ -35,14 +35,15 @@ router.post('/users/playlists',checkAuth,async (req,res)=>{
 
 router.put('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     
+
+
+
     const userID = req.user._id; // get it from desierialize auth 
     const playlistID = req.params.playlist_id;
-    const updatedUser= await  User.followPlaylist(userID,playlistID);
-    // TO DO
-    // SEND HTTP CODES AND IMPLEMENT ERROR OBJECT
-    if(!updatedUser) res.send({error:"already follow this playlist"}); // if user already liked the song
-    else res.send({success:" followed this playlist successfully"});
-
+     const updatedUser= await  User.followPlaylist(userID,playlistID);
+     if (updatedUser) res.send({success:" followed this playlist successfully"});
+     else res.status(400).send('this playlist is followed before');
+  
 })
 
 // user unlike track
@@ -50,10 +51,8 @@ router.delete('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth
     const playlistID = req.params.playlist_id;
     const updatedUser= await  User.unfollowPlaylist(userID,playlistID);
-    // TO DO
-    // SEND HTTP CODES AND IMPLEMENT ERROR OBJECT
-    if(!updatedUser) res.send({error:"user didnt follow this playlist"}); // if user already liked the song
-    else res.send({success:"unfollowed this playlist successfully"});
+    if(updatedUser) res.send({success:"unfollowed this playlist successfully"}); // if user already liked the song
+    else res.status(400).send({error:"user did not follow this playlist "});
 
 });
 

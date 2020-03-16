@@ -1,6 +1,6 @@
 
 const forgpass=require('./routes/Forgpass-route');
-const connection=require('./DBconnection/connection');
+
 const express = require('express');
 const app=express();
 //connect to database
@@ -9,6 +9,11 @@ const cors = require('cors');
 const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
+
+
+
+const Track=require('./routes/Track-routes')
+const playlist=require('./routes/playlist-routes');
 const userProfile=require('./routes/userprofile')
 const login=require('./routes/login');
 const signup=require('./routes/signup');
@@ -24,8 +29,11 @@ app.use(passport.initialize());
 
 app.use(login);
 app.use(signup);
+app.use(Track);
+app.use(playlist);
 app.use(forgpass);
 app.use(userProfile)
+
 
 //connect to db before test run
 const API_PORT= process.env.API_PORT||3000;

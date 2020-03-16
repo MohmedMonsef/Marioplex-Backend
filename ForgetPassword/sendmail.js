@@ -21,6 +21,6 @@ var mailOptions = {
 };
 
 transporter.sendMail(mailOptions, function(error, info){
- 
+
 });
 };

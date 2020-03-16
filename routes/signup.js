@@ -81,12 +81,12 @@ router.post('/sign_up',(req,res)=>{
                                     
                                   };
                                   var token = jwt.sign({ _id: user._id,product: user.product}, jwtSeret.secret, {
-                                    expiresIn: 60 // 1 week
+                                    expiresIn: '24h' // 1 day
                                   });
                                  
                                   // return the information including token as JSON
                                   //res.json({success: true, token: 'JWT ' + token});
-                                  res.send(token.sign(_id));
+                                  res.send(token);
                            // res.redirect('/login');
                         }
                     })

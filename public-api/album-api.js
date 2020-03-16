@@ -3,7 +3,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 
 // initialize db 
 const connection=require('../DBconnection/connection');
-const user=require('./user-api');
+const User=require('./user-api');
 const track=require('./track-api');
 
  const Album =  {
@@ -13,7 +13,7 @@ const track=require('./track-api');
         
             // connect to db and find album with the same id then return it as json file
             // if found return album else return 0
-            const album = await albumDocument.findById(albumID,(err,album)=>{
+            let album = await albumDocument.findById(albumID,(err,album)=>{
                 if(err) return 0;
                 return album;
             }).catch((err)=> 0);
@@ -25,15 +25,15 @@ const track=require('./track-api');
         
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        Album=[]
-        for(let i=0;i <albumIds.length;i++ ){
-            album=this.getAlbumById(i);
+        var Album=[]
+        for(var i=0;i <albumIds.length;i++){
+            var album=await this.getAlbumById(albumIds[i]);
             if(album){
                 Album.push(album)
             }
         }
         if(Album.length>0){
-        return album;
+        return Album;
         }
         else{
             return 0;
@@ -46,18 +46,21 @@ const track=require('./track-api');
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
         const Tracks=[];
-        const album = this.getAlbumById(albumID);
+        const album = await this.getAlbumById(albumID);
         if(!album){
             return 0;
         }
         else{
 
-            for(i=0;i<album.hasTracks.length();i++)
-            Track=track.getTrack(album.hasTracks[i].trackId);
+            for(i=0;i<album.hasTracks.length;i++)
+            var Track=track.getTrack(album.hasTracks[i].trackId);
             if(Track){
                 Tracks.push(Track);
             }
 
+        }
+        if(Tracks.length==0){
+            return 0;
         }
         return Tracks;
 
@@ -87,25 +90,49 @@ const track=require('./track-api');
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
-        if(this.checkIfUserSaveAlbum(user,albumID)){
-            return 0;
-        }
-        if(user.saveAlbum){
+        
+        
+            if(this.checkIfUserSaveAlbum(user,albumID)){
+                return 0;
+            }
+            if(user.saveAlbum){
+                user.saveAlbum.push({
+                    albumId: albumID,
+                    savedAt: Date.now()
+                });
+                await user.save();
+                return 1;
+                
+            }
+            user.saveAlbum = [];
             user.saveAlbum.push({
                 albumId: albumID,
                 savedAt: Date.now()
             });
             await user.save();
             return 1;
-            
-        }
-        user.saveAlbum = [];
-        user.saveAlbum.push({
-            albumId: albumID,
-            savedAt: Date.now()
-        });
-        await user.save().catch();
-        return 1;
+        
+
+       
+    
+
+    },
+    unsaveAlbum : async function(user,albumID){
+        // check if user already saved the album
+        // if not found then add album.album_id to user likes and return the updated user
+        // else return 0 as he already saved the album
+        
+        
+            if(!this.checkIfUserSaveAlbum(user,albumID)){
+                return 0;
+            }
+            for(let i=0;i <user.saveAlbum.length;i++ ){
+                if(user.saveAlbum[i].albumId == albumID){
+                    user.saveAlbum.splice(i,1);
+                }
+            }
+            await user.save().catch();
+            return 1;
 
     }
 

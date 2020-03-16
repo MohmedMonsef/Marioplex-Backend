@@ -3,6 +3,7 @@ const forgpass=require('./routes/Forgpass-route');
 
 const express = require('express');
 const app=express();
+const connection=require('./DBconnection/connection');
 //connect to database
 connection(app);
 const cors = require('cors');

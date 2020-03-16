@@ -10,7 +10,7 @@ const cors = require('cors');
 const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
-
+const session = require('express-session')
 
 
 const Track=require('./routes/Track-routes')
@@ -18,6 +18,7 @@ const playlist=require('./routes/playlist-routes');
 const userProfile=require('./routes/userprofile')
 const login=require('./routes/login');
 const signup=require('./routes/signup');
+const facebook = require('./authentication/facebook-routes');
 require('./config/passport');
 
 
@@ -25,15 +26,17 @@ app.use(cors());
 app.use(bodyparser.urlencoded({extended:false}));
 app.use(bodyparser.json());
 app.use(logger('dev'));
+app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
-
+app.use(passport.session());
 
 app.use(login);
 app.use(signup);
 app.use(Track);
 app.use(playlist);
 app.use(forgpass);
-app.use(userProfile)
+app.use('/auth',facebook);
+app.use(userProfile);
 
 
 //connect to db before test run
@@ -44,7 +47,7 @@ app.use(function(error,req,res,next){
     res.send({error:error.message});
     
 });
-app.listen(process.env.port||5000,function(){
+app.listen(process.env.port||API_PORT,function(){
     console.log('listening for a request');
 });
 

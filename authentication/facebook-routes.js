@@ -41,7 +41,7 @@ router.get('/facebook/callback',passport.authenticate('facebook', {  successRedi
 router.get('/facebookJWT',checkAuthentication,(req,res)=>{
     const id = req.session.passport.user;
     //res.send('hh')
-   var token = jwt.sign({ _id: id}, jwtSeret.secret, {
+   var token = jwt.sign({ _id: id,product:req.session.passport.user.product}, jwtSeret.secret, {
         expiresIn: '24h' // 1 day
      });
      

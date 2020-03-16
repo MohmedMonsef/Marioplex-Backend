@@ -6,6 +6,7 @@ const Playlist =  require('./Playlist-api');
 
 // initialize db 
 const connection=require('../DBconnection/connection');
+const bcrypt=require('bcrypt');
 
 const User =  {
     
@@ -34,6 +35,7 @@ const User =  {
         return unlikeTrack;
     },
 
+<<<<<<< HEAD
 
     followPlaylist: async function(userID,playlistID){
         const user = await this.getUserById(userID);
@@ -84,7 +86,28 @@ const User =  {
            
           
 
+=======
+    checkmail: async function (email){
+    
+        let user=await userDocument.findOne({email:email});
+        
+        if(!user)
+        {
+            return false;
+        }
+        return user;
+    },
+>>>>>>> ab5caf6f5b53307ea986f73a6a8d9c18c77f2441
 
+    updateforgottenpassword: async function (user){
+      
+        let password=user.displayName+"1234";
+        const salt=await bcrypt.genSalt(10);
+        let hashed=await bcrypt.hash(password,salt);
+            user.password=hashed;
+        await user.save();
+            return password;
+    }
 
 }
 

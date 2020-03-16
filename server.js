@@ -11,9 +11,10 @@ const logger = require('morgan');
 const passport = require('passport');
 
 
+
 const Track=require('./routes/Track-routes')
 const playlist=require('./routes/playlist-routes');
-
+const userProfile=require('./routes/userprofile')
 const login=require('./routes/login');
 const signup=require('./routes/signup');
 require('./config/passport');
@@ -28,10 +29,10 @@ app.use(passport.initialize());
 
 app.use(login);
 app.use(signup);
-
 app.use(Track);
 app.use(playlist);
-app.use('/login/forgetpassword',forgpass);
+app.use(forgpass);
+app.use(userProfile)
 
 
 //connect to db before test run

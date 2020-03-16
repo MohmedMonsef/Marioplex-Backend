@@ -17,8 +17,8 @@ router.get('/track/:track_id',checkAuth,async (req,res)=>{
 
 })
 // get tracks
-router.get('/tracks/:tracks_ids',checkAuth,async (req,res)=>{
-    const trackIDs = req.params.tracks_ids.split(',');
+router.get('/tracks/',checkAuth,async (req,res)=>{
+    const trackIDs = req.query.tracks_ids.split(',');
     const tracks = await Track.getTracks(trackIDs);
     if(!tracks) res.status(404).send({error:"tracks with those id's are not found"});
     else res.json(tracks);
@@ -31,8 +31,8 @@ router.get('/track/audio-features/:track_id',checkAuth,async (req,res)=>{
 })
 
 // get tracks audio feature/analysis 
-router.get('/tracks/audio-features/:tracks_ids',checkAuth,async (req,res)=>{
-    const trackIDs = req.params.tracks_ids.split(',');
+router.get('/tracks/audio-features/',checkAuth,async (req,res)=>{
+    const trackIDs = req.query.tracks_ids.split(',');
     const audioFeatures = await Track.getAudioFeaturesTracks(trackIDs);
     if(!audioFeatures) res.status(404).send({error:"no tracks with this id"});
     else res.json(audioFeatures);

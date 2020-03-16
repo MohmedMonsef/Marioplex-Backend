@@ -8,7 +8,7 @@ const {auth:checkAuth} = require('../middlewares/isMe');
 router.get('/albums/:album_id',checkAuth,async (req,res)=>{
     
     const albumID = req.params.album_id;
-   
+    
     const album = await Album.getAlbumById(albumID);
     if(!album) res.sendStatus(404); //not found
     else res.send(album); 

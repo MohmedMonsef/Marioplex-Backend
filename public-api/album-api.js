@@ -26,6 +26,7 @@ const track=require('./track-api');
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
         var Album=[]
+        if(albumIds==undefined)return 0;
         for(var i=0;i <albumIds.length;i++){
             var album=await this.getAlbumById(albumIds[i]);
             if(album){

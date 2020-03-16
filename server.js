@@ -12,7 +12,7 @@ const logger = require('morgan');
 const passport = require('passport');
 const session = require('express-session')
 
-
+const album=require('./routes/album')
 const Track=require('./routes/Track-routes')
 const playlist=require('./routes/playlist-routes');
 const userProfile=require('./routes/userprofile')
@@ -20,7 +20,6 @@ const login=require('./routes/login');
 const signup=require('./routes/signup');
 const facebook = require('./authentication/facebook-routes');
 require('./config/passport');
-
 
 app.use(cors());
 app.use(bodyparser.urlencoded({extended:false}));
@@ -30,6 +29,7 @@ app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(album);
 app.use(login);
 app.use(signup);
 app.use(Track);

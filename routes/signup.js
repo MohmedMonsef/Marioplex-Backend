@@ -12,9 +12,11 @@ require('../config/passport');
 const passport =require('passport');
 
 
+
 router.post('/sign_up',(req,res)=>{
 
     const shcema = joi.object().keys({
+
         email: joi.string().trim().email().required() ,
         password: joi.string().required(),
         gender: joi.string().required() ,
@@ -81,21 +83,73 @@ router.post('/sign_up',(req,res)=>{
                                     
                                   };
                                   var token = jwt.sign({ _id: user._id,product: user.product}, jwtSeret.secret, {
-                                    expiresIn: 60 // 1 week
+
+
+                                    expiresIn: '24h'
+
                                   });
                                  
                                   // return the information including token as JSON
                                   //res.json({success: true, token: 'JWT ' + token});
-                                  res.send(token.sign(_id));
+
+                                  res.send(token);
                            // res.redirect('/login');
+
                         }
+
                     })
+
                 }
-            });          
+
+
+            });
+           
+
+
+            
         }
+
+
+
+
     });
+
+
 });
 
+router.get('/users/:id',auth.auth,(req,res,next)=>{
+    spotifySchema.user.find({_id:req.params.id}).exec().then(user=>{
+        if(user){
+
+            res.status(200);
+            res.send(user);
+            
+        }
+        else {
+            res.status(404).json({
+                message:'user not found'
+            });
+            
+        }        
+}).catch(next);
+})
+
+router.get('/:id',(req,res,next)=>{
+    spotifySchema.user.find({_id:req.params.id}).exec().then(user=>{
+        if(user){
+
+            res.status(200);
+            res.send(user);
+            
+        }
+        else {
+            res.status(403).json({
+                message:'user not found'
+            });
+            
+        }        
+}).catch(next);
+})
 
 
 

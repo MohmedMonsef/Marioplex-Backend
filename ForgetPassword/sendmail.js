@@ -21,6 +21,14 @@ var mailOptions = {
 };
 
 transporter.sendMail(mailOptions, function(error, info){
+<<<<<<< HEAD
  
+=======
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
+>>>>>>> playlist-api
 });
 };

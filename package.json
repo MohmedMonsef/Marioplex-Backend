@@ -28,12 +28,7 @@
     
   },
   "devDependencies": {
-    "jest": {
-      "testEnvironment": "node",
-      "coveragePathIgnorePatterns": [
-        "/node_modules/"
-      ]
-    },
+   
     "supertest": "^4.0.2"
   },
   "scripts": {

@@ -60,13 +60,14 @@ router.put('/Artists/:artist_id/Albums',[checkAuth,checkType,checkContent],async
 
 });
 
-router.put('/Artists/:artist_id/Albums/:album_id/tracks',[checkAuth,checkType,uploadTrack.single('file')],async (req,res)=>{
+router.put('/Artists/:artist_id/Albums/:album_id/tracks',[checkAuth,checkType,checkContent,uploadTrack.single('file')],async (req,res)=>{
 // create track its external id=req.file.id
 //add rest info to the track
+console.log(req.file);
 let track=await Track.createTrack(req.file.id,req.body.name,req.body.TrackNum,req.body.availableMarkets);
 await Album.addTrack(req.params.album_id,track);
 await Artist.addTrack(req.params.artist_id,track._id);
-res.status(200).send("Track saved");
+res.status(200).send(track);
 });
 
 

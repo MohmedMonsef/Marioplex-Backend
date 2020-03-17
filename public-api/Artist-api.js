@@ -1,5 +1,5 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
-
+const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 
@@ -19,13 +19,16 @@ const Track=require('./track-api');
     // create album for an artist
     // params : artist-id
     addAlbum  : async function(ArtistID,Album){
-        let album=new albumDocument(Album); 
-        await album.save();   
-        console.log(album);        
+        let spotifyAlbums=spotify.album;
+        let album=await new spotifyAlbums(Album); 
+        await album.save(function(err,albumobj){
+            album=albumobj;
+        });   
         const artist = await artistDocument.findById(ArtistID);
         artist.addAlbums.push({
             albumId:album._id
         });
+        console.log(album);
        await artist.save();
          return album;
 },

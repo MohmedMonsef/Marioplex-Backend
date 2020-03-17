@@ -1,0 +1,153 @@
+{
+    "5e6d056e0bfa4c37c0d6d760": {
+        "genre": [],
+        "_id": "5e6d056e0bfa4c37c0d6d760",
+        "info": "this is nada",
+        "popularity": 100,
+        "addAlbums": [
+            {
+                "_id": "5e6d528f5687d92ef8e31b92",
+                "albumId": "5e6d528e5687d92ef8e31b91"
+            },
+            {
+                "_id": "5e6d53a45687d92ef8e31b94",
+                "albumId": "5e6d53a45687d92ef8e31b93"
+            },
+            {
+                "_id": "5e6d545f5687d92ef8e31b96",
+                "albumId": "5e6d545f5687d92ef8e31b95"
+            },
+            {
+                "_id": "5e6d55835687d92ef8e31b99",
+                "albumId": "5e6d55825687d92ef8e31b98"
+            },
+            {
+                "_id": "5e6d56b70d8fc14070cc13e4",
+                "albumId": "5e6d56b60d8fc14070cc13e3"
+            },
+            {
+                "_id": "5e6d56e93aee1f0a184b8c87",
+                "albumId": "5e6d56e83aee1f0a184b8c86"
+            },
+            {
+                "_id": "5e6d5701532aef3aa44f5ade",
+                "albumId": "5e6d5700532aef3aa44f5add"
+            },
+            {
+                "_id": "5e6d570d165db84058bc60f0",
+                "albumId": "5e6d570d165db84058bc60ef"
+            },
+            {
+                "_id": "5e6d5728a5007641ecaa9a89",
+                "albumId": "5e6d5728a5007641ecaa9a88"
+            },
+            {
+                "_id": "5e6d573f94520514b0608635",
+                "albumId": "5e6d573e94520514b0608634"
+            },
+            {
+                "_id": "5e6d57a2524b4845500d776d",
+                "albumId": "5e6d57a2524b4845500d776c"
+            },
+            {
+                "_id": "5e6d57dae8d5074660087d4d",
+                "albumId": "5e6d57dae8d5074660087d4c"
+            }
+        ],
+        "addTracks": [
+            {
+                "_id": "5e6e693185eb154e28db720e"
+            },
+            {
+                "_id": "5e6e69c685eb154e28db7227"
+            },
+            {
+                "_id": "5e6e69fc85eb154e28db722c"
+            },
+            {
+                "_id": "5e6e6a38c260c634d4457727"
+            },
+            {
+                "_id": "5e6e6a4ff686ca22388a7770"
+            },
+            {
+                "_id": "5e6e6a84a8065f53a42af8a4"
+            },
+            {
+                "_id": "5e6e6acc5f9a674bc8427c81"
+            },
+            {
+                "_id": "5e6e6aee4b6917338ca7d617"
+            },
+            {
+                "_id": "5e6e6b3965059a0e0cdda693"
+            },
+            {
+                "_id": "5e6e6b92866ecc3dc8e934c9"
+            },
+            {
+                "_id": "5e6e6bcf2431754f5433e5be"
+            },
+            {
+                "_id": "5e6e6bf7d725e448043ffa45"
+            },
+            {
+                "_id": "5e6e6c36fd0a0e4c743eead4"
+            },
+            {
+                "_id": "5e6e6c711b19bf2a98babc7e"
+            },
+            {
+                "_id": "5e6e6c90d9ee6b2f70d3b7d7",
+                "trackId": "5e6e6c8ed9ee6b2f70d3b7d5"
+            },
+            {
+                "_id": "5e6e6ca4448cb742806764d9",
+                "trackId": "5e6e6ca3448cb742806764d7"
+            },
+            {
+                "_id": "5e6e6ccf07f72252041654ed",
+                "trackId": "5e6e6ccc07f72252041654eb"
+            },
+            {
+                "_id": "5e6e6d0207f72252041654f2",
+                "trackId": "5e6e6d0207f72252041654f0"
+            },
+            {
+                "_id": "5e6e6d71b906640e5c5760e4",
+                "trackId": "5e6e6d70b906640e5c5760e2"
+            },
+            {
+                "_id": "5e6e6dd86d80170afc336028",
+                "trackId": "5e6e6dd66d80170afc336026"
+            },
+            {
+                "_id": "5e6e6e176d80170afc336041",
+                "trackId": "5e6e6e166d80170afc33603f"
+            },
+            {
+                "_id": "5e6e6ec3d9619c063470e7f7",
+                "trackId": "5e6e6ec1d9619c063470e7f5"
+            }
+        ],
+        "__v": 34
+    },
+    "5e6d0b1231ea843704a9bd95": {
+        "genre": [],
+        "_id": "5e6d0b1231ea843704a9bd95",
+        "info": "this is nada",
+        "popularity": 100,
+        "addAlbums": [],
+        "addTracks": [],
+        "__v": 0
+    },
+    "5e6d0b92f21eea1c8860530f": {
+        "genre": [],
+        "_id": "5e6d0b92f21eea1c8860530f",
+        "info": "this is nada",
+        "popularity": 100,
+        "addAlbums": [],
+        "addTracks": [],
+        "__v": 0
+    }
+}

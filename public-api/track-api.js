@@ -85,6 +85,7 @@ const connection=require('../DBconnection/connection');
             name:Name
         }); 
        await track.save();
+       console.log(track);
        return track;
       
 }

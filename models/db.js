@@ -142,7 +142,16 @@ const User=new Schema({
   addedAt:Date,
   type:String ,
   link:Link ,
-  }]
+  }],
+  player:{
+    current_track:mongoose.Schema.Types.ObjectId,
+    next_track:mongoose.Schema.Types.ObjectId,
+    prev_track:mongoose.Schema.Types.ObjectId,
+    is_playing:Boolean,
+    is_shuffled:Boolean,
+    is_repeat:Boolean,
+    volume:Number
+  }
 });
 
 const Artist=new Schema({ 

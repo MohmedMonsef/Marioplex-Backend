@@ -11,7 +11,7 @@ const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const session = require('express-session')
-
+const browse=require('./routes/browse')
 const album=require('./routes/album')
 const Track=require('./routes/Track-routes')
 const playlist=require('./routes/playlist-routes');
@@ -37,7 +37,7 @@ app.use(playlist);
 app.use(forgpass);
 app.use('/auth',facebook);
 app.use(userProfile);
-
+app.use(browse);
 
 //connect to db before test run
 const API_PORT= process.env.API_PORT||3000;

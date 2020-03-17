@@ -8,18 +8,18 @@ const {auth:checkAuth} = require('../middlewares/isMe');
 router.get('/albums/:album_id',checkAuth,async (req,res)=>{
     
     const albumID = req.params.album_id;
-    
+   
     const album = await Album.getAlbumById(albumID);
     if(!album) res.sendStatus(404); //not found
     else res.send(album); 
 
 })
-router.put('/unsaveAlbum/:id',checkAuth,async (req,res)=>{
+router.delete('/me/albums',checkAuth,async (req,res)=>{
     
-    const albumID = req.params.album_id;
+    const albumID = req.body.ids;
     const userID= req.user._id;
     const user= await User.getUserById(userID);
-    if(!user) res.status(404);
+    if(!user) res.status(403);
     else{
         const album = await Album.unsaveAlbum(user,albumID);
         if(!album) res.status(404).json({
@@ -33,12 +33,12 @@ router.put('/unsaveAlbum/:id',checkAuth,async (req,res)=>{
     
 })
 
-router.put('/saveAlbum/:id',checkAuth,async (req,res)=>{
+router.put('/me/Albums',checkAuth,async (req,res)=>{
     
-    const albumID = req.params.album_id;
+    const albumID = req.body.ids;
     const userID= req.user._id;
     const user= await User.getUserById(userID);
-    if(!user) res.status(404);
+    if(!user) res.status(403);
     else{
         const album = await Album.saveAlbum(user,albumID);
         if(!album) res.status(404).json({

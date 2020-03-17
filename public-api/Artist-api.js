@@ -1,6 +1,7 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 
-
+const Album=require('./album-api');
+const Track=require('./track-api');
 
  const Artist =  {
     
@@ -37,7 +38,89 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
         });
        await artist.save();
          
-}
+},
+    // get several Artists
+    // params : array of Artists ids
+    getArtists : async function(artistsIDs){
+        let artists = {};
+        for(let artistID of artistsIDs){
+            artists[artistID] = await this.getArtist(artistID);
+            if(!artists[artistID])return 0;
+        }
+        return artists;
+},
+    // get specific Albums for an Artist
+    getAlbums : async function(artistID,groups,country,limit,offset){
+            let SpecificAlbums=[];
+            let albums={};
+            let artist = await this.getArtist(artistID);
+            if(!artist)return 0;
+        for(let i=0;i<artist.addAlbums.length;i++){
+            albums[artist.addAlbums[i].albumId]=await Album.getAlbumById(artist.addAlbums[i].albumId);
+        }
+        for(let Album in albums){
+            if(groups.includes(albums[Album].albumType)&&albums[Album].availableMarkets.includes(country)){
+                SpecificAlbums.push(albums[Album]);
+            }
+        }
+        let start=0;
+        let end=SpecificAlbums.length;
+        if(offset!=undefined){
+        if(offset>=0&&offset<=SpecificAlbums.length){
+            start=offset;
+        }
+    }
+    if(limit!=undefined){
+        if((start+limit)>0&&(start+limit)<=SpecificAlbums.length){
+            end=start+limit;
+        }
+    }
+      SpecificAlbums.slice(start,end);
+        return SpecificAlbums;
+},
+getRelatedArtists : async function(artistID){
+    let Artists;
+    artistDocument.find({},function(err,artists){
+        Artists=artists;
+    });
+    let artist = await this.getArtist(artistID);
+    if(!Artists) return 0;
+    if(!artist) return 0;
+    let RelatedArtists=[];
+    for(let Artist in Artists) {
+        for(var i=0;i<Artists[Artist].genre.length;i++){
+            for(var j=0;j<artist.genre.length;j++){
+                if(Artists[Artist].genre[i]==artist.genre[j]){
+                    RelatedArtists.push(Artists[Artist]);
+                    continue;
+                }
+            }
+        }
+   } 
+if(RelatedArtists.length>20) RelatedArtists.slice(0,20);
+return RelatedArtists;
+},
+    // get top tracks of a country for an Artist
+getTopTracks : async function(artistID,country){
+        let TopTracks=[];
+        let tracks={};
+        let artist = await this.getArtist(artistID);
+        if(!artist)return 0;
+    for(let i=0;i<artist.addTracks.length;i++){
+        let track=await Track.getTrack(artist.addTracks[i].trackId);
+        if(track){tracks[artist.addTracks[i].trackId]=track;}
+    }
+    for(let track in tracks){
+        console.log(tracks[track]);
+        if(tracks[track].availableMarkets.includes(country)){
+            TopTracks.push(tracks[track]);
+        }
+    }
+
+    TopTracks.sort((a, b) => (a.popularity > b.popularity) ? -1 : 1);
+    TopTracks.slice(0,10);
+    return TopTracks;
+},
 }
 
 module.exports = Artist;

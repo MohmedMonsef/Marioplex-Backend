@@ -55,7 +55,7 @@ const Playlist=new Schema({
   isPublic:Boolean ,
   images:[Image] ,
   hasTracks:[{
-    trackId: mongoose.Schema.Types.ObjectId,
+    trackId: String,
     //ref: 'Track'
   }]
   
@@ -75,7 +75,7 @@ const Album=new Schema({
   releaseDatePercision: String ,
   label:String ,
   hasTracks:[{
-    trackId: mongoose.Schema.Types.ObjectId,
+    trackId: String,
     //ref: 'Track'
   }]
   
@@ -103,40 +103,40 @@ const User=new Schema({
   displayName:String ,
   product:String ,
   follow:[{
-    id: mongoose.Schema.Types.ObjectId,
+    id: String,
     //ref: 'User'
   }],
   followedBy:[{
-    id: mongoose.Schema.Types.ObjectId,
+    id: String,
     //ref: 'User'
   }],
   like:[{
-    trackId: mongoose.Schema.Types.ObjectId
+    trackId: String
     //ref: 'Track'
   }],
   createPlaylist:[{
-    playListId: mongoose.Schema.Types.ObjectId,
+    playListId: String,
     //ref: 'Playlist',
     addedAt:Date ,
     isLocal:Boolean ,
     collaboratorsId:[{
-      id: mongoose.Schema.Types.ObjectId,
+      id: String,
       //ref: 'User'
     }]
   }],
   followPlaylist:[{
-    playListId: mongoose.Schema.Types.ObjectId
+    playListId: String
     //ref: 'Playlist'
     
   }],
   saveAlbum:[{
     savedAt:Date,
-    albumId: mongoose.Schema.Types.ObjectId,
+    albumId: String,
     //ref: 'Album'
   }],
   playHistory:[{
     tracks:{
-      trackId: mongoose.Schema.Types.ObjectId
+      trackId: String
       //ref: 'Track'
     },
   addedAt:Date,
@@ -144,9 +144,9 @@ const User=new Schema({
   link:Link ,
   }],
   player:{
-    current_track:mongoose.Schema.Types.ObjectId,
-    next_track:mongoose.Schema.Types.ObjectId,
-    prev_track:mongoose.Schema.Types.ObjectId,
+    current_track:String,
+    next_track:String,
+    prev_track:String,
     is_playing:Boolean,
     is_shuffled:Boolean,
     is_repeat:Boolean,
@@ -160,15 +160,15 @@ const Artist=new Schema({
     genre:[String] ,
     type:String ,
     user:{
-      userId: mongoose.Schema.Types.ObjectId
+      userId: String
       //ref: 'User'
     },
     addAlbums:[{
-      albumId: mongoose.Schema.Types.ObjectId
+      albumId: String
       //ref: 'Album'
     }],
     addTracks:[{
-      trackId: mongoose.Schema.Types.ObjectId
+      trackId: String
       //ref: 'Track'
     }]
 

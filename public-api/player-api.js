@@ -55,6 +55,39 @@ const Player = {
             return 1;
         }
             
+    },
+    // add  a track to user recent tracks
+    addRecenTrack: async function(user,trackID){
+        if(user.playHistory){
+            if(user.playHistory.length > 50)user.playHistory.pop();
+            user.playHistory.unshift({
+                trackId:trackID
+            });
+            await user.save();
+            return 1;
+        }else{
+            user.playHistory = [];
+            user.playHistory.push({
+                trackId:trackID
+            });
+            await user.save();
+            return 1;
+        }
+        
+    },
+    // clear user recent played track history
+    clearRecentTracks: async function(user){
+        user.playHistory = [];
+        await user.save();
+        return 1;
+    },
+    // get recent tracks played by user
+    getRecentTracks:  function(user,limit){
+        limit = limit || 50;
+        let tracks= [];
+        if(!user.playHistory) return tracks;
+        for(let i=0;i<Math.min(user.playHistory.length,limit);i++) tracks.push(user.playHistory[i]);
+        return tracks;
     }
 }
 

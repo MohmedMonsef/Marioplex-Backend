@@ -1,0 +1,23 @@
+[
+    {
+        "availableMarkets": [
+            "Eg",
+            "Us"
+        ],
+        "_id": "5e6d53a45687d92ef8e31b93",
+        "images": [],
+        "hasTracks": [],
+        "albumType": "single",
+        "__v": 0
+    },
+    {
+        "availableMarkets": [
+            "Eg"
+        ],
+        "_id": "5e6d545f5687d92ef8e31b95",
+        "images": [],
+        "hasTracks": [],
+        "__v": 0,
+        "albumType": "single"
+    }
+]

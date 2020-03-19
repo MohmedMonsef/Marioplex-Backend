@@ -15,6 +15,7 @@ const browse=require('./routes/browse')
 const album=require('./routes/album')
 const Track=require('./routes/Track-routes')
 const playlist=require('./routes/playlist-routes');
+const Artist=require('./routes/Artist-route');
 const userProfile=require('./routes/userprofile')
 const login=require('./routes/login');
 const signup=require('./routes/signup');
@@ -40,6 +41,11 @@ app.use(forgpass);
 app.use('/auth',facebook);
 app.use(userProfile);
 app.use(browse);
+app.use(Artist);
+app.use(login);
+app.use(signup);
+app.use(forgpass);
+app.use(userProfile)
 
 //connect to db before test run
 const API_PORT= process.env.API_PORT||3000;

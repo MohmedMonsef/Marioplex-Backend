@@ -119,7 +119,21 @@ const connection=require('../DBconnection/connection');
         }
         await user.save().catch();
         return 1;
-    }
+    },
+      // create Track for an artist
+    // params : artist-id
+    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets){
+        let track=new trackDocument({
+            externalId:url ,
+            availableMarkets:AvailableMarkets ,
+            trackNumber:TrackNumber ,
+            name:Name
+        }); 
+       await track.save();
+       console.log(track);
+       return track;
+      
+}
 
 
 }

@@ -19,6 +19,7 @@ const User =  {
         
         return user;
     },
+
     update : async function(userID,Display_Name,Password,Email,Country){
         const user = await this.getUserById(userID);
         if(user){
@@ -51,6 +52,20 @@ const User =  {
         
         
     },
+    deleteAccount:async function(userID){
+        const user = await this.getUserById(userID);
+        if(!user){ return 0; }
+        const User = await userDocument.find({follow:{id:user._id}},(err,User)=>{
+            if(err) return 0;
+            return User;
+        });
+        return User;
+            
+            
+        
+        
+    },
+
     likeTrack: async function(userID,trackID){
             const user = await this.getUserById(userID);
             if(!user){ return 0; }

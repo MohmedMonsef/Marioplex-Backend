@@ -18,6 +18,7 @@ const playlist=require('./routes/playlist-routes');
 const userProfile=require('./routes/userprofile')
 const login=require('./routes/login');
 const signup=require('./routes/signup');
+const search=require('./routes/search')
 const facebook = require('./authentication/facebook-routes');
 require('./config/passport');
 
@@ -29,6 +30,7 @@ app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(search);
 app.use(album);
 app.use(login);
 app.use(signup);

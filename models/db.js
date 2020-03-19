@@ -55,7 +55,7 @@ const Playlist=new Schema({
   isPublic:Boolean ,
   images:[Image] ,
   hasTracks:[{
-    trackId: mongoose.Schema.Types.ObjectId,
+    trackId: mongoose.Schema.ObjectId,
     //ref: 'Track'
   }]
   
@@ -151,7 +151,7 @@ const Artist=new Schema({
     genre:[String] ,
     type:String ,
     user:{
-      userId: mongoose.Schema.Types.ObjectId
+      userId: mongoose.Schema.ObjectId
       //ref: 'User'
     },
     addAlbums:[{

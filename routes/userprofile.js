@@ -68,5 +68,19 @@ router.get('/me',checkAuth,(req,res,next)=>{
         }        
 }).catch(next);
 })
+router.delete('/remove',checkAuth,(req,res,next)=>{
+    const userID = req.user._id; // get it from desierialize auth 
+    const user=User.deleteAccount(userID)
+        if(user){
+            res.send(user);
+            
+        }
+        else {
+            res.status(403).json({
+                message:'user not found'
+            });
+            
+        }        
 
+})
 module.exports=router;

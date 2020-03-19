@@ -10,6 +10,7 @@ const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const Artist=require('./routes/Artist-route');
+const Library=require('./routes/Library-routes');
 const userProfile=require('./routes/userprofile')
 const login=require('./routes/login');
 const signup=require('./routes/signup');
@@ -23,6 +24,7 @@ app.use(logger('dev'));
 app.use(passport.initialize());
 
 app.use(Artist);
+app.use(Library);
 app.use(login);
 app.use(signup);
 app.use(forgpass);

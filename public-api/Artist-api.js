@@ -61,11 +61,34 @@ const Track=require('./track-api');
         for(let i=0;i<artist.addAlbums.length;i++){
             albums[artist.addAlbums[i].albumId]=await Album.getAlbumById(artist.addAlbums[i].albumId);
         }
+
+        if(groups!=undefined&&country!=undefined){
         for(let Album in albums){
             if(groups.includes(albums[Album].albumType)&&albums[Album].availableMarkets.includes(country)){
                 SpecificAlbums.push(albums[Album]);
             }
         }
+        }
+        else if(groups==undefined&&country!=undefined){
+            for(let Album in albums){
+                if(albums[Album].availableMarkets.includes(country)){
+                    SpecificAlbums.push(albums[Album]);
+                }
+            }
+        }
+        else if(groups!=undefined&&country==undefined) {
+            for(let Album in albums){
+                if(groups.includes(albums[Album].albumType)){
+                    SpecificAlbums.push(albums[Album]);
+                }
+            }
+        }
+        else {
+            for(let Album in albums){
+                SpecificAlbums.push(albums[Album]); 
+            }
+        }
+        
         let start=0;
         let end=SpecificAlbums.length;
         if(offset!=undefined){

@@ -1,26 +1,48 @@
 const router = require('express').Router();
 
-const Artist =require('../public-api/Artist-api');
 const Library =require('../public-api/Library-api');
-const Track =require('../public-api/track-api');
-const User = require('../public-api/user-api');
+
 const {auth:checkAuth} = require('../middlewares/isMe');
-const {content:checkContent} = require('../middlewares/content');
-const {isArtist:checkType} = require('../middlewares/check-type');
-const {upload:uploadTrack} = require('../middlewares/upload');
 
 
-router.get('me/albums/contains',checkAuth,async (req,res)=>{
+
+router.get('/me/albums/contains',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
     const albumsIDs = req.query.albums_ids.split(',');
-    const checks=Library.checkSavedAlbums(albumsIDs,userID);
+    const checks=await Library.checkSavedAlbums(albumsIDs,userID);
     if(!checks) res.status(404); //not found
-    else res.status(200).send(checks); 
+    else res.status(200).json(checks); 
 
 });
 
+router.get('/me/tracks/contains',checkAuth,async (req,res)=>{
 
+    const userID = req.user._id;
+    const tracksIDs = req.query.tracks_ids.split(',');
+    const checks=await Library.checkSavedTracks(tracksIDs,userID);
+    if(!checks) res.status(404); //not found
+    else res.status(200).json(checks); 
+
+});
+
+router.get('/me/albums',checkAuth,async (req,res)=>{
+
+    const userID = req.user._id;
+    const albums=await Library.getAlbums(userID,req.query.limit,req.query.offset);
+    if(!albums) res.status(404); //not found
+    else res.status(200).json(albums); 
+
+});
+
+router.get('/me/tracks',checkAuth,async (req,res)=>{
+
+    const userID = req.user._id;
+    const tracks=await Library.getSavedTracks(userID,req.query.limit,req.query.offset);
+    if(!tracks) res.status(404); //not found
+    else res.status(200).json(tracks); 
+
+});
 
 
 

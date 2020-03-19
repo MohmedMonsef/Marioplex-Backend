@@ -1,4 +1,5 @@
 
+
 const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
 
@@ -183,5 +184,4 @@ const category=mongoose.model('Category',Category);
 
 
 module.exports={user,artist,album,track,playlist,category}
-
 

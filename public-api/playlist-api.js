@@ -43,12 +43,35 @@ const Playlist =  {
         type:"playlist" ,
         collaborative:"false" ,
         name:playlistName ,
-        isPublic:"false" 
+        isPublic:"false" ,
+        hasTracks:[]
     })
+    await Playlist.save();
+    Playlist.hasTracks.push({
+        trackId:"4782387rrtbnyut"
+    });
+    await Playlist.save();
+    Playlist.hasTracks.push({
+        trackId:"478238565sbnf2yuy"
+    });
+    await Playlist.save();
+    Playlist.hasTracks.push({
+        trackId:"4782eqwe7dsbnf2yuk"
+    });
+    await Playlist.save();
+    Playlist.hasTracks.push({
+        trackId:"47gfhg87dsbnf2yur"
+    });
     await Playlist.save();
     return Playlist;
     },
-
+    findIndexOfTrackInPlaylist: async function(trackId,tplaylist) {
+        for(let i=0;i <tplaylist.hasTracks.length;i++ ){
+            if(tplaylist.hasTracks[i].trackId==trackId) 
+              return i;     
+        }
+        return -1
+    },
     //to delete playlist
     
     deletePlaylist  : async function(user,playlistId){

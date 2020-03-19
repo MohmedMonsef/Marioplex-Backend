@@ -1,4 +1,4 @@
-
+S
 const forgpass=require('./routes/Forgpass-route');
 
 const express = require('express');
@@ -12,12 +12,12 @@ const logger = require('morgan');
 const passport = require('passport');
 const session = require('express-session')
 
-
-const Track=require('./routes/Track-routes')
-const playlist=require('./routes/playlist-routes');
-const userProfile=require('./routes/userprofile')
-const login=require('./routes/login');
-const signup=require('./routes/signup');
+const player = require('./routes/player-routes')
+const Track = require('./routes/Track-routes')
+const playlist =require('./routes/playlist-routes');
+const userProfile =require('./routes/userprofile')
+const login =require('./routes/login');
+const signup =require('./routes/signup');
 const facebook = require('./authentication/facebook-routes');
 require('./config/passport');
 
@@ -30,9 +30,11 @@ app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 app.use(login);
 app.use(signup);
 app.use(Track);
+app.use(player);
 app.use(playlist);
 app.use(forgpass);
 app.use('/auth',facebook);

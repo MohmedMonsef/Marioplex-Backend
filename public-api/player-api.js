@@ -88,7 +88,88 @@ const Player = {
         if(!user.playHistory) return tracks;
         for(let i=0;i<Math.min(user.playHistory.length,limit);i++) tracks.push(user.playHistory[i]);
         return tracks;
+    },
+
+    // to fill queue
+    createQueue: async function(user,isPlaylist,id,trackID)
+    {
+       
+       
+        if(isPlaylist=='true')
+        {
+          const queueFiller= await Playlist.getPlaylist(id);
+           if(!queueFiller) return 0; //if this is not a playlist
+            const   indexOfTrack = await Playlist.findIndexOfTrackInPlaylist(trackID,queueFiller)
+           if( indexOfTrack == -1) return 0;
+           user.tracksInQueue=[];
+        var j=0;
+        for(let i=indexOfTrack-1;i >=0;i-- ){
+            user.tracksInQueue.push({
+                trackId: queueFiller.hasTracks[i],
+                isQueue: false,
+                inedex : j,
+                isNextToCurrent:false
+            });
+            await user.save().catch();
+            j++
+        }
+        for(let i=queueFiller.hasTracks.length-1;i>=indexOfTrack+1;i-- ){
+            user.tracksInQueue.push({
+                trackId: queueFiller.hasTracks[i],
+                isQueue: false,
+                inedex : j,
+                isNextToCurrent:true
+            });
+            await user.save().catch();
+            j++
+        }
+        user.tracksInQueue.push({
+            trackId: queueFiller.hasTracks[indexOfTrack],
+            isQueue: false,
+            inedex : j,
+            isNextToCurrent:false
+        });
+        await user.save().catch();
+        return 1;
+        }
+        
+        const queueFiller= await Album.getAlbumById(id);
+        if(!queueFiller) return 0;  //if this is not a album
+        const indexOfTrack = Album.findIndexOfTrackInAlbum(trackID,queueFiller);
+        if(indexOfTrack ==-1) return 0;  
+        user.tracksInQueue=[];
+        var j=0;
+        for(let i=indexOfTrack-1;i <=0;i-- ){
+            user.tracksInQueue.push({
+                trackId: queueFiller.hasTracks[i],
+                isQueue: false,
+                inedex : j,
+                isNextToCurrent:false
+            });
+            await user.save().catch();
+            j++
+        }
+        for(let i=queueFiller.hasTracks.length-1;i <=indexOfTrack+1;i-- ){
+            user.tracksInQueue.push({
+                trackId: queueFiller.hasTracks[i],
+                isQueue: false,
+                inedex : j,
+                isNextToCurrent:true
+            });
+            await user.save().catch();
+            j++
+        }
+        user.tracksInQueue.push({
+            trackId: queueFiller.hasTracks[indexOfTrack],
+            isQueue: false,
+            inedex : j,
+            isNextToCurrent:false
+        });
+        await user.save().catch();
+        return 1;
     }
+
+    
 }
 
 

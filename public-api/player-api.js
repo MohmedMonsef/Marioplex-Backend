@@ -57,7 +57,7 @@ const Player = {
             
     },
     // add  a track to user recent tracks
-    addRecenTrack: async function(user,trackID){
+    addRecentTrack: async function(user,trackID){
         if(user.playHistory){
             if(user.playHistory.length > 50)user.playHistory.pop();
             user.playHistory.unshift({

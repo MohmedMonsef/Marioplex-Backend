@@ -149,10 +149,9 @@ const Artist=new Schema({
     popularity:Number,
     genre:[String] ,
     type:String ,
-    user:{
-      userId: mongoose.Schema.Types.ObjectId
+    userId: mongoose.Schema.Types.ObjectId
       //ref: 'User'
-    },
+    ,
     addAlbums:[{
       albumId: mongoose.Schema.Types.ObjectId
       //ref: 'Album'

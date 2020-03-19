@@ -124,6 +124,22 @@ getTopTracks : async function(artistID,country){
     TopTracks.slice(0,10);
     return TopTracks;
 },
+getTracks : async function(artistID){
+    let SpecificTracks=[];
+    let tracks={};
+    let artist = await this.getArtist(artistID);
+    if(!artist)return 0;
+for(let i=0;i<artist.addTracks.length;i++){
+    let track=await Track.getTrack(artist.addTracks[i].trackId);
+        if(track){tracks[artist.addTracks[i].trackId]=track;}
+}
+for(let Track in tracks){
+        SpecificTracks.push(tracks[Track]);
+}
+
+
+return SpecificTracks;
+},
 }
 
 module.exports = Artist;

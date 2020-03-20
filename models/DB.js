@@ -144,12 +144,13 @@ const User=new Schema({
   link:Link ,
   }],
   tracksInQueue:[{
-    
       trackId: String,
       //ref: 'Track'
     isQueue:Boolean,
+    // if add by add to queue request 
     inedex:Number,
     isNextToCurrent:Boolean
+    // if next to current in playlit
   }],
   player:{
     current_track_index:Number,
@@ -159,7 +160,8 @@ const User=new Schema({
     is_playing:Boolean,
     is_shuffled:Boolean,
     is_repeat:Boolean,
-    volume:Number
+    volume:Number,
+    last_from_source:String
   }
   
 });

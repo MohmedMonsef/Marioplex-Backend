@@ -1,6 +1,7 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 const Playlist = require('./playlist-api');
 const Album = require('./album-api');
+const Track =require('./track-api')
 
 const Player = {
 
@@ -146,6 +147,10 @@ const Player = {
             isNextToCurrent:false
         });
         await user.save().catch();
+        user.player["last_from_source"] = queueFiller.hasTracks[indexOfTrack];
+        user.player["current_track_index"] =j;
+        user.player["current_track"] = queueFiller.hasTracks[indexOfTrack];
+        await user.save().catch();
         return 1;
         }
         
@@ -182,10 +187,42 @@ const Player = {
             isNextToCurrent:false
         });
         await user.save().catch();
+        user.player["current_track_index"] =j;
+        user.player["last_from_source"] = queueFiller.hasTracks[indexOfTrack];
+        user.player["current_track"] = queueFiller.hasTracks[indexOfTrack];
+        await user.save().catch();
+        return 1;
+    },
+
+    addToQueue:async function(user,trackID){
+       // if(!await Track.getTrack(trackID))   return 0;
+        const index =user.tracksInQueue.length;
+        user.tracksInQueue.push({
+            trackId: trackID,
+            isQueue: true,
+            inedex : index,
+            isNextToCurrent:true
+        });
+        await user.save().catch();
+        user.player["next_track"]=trackID;
+        await user.save().catch();
         return 1;
     }
 
+    //// when find next in is queue the frist one will take is his index is the frist bigger than current played
+    // when get next 
+    //1. find the frist track index bigger than the current and isQueue=true
+        //2. then if found will delete this track from in queue
+        //then if not found will search the frist index less than current isnext = 'true'
+            // if found make isnext = 0 ; and player.last-form-source =id;
+            //if not found will take the trackid its index before the last_from _source 
+            // then make all tracks in queue isnext = 'true';
+    // to get previous get the index bigger than me isnext= false & isqueue =false
+    //and make current isnext =true 
+    //if not found get the index 0
     
+    // can add track muliple in queue
+
 }
 
 

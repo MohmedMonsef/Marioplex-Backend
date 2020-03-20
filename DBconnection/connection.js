@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 mongoose.Promise=global.Promise;
-const spotify=require('../models/db');
+const spotify=require('../models/DB');
 const bcrypt=require('bcrypt');
 mongoose.Promise=global.Promise;
 

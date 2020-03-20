@@ -4,7 +4,7 @@ const bcrypt=require('bcrypt');
 const BCRYPT_SALT_ROUNDS=12;
 
 const pasport=require('passport');
-const spotifySchema = require('../models/db');
+const spotifySchema = require('../models/DB');
 var JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 

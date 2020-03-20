@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const spotifySchema = require('../models/db');
+const spotifySchema = require('../models/DB');
 const {auth:checkAuth} = require('../middlewares/isMe');
 
 router.get('/users/:id',checkAuth,(req,res,next)=>{

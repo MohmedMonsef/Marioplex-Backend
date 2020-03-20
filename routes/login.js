@@ -1,4 +1,4 @@
-const spotifySchema = require('../models/db');
+const spotifySchema = require('../models/DB');
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
 const passport =require('passport');

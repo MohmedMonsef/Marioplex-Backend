@@ -21,6 +21,7 @@ const Link=new Schema({
 const Track=new Schema({ 
   link:Link ,
   externalId:mongoose.Schema.Types.ObjectId ,
+  artistId:mongoose.Schema.Types.ObjectId,
   availableMarkets:[String] ,
   discNumber:Number ,
   trackNumber:Number ,

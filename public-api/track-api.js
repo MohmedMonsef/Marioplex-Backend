@@ -77,12 +77,13 @@ const connection=require('../DBconnection/connection');
     },
       // create Track for an artist
     // params : artist-id
-    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets){
+    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets,artistID){
         let track=new trackDocument({
             externalId:url ,
             availableMarkets:AvailableMarkets ,
             trackNumber:TrackNumber ,
-            name:Name
+            name:Name,
+            artistId:artistID
         }); 
        await track.save();
        console.log(track);

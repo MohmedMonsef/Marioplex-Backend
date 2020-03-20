@@ -70,7 +70,7 @@ router.put('/Artists/:artist_id/Albums/:album_id/tracks',[checkAuth,checkType,ch
 // create track its external id=req.file.id
 //add rest info to the track
 console.log(req.file);
-let track=await Track.createTrack(req.file.id,req.body.name,req.body.TrackNum,req.body.availableMarkets);
+let track=await Track.createTrack(req.file.id,req.body.name,req.body.TrackNum,req.body.availableMarkets,req.params.artist_id);
 await Album.addTrack(req.params.album_id,track);
 await Artist.addTrack(req.params.artist_id,track._id);
 res.status(200).send(track);

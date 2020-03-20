@@ -24,6 +24,15 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
  
  }) 
 
+ router.put('/player/add-to-queue/:trackId',checkAuth,async (req,res)=>{
+
+  const trackId =req.params.trackId;
+  const user = await User.getUserById(req.user._id)
+  const addToQueue = await Player.addToQueue(user,trackId);
+  if( addToQueue == 0) res.status(400).send("can not add queue ! ");
+  else res.send(" add successfully");
+
+}) 
 
 module.exports = router; 
 

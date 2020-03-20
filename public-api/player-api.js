@@ -101,9 +101,6 @@ const Player = {
         user.player["last_from_source"] = queueFiller.hasTracks[indexOfTrack];
         user.player["current_track_index"] =j;
         user.player["current_track"] = queueFiller.hasTracks[indexOfTrack];
-        user.player["frist_track_played"]=queueFiller.hasTracks[indexOfTrack];
-        user.player["current_source_id"]=id;
-        user.player["isplaylist"]=isPlaylist;
         await user.save().catch();
         return 1;
         }
@@ -144,15 +141,12 @@ const Player = {
         user.player["current_track_index"] =j;
         user.player["last_from_source"] = queueFiller.hasTracks[indexOfTrack];
         user.player["current_track"] = queueFiller.hasTracks[indexOfTrack];
-        user.player["frist_track_played"]=queueFiller.hasTracks[indexOfTrack];
-        user.player["current_source_id"]=id;
-        user.player["isplaylist"]=isPlaylist;
         await user.save().catch();
         return 1;
     },
 
     addToQueue:async function(user,trackID){
-        if(!await Track.getTrack(trackID))   return 0;
+       // if(!await Track.getTrack(trackID))   return 0;
         const index =user.tracksInQueue.length;
         user.tracksInQueue.push({
             trackId: trackID,

@@ -1,9 +1,7 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
-
 const Track =  require('./track-api');
-
 const Playlist =  require('./Playlist-api');
-
+const Player =require('./player-api');
 // initialize db 
 const connection=require('../DBconnection/connection');
 const bcrypt=require('bcrypt');
@@ -138,6 +136,19 @@ const User =  {
             user.password=hashed;
         await user.save();
             return password;
+    },
+
+    createQueue:async function (userID,isPlaylist,sourceId,trackId){
+        const user = await this.getUserById(userID);
+        const isCreateQueue= await Player.createQueue(user,isPlaylist,sourceId,trackId);       
+        return isCreateQueue ;
+    },
+
+    addToQueue:async function (userID,trackId){
+        const user = await this.getUserById(userID);
+        const isAddQueue= await Player.addToQueue(user,trackId);       
+        return isAddQueue ;
+        
     }
 
 }

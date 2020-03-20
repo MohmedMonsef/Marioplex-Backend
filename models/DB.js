@@ -44,10 +44,10 @@ const Track=new Schema({
   tempo:Number ,
   timeSignature:Date ,
   valence:Number,
-  artists: {
+  artists: [{
     artistId: mongoose.Schema.Types.ObjectId
     //ref: 'Artist'
-  }
+  }]
 });
 
 const Playlist=new Schema({
@@ -146,15 +146,14 @@ const User=new Schema({
   type:String ,
   link:Link ,
   }],
+  queue:{
+  queuIndex:Number,  
   tracksInQueue:[{
-      trackId:  mongoose.Schema.Types.ObjectId,
+    trackId:  mongoose.Schema.Types.ObjectId,
       //ref: 'Track'
     isQueue:Boolean,
-    // if add by add to queue request 
-    inedex:Number,
-    isNextToCurrent:Boolean
-    // if next to current in playlit
-  }],
+  }]
+},
   player:{
     current_track_index:Number,
     current_track:mongoose.Schema.Types.ObjectId,

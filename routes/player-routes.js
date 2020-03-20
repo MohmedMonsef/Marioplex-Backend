@@ -1,4 +1,4 @@
-const middleTrack = "2";
+
 const router = require('express').Router();
 const Player =require('../public-api/player-api');
 const User = require('../public-api/user-api');
@@ -6,9 +6,12 @@ const Track = require('../public-api/track-api')
 const {auth:checkAuth} = require('../middlewares/isMe');
 
 // update the player api instance
-router.get('/updatePlayer/:id',async (req,res)=>{
-    const user = await User.getUserById("5e6bcfec15da8934bc2114d5")
-  const p =  await Player.setPlayerInstance(user,true,"5e713e741103df39508b20cf",req.params.id);
+// just for test route
+router.get('/updatePlayer',async (req,res)=>{
+  const userID = "5e6bcfec15da8934bc2114d5";
+  const playlistID = "5e74d060d5f64531a44df5c0";
+  const trackID = "5e1a0651741b255ddda996c2"
+  const p =  await User.updateUserPlayer(userID,true,playlistID,trackID);
   if(!p) res.status(404).send({error:"wrong"});
   else res.json({"success":"updated user player"});
 })
@@ -58,3 +61,4 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
 
 }) 
 
+module.exports = router;

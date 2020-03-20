@@ -1,5 +1,4 @@
 
-
 const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
 
@@ -56,7 +55,7 @@ const Playlist=new Schema({
   isPublic:Boolean ,
   images:[Image] ,
   hasTracks:[{
-    trackId: mongoose.Schema.ObjectId,
+    trackId: String,
     //ref: 'Track'
   }]
   
@@ -76,7 +75,7 @@ const Album=new Schema({
   releaseDatePercision: String ,
   label:String ,
   hasTracks:[{
-    trackId: mongoose.Schema.ObjectId,
+    trackId: String,
     //ref: 'Track'
   }]
   
@@ -104,55 +103,65 @@ const User=new Schema({
   displayName:String ,
   product:String ,
   follow:[{
-    id: mongoose.Schema.ObjectId,
+    id: String,
     //ref: 'User'
   }],
   followedBy:[{
-    id: mongoose.Schema.ObjectId,
+    id: String,
     //ref: 'User'
   }],
   like:[{
-    trackId: mongoose.Schema.ObjectId
+    trackId: String
     //ref: 'Track'
   }],
   createPlaylist:[{
-    playListId: mongoose.Schema.ObjectId,
+    playListId: String,
     //ref: 'Playlist',
     addedAt:Date ,
     isLocal:Boolean ,
     collaboratorsId:[{
-      id: mongoose.Schema.ObjectId,
+      id: String,
       //ref: 'User'
     }]
   }],
   followPlaylist:[{
-    playListId: mongoose.Schema.ObjectId
+    playListId: String
     //ref: 'Playlist'
     
   }],
   saveAlbum:[{
     savedAt:Date,
-    albumId: mongoose.Schema.ObjectId,
+    albumId: String,
     //ref: 'Album'
   }],
   playHistory:[{
     tracks:{
-      trackId: mongoose.Schema.ObjectId
+      trackId: String
       //ref: 'Track'
     },
   addedAt:Date,
   type:String ,
   link:Link ,
   }],
+  tracksInQueue:[{
+    
+      trackId: String,
+      //ref: 'Track'
+    isQueue:Boolean,
+    inedex:Number,
+    isNextToCurrent:Boolean
+  }],
   player:{
-    current_track:mongoose.Schema.ObjectId,
-    next_track:mongoose.Schema.ObjectId,
-    prev_track:mongoose.Schema.ObjectId,
+    current_track_index:Number,
+    current_track:String,
+    next_track:String,
+    prev_track:String,
     is_playing:Boolean,
     is_shuffled:Boolean,
     is_repeat:Boolean,
     volume:Number
   }
+  
 });
 
 const Artist=new Schema({ 
@@ -161,15 +170,15 @@ const Artist=new Schema({
     genre:[String] ,
     type:String ,
     user:{
-      userId: mongoose.Schema.ObjectId
+      userId: String
       //ref: 'User'
     },
     addAlbums:[{
-      albumId: mongoose.Schema.ObjectId
+      albumId: String
       //ref: 'Album'
     }],
     addTracks:[{
-      trackId: mongoose.Schema.ObjectId
+      trackId: String
       //ref: 'Track'
     }]
 

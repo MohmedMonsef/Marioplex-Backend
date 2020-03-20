@@ -24,6 +24,21 @@ const Player = {
 
     // update user player object each time he plays new track
     setPlayerInstance: async function(user,isPlaylist,id,trackID){
+        // first check if there is a queue
+        if(user.tracksInQueue){
+            // get next from the queue directly
+           // get next track and prev Track in playlist by checking for id greater than track id
+           const {"next_track":nextTrack,"prev_track":prevTrack} = this.getPrevAndNext(user.tracksInQueue,trackID);
+           
+           // update user player info 
+           user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
+           user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
+           user.player["current_track"] = trackID;
+           await user.save();
+           return 1;
+        }else{
+            // get next and previous form playlist or album he is currently in
+    
         // if the new track the user is playing from a plylist then get track and get it's previus and next from the playlist
         if(isPlaylist){
             // get playlist
@@ -54,6 +69,7 @@ const Player = {
             await user.save();
             return 1;
         }
+    }
             
     },
     // add  a track to user recent tracks

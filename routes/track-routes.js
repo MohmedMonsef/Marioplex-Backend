@@ -16,6 +16,19 @@ router.get('/track/:track_id',checkAuth,async (req,res)=>{
     else res.json(track); 
 
 })
+
+// get track with some user info as like
+router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
+    
+    const trackID = req.params.track_id;
+    const user = await User.getUserById(req.user._id);
+    const track = await Track.getTrack(trackID);
+    const isLiked = Track.checkIfUserLikeTrack(user,trackID)?true:false;
+   
+    if(!track) res.sendStatus(404); //not found
+    else res.json({track:track,isLiked:isLiked}); 
+
+})
 // get tracks
 router.get('/tracks/',checkAuth,async (req,res)=>{
     const trackIDs = req.query.ids.split(',');

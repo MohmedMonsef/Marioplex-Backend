@@ -70,4 +70,13 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
   else res.status(404).json({error:"track not found"})
 })
 
+router.post('/me/player/prev-playing',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const player = user.player;
+  const prevPlayingTrack = await Track.getTrack(player.prev_track);
+  const skip = await Player.skipPrevious(user);
+  if(!skip) res.json(prevPlayingTrack);
+  else res.status(404).json({error:"track not found"})
+})
+
 module.exports = router;

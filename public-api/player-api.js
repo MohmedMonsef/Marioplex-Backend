@@ -278,8 +278,57 @@ const Player = {
             }
        }
         return 1;
-    } 
+    } ,
+
+    //skip to previous
+    skipPrevious:async function(user){
+        
+         user.player["current_track"]=user.player["prev_track"];
+        await user.save();
+        if ( user.queue.queuIndex ==-1)
+            {
+                user.player["next_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;        
+                await user.save();
+                if(user.player["last_playlist_track_index"] == 1){
+                    user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;;
+                    user.player["last_playlist_track_index"]=0;
+                    await user.save();
+                }
+                else
+                {   
+                   
+                    if(user.player["last_playlist_track_index"]==0){   
+                        user.player["last_playlist_track_index"]=user.queue.tracksInQueue.length-1;
+                        user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;;
+                        
+                    }
+                    else{
+                        user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;;
+                        user.player["last_playlist_track_index"]--;
+                    }
+                }
+                await user.save();
+                return 0;
+        }
+        else{
+    
+            user.player["next_track"] = user.queue.tracksInQueue[user.queue.queuIndex].trackId;        
+            await user.save();
+            if(user.player["last_playlist_track_index"] == 0){
+                user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                await user.save();
+            }
+            else
+            {  
+                user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-1].trackId;    
+            }
+            await user.save();
+            return 0;
+        }
+    }
 }
-
-
+////////////////////////////////////////////
+// if there is isQueue but no one is the current TODO
+// if there is no isqueue but current is add TODO
+/////////////////////////////////////////////
 module.exports = Player;

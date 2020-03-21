@@ -154,7 +154,8 @@ const User=new Schema({
         //ref: 'Track'
       isQueue:Boolean,
       isPlaylist:Boolean,
-      sourceId:mongoose.Schema.Types.ObjectId
+      sourceId:mongoose.Schema.Types.ObjectId,
+      sourceName:String
     }]
 },
   player:{

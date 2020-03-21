@@ -283,7 +283,9 @@ const Player = {
     //skip to previous
     skipPrevious:async function(user){
         
-         user.player["current_track"]=user.player["prev_track"];
+        if(user.player["current_track"] == user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId){
+            return 0;
+            user.player["current_track"]=user.player["prev_track"];
         await user.save();
         if ( user.queue.queuIndex ==-1)
             {
@@ -326,6 +328,8 @@ const Player = {
             return 0;
         }
     }
+return 1;
+}
 }
 ////////////////////////////////////////////
 // if there is isQueue but no one is the current TODO

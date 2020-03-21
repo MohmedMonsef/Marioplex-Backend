@@ -47,8 +47,9 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
     const sourceId =req.params.playlist_id;
     const trackId =req.params.trackId;
     const isPlaylist = req.query.isPlaylist;
-    const createQueue= await User.createQueue(req.user._id,isPlaylist,sourceId,trackId)
-    if( createQueue == 0) res.status(400).send("can not create queue");
+    const userID =req.user._id;
+    const createQueue= await User.updateUserPlayer(userID,isPlaylist,sourceId,trackId)
+    if(!createQueue) res.status(400).send("can not create queue");
     else res.send(" Queue is created successfully");
  
  }) 
@@ -60,5 +61,22 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
   else res.send(" add successfully");
 
 }) 
+ router.post('/me/player/next-playing',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const player = user.player;
+  const nextPlayingTrack = await Track.getTrack(player.next_track);
+  const skip = await Player.skipNext(user);
+  if(nextPlayingTrack) res.json(nextPlayingTrack);
+  else res.status(404).json({error:"track not found"})
+})
+
+router.post('/me/player/prev-playing',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const player = user.player;
+  const prevPlayingTrack = await Track.getTrack(player.prev_track);
+  const skip = await Player.skipPrevious(user);
+  if(prevPlayingTrack) res.json(prevPlayingTrack);
+  else res.status(404).json({error:"track not found"})
+})
 
 module.exports = router;

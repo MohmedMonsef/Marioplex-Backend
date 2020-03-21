@@ -42,7 +42,7 @@ router.get('/me/player/prev-playing',checkAuth,async (req,res)=>{
   if(prevPlayingTrack) res.json(prevPlayingTrack);
   else res.status(404).json({error:"track not found"})
 })
-
+// create queue fo player
 router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
     const sourceId =req.params.playlist_id;
     const trackId =req.params.trackId;
@@ -53,14 +53,17 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
     else res.send(" Queue is created successfully");
  
  }) 
-
+// add track to user player queue
  router.put('/player/add-to-queue/:trackId',checkAuth,async (req,res)=>{
   const trackId =req.params.trackId;
-  const addToQueue = await User.addToQueue(req.user._id,trackId);
+  const isPlaylist = req.query.isPlaylist;
+  const sourceId = req.query.sourceId;
+  const addToQueue = await User.addToQueue(req.user._id,trackId,isPlaylist,sourceId);
   if( addToQueue == 0) res.status(400).send("can not add queue ! ");
   else res.send(" add successfully");
 
-}) 
+})
+// skip to next track 
  router.post('/me/player/next-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
@@ -69,7 +72,7 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
   if(nextPlayingTrack) res.json(nextPlayingTrack);
   else res.status(404).json({error:"track not found"})
 })
-
+// skip to prev track
 router.post('/me/player/prev-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
@@ -78,5 +81,12 @@ router.post('/me/player/prev-playing',checkAuth,async (req,res)=>{
   if(prevPlayingTrack) res.json(prevPlayingTrack);
   else res.status(404).json({error:"track not found"})
 })
-
+// get user queue 
+router.get('/me/queue',checkAuth,async (req,res)=>{
+  const userID = req.user._id;
+  const tracks = await User.getQueue(userID);
+  
+  if(!tracks) res.status(400).json({error:"couldnt get queue"});
+  else res.status(200).json(tracks);
+})
 module.exports = router;

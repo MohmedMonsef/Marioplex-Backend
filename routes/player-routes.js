@@ -61,5 +61,13 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
   else res.send(" add successfully");
 
 }) 
+ router.post('/me/player/next-playing',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const player = user.player;
+  const nextPlayingTrack = await Track.getTrack(player.next_track);
+  const skip = await Player.skipNext(user);
+  if(nextPlayingTrack) res.json(nextPlayingTrack);
+  else res.status(404).json({error:"track not found"})
+})
 
 module.exports = router;

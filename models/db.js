@@ -156,7 +156,7 @@ const User=new Schema({
     }]
 },
   player:{
-    current_track_index:Number,
+    last_playlist_track_index:Number,
     current_track:mongoose.Schema.Types.ObjectId,
     next_track:mongoose.Schema.Types.ObjectId,
     prev_track:mongoose.Schema.Types.ObjectId,

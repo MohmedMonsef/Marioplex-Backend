@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
 
@@ -44,7 +43,11 @@ const Track=new Schema({
   speechiness:Number ,
   tempo:Number ,
   timeSignature:Date ,
-  valence:Number
+  valence:Number,
+  artists: [{
+    artistId: mongoose.Schema.Types.ObjectId
+    //ref: 'Artist'
+  }]
 });
 
 const Playlist=new Schema({
@@ -55,7 +58,7 @@ const Playlist=new Schema({
   isPublic:Boolean ,
   images:[Image] ,
   hasTracks:[{
-    trackId: String,
+    trackId:  mongoose.Schema.Types.ObjectId,
     //ref: 'Track'
   }]
   
@@ -75,7 +78,7 @@ const Album=new Schema({
   releaseDatePercision: String ,
   label:String ,
   hasTracks:[{
-    trackId: String,
+    trackId:  mongoose.Schema.Types.ObjectId,
     //ref: 'Track'
   }]
   
@@ -103,60 +106,60 @@ const User=new Schema({
   displayName:String ,
   product:String ,
   follow:[{
-    id: String,
+    id:  mongoose.Schema.Types.ObjectId,
     //ref: 'User'
   }],
   followedBy:[{
-    id: String,
+    id:  mongoose.Schema.Types.ObjectId,
     //ref: 'User'
   }],
   like:[{
-    trackId: String
+    trackId:  mongoose.Schema.Types.ObjectId
     //ref: 'Track'
   }],
   createPlaylist:[{
-    playListId: String,
+    playListId:  mongoose.Schema.Types.ObjectId,
     //ref: 'Playlist',
     addedAt:Date ,
     isLocal:Boolean ,
     collaboratorsId:[{
-      id: String,
+      id:  mongoose.Schema.Types.ObjectId,
       //ref: 'User'
     }]
   }],
   followPlaylist:[{
-    playListId: String
+    playListId:  mongoose.Schema.Types.ObjectId
     //ref: 'Playlist'
     
   }],
   saveAlbum:[{
     savedAt:Date,
-    albumId: String,
+    albumId:  mongoose.Schema.Types.ObjectId,
     //ref: 'Album'
   }],
   playHistory:[{
     tracks:{
-      trackId: String
+      trackId:  mongoose.Schema.Types.ObjectId
       //ref: 'Track'
     },
   addedAt:Date,
   type:String ,
   link:Link ,
   }],
-  tracksInQueue:[{
-      trackId: String,
-      //ref: 'Track'
-    isQueue:Boolean,
-    // if add by add to queue request 
-    inedex:Number,
-    isNextToCurrent:Boolean
-    // if next to current in playlit
-  }],
+  queue:{
+    lastInPlaylistIndex:Number,
+    queuIndex:Number,  
+    tracksInQueue:[{
+      trackId:  mongoose.Schema.Types.ObjectId,
+        //ref: 'Track'
+      isQueue:Boolean,
+    }]
+},
   player:{
     current_track_index:Number,
-    current_track:String,
-    next_track:String,
-    prev_track:String,
+    current_track:mongoose.Schema.Types.ObjectId,
+    next_track:mongoose.Schema.Types.ObjectId,
+    prev_track:mongoose.Schema.Types.ObjectId,
     is_playing:Boolean,
     is_shuffled:Boolean,
     is_repeat:Boolean,
@@ -172,15 +175,15 @@ const Artist=new Schema({
     genre:[String] ,
     type:String ,
     user:{
-      userId: String
+      userId: mongoose.Schema.Types.ObjectId
       //ref: 'User'
     },
     addAlbums:[{
-      albumId: String
+      albumId:  mongoose.Schema.Types.ObjectId
       //ref: 'Album'
     }],
     addTracks:[{
-      trackId: String
+      trackId:  mongoose.Schema.Types.ObjectId
       //ref: 'Track'
     }]
 
@@ -195,5 +198,4 @@ const category=mongoose.model('Category',Category);
 
 
 module.exports={user,artist,album,track,playlist,category}
-
 

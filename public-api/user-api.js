@@ -149,6 +149,16 @@ const User =  {
         const isAddQueue= await Player.addToQueue(user,trackId);       
         return isAddQueue ;
         
+    },
+    updateUserPlayer: async function(userID,isPlaylist,sourceId,trackID){
+        const user = await this.getUserById(userID);
+        
+        const queu = await Player.createQueue(user,isPlaylist,sourceId,trackID);
+        console.log(queu)
+        if(!queu) return 0;
+        const player = await Player.setPlayerInstance(user,isPlaylist,sourceId,trackID);
+        if(!player) return 0;
+        return 1;
     }
 
 }

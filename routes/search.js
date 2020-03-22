@@ -27,7 +27,7 @@ router.get('/search',checkAuth,async (req,res)=>{
 
     }
     else if(type=="artist"){
-        const artist = await search.getArtist(name);
+        const artist = await search.getArtistProfile(name);
         if(artist.length==0) res.sendStatus(404); //not found
         else res.send(artist); 
         }

@@ -7,10 +7,11 @@ const artistApi=require('./artist-api');
 const connection=require('../DBconnection/connection');
 const User=require('./user-api');
 const track=require('./track-api');
+const artist_api=require('./Artist-api');
 
 const Search =  {
     getUsers  : async function(){
-        let user = await userDocument.find( {} ,(err,user)=>{
+        let user = await userDocument.find({} ,(err,user)=>{
             if(err) return 0;
             return user;
         }).catch((err)=> 0);
@@ -18,7 +19,7 @@ const Search =  {
 
     },
     getAlbums : async function(){
-        let album = await albumDocument.find( {} ,(err,album)=>{
+        let album = await albumDocument.find({} ,(err,album)=>{
             if(err) return 0;
             return album;
         }).catch((err)=> 0);
@@ -41,60 +42,65 @@ const Search =  {
         return playlist;
     },
     getTracks :async function(){
-        let track = await trackDocument.find( {} ,(err,track)=>{
+        let track = await trackDocument.find({} ,(err,track)=>{
             if(err) return 0;
            return track;
         }).catch((err)=> 0);
         return track;
     },
     
-    
+    //problem
     getAlbum  : async function(albumName){
         
-        let artist=this.getTopResults();
-        if(artist==0){
-        const album= await this.getAlbums();
-        if(album.length==0)return album;
-        return Fuzzysearch(albumName,'name',album);
-        }
-        else{
-            return artistApi.getAlbums(artist);
-        }
+            const album= await this.getAlbums();
+            if(album.length==0) return album;
+            return Fuzzysearch(albumName,'name',album);   
+    
+    
     },
     getTrack : async function(Name){
-        const track= await this.getTracks();
-        if(track.length==0)return track;
-        return Fuzzysearch(Name,'name',track);
-
+        
+            
+            const track= await this.getTracks();
+            if(track==0)return track;
+            return Fuzzysearch(Name,'name',track); 
+        
+       
+    
     },
     getTopResults :async function(Name){
         
-        const artist= await this.getArtist(Name);
+        const artist= await this.getArtistProfile(Name);
         if(artist.length==0){
-            let tracks=this.getTrack(Name);
-            if(tracks.length>0)return tracks[0];
-            else return 0;
+            let tracks = this.getTrack(Name);
+            if(tracks.length==0) return [];
+            else return tracks;
         }
-        return artist[0];
+        
+        return artist[0]
     },
-    getArtist  : async function(name){
+    getArtistProfile  : async function(name){
         
         Artist=[]
         let User = await this.getUserByname(name);
         if(User.length==0)return Artist;
         else{
             for( let i=0;i<User.length;i++){
-            if(User[i].userType=="Artist"){
-                await artistDocument.find({user:{userId:User[i]._id}},(err,artist)=>{
-                if(!err) Artist.push(User[i]);
-            
-            });
-            }
+                if(User[i].userType=="Artist"){
+                    Artist.push(User[i]);
+                }
             }
             return Artist;
         
         }
     
+    },
+    getArtist  : async function(artistID){
+        let artist = await artistDocument.find({userId:artistID} ,(err,artist)=>{
+            if(err) return 0;
+           return artist;
+        }).catch((err)=> 0);
+        return artist;
     },
     getUserProfile  : async function(name){
         
@@ -102,9 +108,9 @@ const Search =  {
         if(User.length==0)return User;
         else{
             for( let i=0;i<User.length;i++){
-            if(User[i].userType=="Artist"){
-                User.splice(i,1);
-            }
+                if(User[i].userType=="Artist"){
+                    User.splice(i,1);
+                }
             }
             return User;
         }
@@ -115,6 +121,7 @@ const Search =  {
         const playlist= await this.getPlaylists();
         if(playlist.length==0)return playlist;
         return Fuzzysearch(Name,'name',playlist);
+
     }
 }
 module.exports=Search;
@@ -126,28 +133,37 @@ function search(name,field,schema){
       const users = searcher.search(name);
       return users;
 }
+
 function Fuzzysearch(name,field,schema){
-        
-        Results=[]
-        subName=name.split(' ');
-        let results = search(name,field,schema);
+    Results=[]
+    subName=name.split(' ');
+    let results = search(name,field,schema);
+    Results=Results.concat(results);
+    for( let i=0;i<subName.length;i++){
+        results = search(subName[i],field,schema);
         Results=Results.concat(results);
-        for( let i=0;i<subName.length;i++){
-            results = search(subName[i],field,schema);
-            Results=Results.concat(results);
-        }
-        if(Results.length==0){
-            halfSubName=[]
-            for( let i=0;i<subName.length;i++){
-            len=subName.length;
-            halfSubName.push(subName[i].substring(0, len / 2));
-            halfSubName.push(subName[i].substring(len / 2));
-            }
-            for( let i=0;i<halfSubName.length;i++){
-                results = search(halfSubName[i],field,schema);
-                Results=Results.concat(results);
-            }
-        }
-        
-        return Results;
+    }
+    // if(Results.length==0){
+    //     halfSubName=[]
+    //     for( let i=0;i<subName.length;i++){
+    //     len=subName.length;
+    //     halfSubName.push(subName[i].substring(0, len / 2));
+    //     halfSubName.push(subName[i].substring(len / 2));
+    //     }
+    //     for( let i=0;i<halfSubName.length;i++){
+    //         results = search(halfSubName[i],field,schema);
+    //         Results=Results.concat(results);
+    //     }
+    // }
+    
+    return removeDupliactes(results);
+}
+
+const removeDupliactes = (values) => {
+
+
+    var Unique = values.filter(function(x) {
+        return x._id ;
+      });
+    return Unique;
 }

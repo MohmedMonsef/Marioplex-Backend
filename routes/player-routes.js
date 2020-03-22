@@ -89,4 +89,18 @@ router.get('/me/queue',checkAuth,async (req,res)=>{
   if(!tracks) res.status(400).json({error:"couldnt get queue"});
   else res.status(200).json(tracks);
 })
+// resume player 
+router.put('/me/player/play',checkAuth,async (req,res)=>{
+  const userID = req.user._id;
+  const player = User.resumePlaying(userID);
+  if(!player) res.status(404).json({error:"couldn't resume playing"});
+  else res.status(204).json({success:"resumed playing"})
+})
+// pause player 
+router.put('/me/player/pause',checkAuth,async (req,res)=>{
+  const userID = req.user._id;
+  const player = User.pausePlaying(userID);
+  if(!player) res.status(404).json({error:"couldn't resume playing"});
+  else res.status(204).json({success:"resumed playing"})
+})
 module.exports = router;

@@ -166,6 +166,18 @@ const User =  {
         const tracks = await Player.getQueue(user);
         if(!tracks) return 0;
         return tracks; 
+    },
+    resumePlaying: async function(userID){
+        const user = await this.getUserById(userID);
+        const player = await Player.resumePlaying(user);
+        if(!player) return 0;
+        return 1;
+    },
+    pausePlaying: async function(userID){
+        const user = await this.getUserById(userID);
+        const player = await Player.pausePlaying(user);
+        if(!player) return 0;
+        return 1;
     }
 
 }

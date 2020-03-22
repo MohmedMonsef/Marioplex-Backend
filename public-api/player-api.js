@@ -49,6 +49,7 @@ const Player = {
             user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
             user.player["current_track"] = trackID;
             user.player["last_playlist_track_index"] = current_index;
+            user.player["is_playing"] = true;
             await user.save();
            return 1;
         }else{
@@ -66,7 +67,9 @@ const Player = {
             user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
             user.player["current_track"] = trackID;
             user.player["last_playlist_track_index"] = current_index;
-
+            user.player["is_playing"] = true;
+            await user.save();
+            return 1;
         }else{
             // the track is from album 
             // get album
@@ -79,7 +82,7 @@ const Player = {
              user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
              user.player["current_track"] = trackID;
              user.player["last_playlist_track_index"] = current_index;
-             
+             user.player["is_playing"] = true;
             await user.save();
             return 1;
         }
@@ -394,6 +397,20 @@ const Player = {
          }
         return tracks;
 
+    },
+    resumePlaying: async function(user){
+        const player = user.player;
+        if(!player) return 0;
+        user.player["is_playing"] = true;
+        await user.save();
+        return 1;
+    },
+    pausePlaying: async function(user){
+        const player = user.player;
+        if(!player) return 0;
+        user.player["is_playing"] = false;
+        await user.save();
+        return 1;
     }
 
 }

@@ -48,6 +48,26 @@ const Playlist =  {
     })
     await Playlist.save();
     /////should be deleted 
+    const album1=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album1.save();
+      const album2=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album2.save();
+      const album3=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album3.save();
+      const album4=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album4.save();
     const track1 =new trackDocument({
             _id: mongoose.Types.ObjectId(),
             availableMarkets:"gdffffffffffffffffh" ,
@@ -66,6 +86,7 @@ const Playlist =  {
             energy:7897898 ,
             instrumentalness:7828 ,
             key:9090,
+            albumId:album1._id,
             liveness:0 ,
             loudness:97 ,
             mode:90 ,
@@ -95,6 +116,7 @@ const Playlist =  {
         energy:7897898 ,
         instrumentalness:7828 ,
         key:9090,
+        albumId:album1._id,
         liveness:0 ,
         loudness:97 ,
         mode:90 ,
@@ -102,7 +124,6 @@ const Playlist =  {
         tempo:9090 ,
         timeSignature:Date.now() ,
         valence:8337
-        
       })
       await track2.save();
         
@@ -124,6 +145,7 @@ const Playlist =  {
         energy:7897898 ,
         instrumentalness:7828 ,
         key:9090,
+        albumId:album1._id,
         liveness:0 ,
         loudness:97 ,
         mode:90 ,
@@ -152,6 +174,7 @@ const Playlist =  {
         energy:7897898 ,
         instrumentalness:7828 ,
         key:9090,
+        albumId:album1._id,
         liveness:0 ,
         loudness:97 ,
         mode:90 ,
@@ -164,29 +187,30 @@ const Playlist =  {
       await track4.save(); 
     const track5 =new trackDocument({
         _id: mongoose.Types.ObjectId(),
-        availableMarkets:"gdffffffffffffffffh" ,
-        discNumber:656,
-        trackNumber:54543 ,
-        durationMs:5445 ,
-        explicit: true ,
-        previewURL:'hjfhjwedf' ,
-        popularity:689,
-        name:'frytwuy',
-        type:'track' ,
-        isPlayable:true ,
-        acousticness:78 ,
-        analysisURL:'ewqiudew' ,
-        danceability:7989 ,
-        energy:7897898 ,
-        instrumentalness:7828 ,
-        key:9090,
-        liveness:0 ,
-        loudness:97 ,
-        mode:90 ,
-        speechiness:90 ,
-        tempo:9090 ,
-        timeSignature:Date.now() ,
-        valence:8337
+            availableMarkets:"gdffffffffffffffffh" ,
+            discNumber:656,
+            trackNumber:54543 ,
+            durationMs:5445 ,
+            explicit: true ,
+            previewURL:'hjfhjwedf' ,
+            popularity:689,
+            name:'frytwuy',
+            type:'track' ,
+            isPlayable:true ,
+            acousticness:78 ,
+            analysisURL:'ewqiudew' ,
+            danceability:7989 ,
+            energy:7897898 ,
+            instrumentalness:7828 ,
+            key:9090,
+            albumId:album1._id,
+            liveness:0 ,
+            loudness:97 ,
+            mode:90 ,
+            speechiness:90 ,
+            tempo:9090 ,
+            timeSignature:Date.now() ,
+            valence:8337
       })
 
       await track5.save();

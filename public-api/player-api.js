@@ -12,8 +12,8 @@ const Player = {
                 if(trackID == hasTracks[i].trackId){
                     console.log(trackID,hasTracks[i].trackId)
                     return {
-                        "next_track":i+1<hasTracks.length?hasTracks[i+1]:undefined,
-                        "prev_track":i-1>=0?hasTracks[i-1]:undefined,
+                        "next_track":i+1<hasTracks.length?hasTracks[i+1]:0,//wrap around
+                        "prev_track":i-1>=0?hasTracks[i-1]:hasTracks.length-1,// wrap around
                         "last_playlist_track_index": i ,
                     }
                 }
@@ -24,8 +24,8 @@ const Player = {
                 if(trackID == hasTracks[i].trackId){
                     console.log(trackID,hasTracks[i].trackId)
                     return {
-                        "next_track":i+1<hasTracks.length?user.queue.tracksInQueue[user.queue.queuIndex]:undefined,
-                        "prev_track":i-1>=0?hasTracks[i-1]:undefined,
+                        "next_track":i+1<hasTracks.length?user.queue.tracksInQueue[user.queue.queuIndex]:0,//wrap around
+                        "prev_track":i-1>=0?hasTracks[i-1]:hasTracks.length-1,// wrap around
                         "last_playlist_track_index": i ,
                     }
                 }
@@ -123,8 +123,6 @@ const Player = {
     // to fill queue
     createQueue: async function(user,isPlaylist,id,trackID)
     {
-       
-       
        if(isPlaylist =='true') 
        {
             const playlist = await Playlist.getPlaylist(id);
@@ -144,8 +142,9 @@ const Player = {
                 }
                 user.queue.tracksInQueue.push({
                     trackId : track.trackId,
-                    isQueue: false
-
+                    isQueue: false,
+                    isPlaylist:true,
+                    sourceId:id
                 });
                 i++;
             }
@@ -172,8 +171,9 @@ const Player = {
             }
             user.queue.tracksInQueue.push({
                 trackId : track.trackId,
-                isQueue: false
-
+                isQueue: false,
+                isPlaylist:false,
+                sourceId:id
             });
             i++;
         }
@@ -198,7 +198,7 @@ const Player = {
            if(!user.queue.tracksInQueue){
             user.queue.tracksInQueue = [{
                 trackId:trackID,
-                isQueue:true
+                isQueue:true,
             }];
             user.queue.queuIndex = 0;
             user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
@@ -209,7 +209,7 @@ const Player = {
                {
                user.queue.tracksInQueue.splice(0,0,{
                    trackId:trackID,
-                   isQueue:true
+                   isQueue:true,
                });
                user.queue.queuIndex = 0;
                user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
@@ -348,10 +348,36 @@ const Player = {
             return 0;
         }
     },
+    // get next songs in user queue
+    getQueue: async function(user){
+        const queue = user.queue;
+        let tracks = [];
+        if(!queue) return 0;
+        if(!queue.tracksInQueue) return 0;
+        const queueIndex = queue.queuIndex;
+        //console.log(queueIndex)
+        // get tracks that was added to queue
+        for(let i=0;i<queueIndex;i++){
+            const track = await Track.getTrack(queue.tracksInQueue[i].trackId);
+            if(!track) return 0;
+            const album5=await Album.getAlbumById(track.albumId); 
+            tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album5.name});
+         }
+        const lastplaylistIndex = user.player.last_playlist_track_index < 0? 0:user.player.last_playlist_track_index;
+        //console.log(queu.lastInPlaylistIndex)
+        // get tracks that was next in playlist
+        for(let i=lastplaylistIndex;i<queue.tracksInQueue.length;i++){
+            const track = await Track.getTrack(queue.tracksInQueue[i].trackId);
+            
+            if(!track) return 0;
+                const album4=await Album.getAlbumById(track.albumId);
+                tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name});
+           
+         }
+        return tracks;
+
+    }
 
 }
-////////////////////////////////////////////
-// if there is isQueue but no one is the current TODO
-// if there is no isqueue but current is add TODO
-/////////////////////////////////////////////
+
 module.exports = Player;

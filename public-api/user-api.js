@@ -159,6 +159,13 @@ const User =  {
         const player = await Player.setPlayerInstance(user,isPlaylist,sourceId,trackID);
         if(!player) return 0;
         return 1;
+    },
+    getQueue: async function(userId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const tracks = await Player.getQueue(user);
+        if(!tracks) return 0;
+        return tracks; 
     }
 
 }

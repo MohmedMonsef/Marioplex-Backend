@@ -12,6 +12,7 @@ const logger = require('morgan');
 const passport = require('passport');
 const session = require('express-session')
 
+const album = require('./routes/album')
 const player = require('./routes/player-routes')
 const Track = require('./routes/Track-routes')
 const playlist =require('./routes/playlist-routes');
@@ -39,7 +40,7 @@ app.use(playlist);
 app.use(forgpass);
 app.use('/auth',facebook);
 app.use(userProfile);
-
+app.use(album);
 
 //connect to db before test run
 const API_PORT= process.env.API_PORT||3000;

@@ -75,7 +75,7 @@ router.post('/me/player/prev-playing',checkAuth,async (req,res)=>{
   const player = user.player;
   const prevPlayingTrack = await Track.getTrack(player.prev_track);
   const skip = await Player.skipPrevious(user);
-  if(!skip) res.json(prevPlayingTrack);
+  if(prevPlayingTrack) res.json(prevPlayingTrack);
   else res.status(404).json({error:"track not found"})
 })
 

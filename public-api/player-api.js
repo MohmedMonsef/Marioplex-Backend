@@ -282,54 +282,73 @@ const Player = {
 
     //skip to previous
     skipPrevious:async function(user){
-        
-        if(user.player["current_track"] == user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId){
-            return 0;
+        const current=await user.player["current_track"];
+        const lastplaylist=await await user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+        if (lastplaylist+1 == current+1  ) {
+           
             user.player["current_track"]=user.player["prev_track"];
-        await user.save();
-        if ( user.queue.queuIndex ==-1)
-            {
-                user.player["next_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;        
+            await user.save();
+            if ( user.queue.queuIndex ==-1)
+                {
+                    user.player["next_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;        
+                    await user.save();
+                    if(user.player["last_playlist_track_index"] == 1){
+                        user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;;
+                        user.player["last_playlist_track_index"]=0;
+                        await user.save();
+                    }
+                    else
+                    {   
+                    
+                        if(user.player["last_playlist_track_index"]==0){   
+                            user.player["last_playlist_track_index"]=user.queue.tracksInQueue.length-1;
+                            user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;;
+                            
+                        }
+                        else{
+                            user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;;
+                            user.player["last_playlist_track_index"]--;
+                        }
+                    }
+                    await user.save();
+                    return 0;
+            }
+            else{
+        
+                user.player["next_track"] = user.queue.tracksInQueue[user.queue.queuIndex].trackId;        
                 await user.save();
-                if(user.player["last_playlist_track_index"] == 1){
-                    user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;;
-                    user.player["last_playlist_track_index"]=0;
+                if(user.player["last_playlist_track_index"] == user.queue.queuIndex+2){
+                    user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                    user.player["last_playlist_track_index"]--;
                     await user.save();
                 }
-                else
-                {   
-                   
-                    if(user.player["last_playlist_track_index"]==0){   
+                else{ 
+                    if(user.player["last_playlist_track_index"]==user.queue.queuIndex+1){   
                         user.player["last_playlist_track_index"]=user.queue.tracksInQueue.length-1;
-                        user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;;
-                        
+                        user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;
                     }
-                    else{
-                        user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;;
-                        user.player["last_playlist_track_index"]--;
-                    }
+                else{
+                    user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;;
+                    user.player["last_playlist_track_index"]--;
+                }
                 }
                 await user.save();
                 return 0;
+            }
         }
         else{
-    
-            user.player["next_track"] = user.queue.tracksInQueue[user.queue.queuIndex].trackId;        
-            await user.save();
-            if(user.player["last_playlist_track_index"] == 0){
-                user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
-                await user.save();
-            }
-            else
-            {  
-                user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-1].trackId;    
-            }
+            
+                user.player["current_track"]=user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+                if(user.player["last_playlist_track_index"]==user.queue.queuIndex+1)
+                     user.player["prev_track"]=user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                else
+                    user.player["prev_track"]=user.queue.tracksInQueue[user.player["last_playlist_track_index"]-1].trackId;
+            
             await user.save();
             return 0;
         }
-    }
-return 1;
-}
+    },
+
 }
 ////////////////////////////////////////////
 // if there is isQueue but no one is the current TODO

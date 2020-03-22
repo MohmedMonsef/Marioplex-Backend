@@ -150,21 +150,21 @@ const User=new Schema({
     lastInPlaylistIndex:Number,
     queuIndex:Number,  
     tracksInQueue:[{
-      trackId:  mongoose.Schema.Types.ObjectId,
+      trackId:   mongoose.Schema.Types.ObjectId,
         //ref: 'Track'
       isQueue:Boolean,
     }]
 },
   player:{
     last_playlist_track_index:Number,
-    current_track:mongoose.Schema.Types.ObjectId,
-    next_track:mongoose.Schema.Types.ObjectId,
-    prev_track:mongoose.Schema.Types.ObjectId,
+    current_track: mongoose.Schema.Types.ObjectId,
+      //ref: 'Track'
+    next_track: mongoose.Schema.Types.ObjectId,
+    prev_track: mongoose.Schema.Types.ObjectId,
     is_playing:Boolean,
     is_shuffled:Boolean,
     is_repeat:Boolean,
-    volume:Number,
-    last_from_source:String
+    volume:Number
   }
   
 });

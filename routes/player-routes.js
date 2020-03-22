@@ -43,7 +43,7 @@ router.get('/me/player/prev-playing',checkAuth,async (req,res)=>{
   else res.status(404).json({error:"track not found"})
 })
 // create queue fo player
-router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
+router.post('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
     const sourceId =req.params.playlist_id;
     const trackId =req.params.trackId;
     const isPlaylist = req.query.isPlaylist;
@@ -54,7 +54,7 @@ router.put('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
  
  }) 
 // add track to user player queue
- router.put('/player/add-to-queue/:trackId',checkAuth,async (req,res)=>{
+ router.post('/player/add-to-queue/:trackId',checkAuth,async (req,res)=>{
   const trackId =req.params.trackId;
   const isPlaylist = req.query.isPlaylist;
   const sourceId = req.query.sourceId;

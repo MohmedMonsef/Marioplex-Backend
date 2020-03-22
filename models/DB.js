@@ -22,6 +22,7 @@ const Track=new Schema({
   link:Link ,
   externalId:ExternalId ,
   availableMarkets:[String] ,
+  albumId: mongoose.Schema.Types.ObjectId,
   discNumber:Number ,
   trackNumber:Number ,
   durationMs:Number ,
@@ -154,8 +155,7 @@ const User=new Schema({
         //ref: 'Track'
       isQueue:Boolean,
       isPlaylist:Boolean,
-      sourceId:mongoose.Schema.Types.ObjectId,
-      sourceName:String
+      sourceId:mongoose.Schema.Types.ObjectId
     }]
 },
   player:{

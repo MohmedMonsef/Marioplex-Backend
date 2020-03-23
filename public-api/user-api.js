@@ -166,6 +166,13 @@ const User =  {
         const tracks = await Player.getQueue(user);
         if(!tracks) return 0;
         return tracks; 
+    },
+    setShuffle:async function(state,userId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const isShuffle = await Player.setShuffle(state,user);
+        if(!isShuffle) return 0;
+        return 1;
     }
 
 }

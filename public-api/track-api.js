@@ -20,6 +20,51 @@ const connection=require('../DBconnection/connection');
             
 
     },
+    // get several tracks
+    // params : array of track ids
+    getTracks : async function(tracksIDs){
+            let tracks = {};
+            for(let trackID of tracksIDs){
+                tracks[trackID] = await this.getTrack(trackID);
+                if(!tracks[trackID])return 0;
+            }
+            return tracks;
+    },
+
+    // get audio feature track
+    // params :  trackid
+    getAudioFeaturesTrack : async function(trackID){
+        const track = await this.getTrack(trackID);
+        if(!track)return 0;
+        const audioFeatures = {
+        
+            durationMs:track.durationMs ,
+            explicit:track.explicit ,
+            acousticness:track.acousticness ,
+            danceability:track.danceability ,
+            energy:track.danceability ,
+            instrumentalness:track.instrumentalness ,
+            key:track.key ,
+            liveness:track.liveness ,
+            loudness:track.loudness ,
+            mode:track.mode ,
+            speechiness:track.speechiness ,
+            tempo:track.tempo ,
+            valence:track.valence
+        }
+        return audioFeatures;
+    },
+    // get audio of features of several tracks 
+    // params : trackIDs
+    getAudioFeaturesTracks : async function(tracksIDs){
+        let audioFeatures = {};
+        for(let trackID of tracksIDs){
+            const audioFeature = await this.getAudioFeaturesTrack(trackID);
+            if(!audioFeatures) return 0;
+            audioFeatures[trackID] = audioFeature;
+        }
+        return audioFeatures;
+    },
 
     // check if user liked a track
     checkIfUserLikeTrack: function(user,trackID){
@@ -74,7 +119,21 @@ const connection=require('../DBconnection/connection');
         }
         await user.save().catch();
         return 1;
-    }
+    },
+      // create Track for an artist
+    // params : artist-id
+    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets){
+        let track=new trackDocument({
+            externalId:url ,
+            availableMarkets:AvailableMarkets ,
+            trackNumber:TrackNumber ,
+            name:Name
+        }); 
+       await track.save();
+       console.log(track);
+       return track;
+      
+}
 
 
 }

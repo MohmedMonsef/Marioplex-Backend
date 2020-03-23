@@ -19,7 +19,53 @@ const User =  {
         
         return user;
     },
+
+    update : async function(userID,Display_Name,Password,Email,Country){
+        const user = await this.getUserById(userID);
+        if(user){
+            spotifySchema.user.findOne({email:req.body.email}).exec().then(User=>{
+                
+                    if(Display_Name!=undefined){
+                        user.displayName=Display_Name;
+        
+                    }
+                    if(Password!=undefined){
+                        bcrypt.hash(Password,10,(err,hash)=>{
+                            if(!err) {
+                                user.password=hash;
+                            }
+                        })
+                    }
+                    if(Email!=undefined && !User){
+                        user.email=Email;
+                    }
+                    if(Country!=undefined){
+                        user.country=Country;
+                    }
+                    return 1;
+                
+            })
+        }
+        else return 0;
+            
     
+        
+        
+    },
+    deleteAccount:async function(userID){
+        const user = await this.getUserById(userID);
+        if(!user){ return 0; }
+        const User = await userDocument.find({follow:{id:user._id}},(err,User)=>{
+            if(err) return 0;
+            return User;
+        });
+        return User;
+            
+            
+        
+        
+    },
+
     likeTrack: async function(userID,trackID){
             const user = await this.getUserById(userID);
             if(!user){ return 0; }

@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
 
@@ -55,7 +54,7 @@ const Playlist=new Schema({
   isPublic:Boolean ,
   images:[Image] ,
   hasTracks:[{
-    trackId: mongoose.Schema.ObjectId,
+    trackId: mongoose.Schema.Types.ObjectId,
     //ref: 'Track'
   }]
   
@@ -150,9 +149,10 @@ const Artist=new Schema({
     popularity:Number,
     genre:[String] ,
     type:String ,
-    userId: mongoose.Schema.Types.ObjectId
+    user:{
+      userId: mongoose.Schema.Types.ObjectId
       //ref: 'User'
-    ,
+    },
     addAlbums:[{
       albumId: mongoose.Schema.Types.ObjectId
       //ref: 'Album'

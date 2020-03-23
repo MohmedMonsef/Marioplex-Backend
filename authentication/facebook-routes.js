@@ -3,8 +3,7 @@ const passport = require('passport');
 
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
-// initialize passport
-require('./passport-config')(passport);
+
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 
 

@@ -13,8 +13,29 @@ router.get('/track/:track_id',checkAuth,async (req,res)=>{
    
     const track = await Track.getTrack(trackID);
     if(!track) res.sendStatus(404); //not found
-    else res.send(track); 
+    else res.json(track); 
 
+})
+// get tracks
+router.get('/tracks/',checkAuth,async (req,res)=>{
+    const trackIDs = req.query.tracks_ids.split(',');
+    const tracks = await Track.getTracks(trackIDs);
+    if(!tracks) res.status(404).send({error:"tracks with those id's are not found"});
+    else res.json(tracks);
+})
+// get track audio feature/analysis
+router.get('/track/audio-features/:track_id',checkAuth,async (req,res)=>{
+    const audioFeature = await Track.getAudioFeaturesTrack(req.params.track_id);
+    if(!audioFeature) res.status(404).send({error:"no track with this id"});
+    else res.json(audioFeature);
+})
+
+// get tracks audio feature/analysis 
+router.get('/tracks/audio-features/',checkAuth,async (req,res)=>{
+    const trackIDs = req.query.tracks_ids.split(',');
+    const audioFeatures = await Track.getAudioFeaturesTracks(trackIDs);
+    if(!audioFeatures) res.status(404).send({error:"no tracks with this id"});
+    else res.json(audioFeatures);
 })
 
 // user like track

@@ -8,7 +8,13 @@ const track=require('./track-api');
 
  const Album =  {
     
-    
+    addTrack  : async function(AlbumId,Track){     
+        const album = await albumDocument.findById(AlbumId);
+        album.hasTracks.push({
+            trackId:Track._id
+        });
+       await album.save();
+},
     getAlbumById  : async function(albumID){
         
             // connect to db and find album with the same id then return it as json file
@@ -26,6 +32,7 @@ const track=require('./track-api');
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
         var Album=[]
+        if(albumIds==undefined)return 0;
         for(var i=0;i <albumIds.length;i++){
             var album=await this.getAlbumById(albumIds[i]);
             if(album){
@@ -90,50 +97,45 @@ const track=require('./track-api');
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
-        
-        
-            if(this.checkIfUserSaveAlbum(user,albumID)){
-                return 0;
-            }
-            if(user.saveAlbum){
-                user.saveAlbum.push({
-                    albumId: albumID,
-                    savedAt: Date.now()
-                });
-                await user.save();
+            if(albumID==undefined) return 0;
+            for(let i=0;i<albumID.length;i++){
+                if(this.checkIfUserSaveAlbum(user,albumID[i])!=undefined){
+                    if(user.saveAlbum){
+                        user.saveAlbum.push({
+                            albumId: albumID[i],
+                            savedAt: Date.now()
+                        });
+                        await user.save();
+                        
+                        
+                    }
+                    user.saveAlbum = [];
+                    user.saveAlbum.push({
+                        albumId: albumID[i],
+                        savedAt: Date.now()
+                    });
+                    await user.save();
+                 }
+                }
                 return 1;
-                
-            }
-            user.saveAlbum = [];
-            user.saveAlbum.push({
-                albumId: albumID,
-                savedAt: Date.now()
-            });
-            await user.save();
-            return 1;
-        
-
-       
-    
 
     },
     unsaveAlbum : async function(user,albumID){
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
-        
-        
-            if(!this.checkIfUserSaveAlbum(user,albumID)){
-                return 0;
-            }
-            for(let i=0;i <user.saveAlbum.length;i++ ){
-                if(user.saveAlbum[i].albumId == albumID){
-                    user.saveAlbum.splice(i,1);
+        if(albumID==undefined) return 0;
+        for(let j=0;j<albumID.length;j++){
+            if(this.checkIfUserSaveAlbum(user,albumID[j])){
+                for(let i=0;i <user.saveAlbum.length;i++ ){
+                    if(user.saveAlbum[i].albumId == albumID[j]){
+                        user.saveAlbum.splice(i,1);
+                    }
                 }
-            }
-            await user.save().catch();
-            return 1;
-
+                await user.save().catch();
+            }     
+        }
+        return 1;
     }
 
 

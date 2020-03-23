@@ -40,7 +40,7 @@ router.post("/login", (req, res) => {
             id: user.id,
             
           };
-          var token = jwt.sign({ _id: user._id,product: user.product}, jwtSeret.secret, {
+          var token = jwt.sign({ _id: user._id,product: user.product,userType:user.userType}, jwtSeret.secret, {
             expiresIn: '24h' // 1 day
           });
          

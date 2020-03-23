@@ -177,6 +177,12 @@ const User =  {
         const user = await this.getUserById(userID);
         const player = await Player.pausePlaying(user);
         if(!player) return 0;
+    },
+    setShuffle:async function(state,userId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const isShuffle = await Player.setShuffle(state,user);
+        if(!isShuffle) return 0;
         return 1;
     }
 

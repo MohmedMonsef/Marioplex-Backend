@@ -1,9 +1,7 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
-
 const Track =  require('./track-api');
-
 const Playlist =  require('./Playlist-api');
-
+const Player =require('./player-api');
 // initialize db 
 const connection=require('../DBconnection/connection');
 const bcrypt=require('bcrypt');
@@ -184,6 +182,54 @@ const User =  {
             user.password=hashed;
         await user.save();
             return password;
+    },
+
+    createQueue:async function (userID,isPlaylist,sourceId,trackId){
+        const user = await this.getUserById(userID);
+        const isCreateQueue= await Player.createQueue(user,isPlaylist,sourceId,trackId);       
+        return isCreateQueue ;
+    },
+
+    addToQueue:async function (userID,trackId,isPlaylist,sourceId){
+        const user = await this.getUserById(userID);
+        const isAddQueue= await Player.addToQueue(user,trackId,isPlaylist,sourceId);       
+        return isAddQueue ;
+        
+    },
+    updateUserPlayer: async function(userID,isPlaylist,sourceId,trackID){
+        const user = await this.getUserById(userID);
+        
+        const queu = await Player.createQueue(user,isPlaylist,sourceId,trackID);
+        console.log(queu)
+        if(!queu) return 0;
+        const player = await Player.setPlayerInstance(user,isPlaylist,sourceId,trackID);
+        if(!player) return 0;
+        return 1;
+    },
+    getQueue: async function(userId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const tracks = await Player.getQueue(user);
+        if(!tracks) return 0;
+        return tracks; 
+    },
+    resumePlaying: async function(userID){
+        const user = await this.getUserById(userID);
+        const player = await Player.resumePlaying(user);
+        if(!player) return 0;
+        return 1;
+    },
+    pausePlaying: async function(userID){
+        const user = await this.getUserById(userID);
+        const player = await Player.pausePlaying(user);
+        if(!player) return 0;
+    },
+    setShuffle:async function(state,userId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const isShuffle = await Player.setShuffle(state,user);
+        if(!isShuffle) return 0;
+        return 1;
     }
 
 }

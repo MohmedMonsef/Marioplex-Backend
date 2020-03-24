@@ -16,9 +16,22 @@ router.get('/track/:track_id',checkAuth,async (req,res)=>{
     else res.json(track); 
 
 })
+
+// get track with some user info as like
+router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
+    
+    const trackID = req.params.track_id;
+    const user = await User.getUserById(req.user._id);
+    const track = await Track.getTrack(trackID);
+    const isLiked = Track.checkIfUserLikeTrack(user,trackID)?true:false;
+   
+    if(!track) res.sendStatus(404); //not found
+    else res.json({track:track,isLiked:isLiked}); 
+
+})
 // get tracks
 router.get('/tracks/',checkAuth,async (req,res)=>{
-    const trackIDs = req.query.tracks_ids.split(',');
+    const trackIDs = req.query.ids.split(',');
     const tracks = await Track.getTracks(trackIDs);
     if(!tracks) res.status(404).send({error:"tracks with those id's are not found"});
     else res.json(tracks);
@@ -32,7 +45,7 @@ router.get('/track/audio-features/:track_id',checkAuth,async (req,res)=>{
 
 // get tracks audio feature/analysis 
 router.get('/tracks/audio-features/',checkAuth,async (req,res)=>{
-    const trackIDs = req.query.tracks_ids.split(',');
+    const trackIDs = req.query.ids.split(',');
     const audioFeatures = await Track.getAudioFeaturesTracks(trackIDs);
     if(!audioFeatures) res.status(404).send({error:"no tracks with this id"});
     else res.json(audioFeatures);

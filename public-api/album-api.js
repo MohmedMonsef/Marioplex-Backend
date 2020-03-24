@@ -27,6 +27,12 @@ const track=require('./track-api');
             
 
     },
+    findIndexOfTrackInAlbum: async function(trackId,album) {
+        for(let i=0;i <album.hasTracks.length;i++ ){
+            if(album.hasTracks[i].trackId==trackId)   return i;     
+        }
+        return -1
+    },
     getAlbums  : async function(albumIds){
         
         // connect to db and find album with the same id then return it as json file

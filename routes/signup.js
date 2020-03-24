@@ -59,7 +59,8 @@ router.post('/sign_up',(req,res)=>{
                                 country :req.body.country ,
                                 birthDate:req.body.birthday ,
                                 product:"free" ,
-                                userType:"user"
+                                userType:"user",
+                                tracksInQueue:[]
                             });
                             
                             user

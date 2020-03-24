@@ -43,12 +43,207 @@ const Playlist =  {
         type:"playlist" ,
         collaborative:"false" ,
         name:playlistName ,
-        isPublic:"false" 
+        isPublic:"false" ,
+        hasTracks:[]
     })
     await Playlist.save();
+    /////should be deleted 
+    const album1=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album1.save();
+      const album2=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album2.save();
+      const album3=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album3.save();
+      const album4=new albumDocument({
+        name:"hjhhdhhjdhjdhjfdjhfjhhjd",
+        
+      });
+      await album4.save();
+    const track1 =new trackDocument({
+            _id: mongoose.Types.ObjectId(),
+            availableMarkets:"gdffffffffffffffffh" ,
+            discNumber:656,
+            trackNumber:54543 ,
+            durationMs:5445 ,
+            explicit: true ,
+            previewURL:'hjfhjwedf' ,
+            popularity:689,
+            name:'frytwuy',
+            type:'track' ,
+            isPlayable:true ,
+            acousticness:78 ,
+            analysisURL:'ewqiudew' ,
+            danceability:7989 ,
+            energy:7897898 ,
+            instrumentalness:7828 ,
+            key:9090,
+            albumId:album1._id,
+            liveness:0 ,
+            loudness:97 ,
+            mode:90 ,
+            speechiness:90 ,
+            tempo:9090 ,
+            timeSignature:Date.now() ,
+            valence:8337
+          })
+          await track1.save();
+
+          
+    const track2 =new trackDocument({
+        _id: mongoose.Types.ObjectId(),
+        availableMarkets:"gdffffffffffffffffh" ,
+        discNumber:656,
+        trackNumber:54543 ,
+        durationMs:5445 ,
+        explicit: true ,
+        previewURL:'hjfhjwedf' ,
+        popularity:689,
+        name:'frytwuy',
+        type:'track' ,
+        isPlayable:true ,
+        acousticness:78 ,
+        analysisURL:'ewqiudew' ,
+        danceability:7989 ,
+        energy:7897898 ,
+        instrumentalness:7828 ,
+        key:9090,
+        albumId:album1._id,
+        liveness:0 ,
+        loudness:97 ,
+        mode:90 ,
+        speechiness:90 ,
+        tempo:9090 ,
+        timeSignature:Date.now() ,
+        valence:8337
+      })
+      await track2.save();
+        
+    const track3 =new trackDocument({
+        _id: mongoose.Types.ObjectId(),
+        availableMarkets:"gdffffffffffffffffh" ,
+        discNumber:656,
+        trackNumber:54543 ,
+        durationMs:5445 ,
+        explicit: true ,
+        previewURL:'hjfhjwedf' ,
+        popularity:689,
+        name:'frytwuy',
+        type:'track' ,
+        isPlayable:true ,
+        acousticness:78 ,
+        analysisURL:'ewqiudew' ,
+        danceability:7989 ,
+        energy:7897898 ,
+        instrumentalness:7828 ,
+        key:9090,
+        albumId:album1._id,
+        liveness:0 ,
+        loudness:97 ,
+        mode:90 ,
+        speechiness:90 ,
+        tempo:9090 ,
+        timeSignature:Date.now() ,
+        valence:8337
+      })
+
+      await track3.save(); 
+    const track4 =new trackDocument({
+        _id: mongoose.Types.ObjectId(),
+        availableMarkets:"gdffffffffffffffffh" ,
+        discNumber:656,
+        trackNumber:54543 ,
+        durationMs:5445 ,
+        explicit: true ,
+        previewURL:'hjfhjwedf' ,
+        popularity:689,
+        name:'frytwuy',
+        type:'track' ,
+        isPlayable:true ,
+        acousticness:78 ,
+        analysisURL:'ewqiudew' ,
+        danceability:7989 ,
+        energy:7897898 ,
+        instrumentalness:7828 ,
+        key:9090,
+        albumId:album1._id,
+        liveness:0 ,
+        loudness:97 ,
+        mode:90 ,
+        speechiness:90 ,
+        tempo:9090 ,
+        timeSignature:Date.now() ,
+        valence:8337
+      })
+
+      await track4.save(); 
+    const track5 =new trackDocument({
+        _id: mongoose.Types.ObjectId(),
+            availableMarkets:"gdffffffffffffffffh" ,
+            discNumber:656,
+            trackNumber:54543 ,
+            durationMs:5445 ,
+            explicit: true ,
+            previewURL:'hjfhjwedf' ,
+            popularity:689,
+            name:'frytwuy',
+            type:'track' ,
+            isPlayable:true ,
+            acousticness:78 ,
+            analysisURL:'ewqiudew' ,
+            danceability:7989 ,
+            energy:7897898 ,
+            instrumentalness:7828 ,
+            key:9090,
+            albumId:album1._id,
+            liveness:0 ,
+            loudness:97 ,
+            mode:90 ,
+            speechiness:90 ,
+            tempo:9090 ,
+            timeSignature:Date.now() ,
+            valence:8337
+      })
+
+      await track5.save();
+
+   
+    Playlist.hasTracks.push({
+        trackId : track1._id
+    });
+    await Playlist.save();
+    Playlist.hasTracks.push({
+        trackId : track2._id
+    });
+    await Playlist.save();
+    Playlist.hasTracks.push({
+        trackId : track3._id
+    });
+    await Playlist.save();
+    Playlist.hasTracks.push({
+        trackId : track4._id
+    });
+    await Playlist.save();
+    //////should be deleted
+    
+    
     return Playlist;
     },
-
+    findIndexOfTrackInPlaylist: async function(trackId,tplaylist) {
+        for(let i=0;i <tplaylist.hasTracks.length;i++ ){
+            if(tplaylist.hasTracks[i].trackId==trackId) 
+              return i;     
+        }
+        return -1
+    },
     //to delete playlist
     
     deletePlaylist  : async function(user,playlistId){

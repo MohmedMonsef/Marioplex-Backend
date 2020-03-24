@@ -1,8 +1,6 @@
-S
-const forgpass=require('./routes/Forgpass-route');
 
 const express = require('express');
-const app=express();
+const app =express();
 const connection=require('./DBconnection/connection');
 //connect to database
 connection(app);
@@ -11,6 +9,7 @@ const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const session = require('express-session')
+require('./config/passport');
 
 const album = require('./routes/album')
 const player = require('./routes/player-routes')
@@ -20,7 +19,8 @@ const userProfile =require('./routes/userprofile')
 const login =require('./routes/login');
 const signup =require('./routes/signup');
 const facebook = require('./authentication/facebook-routes');
-require('./config/passport');
+const forgpass = require('./routes/Forgpass-route');
+
 
 
 app.use(cors());

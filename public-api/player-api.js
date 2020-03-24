@@ -179,25 +179,16 @@ const Player = {
        }        
     },
 
-    addToQueue:async function(user,trackID,isPlaylistFlag,id){
-        const isPlaylist = isPlaylistFlag == 'true'?true:false;
-        let sourceName = "";
-        if(isPlaylist){
-                const playlist  = await Playlist.getPlaylist(id);
-                sourceName = playlist.name;
-        }else{
-            const album  = await album.getPlaylist(id);
-            sourceName = playlist.name;
-        }
+    addToQueue:async function(user,trackID){
+       
        if(!user.queue){
            user.queue = {};
            user.queue.tracksInQueue = [{
                trackId:trackID,
                isQueue:true,
-               isPlaylist:isPlaylist,
-               sourceId:id,
-               sourceName:sourceName
+              
            }];
+           await user.save();
            user.queue.queuIndex = 0;
            user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
            await user.save();
@@ -230,9 +221,7 @@ const Player = {
                user.queue.tracksInQueue.splice(index,0,{
                    trackId:trackID,
                    isQueue:true,
-                   isPlaylist:isPlaylist,
-                   sourceId:id,
-                   sourceName:sourceName
+                 
                });
                user.queue.queuIndex = index+1;
                user.player["last_playlist_track_index"] ++;

@@ -163,7 +163,6 @@ const User=new Schema({
     next_track: mongoose.Schema.Types.ObjectId,
     prev_track: mongoose.Schema.Types.ObjectId,
     is_playing:Boolean,
-    is_shuffled:Boolean,
     current_source:mongoose.Schema.Types.ObjectId,
     isPlaylist:Boolean,
     is_repeat:Boolean,

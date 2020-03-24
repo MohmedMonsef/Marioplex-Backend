@@ -60,7 +60,7 @@ router.get('/Artists/:artist_id/toptracks',[checkAuth],async (req,res)=>{
 router.put('/Artists/:artist_id/Albums',[checkAuth,checkType,checkContent],async (req,res)=>{
     const Album = req.body.Album;
     const artistID=req.params.artist_id;
-    const artistAlbum = await Artist.addAlbum(artistID,Album);
+    const artistAlbum = await Artist.addAlbum(artistID,req.body.Name,req.body.Label,req.body.Availablemarkets,req.body.Albumtype,req.body.ReleaseDate,req.body.Genre);
     if(!artistAlbum) res.status(404); //not found
     else res.status(200).send(artistAlbum); 
 
@@ -76,5 +76,10 @@ await Artist.addTrack(req.params.artist_id,track._id);
 res.status(200).send(track);
 });
 
-
+router.post('/me/ToArtist',[checkAuth],async (req,res)=>{
+   let genre=req.body.genre.split(',');
+    let isartist=await User.promoteToArtist(req.user._id,req.body.info,req.body.Name,genre);
+    if(!isartist){return res.status(403).send("sorry you can't be an Artist");}
+    return res.status(200).send("Artist Succeded");
+    });
 module.exports = router;

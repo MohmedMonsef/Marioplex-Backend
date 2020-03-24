@@ -1,5 +1,5 @@
-const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/DB');
-const spotify=require('../models/DB');
+const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
+const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 

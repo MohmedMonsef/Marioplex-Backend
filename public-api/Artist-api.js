@@ -1,10 +1,25 @@
-const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/DB');
-const spotify=require('../models/DB');
+const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
+const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 
  const Artist =  {
-    
+
+
+    createArtist: async function(userID,Info,name,Genre){
+
+        let artist=new artistDocument({
+            info:Info ,
+            popularity:0,
+            genre:Genre ,
+            type:"Artist" ,
+            Name:name,
+            userId:userID
+        });
+        await artist.save();
+        console.log(artist);
+        return artist;
+    },
     // get artist by id
     // params : artist-id
     getArtist  : async function(ArtistID){
@@ -18,9 +33,18 @@ const Track=require('./track-api');
 
     // create album for an artist
     // params : artist-id
-    addAlbum  : async function(ArtistID,Album){
+    addAlbum  : async function(ArtistID,Name,Label,Avmarkets,Albumtype,ReleaseDate,Genre){
         let spotifyAlbums=spotify.album;
-        let album=await new spotifyAlbums(Album); 
+        let album=await new spotifyAlbums({
+            name:Name ,
+            albumType:Albumtype ,
+            popularity:0 ,
+            genre:Genre ,
+            releaseDate:ReleaseDate ,
+            availableMarkets: Avmarkets ,
+            label:Label 
+
+        }); 
         await album.save(function(err,albumobj){
             album=albumobj;
         });   

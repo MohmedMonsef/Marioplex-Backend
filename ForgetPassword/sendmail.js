@@ -16,7 +16,7 @@ var transporter = nodemailer.createTransport({
 var mailOptions = {
   from: '"Spotify Contact" <appspotify646@gmail.com>',
   to: email,
-  subject: 'Your New Spotify Password',
+  subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
   text: password
 };
 

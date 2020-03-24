@@ -29,7 +29,7 @@ router.get('/me/tracks/contains',checkAuth,async (req,res)=>{
 router.get('/me/albums',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
-    const albums=await Library.getAlbums(userID,req.query.limit,req.query.offset);
+    const albums=await Library.getSavedAlbums(userID,req.query.limit,req.query.offset);
     if(!albums) res.status(404); //not found
     else res.status(200).json(albums); 
 

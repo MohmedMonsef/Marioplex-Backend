@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
-
 const Image=new Schema({ 
     height:Number ,
     wedth:Number ,
@@ -54,11 +53,10 @@ const Playlist=new Schema({
   name:String ,
   isPublic:Boolean ,
   images:[Image] ,
-  hasTracks:[{
-    trackId: mongoose.Schema.Types.ObjectId,
-    //ref: 'Track'
+  snapshot:[{
+  hasTracks:[mongoose.Schema.Types.ObjectId ],  //ref: 'Track',
+  action:String
   }]
-  
 });
 
 const Album=new Schema({
@@ -118,14 +116,12 @@ const User=new Schema({
     playListId: mongoose.Schema.Types.ObjectId,
     //ref: 'Playlist',
     addedAt:Date ,
-    isLocal:Boolean ,
-    collaboratorsId:[{
-      id: mongoose.Schema.Types.ObjectId,
-      //ref: 'User'
-    }]
+    isPrivate:Boolean ,
+    collaboratorsId:[mongoose.Schema.Types.ObjectId ]
   }],
   followPlaylist:[{
-    playListId: mongoose.Schema.Types.ObjectId
+    playListId: mongoose.Schema.Types.ObjectId,
+    isPrivate:Boolean
     //ref: 'Playlist'
     
   }],
@@ -150,6 +146,8 @@ const Artist=new Schema({
     popularity:Number,
     genre:[String] ,
     type:String ,
+    Name:String,
+    images:[Image],
     userId: mongoose.Schema.Types.ObjectId
       //ref: 'User'
     ,
@@ -173,5 +171,4 @@ const category=mongoose.model('Category',Category);
 
 
 module.exports={user,artist,album,track,playlist,category}
-
 

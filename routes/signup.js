@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const router = express.Router();
-const spotifySchema = require('../models/DB');
+const spotifySchema = require('../models/db');
 const bcrypt = require('bcrypt');
 const joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
@@ -12,9 +12,10 @@ require('../config/passport');
 const passport =require('passport');
 
 
-router.post('/sign_up',(req,res)=>{
+router.post('/signup',(req,res)=>{
 
     const shcema = joi.object().keys({
+
         email: joi.string().trim().email().required() ,
         password: joi.string().required(),
         gender: joi.string().required() ,
@@ -25,6 +26,7 @@ router.post('/sign_up',(req,res)=>{
     });
 
     joi.validate(req.body,shcema,(err,result)=>{
+
         if(err){
 
             res.status(500).json({
@@ -86,20 +88,66 @@ router.post('/sign_up',(req,res)=>{
                                  
                                   // return the information including token as JSON
                                   //res.json({success: true, token: 'JWT ' + token});
-                                  res.send(token.sign(_id));
+                                  res.send(token);
                            // res.redirect('/login');
+
                         }
+
                     })
+
                 }
-            });          
+
+
+            });
+           
+
+
+            
         }
+
+
+
+
     });
+
+
 });
 
+router.get('/users/:id',auth.auth,(req,res,next)=>{
+    spotifySchema.user.find({_id:req.params.id}).exec().then(user=>{
+        if(user){
 
+            res.status(200);
+            res.send(user);
+            
+        }
+        else {
+            res.status(404).json({
+                message:'user not found'
+            });
+            
+        }        
+}).catch(next);
+})
+
+router.get('/:id',(req,res,next)=>{
+    spotifySchema.user.find({_id:req.params.id}).exec().then(user=>{
+        if(user){
+
+            res.status(200);
+            res.send(user);
+            
+        }
+        else {
+            res.status(403).json({
+                message:'user not found'
+            });
+            
+        }        
+}).catch(next);
+})
 
 
 
 
 module.exports = router;
-

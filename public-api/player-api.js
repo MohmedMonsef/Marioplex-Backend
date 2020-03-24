@@ -459,9 +459,9 @@ const Player = {
     setShuffle:async function(state,user){
        if (user.queue.tracksInQueue){
            if(state=='true')
-                 return this.shuffleQueue(user);
+                 return await  this.shuffleQueue(user);
             else
-                return this.fillByplaylist(user);
+                return await this.fillByplaylist(user);
        }
        return 0
     }

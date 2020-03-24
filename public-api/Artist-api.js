@@ -64,7 +64,7 @@ const Track=require('./track-api');
             trackId:trackid
         });
        await artist.save();
-         
+       return true;  
 },
     // get several Artists
     // params : array of Artists ids

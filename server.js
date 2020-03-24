@@ -50,7 +50,7 @@ app.use(browse);
 app.use(Artist);
 
 //connect to db before test run
-const API_PORT= process.env.API_PORT||5000;
+const API_PORT= process.env.API_PORT||3000;
 
 app.use(function(error,req,res,next){
     res.status(500);

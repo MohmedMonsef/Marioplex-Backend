@@ -3,7 +3,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 
 // initialize db 
 const connection=require('../DBconnection/connection');
-const user=require('./user-api');
+const User=require('./user-api');
 const track=require('./track-api');
 
  const Album =  {
@@ -19,7 +19,7 @@ const track=require('./track-api');
         
             // connect to db and find album with the same id then return it as json file
             // if found return album else return 0
-            const album = await albumDocument.findById(albumID,(err,album)=>{
+            let album = await albumDocument.findById(albumID,(err,album)=>{
                 if(err) return 0;
                 return album;
             }).catch((err)=> 0);
@@ -27,19 +27,26 @@ const track=require('./track-api');
             
 
     },
+    findIndexOfTrackInAlbum: async function(trackId,album) {
+        for(let i=0;i <album.hasTracks.length;i++ ){
+            if(album.hasTracks[i].trackId==trackId)   return i;     
+        }
+        return -1
+    },
     getAlbums  : async function(albumIds){
         
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        Album=[]
-        for(let i=0;i <albumIds.length;i++ ){
-            album=this.getAlbumById(i);
+        var Album=[]
+        if(albumIds==undefined)return 0;
+        for(var i=0;i <albumIds.length;i++){
+            var album=await this.getAlbumById(albumIds[i]);
             if(album){
                 Album.push(album)
             }
         }
         if(Album.length>0){
-        return album;
+        return Album;
         }
         else{
             return 0;
@@ -52,18 +59,21 @@ const track=require('./track-api');
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
         const Tracks=[];
-        const album = this.getAlbumById(albumID);
+        const album = await this.getAlbumById(albumID);
         if(!album){
             return 0;
         }
         else{
 
-            for(i=0;i<album.hasTracks.length();i++)
-            Track=track.getTrack(album.hasTracks[i].trackId);
+            for(i=0;i<album.hasTracks.length;i++)
+            var Track=track.getTrack(album.hasTracks[i].trackId);
             if(Track){
                 Tracks.push(Track);
             }
 
+        }
+        if(Tracks.length==0){
+            return 0;
         }
         return Tracks;
 

@@ -44,7 +44,7 @@ router.put('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
   
 })
 
-// user unlike track
+// user unfollow playlist
 router.delete('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth
     const playlistID = req.params.playlist_id;
@@ -130,6 +130,7 @@ router.put('/playlists/:playlist_id/public',[checkAuth,checkContent],async (req,
 router.get('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
 
     let tracks=await Playlist.getPlaylistTracks(req.params.playlist_id);
+    if(!tracks){return res.status(401).send("no tracks");}
     if(tracks.length==0) return res.status(404).send("NO Tracks in this playlist yet");
     return res.status(200).send(tracks);
 })

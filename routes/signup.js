@@ -12,10 +12,9 @@ require('../config/passport');
 const passport =require('passport');
 
 
-router.post('/signup',(req,res)=>{
+router.post('/sign_up',(req,res)=>{
 
     const shcema = joi.object().keys({
-
         email: joi.string().trim().email().required() ,
         password: joi.string().required(),
         gender: joi.string().required() ,
@@ -26,7 +25,6 @@ router.post('/signup',(req,res)=>{
     });
 
     joi.validate(req.body,shcema,(err,result)=>{
-
         if(err){
 
             res.status(500).json({
@@ -61,7 +59,8 @@ router.post('/signup',(req,res)=>{
                                 country :req.body.country ,
                                 birthDate:req.body.birthday ,
                                 product:"free" ,
-                                userType:"user"
+                                userType:"user",
+                                tracksInQueue:[]
                             });
                             
                             user
@@ -83,7 +82,7 @@ router.post('/signup',(req,res)=>{
                                     
                                   };
                                   var token = jwt.sign({ _id: user._id,product: user.product}, jwtSeret.secret, {
-                                    expiresIn: '24h' // 1 week
+                                    expiresIn: '24h' // 1 day
                                   });
                                  
                                   // return the information including token as JSON

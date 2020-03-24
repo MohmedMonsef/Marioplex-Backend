@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
-
 const Image=new Schema({ 
     height:Number ,
     wedth:Number ,
@@ -21,8 +20,9 @@ const Link=new Schema({
 const Track=new Schema({ 
   link:Link ,
   externalId:mongoose.Schema.Types.ObjectId ,
+  artistId:mongoose.Schema.Types.ObjectId,
+  albumId:mongoose.Schema.Types.ObjectId,
   availableMarkets:[String] ,
-  albumId: mongoose.Schema.Types.ObjectId,
   discNumber:Number ,
   trackNumber:Number ,
   durationMs:Number ,
@@ -44,11 +44,9 @@ const Track=new Schema({
   speechiness:Number ,
   tempo:Number ,
   timeSignature:Date ,
-  valence:Number,
-  artists: [{
-    artistId: mongoose.Schema.Types.ObjectId
-    //ref: 'Artist'
-  }]
+  valence:Number
+
+
 });
 
 const Playlist=new Schema({
@@ -58,11 +56,10 @@ const Playlist=new Schema({
   name:String ,
   isPublic:Boolean ,
   images:[Image] ,
-  hasTracks:[{
-    trackId:  mongoose.Schema.Types.ObjectId,
-    //ref: 'Track'
+  snapshot:[{
+  hasTracks:[mongoose.Schema.Types.ObjectId ],  //ref: 'Track',
+  action:String
   }]
-  
 });
 
 const Album=new Schema({
@@ -79,7 +76,7 @@ const Album=new Schema({
   releaseDatePercision: String ,
   label:String ,
   hasTracks:[{
-    trackId:  mongoose.Schema.Types.ObjectId,
+    trackId: mongoose.Schema.Types.ObjectId,
     //ref: 'Track'
   }]
   
@@ -107,40 +104,38 @@ const User=new Schema({
   displayName:String ,
   product:String ,
   follow:[{
-    id:  mongoose.Schema.Types.ObjectId,
+    id: mongoose.Schema.Types.ObjectId,
     //ref: 'User'
   }],
   followedBy:[{
-    id:  mongoose.Schema.Types.ObjectId,
+    id: mongoose.Schema.Types.ObjectId,
     //ref: 'User'
   }],
   like:[{
-    trackId:  mongoose.Schema.Types.ObjectId
+    trackId: mongoose.Schema.Types.ObjectId
     //ref: 'Track'
   }],
   createPlaylist:[{
-    playListId:  mongoose.Schema.Types.ObjectId,
+    playListId: mongoose.Schema.Types.ObjectId,
     //ref: 'Playlist',
     addedAt:Date ,
-    isLocal:Boolean ,
-    collaboratorsId:[{
-      id:  mongoose.Schema.Types.ObjectId,
-      //ref: 'User'
-    }]
+    isPrivate:Boolean ,
+    collaboratorsId:[mongoose.Schema.Types.ObjectId ]
   }],
   followPlaylist:[{
-    playListId:  mongoose.Schema.Types.ObjectId
+    playListId: mongoose.Schema.Types.ObjectId,
+    isPrivate:Boolean
     //ref: 'Playlist'
     
   }],
   saveAlbum:[{
     savedAt:Date,
-    albumId:  mongoose.Schema.Types.ObjectId,
+    albumId: mongoose.Schema.Types.ObjectId,
     //ref: 'Album'
   }],
   playHistory:[{
     tracks:{
-      trackId:  mongoose.Schema.Types.ObjectId
+      trackId: mongoose.Schema.Types.ObjectId
       //ref: 'Track'
     },
   addedAt:Date,
@@ -163,12 +158,12 @@ const User=new Schema({
     next_track: mongoose.Schema.Types.ObjectId,
     prev_track: mongoose.Schema.Types.ObjectId,
     is_playing:Boolean,
+    is_shuffled:Boolean,
     current_source:mongoose.Schema.Types.ObjectId,
     isPlaylist:Boolean,
     is_repeat:Boolean,
     volume:Number
   }
-  
 });
 
 const Artist=new Schema({ 
@@ -176,16 +171,17 @@ const Artist=new Schema({
     popularity:Number,
     genre:[String] ,
     type:String ,
-    user:{
-      userId: mongoose.Schema.Types.ObjectId
+    Name:String,
+    images:[Image],
+    userId: mongoose.Schema.Types.ObjectId
       //ref: 'User'
-    },
+    ,
     addAlbums:[{
-      albumId:  mongoose.Schema.Types.ObjectId
+      albumId: mongoose.Schema.Types.ObjectId
       //ref: 'Album'
     }],
     addTracks:[{
-      trackId:  mongoose.Schema.Types.ObjectId
+      trackId: mongoose.Schema.Types.ObjectId
       //ref: 'Track'
     }]
 

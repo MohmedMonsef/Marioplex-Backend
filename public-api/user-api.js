@@ -1,12 +1,14 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
-
 const Track =  require('./track-api');
 const Playlist =  require('./Playlist-api');
 // initialize db 
-const connection=require('../DBconnection/connection');
 const bcrypt=require('bcrypt');
 const Artist=require('./Artist-api');
 const sendmail=require('../ForgetPassword/sendmail');
+const Player =require('./player-api');
+// initialize db 
+const connection=require('../DBconnection/connection');
+
 const User =  {
     
 
@@ -18,7 +20,53 @@ const User =  {
         
         return user;
     },
+
+    update : async function(userID,Display_Name,Password,Email,Country){
+        const user = await this.getUserById(userID);
+        if(user){
+            spotifySchema.user.findOne({email:req.body.email}).exec().then(User=>{
+                
+                    if(Display_Name!=undefined){
+                        user.displayName=Display_Name;
+        
+                    }
+                    if(Password!=undefined){
+                        bcrypt.hash(Password,10,(err,hash)=>{
+                            if(!err) {
+                                user.password=hash;
+                            }
+                        })
+                    }
+                    if(Email!=undefined && !User){
+                        user.email=Email;
+                    }
+                    if(Country!=undefined){
+                        user.country=Country;
+                    }
+                    return 1;
+                
+            })
+        }
+        else return 0;
+            
     
+        
+        
+    },
+    deleteAccount:async function(userID){
+        const user = await this.getUserById(userID);
+        if(!user){ return 0; }
+        const User = await userDocument.find({follow:{id:user._id}},(err,User)=>{
+            if(err) return 0;
+            return User;
+        });
+        return User;
+            
+            
+        
+        
+    },
+
     likeTrack: async function(userID,trackID){
             const user = await this.getUserById(userID);
             if(!user){ return 0; }
@@ -32,6 +80,41 @@ const User =  {
         const unlikeTrack = await Track.unlikeTrack(user,trackID);
         return unlikeTrack;
     },
+    addTrack: async function (user,trackID,playlistID){
+        const Playlist = await playlist.findById(playlistID);
+        const Track = await track.findById(trackID);
+        if(!Playlist||!Track){ return 0; }
+        if(Playlist.hasTracks){
+            user.hasTracks.push({
+                trackId: trackID
+               
+            });
+            await Playlist.save();
+            return 1;
+            
+        }
+        Playlist.hasTracks = [];
+        Playlist.hasTracks.push({
+            trackId: trackID
+
+        });
+        await Playlist.save();
+        return 1;
+
+
+
+        
+    },
+    AddTrackToPlaylist: async function (userID,trackID,playlistID){
+        const user = await this.getUserById(userID);
+        const userplaylist= await user.createPlaylist.find({playListId:playlistID});
+        if(!user||userplaylist){ return 0; }
+        const addTrack = await this.addTrack(user,trackID,playlistID);
+        return addTrack;
+    },
+    
+
+
 
 
     checkmail: async function (email){
@@ -105,6 +188,27 @@ const User =  {
     
         },
            
+        checkmail: async function (email){
+   
+            let user=await userDocument.findOne({email:email});
+            
+            if(!user)
+            {
+                return false;
+            }
+             return user;
+        },
+        
+        updateforgottenpassword: async function (user){
+           
+            let password=user.displayName+"1234";
+            const salt=await bcrypt.genSalt(10);
+            let hashed=await bcrypt.hash(password,salt);
+               user.password=hashed;
+               await user.save();
+               return password;
+    
+        },
         checkAuthorizedPlaylist:async  function (userID,playlistId){
             let users=await userDocument.find({});
             let createduser;
@@ -145,8 +249,54 @@ const User =  {
             await user.save();
             sendmail(user.email,"Congrats!! ^^) You're Now Promoted to Artist so You can Login with your Account as an Artist");
             return true;
-        }
+        },
+    createQueue:async function (userID,isPlaylist,sourceId,trackId){
+        const user = await this.getUserById(userID);
+        const isCreateQueue= await Player.createQueue(user,isPlaylist,sourceId,trackId);       
+        return isCreateQueue ;
+    },
 
+    addToQueue:async function (userID,trackId,isPlaylist,sourceId){
+        const user = await this.getUserById(userID);
+        const isAddQueue= await Player.addToQueue(user,trackId,isPlaylist,sourceId);       
+        return isAddQueue ;
+        
+    },
+    updateUserPlayer: async function(userID,isPlaylist,sourceId,trackID){
+        const user = await this.getUserById(userID);
+        
+        const queu = await Player.createQueue(user,isPlaylist,sourceId,trackID);
+        console.log(queu);
+        if(!queu) return 0;
+        const player = await Player.setPlayerInstance(user,isPlaylist,sourceId,trackID);
+        if(!player) return 0;
+        return 1;
+    },
+    getQueue: async function(userId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const tracks = await Player.getQueue(user);
+        if(!tracks) return 0;
+        return tracks; 
+    },
+    resumePlaying: async function(userID){
+        const user = await this.getUserById(userID);
+        const player = await Player.resumePlaying(user);
+        if(!player) return 0;
+        return 1;
+    },
+    pausePlaying: async function(userID){
+        const user = await this.getUserById(userID);
+        const player = await Player.pausePlaying(user);
+        if(!player) return 0;
+    },
+    setShuffle:async function(state,userId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const isShuffle = await Player.setShuffle(state,user);
+        if(!isShuffle) return 0;
+        return 1;
+    }
 
 }
 

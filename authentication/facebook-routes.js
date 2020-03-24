@@ -3,8 +3,7 @@ const passport = require('passport');
 
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
-// initialize passport
-require('./passport-config')(passport);
+
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 
 
@@ -41,7 +40,7 @@ router.get('/facebook/callback',passport.authenticate('facebook', {  successRedi
 router.get('/facebookJWT',checkAuthentication,(req,res)=>{
     const id = req.session.passport.user;
     //res.send('hh')
-   var token = jwt.sign({ _id: id}, jwtSeret.secret, {
+   var token = jwt.sign({ _id: id,product:req.session.passport.user.product}, jwtSeret.secret, {
         expiresIn: '24h' // 1 day
      });
      

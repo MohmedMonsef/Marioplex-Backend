@@ -6,20 +6,8 @@ const Image=new Schema({
     URL:String
 });
 
-const ExternalId=new Schema({ 
-  key:String ,
-  value:String 
-});
-
-const Link=new Schema({
-  URI:String,
-  URI:String,
-  href:String
-});
 
 const Track=new Schema({ 
-  link:Link ,
-  externalId:mongoose.Schema.Types.ObjectId ,
   artistId:mongoose.Schema.Types.ObjectId,
   albumId:mongoose.Schema.Types.ObjectId,
   availableMarkets:[String] ,
@@ -50,7 +38,7 @@ const Track=new Schema({
 });
 
 const Playlist=new Schema({
-  link:Link ,
+  ownerId:mongoose.Schema.Types.ObjectId ,
   type:String ,
   collaborative:Boolean ,
   name:String ,
@@ -64,8 +52,7 @@ const Playlist=new Schema({
 
 const Album=new Schema({
   images:[Image] ,
-  link:Link ,
-  externalId:ExternalId ,
+  artistId: mongoose.Schema.Types.ObjectId ,
   name:String ,
   type:String ,
   albumType:String ,
@@ -84,7 +71,6 @@ const Album=new Schema({
 
 const Category=new Schema({
   name:String ,
-  href:String ,
   images:[Image] ,
   playlist:[Playlist]
 });
@@ -98,7 +84,6 @@ const User=new Schema({
   gender:String ,
   country:String ,
   isLogged:Boolean ,
-  link:Link ,
   images:[Image] ,
   userType:String ,
   displayName:String ,
@@ -140,7 +125,6 @@ const User=new Schema({
     },
   addedAt:Date,
   type:String ,
-  link:Link ,
   }],
   queue:{
     lastInPlaylistIndex:Number,
@@ -167,6 +151,8 @@ const User=new Schema({
 });
 
 const Artist=new Schema({ 
+    name:String ,
+    images:[Image] ,
     info:String ,
     popularity:Number,
     genre:[String] ,

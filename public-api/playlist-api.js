@@ -35,7 +35,7 @@ const Playlist =  {
 
     // create playlist by playlist_name
     // params : playlist name user 
-    createPlaylist : async function(playlistName){
+    createPlaylist : async function(playlistName,userid,Details){
 
     // create new playlist
     const Playlist=new playlistDocument({
@@ -44,7 +44,9 @@ const Playlist =  {
         collaborative:false ,
         name:playlistName ,
         isPublic:true ,
-        hasTracks:[]
+        ownerId:userid ,
+        images:[] ,
+        snapshot:[]
     })
     await Playlist.save();
     /////should be deleted 

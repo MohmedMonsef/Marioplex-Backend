@@ -14,7 +14,12 @@ const Track=require('./track-api');
             genre:Genre ,
             type:"Artist" ,
             Name:name,
-            userId:userID
+            userId:userID,
+            popularity:0,
+            images:[], 
+            addAlbums:[],
+            addTracks:[]
+
         });
         await artist.save();
         console.log(artist);
@@ -42,8 +47,13 @@ const Track=require('./track-api');
             genre:Genre ,
             releaseDate:ReleaseDate ,
             availableMarkets: Avmarkets ,
-            label:Label 
-
+            label:Label ,
+            images:[] ,
+            artistId:ArtistID ,
+            type:"Album" ,
+            popularity:0 ,
+            hasTracks:[]
+    
         }); 
         await album.save(function(err,albumobj){
             album=albumobj;

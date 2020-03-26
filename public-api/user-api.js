@@ -166,6 +166,7 @@ const User =  {
             const user = await this.getUserById(userID);
             // create new playlist
             const createdPlaylist = await Playlist.createPlaylist(playlistName);
+            
             //add to user 
             if(user.createPlaylist){
                 user.createPlaylist.push({

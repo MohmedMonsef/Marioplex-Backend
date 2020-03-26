@@ -115,7 +115,7 @@ const User=new Schema({
   }],
 
   playHistory:[{
-    tracks: mongoose.Schema.Types.ObjectId,
+    tracks: {trackId: mongoose.Schema.Types.ObjectId}	,
       //ref: 'Track'
     addedAt:Date ,
     type:String ,

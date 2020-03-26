@@ -61,10 +61,7 @@ const User =  {
             return User;
         });
         return User;
-            
-            
-        
-        
+
     },
 
     likeTrack: async function(userID,trackID){
@@ -141,10 +138,11 @@ const User =  {
          
     
 
-    followPlaylist: async function(userID,playlistID){
+
+    followPlaylist: async function(userID,playlistID,isprivate){
         const user = await this.getUserById(userID);
         if(!user){ return 0; }
-        return  await Playlist.followPlaylist(user,playlistID);
+        return  await Playlist.followPlaylits(user,playlistID,isprivate);
      
     },
 
@@ -162,6 +160,12 @@ const User =  {
             return isDelete;
           
     },
+
+    getPlaylist:async function (playlistId,snapshot,userId){
+        const user = await this.getUserById(userId);
+        return await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
+    },
+
     createdPlaylist:async  function (userID,playlistName){
             const user = await this.getUserById(userID);
             // create new playlist
@@ -171,23 +175,23 @@ const User =  {
                 user.createPlaylist.push({
                     playListId: createdPlaylist._id,
                     addedAt:  Date.now() ,
-                    isLocal : 'false' 
+                    isPrivate : false  
                 });
-                await user.save();
-                return createdPlaylist;
-                
+
             }
-            user.createPlaylist = [];
-            user.createPlaylist.push({
-                playListId: createdPlaylist._id,
-                addedAt: Date.now(),
-                isPrivate : false 
-            });
+            else{
+                user.createPlaylist = [];
+                user.createPlaylist.push({
+                    playListId: createdPlaylist._id,
+                    addedAt: Date.now(),
+                    isPrivate : false 
+                });
+            }
             await user.save().catch();
+            await Playlist.followPlaylits(user,createdPlaylist._id,false);
             return createdPlaylist;
-    
         },
-           
+
         checkmail: async function (email){
    
             let user=await userDocument.findOne({email:email});

@@ -71,7 +71,7 @@ const Playlist =  {
 
     // create playlist by playlist_name
     // params : playlist name user 
-    createPlaylist : async function(playlistName){
+    createPlaylist : async function(playlistName,userid,Details){
 
     const Playlist=new playlistDocument({
         _id: mongoose.Types.ObjectId(),
@@ -79,6 +79,8 @@ const Playlist =  {
         collaborative:false ,
         name:playlistName ,
         isPublic:true ,
+        ownerId:userid ,
+        images:[] ,
         snapshot:[]
     })
     await Playlist.save();

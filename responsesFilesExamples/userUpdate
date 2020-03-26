@@ -1,0 +1,21 @@
+/me/Update
+request
+{
+"Email":"",
+"Password":"",
+"Country":"",
+"Display_Name":""
+}
+
+
+response
+{
+    "message": "information has been updated successfully"
+}
+status code=200
+
+{
+    "error": {}
+
+}
+status code=500

@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 
 const Track =require('./track-api');
 const Album =require('./album-api');
-const Artist =require('./artist-api');
+const Artist =require('./Artist-api');
 
 const Playlist =  {
 

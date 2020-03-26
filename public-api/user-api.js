@@ -166,10 +166,10 @@ const User =  {
         return await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
     },
 
-    createdPlaylist:async  function (userID,playlistName){
+    createdPlaylist:async  function (userID,playlistName,Description){
             const user = await this.getUserById(userID);
             // create new playlist
-            const createdPlaylist = await Playlist.createPlaylist(playlistName);
+            const createdPlaylist = await Playlist.createPlaylist(userID,playlistName,Description);
             //add to user 
             if(user.createPlaylist){
                 user.createPlaylist.push({

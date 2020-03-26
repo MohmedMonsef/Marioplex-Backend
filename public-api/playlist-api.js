@@ -26,31 +26,33 @@ const Playlist =  {
 
     },
     //for routes
-    getPlaylistWithTracks : async function(playlistId,snapshot,user){    
+    getPlaylistWithTracks : async function(playlistId,snapshotID,user){    
         const playlist = await this.getPlaylist(playlistId);
         if (playlist.isPublic || this.checkIfUserHasPlaylist(user,playlistId)||this.checkFollowPlaylistByUser(user,playlistId)){
             var playlistJson=[];
             var tracks=[];
-            if(playlist.snapshot[snapshot]){
+            let snapshot;
+            let found=false;
+            for(let i=0;i<playlist.snapshot.length;i++){
+                    if(playlist.snapshot[i]._id==snapshotID){
+                        snapshot=i;
+                        found=true;
+                    }
+            }
+            if(!found){snapshot=playlist.snapshot.length-1;}
+            if(playlist.snapshot[snapshot]!=undefined){
                 for(let i=0;i<playlist.snapshot[snapshot].hasTracks.length;i++){
                     const track1 =await Track.getTrack(playlist.snapshot[snapshot].hasTracks[i]);
+                    console.log(track1);
                     const artistId = track1.artistId;
                     const albumId =track1.albumId;
                     const album =await Album.getAlbumById(albumId);
                     const artist =await Artist.getArtist(artistId);
+                    if(!album || !artist){return 0;}
                     tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.name,albumId:albumId,albumName:album.name});                
                 }
             }
-            else{
-                 for(let i=0;i <playlist.snapshot[playlist.snapshot.length-1].hasTracks.length;i++ ){
-                    const track1 =await Track.getTrack(playlist.snapshot[playlist.snapshot.length-1].hasTracks[i]);
-                    const artistId = track1.artistId;
-                    const albumId =track1.albumId;
-                    const album =await Album.getAlbumById(albumId);
-                    const artist =await Artist.getArtist(artistId);
-                    tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.name,albumId:albumId,albumName:album.name});                
-                }
-            }
+            
             playlistJson.push({id:playlist._id,type:playlist.type,name:playlist.name,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images,tracks:tracks});
             return playlistJson;
         } 
@@ -71,76 +73,20 @@ const Playlist =  {
 
     // create playlist by playlist_name
     // params : playlist name user 
-    createPlaylist : async function(playlistName,userid,Details){
-
+    createPlaylist : async function(userid,Name,description){
+        let desc=(description==undefined)?"":description;
     const Playlist=new playlistDocument({
         _id: mongoose.Types.ObjectId(),
         type:"playlist" ,
+        Description:desc,
         collaborative:false ,
-        name:playlistName ,
+        name:Name ,
         isPublic:true ,
         ownerId:userid ,
         images:[] ,
         snapshot:[]
     })
-    await Playlist.save();
-    
-    const album1=new albumDocument({
-        name:"album1"
-    }) 
-    await album1.save();
-    const album2=new albumDocument({
-        name:"album2"
-    })
-    await album2.save();
-    const album3=new albumDocument({
-        name:"album3"
-    }) 
-    await album3.save();
-    const album4=new albumDocument({
-        name:"album4"
-    }) 
-    await album4.save();
-    const artist1=new artistDocument({
-        name:"artist1"
-    }) 
-    await artist1.save();
-    const artist2=new artistDocument({
-        name:"artist4"
-    }) 
-    await artist2.save();
-    const track1=new trackDocument({
-        name:"track1",
-        albumId:album1._id,
-        artistId:artist1._id
-    })
-    await track1.save();
-    const track2=new trackDocument({
-        name:"track2",
-        albumId:album2._id,
-        artistId:artist1._id
-    
-    })
-    await track2.save();
-    const track3=new trackDocument({
-        name:"track3",
-        albumId:album3._id,
-        artistId:artist1._id
-    
-    })
-    await track3.save();
-    const track4=new trackDocument({
-        name:"track4",
-        albumId:album4._id,
-        artistId:artist2._id
-    
-    })
-    await track4.save();
-    Playlist.snapshot.push({hasTracks:[]})
-    Playlist.snapshot[0].hasTracks.push(track2._id);
-    Playlist.snapshot[0].hasTracks.push(track4._id);
-    Playlist.snapshot[0].hasTracks.push(track3._id);
-    Playlist.snapshot[0].hasTracks.push(track1._id);
+
     await Playlist.save();
     return Playlist;
     },
@@ -189,6 +135,8 @@ const Playlist =  {
         //params : user , playlist-id
 
         followPlaylits: async function(user,playlistID,isPrivate){
+            let check=await this.getPlaylist(playlistID);
+            if(!check){return 0;}
             const followedBefore= this.checkFollowPlaylistByUser(user,playlistID)
             if (followedBefore){
                 return 0;
@@ -219,6 +167,8 @@ const Playlist =  {
         },
 
         unfollowPlaylist: async function(user,playlistID){
+            let check=await this.getPlaylist(playlistID);
+            if(!check){return 0;}
             const followedBefore= this.checkFollowPlaylistByUser(user,playlistID)
            
             if (!followedBefore){
@@ -340,12 +290,14 @@ const Playlist =  {
                     }
                 }
                 }
+                await playlist.save();
                  return true;
                 
             },
         changePublic : async function(user,playlistID){
                 let playlist=await playlistDocument.findById(playlistID);
                 if(!playlist) return false;
+                if(playlist.collaborative){return false;}
                 playlist.isPublic=!playlist.isPublic;
 
                     for (var i=0;i<user.createPlaylist.length;i++){
@@ -454,17 +406,19 @@ const Playlist =  {
                             }
                        }
                        let orderedtracks=[];
+                       console.log(start);
+                       console.log(before);
                        let stindex=Number(start);
-                       let endindex=(length==undefined)?Number(stindex+1):((stindex+length)>tracks.length)?tracks.length-Number(start):length;
+                       let endindex=(!length)?Number(stindex+1):(stindex+length-1);
                      console.log(endindex);
-                       for(var i=stindex;i<endindex+stindex;i++){
-                           console.log("Ssss");
+                       for(var i=stindex;i<endindex;i++){
                         orderedtracks.push(tracks[i]);
                        }
                        console.log(orderedtracks);
-                       tracks.splice(stindex,endindex);
+                       tracks.splice(stindex,endindex-stindex);
+                       console.log(tracks);
                        for(let i=0;i<orderedtracks.length;i++){
-                        tracks.splice(before+i,0,orderedtracks[i]);
+                        tracks.splice(i+Number(before),0,orderedtracks[i]);
                        }
                        console.log(tracks);
                      playlist.snapshot.push({

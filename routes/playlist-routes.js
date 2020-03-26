@@ -8,13 +8,11 @@ const {content:checkContent} = require('../middlewares/content');
 
 //get playlist
 router.get('/playlist/:playlist_id',checkAuth,async (req,res)=>{
-    
+
     const playlistId = req.params.playlist_id;
-   
-    const playlist = await Playlist.getPlaylist(playlistId);
+    const playlist = await User.getPlaylist(playlistId,req.query.snapshot,req.user._id);
     if(!playlist) res.status(400).send("Not found !"); //not found
     else res.send(playlist); 
-
 })
 
 // user create playlist
@@ -31,14 +29,14 @@ router.post('/users/playlists',checkAuth,async (req,res)=>{
     const createPlaylist= await  User.createdPlaylist(userID,req.body.name);
     if(createPlaylist) res.send(createPlaylist);
     else  res.send({error:"can not create"}); // if can not create for unexpected reason
-    
 
 })
 
 router.put('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
     const playlistID = req.params.playlist_id;
-     const updatedUser= await  User.followPlaylist(userID,playlistID);
+
+     const updatedUser= await  User.followPlaylist(userID,playlistID,req.body.isPrivate);
      if (updatedUser) res.send({success:" followed this playlist successfully"});
      else res.status(400).send('this playlist is followed before');
   
@@ -59,12 +57,10 @@ router.delete('/me/delete/:playlist_id',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth
     const playlistId = req.params.playlist_id;
     const updatedUser= await User.deletePlaylist(userID,playlistId);
-    
 
-    if(!updatedUser) res.send({error:'can not delete !'}); // if user already liked the song
-    else res.send({success:'Delete successfully'});
+    if(!updatedUser) res.status(400).send({error:'can not delete !'}); // if user already liked the song
+    else res.status(200).send({success:'Delete successfully'});
 
-    
 
 })
 //add track to a playlist

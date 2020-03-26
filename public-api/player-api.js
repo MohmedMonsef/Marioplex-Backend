@@ -63,6 +63,7 @@ const Player = {
             // check if there is snapshot or not
             if(!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{hasTracks:[]}];
             // get next track and prev Track in playlist by checking for id greater than track id
+            
             const {"next_track":nextTrack,"prev_track":prevTrack,"last_playlist_track_index":current_index} = this.getPrevAndNext(playlist.snapshot[playlist.snapshot.length-1].hasTracks,trackID,user);            // update user player info 
             user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
             user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;

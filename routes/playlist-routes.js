@@ -19,7 +19,7 @@ router.get('/playlist/:playlist_id',checkAuth,async (req,res)=>{
 router.post('/users/playlists',checkAuth,async (req,res)=>{
     
     const userID = req.user._id; // get it from desierialize auth
-    
+ 
     const { errors, isValid } = validatePlaylistInput(req.body);
     // Check validation
     if (!isValid) {

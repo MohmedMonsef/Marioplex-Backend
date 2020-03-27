@@ -34,7 +34,7 @@ router.post('/users/playlists',checkAuth,async (req,res)=>{
     else  res.send({error:"can not create"}); // if can not create for unexpected reason
 
 })
-
+// user follow playlist
 router.put('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
     const playlistID = req.params.playlist_id;
@@ -54,8 +54,8 @@ router.delete('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     else res.status(400).send({error:"user did not follow this playlist "});
 
 });
-
-router.delete('/me/delete/:playlist_id',checkAuth,async (req,res)=>{
+// delete playlist 
+router.delete('/me/delete/playlists/:playlist_id',checkAuth,async (req,res)=>{
     
     const userID = req.user._id; // get it from desierialize auth
     const playlistId = req.params.playlist_id;
@@ -102,7 +102,7 @@ router.get('/users/:user_id/playlists',[checkAuth],async (req,res)=>{
     return res.status(200).send(playlists);
    
 })
-
+// change playlist callobrative attribute
 router.put('/playlists/:playlist_id/collaborative',[checkAuth,checkContent],async (req,res)=>{
     let user=await User.getUserById(req.user._id);
     if(!user) return res.status(404).send("NOT FOUND");
@@ -113,7 +113,7 @@ router.put('/playlists/:playlist_id/collaborative',[checkAuth,checkContent],asyn
     if(!done) return res.status(404).send("NOT FOUND");
     return res.status(200).send("CHANGED");
 })
-
+// toggle playlist isPublic attribute
 router.put('/playlists/:playlist_id/public',[checkAuth,checkContent],async (req,res)=>{
     let user=await User.getUserById(req.user._id);
     if(!user) return res.status(404).send("NOT FOUND");
@@ -125,7 +125,7 @@ router.put('/playlists/:playlist_id/public',[checkAuth,checkContent],async (req,
     if(!done) return res.status(404).send("Cant be PUblic");
     return res.status(200).send("CHANGED");
 })
-
+// get tracks in playlist
 router.get('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
 
     let tracks=await Playlist.getPlaylistTracks(req.params.playlist_id);
@@ -133,17 +133,18 @@ router.get('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
     if(tracks.length==0) return res.status(404).send("NO Tracks in this playlist yet");
     return res.status(200).send(tracks);
 })
-
+// delete tracks from playlist
 router.delete('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
     let authorized=await User.checkAuthorizedPlaylist(req.user._id,req.params.playlist_id);
     if(!authorized){return res.status(403).send("FORBIDDEN");}
     let tracksids=[];
-     tracksids=(req.query.tracks)?req.query.tracks.split(','):[];
-    let result=await Playlist.removePlaylistTracks(req.params.playlist_id,tracksids,req.query.snapshot);
+     tracksids=(req.body.tracks)?req.body.tracks.split(','):[];
+     console.log(tracksids);
+    let result=await Playlist.removePlaylistTracks(req.params.playlist_id,tracksids,req.body.snapshot);
     if(!result) return res.status(404).send("NO Tracks Delelted");
     return res.status(200).send(result);
 })
-
+// reorder playlist
 router.put('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
     let authorized=await User.checkAuthorizedPlaylist(req.user._id,req.params.playlist_id);
     if(!authorized){return res.status(403).send("FORBIDDEN");}

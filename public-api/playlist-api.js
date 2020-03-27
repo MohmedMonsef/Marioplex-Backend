@@ -190,10 +190,11 @@ const Playlist =  {
             return 0;
         },
         addTrackToPlaylist : async function(playlistID,tracksIds){
-
+            
+            if(!tracksIds || tracksIds.length == 0) return 0;
             let playlist=await this.getPlaylist(playlistID);
             if(!playlist) return 0;
-            console.log(playlist);
+            //console.log(playlist);
             let len=playlist.snapshot.length;
             let tracks=[];
             if(len){
@@ -202,10 +203,12 @@ const Playlist =  {
             }
         }
             for(let i=0;i<tracksIds.length;i++){
+                // check if trackid is valid mongoose object id
+                if(!mongoose.Types.ObjectId.isValid(tracksIds[i]) ) return 0;
                 tracks.push(tracksIds[i]);
             }
             let uniquetracks=await this.removeDups(tracks);
-            console.log(uniquetracks);
+            //console.log(uniquetracks);
             playlist.snapshot.push({
                 hasTracks:uniquetracks,
                 action:'Add Tracks'

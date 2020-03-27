@@ -22,7 +22,7 @@ const Playlist =  {
         
 
     },
-
+    
     checkIfUserHasPlaylist: function(user,playlistID){
         
         const userPlaylists = user.createPlaylist;

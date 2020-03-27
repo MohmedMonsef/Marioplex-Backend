@@ -3,9 +3,21 @@ const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 
+
  const Artist =  {
 
+    getAlbumById  : async function(albumID){
+        
+        // connect to db and find album with the same id then return it as json file
+        // if found return album else return 0
+        let album = await albumDocument.findById(albumID,(err,album)=>{
+            if(err) return 0;
+            return album;
+        }).catch((err)=> 0);
+        return album;
+        
 
+    },
     createArtist: async function(userID,Info,name,Genre){
 
         let artist=new artistDocument({
@@ -83,7 +95,7 @@ const Track=require('./track-api');
             let artist = await this.getArtist(artistID);
             if(!artist)return 0;
         for(let i=0;i<artist.addAlbums.length;i++){
-            albums[artist.addAlbums[i].albumId]=await Album.getAlbumById(artist.addAlbums[i].albumId);
+            albums[artist.addAlbums[i].albumId]= await this.getAlbumById(artist.addAlbums[i].albumId);
         }
 
         if(groups!=undefined&&country!=undefined){

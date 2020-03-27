@@ -39,7 +39,7 @@ const Search =  {
         
         const artist= await this.getArtistProfile(Name);
         if(artist){
-            return artist['1']._id
+            return artist[0]._id
         }
         return 0;
     },
@@ -64,6 +64,8 @@ const Search =  {
             var album;
             let artist=await this.getTop(albumName)
             if(artist){
+             // let album=await artistApi.getAlbums(artist,groups,country,limit,offset);
+
                  album=await artistApi.getAlbums(artist,groups,country,limit,offset);
             }
             else{
@@ -150,14 +152,14 @@ const Search =  {
         if(artist){
             
             let artist=await this.getArtistProfile(Name)
-            return artist['1']
+            return artist[0]
         }
         let track=await this.getTrack(Name);
         return track[0]
     },
     getArtistProfile  : async function(name){
         
-        let ArtistInfo={};
+        let ArtistInfo=[];
         let User = await this.getUserByname(name);
         if(User.length==0)return 0;
         else{
@@ -173,7 +175,7 @@ const Search =  {
                        Artist["info"]=artist[0].info
                        Artist["type"]=artist[0].type
                        Artist["genre"]=artist[0].genre
-                       ArtistInfo[i]=Artist
+                       ArtistInfo.push(Artist)
 
                    }
 

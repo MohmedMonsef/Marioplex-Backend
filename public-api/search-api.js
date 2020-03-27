@@ -38,6 +38,7 @@ const Search =  {
     getTop :async function(Name){
         
         const artist= await this.getArtistProfile(Name);
+        console.log(artist)
         if(artist){
             return artist[0]._id
         }
@@ -64,9 +65,10 @@ const Search =  {
             var album;
             let artist=await this.getTop(albumName)
             if(artist){
-             // let album=await artistApi.getAlbums(artist,groups,country,limit,offset);
 
-                 album=await artistApi.getAlbums(artist,groups,country,limit,offset);
+                console.log(artist)
+                album=await artistApi.getAlbums(artist,groups,country,limit,offset);
+
             }
             else{
                 album= await this.getAlbums();
@@ -159,7 +161,9 @@ const Search =  {
     },
     getArtistProfile  : async function(name){
         
+
         let ArtistInfo=[];
+
         let User = await this.getUserByname(name);
         if(User.length==0)return 0;
         else{

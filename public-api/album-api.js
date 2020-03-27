@@ -32,6 +32,7 @@ const artist=require('./artist-api');
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
         let album = await this.getAlbumById(albumID);
+        console.log(album);
         if(album){
             let Artist= await artist.getArtist(album.artistId);
             if(Artist){

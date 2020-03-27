@@ -2,6 +2,8 @@
 
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
+const Album = require('../public-api/album-api');
+const Artist = require('../public-api/artist-api');
 const {auth:checkAuth} = require('../middlewares/isMe');
 
 // get track
@@ -22,9 +24,14 @@ router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
     const user = await User.getUserById(req.user._id);
     const track = await Track.getTrack(trackID);
     const isLiked = Track.checkIfUserLikeTrack(user,trackID)?true:false;
-   
-    if(!track) res.sendStatus(404); //not found
-    else res.json({track:track,isLiked:isLiked}); 
+    if(!track) res.sendStatus(404).json({error:"track not found"}); //not found
+    // get both album and artist of the track
+    const album = await Album.getAlbumById(track.albumId);
+    if(!album) res.sendStatus(404).json({error:"album not found"});; //not found
+    const artist = await Artist.getArtist(track.artistId);
+    if(!artist) res.sendStatus(404).json({error:"artist not found"});; //not found
+    // if all are found return them in new created json object
+    res.json({track:track,isLiked:isLiked,album:album,artist:artist}); 
 
 })
 // get tracks

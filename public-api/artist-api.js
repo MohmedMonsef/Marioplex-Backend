@@ -3,7 +3,6 @@ const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 
-
  const Artist =  {
 
     createArtist: async function(userID,Info,name,Genre){
@@ -14,7 +13,12 @@ const Track=require('./track-api');
             genre:Genre ,
             type:"Artist" ,
             Name:name,
-            userId:userID
+            userId:userID,
+            popularity:0,
+            images:[], 
+            addAlbums:[],
+            addTracks:[]
+
         });
         await artist.save();
         console.log(artist);
@@ -42,8 +46,13 @@ const Track=require('./track-api');
             genre:Genre ,
             releaseDate:ReleaseDate ,
             availableMarkets: Avmarkets ,
-            label:Label 
-
+            label:Label ,
+            images:[] ,
+            artistId:ArtistID ,
+            type:"Album" ,
+            popularity:0 ,
+            hasTracks:[]
+    
         }); 
         await album.save(function(err,albumobj){
             album=albumobj;
@@ -64,7 +73,7 @@ const Track=require('./track-api');
             trackId:trackid
         });
        await artist.save();
-       return true;  
+         
 },
     // get several Artists
     // params : array of Artists ids
@@ -83,7 +92,7 @@ const Track=require('./track-api');
             let artist = await this.getArtist(artistID);
             if(!artist)return 0;
         for(let i=0;i<artist.addAlbums.length;i++){
-            albums[artist.addAlbums[i].albumId]= await Album.getAlbumById(artist.addAlbums[i].albumId);
+            albums[artist.addAlbums[i].albumId]=await Album.getAlbumById(artist.addAlbums[i].albumId);
         }
 
         if(groups!=undefined&&country!=undefined){

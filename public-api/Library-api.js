@@ -53,6 +53,7 @@ const Track=require('./track-api');
         let Albums=[];
         let user = await userDocument.findById(UserID);
         if(!user)return 0;
+        if(!user.saveAlbum.length){return 0;}
     for(let i=0;i<user.saveAlbum.length;i++){
         let album=await Album.getAlbumById(user.saveAlbum[i].albumId);
        if(album) Albums.push(album);
@@ -77,6 +78,7 @@ getSavedTracks : async function(UserID,limit,offset){
     let Tracks=[];
     let user = await userDocument.findById(UserID);
     if(!user)return 0;
+    if(!user.like.length){return 0;}
 for(let i=0;i<user.like.length;i++){
     let track=await Track.getTrack(user.like[i].trackId);
    if(track) Tracks.push(track);

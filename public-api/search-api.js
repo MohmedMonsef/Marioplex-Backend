@@ -3,7 +3,7 @@ var FuzzySearch = require('fuzzy-search');
 
 
 // initialize db 
-const artistApi=require('./artist-api');
+const artistApi=require('./Artist-api');
 const connection=require('../DBconnection/connection');
 const user_api=require('./user-api');
 const track=require('./track-api');
@@ -40,7 +40,6 @@ const Search =  {
         const artist= await this.getArtistProfile(Name);
         console.log(artist)
         if(artist){
-            console.log(artist)
             return artist[0]._id
         }
         return 0;
@@ -66,11 +65,12 @@ const Search =  {
             var album;
             let artist=await this.getTop(albumName)
             if(artist){
+
                 console.log(artist)
                 album=await artistApi.getAlbums(artist,groups,country,limit,offset);
+
             }
             else{
-                console.log(artist)
                 album= await this.getAlbums();
                 if(album.length==0) return album;
                 album= Fuzzysearch(albumName,'name',album);  
@@ -79,6 +79,7 @@ const Search =  {
             Album={}
             for(let i=0;i<album.length;i++){
                 let albums=await album_api.getAlbumArtist(album[i]._id);
+                console.log(albums);
                 if(albums){
                     album={}
                     album["_id"]=albums.Album._id
@@ -86,14 +87,15 @@ const Search =  {
                     album["images"]=albums.Album.images
                     album["type"]=albums.Album.type
                     artist={}
+                    if(albums.Artist){
                     artist["_id"]=albums.Artist._id
-                    artist["name"]=albums.Artist.name
+                    artist["name"]=albums.Artist.Name
                     artist["images"]=albums.Artist.images
                     artist["info"]=albums.Artist.info
                     artist["type"]=albums.Artist.type
                     artist["genre"]=albums.Artist.genre
+                    }
                     Album[i]={album,artist}
-                    
                 }
             }
             return Album;
@@ -120,7 +122,7 @@ const Search =  {
                 if(artist){
                     
                     Artist["_id"]=artist._id
-                    Artist["name"]=artist.name
+                    Artist["name"]=artist.Name
                     Artist["images"]=artist.images
                     Artist["info"]=artist.info
                     Artist["type"]=artist.type
@@ -159,7 +161,9 @@ const Search =  {
     },
     getArtistProfile  : async function(name){
         
-        ArtistInfo=[]
+
+        let ArtistInfo=[];
+
         let User = await this.getUserByname(name);
         if(User.length==0)return 0;
         else{
@@ -167,10 +171,10 @@ const Search =  {
                 if(User[i].userType=="Artist"){
 
                    let artist= await this.getArtist(User[i]._id);
-                   if(artist!=0){
+                   if(artist){
                        Artist={}
                        Artist["_id"]=artist[0]._id
-                       Artist["name"]=artist[0].name
+                       Artist["name"]=artist[0].Name
                        Artist["images"]=artist[0].images
                        Artist["info"]=artist[0].info
                        Artist["type"]=artist[0].type

@@ -41,6 +41,7 @@ const Playlist=new Schema({
   ownerId:mongoose.Schema.Types.ObjectId ,
   type:String ,
   collaborative:Boolean ,
+  Description:String,
   name:String ,
   isPublic:Boolean ,
   images:[Image] ,
@@ -152,7 +153,6 @@ const Artist=new Schema({
     popularity:Number,
     genre:[String] ,
     type:String ,
-    Name:String ,
     images:[Image] ,
     userId: mongoose.Schema.Types.ObjectId ,
       //ref: 'User'

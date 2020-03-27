@@ -60,7 +60,10 @@ const Player = {
             // get playlist
             const playlist = await Playlist.getPlaylist(id);
             if(!playlist) return 0; // no playlist was found
+            // check if there is snapshot or not
+            if(!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{hasTracks:[]}];
             // get next track and prev Track in playlist by checking for id greater than track id
+            
             const {"next_track":nextTrack,"prev_track":prevTrack,"last_playlist_track_index":current_index} = this.getPrevAndNext(playlist.snapshot[playlist.snapshot.length-1].hasTracks,trackID,user);            // update user player info 
             user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
             user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
@@ -136,6 +139,8 @@ const Player = {
             user.queue = {};
             user.queue.queuIndex = -1;
             user.queue.tracksInQueue = [];
+            if(!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{hasTracks:[]}];
+            console.log(playlist.snapshot,playlist);
             if(playlist.snapshot[playlist.snapshot.length-1].hasTracks.length==0){
                 await user.save();
                 return 1;
@@ -177,7 +182,7 @@ const Player = {
             i++;
         }
         await user.save();
-        console.log(user.queue);
+        //console.log(user.queue);
         return 1;
        }        
     },
@@ -422,6 +427,7 @@ const Player = {
     fillByplaylist:async function(user){
         if(user.player.isPlaylist) {
             const playlist = await Playlist.getPlaylist(user.player.current_source);
+            if(!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{hasTracks:[]}];
             if(playlist.snapshot[playlist.snapshot.length-1].hasTracks.length==0){
                 await user.save();
                 return 1;
@@ -454,9 +460,9 @@ const Player = {
     setShuffle:async function(state,user){
        if (user.queue.tracksInQueue){
            if(state=='true')
-                 return this.shuffleQueue(user);
+                 return await  this.shuffleQueue(user);
             else
-                return this.fillByplaylist(user);
+                return await this.fillByplaylist(user);
        }
        return 0
     }

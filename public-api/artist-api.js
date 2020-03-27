@@ -5,7 +5,6 @@ const Track=require('./track-api');
 
  const Artist =  {
 
-
     createArtist: async function(userID,Info,name,Genre){
 
         let artist=new artistDocument({

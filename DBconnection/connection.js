@@ -18,7 +18,7 @@ module.exports= function(app){
     console.log("connection is made");
     }).on('error',function(error){
     console.log("connection got error : ",error);
-    });
+    }); 
 };
 
 

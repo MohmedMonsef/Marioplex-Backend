@@ -39,8 +39,7 @@ const Search =  {
         
         const artist= await this.getArtistProfile(Name);
         if(artist){
-            console.log(artist)
-            return artist[0]._id;
+            return artist['1']._id
         }
         return 0;
     },
@@ -65,11 +64,9 @@ const Search =  {
             var album;
             let artist=await this.getTop(albumName)
             if(artist){
-                console.log(artist)
-                album=await artistApi.getAlbums(artist,groups,country,limit,offset);
+                 album=await artistApi.getAlbums(artist,groups,country,limit,offset);
             }
             else{
-                console.log(artist)
                 album= await this.getAlbums();
                 if(album.length==0) return album;
                 album= Fuzzysearch(albumName,'name',album);  
@@ -78,6 +75,7 @@ const Search =  {
             Album={}
             for(let i=0;i<album.length;i++){
                 let albums=await album_api.getAlbumArtist(album[i]._id);
+                console.log(albums);
                 if(albums){
                     album={}
                     album["_id"]=albums.Album._id
@@ -85,14 +83,15 @@ const Search =  {
                     album["images"]=albums.Album.images
                     album["type"]=albums.Album.type
                     artist={}
+                    if(albums.Artist){
                     artist["_id"]=albums.Artist._id
                     artist["name"]=albums.Artist.Name
                     artist["images"]=albums.Artist.images
                     artist["info"]=albums.Artist.info
                     artist["type"]=albums.Artist.type
                     artist["genre"]=albums.Artist.genre
+                    }
                     Album[i]={album,artist}
-                    
                 }
             }
             return Album;
@@ -149,23 +148,24 @@ const Search =  {
         
         const artist= await this.getTop(Name);
         if(artist){
-            return await this.getTracks(Name)[0]
+            
+            let artist=await this.getArtistProfile(Name)
+            return artist[0]
         }
-        
-        return await this.getArtistProfile(Name)[0];
+        let track=await this.getTrack(Name);
+        return track[0]
     },
     getArtistProfile  : async function(name){
         
         let ArtistInfo={};
         let User = await this.getUserByname(name);
-        if(User.length==0)return ArtistInfo;
+        if(User.length==0)return 0;
         else{
             for( let i=0;i<User.length;i++){
                 if(User[i].userType=="Artist"){
 
                    let artist= await this.getArtist(User[i]._id);
-                   console.log(artist);
-                   if(!artist){
+                   if(artist){
                        Artist={}
                        Artist["_id"]=artist[0]._id
                        Artist["name"]=artist[0].Name
@@ -179,6 +179,7 @@ const Search =  {
 
                 }
             }
+            if(ArtistInfo=={})return 0;
             return ArtistInfo;
         
         }

@@ -150,7 +150,7 @@ const Search =  {
         if(artist){
             
             let artist=await this.getArtistProfile(Name)
-            return artist[0]
+            return artist['1']
         }
         let track=await this.getTrack(Name);
         return track[0]

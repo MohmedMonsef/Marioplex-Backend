@@ -99,6 +99,14 @@ router.get('/me/queue',checkAuth,async (req,res)=>{
   if(!tracks) res.status(400).json({error:'couldnt get queue'});
   else res.status(200).json(tracks);
 })
+//to repeat
+router.put('/player/repeat',checkAuth,async (req,res)=>{
+  const userID = req.user._id;
+  const repeat = User.repreatPlaylist(userID,req.query.state);
+  if(!repeat) res.status(400).json({error:"couldn't repeat playlist"});
+  else res.status(200).json({success:"is_repeat playlist: "+req.query.state})
+})
+
 // resume player 
 router.put('/me/player/play',checkAuth,async (req,res)=>{
   const userID = req.user._id;

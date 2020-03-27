@@ -9,6 +9,7 @@ const Track =require('./track-api');
 const Album =require('./album-api');
 const Artist =require('./Artist-api');
 
+
 const Playlist =  {
 
 
@@ -52,8 +53,7 @@ const Playlist =  {
                     tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.name,albumId:albumId,albumName:album.name});                
                 }
             }
-            
-            playlistJson.push({id:playlist._id,type:playlist.type,name:playlist.name,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images,tracks:tracks});
+            playlistJson.push({id:playlist._id,type:playlist.type,name:playlist.name,ownerId:playlist.ownerId,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images,tracks:tracks});
             return playlistJson;
         } 
             return 0;
@@ -193,7 +193,7 @@ const Playlist =  {
 
             let playlist=await this.getPlaylist(playlistID);
             if(!playlist) return 0;
-            console.log(playlist);
+           // console.log(playlist);
             let len=playlist.snapshot.length;
             let tracks=[];
             if(len){
@@ -205,7 +205,7 @@ const Playlist =  {
                 tracks.push(tracksIds[i]);
             }
             let uniquetracks=await this.removeDups(tracks);
-            console.log(uniquetracks);
+            //console.log(uniquetracks);
             playlist.snapshot.push({
                 hasTracks:uniquetracks,
                 action:'Add Tracks'
@@ -278,7 +278,7 @@ const Playlist =  {
               let playlist=await playlistDocument.findById(playlistID);
               if(!playlist) return false;
               playlist.collaborative=!playlist.collaborative;
-              console.log(user);
+              //console.log(user);
               if(playlist.collaborative){
                   playlist.isPublic=false;
                   for (var i=0;i<user.createPlaylist.length;i++){
@@ -367,7 +367,7 @@ const Playlist =  {
                            for(var j=0;j<tracks.length;j++){
                                if(tracksids[i]==tracks[j]._id){
                                    tracks.splice(j,1);
-                                   console.log(tracks);
+                                   //consle.log(tracks);
                                }
                            }
                        }

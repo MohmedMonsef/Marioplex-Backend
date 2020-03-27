@@ -373,16 +373,30 @@ const Player = {
          }
         const lastplaylistIndex = user.player.last_playlist_track_index < 0? 0:user.player.last_playlist_track_index;
         // get tracks that was next in playlist
-        for(let i=lastplaylistIndex;i<queue.tracksInQueue.length;i++){
+        for(let i=lastplaylistIndex+1;i<queue.tracksInQueue.length;i++){
             const track = await Track.getTrack(queue.tracksInQueue[i].trackId);
             
             if(!track) return 0;
                 const album4=await Album.getAlbumById(track.albumId);
                 if(i==queueIndex+1)
                     tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name,index:i,fristInSource:true});        
-                tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name,index:i});
+                else
+                    tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name,index:i});
            
          }
+         //if repeat should display all the queue
+          if(user.player.is_repeat){
+              console.log(user.player.is_repeat)
+            for(let i=queueIndex+1;i<lastplaylistIndex+1;i++){
+                const track = await Track.getTrack(queue.tracksInQueue[i].trackId); 
+                if(!track) return 0;
+                    const album4=await Album.getAlbumById(track.albumId);
+                    if(i==queueIndex+1)
+                        tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name,index:i,fristInSource:true});        
+                        else
+                        tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name,index:i});
+             } 
+       }
         return tracks;
 
     },
@@ -415,22 +429,20 @@ const Player = {
             user.queue.tracksInQueue[randomIndex].trackId=temp;
             await user.save();
         }
-        const {"next_track":nextTrack,"prev_track":prevTrack,"last_playlist_track_index":current_index} = this.getPrevAndNext(user.queue.tracksInQueue,track_last_playlist,user);            // update user player info 
-        user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
-        user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
-        user.player["current_track"] = track_last_playlist;
-        user.player["last_playlist_track_index"] = current_index;
-        await user.save();
-        return 1
+        return await this.setNextPrevCurrent(user,track_last_playlist);
+        
     },
     // to make queue same playlist order
     fillByplaylist:async function(user){
+        const track_last_playlist=user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
         if(user.player.isPlaylist) {
             const playlist = await Playlist.getPlaylist(user.player.current_source);
             if(!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{hasTracks:[]}];
             if(playlist.snapshot[playlist.snapshot.length-1].hasTracks.length==0){
                 await user.save();
-                return 1;
+                
+                return await this.setNextPrevCurrent(user,track_last_playlist);
+            
             }
             let i=user.queue.queuIndex+1;
             for(let j=0;j< playlist.snapshot[playlist.snapshot.length-1].hasTracks.length;j++){
@@ -438,14 +450,15 @@ const Player = {
                 i++;
             }
             await user.save();
-            return 1;
+            return await this.setNextPrevCurrent(user,track_last_playlist);
+            
        }
        else{
         const album = await Album.getAlbumById(user.player.current_source);
         if(!album) return 0;
         if(!album.hasTracks){
             await user.save();
-            return 1;
+            return await this.setNextPrevCurrent(user,track_last_playlist);
         }
         let i=0;
         for(let track of album.hasTracks){
@@ -453,7 +466,8 @@ const Player = {
             i++;
         }
         await user.save();
-        return 1;
+            
+        return await this.setNextPrevCurrent(user,track_last_playlist);
        }
     },
     //shuffle
@@ -465,8 +479,36 @@ const Player = {
                 return await this.fillByplaylist(user);
        }
        return 0
-    }
+    },
 
+    setNextPrevCurrent:async function(user,lastTrack){
+       
+        for (let i=user.queue.queuIndex+1;i<user.queue.tracksInQueue.length;i++){
+            
+            if (user.queue.tracksInQueue[i].trackId==lastTrack){
+                user.player["last_playlist_track_index"]= i ;
+                await user.save(); 
+                user.player["prev_track"]=i-1>user.queue.queuIndex?user.queue.tracksInQueue[i-1].trackId:user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                if(user.queue.queuIndex>-1)
+                user.player["next_track"]=user.queue.tracksInQueue[user.queue.queuIndex].trackId;
+                else
+                user.player["next_track"]=i+1>user.queue.tracksInQueue.length-1?user.queue.tracksInQueue[0].trackId:user.queue.tracksInQueue[i+1].trackId;
+                await user.save(); 
+                return 1;
+            }           
+        }
+    },
+    repreatPlaylist:async function(user,state){
+        if (state=='true'||state==true) 
+           user.player["is_repeat"]=true;
+        else if(state=='false'|| state==false)
+                user.player["is_repeat"]=false;
+            else
+            return 0;
+        await user.save();
+        return 1;
+
+    }
 
 }
 

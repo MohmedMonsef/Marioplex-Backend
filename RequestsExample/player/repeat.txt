@@ -1,0 +1,6 @@
+error:
+status-->400   & mes: error:"couldn't repeat playlist"
+---------------------------------------------------------
+correct:
+status:200    & mes: success:"is_repeat playlist: false"
+status:200    & mes: success:"is_repeat playlist: true" 

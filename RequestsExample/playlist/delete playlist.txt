@@ -1,0 +1,4 @@
+if error:
+status--->400   &  mes-->"error": "can not delete !"
+correct
+status--->200   &  mes-->"success":"Delete successfully"

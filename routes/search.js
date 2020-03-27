@@ -10,18 +10,18 @@ router.get('/search',checkAuth,async (req,res)=>{
     const name = req.query.name;
     const type = req.query.type;
     
-    if(type=="top results"){
+    if(type=="top"){
         const artist = await search.getTopResults(name);
         if(artist==0) res.sendStatus(404); //not found
         else res.send(artist); 
     }
     else if(type=="track"){
         const artist = await search.getTrack(name);
-        if(artist.length==0) res.sendStatus(404); //not found
+        if(artist=={}) res.sendStatus(404); //not found
         else res.send(artist); 
     }
     else if(type=="album"){
-        const albums = await search.getAlbum(name);
+        const albums = await search.getAlbum(name,req.query.groups,req.query.country,req.query.limit,req.query.offset);
         if(albums.length==0) res.sendStatus(404); //not found
         else res.send(albums);  
 

@@ -5,9 +5,10 @@ var FuzzySearch = require('fuzzy-search');
 // initialize db 
 const artistApi=require('./Artist-api');
 const connection=require('../DBconnection/connection');
-const User=require('./user-api');
+const user_api=require('./user-api');
 const track=require('./track-api');
 const artist_api=require('./Artist-api');
+const album_api=require('./album-api');
 
 const Search =  {
     getUsers  : async function(){
@@ -34,6 +35,15 @@ const Search =  {
         
             
     },
+    getTop :async function(Name){
+        
+        const artist= await this.getArtistProfile(Name);
+        if(artist){
+            console.log(artist)
+            return artist[0]._id;
+        }
+        return 0;
+    },
     getPlaylists : async function(){
         let playlist = await playlistDocument.find( {isPublic:true} ,(err,playlist)=>{
             if(err) return 0;
@@ -49,48 +59,127 @@ const Search =  {
         return track;
     },
     
-    //problem
-    getAlbum  : async function(albumName){
-        
-            const album= await this.getAlbums();
-            if(album.length==0) return album;
-            return Fuzzysearch(albumName,'name',album);   
+    
+    getAlbum  : async function(albumName,groups,country,limit,offset){
+            
+            var album;
+            let artist=await this.getTop(albumName)
+            if(artist){
+                console.log(artist)
+                album=await artistApi.getAlbums(artist,groups,country,limit,offset);
+            }
+            else{
+                console.log(artist)
+                album= await this.getAlbums();
+                if(album.length==0) return album;
+                album= Fuzzysearch(albumName,'name',album);  
+            
+            }
+            Album={}
+            for(let i=0;i<album.length;i++){
+                let albums=await album_api.getAlbumArtist(album[i]._id);
+                if(albums){
+                    album={}
+                    album["_id"]=albums.Album._id
+                    album["name"]=albums.Album.name
+                    album["images"]=albums.Album.images
+                    album["type"]=albums.Album.type
+                    artist={}
+                    artist["_id"]=albums.Artist._id
+                    artist["name"]=albums.Artist.Name
+                    artist["images"]=albums.Artist.images
+                    artist["info"]=albums.Artist.info
+                    artist["type"]=albums.Artist.type
+                    artist["genre"]=albums.Artist.genre
+                    Album[i]={album,artist}
+                    
+                }
+            }
+            return Album;
     
     
     },
     getTrack : async function(Name){
         
+            var Track;
+            let artist=await this.getTop(Name)
+            if(artist){
+                Track=await artistApi.getTracks(artist);
+            }
+            else{
+                const track= await this.getTracks();
+                if(track==0)return track;
+                Track= Fuzzysearch(Name,'name',track); 
             
-            const track= await this.getTracks();
-            if(track==0)return track;
-            return Fuzzysearch(Name,'name',track); 
-        
-       
-    
+            }
+            trackInfo={}
+            for( let i=0;i<Track.length;i++){
+                let artist=await artist_api.getArtist(Track[i].artistId)
+                Artist={}
+                if(artist){
+                    
+                    Artist["_id"]=artist._id
+                    Artist["name"]=artist.Name
+                    Artist["images"]=artist.images
+                    Artist["info"]=artist.info
+                    Artist["type"]=artist.type
+                }
+                Album={}
+                let album=await album_api.getAlbumById(Track[i].albumId)
+                if(album){
+                    
+                    Album["_id"]=album._id
+                    Album["name"]=album.name
+                    Album["images"]=album.images
+                    Album["type"]=album.type
+                }
+                tracks={}
+                tracks["_id"]=Track[i]._id
+                tracks["name"]=Track[i].name
+                tracks["type"]=Track[i].type
+                tracks["images"]=Track[i].images
+                trackInfo[i]={track:tracks,artist:Artist,album:Album}
+            
+        }
+        return trackInfo;
+            
+
     },
     getTopResults :async function(Name){
         
-        const artist= await this.getArtistProfile(Name);
-        if(artist.length==0){
-            let tracks = this.getTrack(Name);
-            if(tracks.length==0) return [];
-            else return tracks;
+        const artist= await this.getTop(Name);
+        if(artist){
+            return await this.getTracks(Name)[0]
         }
         
-        return artist[0]
+        return await this.getArtistProfile(Name)[0];
     },
     getArtistProfile  : async function(name){
         
-        Artist=[]
+        let ArtistInfo={};
         let User = await this.getUserByname(name);
-        if(User.length==0)return Artist;
+        if(User.length==0)return ArtistInfo;
         else{
             for( let i=0;i<User.length;i++){
                 if(User[i].userType=="Artist"){
-                    Artist.push(User[i]);
+
+                   let artist= await this.getArtist(User[i]._id);
+                   console.log(artist);
+                   if(!artist){
+                       Artist={}
+                       Artist["_id"]=artist[0]._id
+                       Artist["name"]=artist[0].Name
+                       Artist["images"]=artist[0].images
+                       Artist["info"]=artist[0].info
+                       Artist["type"]=artist[0].type
+                       Artist["genre"]=artist[0].genre
+                       ArtistInfo[i]=Artist
+
+                   }
+
                 }
             }
-            return Artist;
+            return ArtistInfo;
         
         }
     
@@ -102,8 +191,10 @@ const Search =  {
         }).catch((err)=> 0);
         return artist;
     },
+    
     getUserProfile  : async function(name){
         
+        UserInfo={}
         let User = await this.getUserByname(name);
         if(User.length==0)return User;
         else{
@@ -111,16 +202,45 @@ const Search =  {
                 if(User[i].userType=="Artist"){
                     User.splice(i,1);
                 }
+                else{
+                    user={}
+                    user["_id"]=User[i]._id
+                    user["displayName"]=User[i].displayName
+                    user["images"]=User[i].images
+                    user["type"]=User[i].type
+                    UserInfo[i]=user
+                }
             }
-            return User;
+            
+            return UserInfo;
         }
     
     },
     getPlaylist  : async function(Name){
 
-        const playlist= await this.getPlaylists();
-        if(playlist.length==0)return playlist;
-        return Fuzzysearch(Name,'name',playlist);
+        let playlist= await this.getPlaylists();
+        if(playlist.length==0) return playlist;
+        playlist= Fuzzysearch(Name,'name',playlist);
+        playlistInfo={}
+        for( let i=0;i<playlist.length;i++){
+                let User=await user_api.getUserById(playlist[i].ownerId)
+                if(User){
+                    user={}
+                    user["_id"]=User._id
+                    user["displayName"]=User.displayName
+                    user["images"]=User.images
+                    user["type"]=User.type
+                }
+                Playlist={}
+                Playlist["_id"]=playlist[i]._id
+                Playlist["name"]=playlist[i].name
+                Playlist["type"]=playlist[i].type
+                Playlist["images"]=playlist[i].images
+                playlistInfo[i]={playlist:Playlist,owner:user}
+            
+        }
+        return playlistInfo;
+    
 
     }
 }

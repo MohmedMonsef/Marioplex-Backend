@@ -19,9 +19,8 @@ router.post('/sign_up',(req,res)=>{
         password: joi.string().required(),
         gender: joi.string().required() ,
         country: joi.string().required() ,
-        birthDate: joi.string().required() ,
-        displayName:joi.string().required()
-
+        birthday: joi.string().required() ,
+        username:joi.string().required()
     });
 
     joi.validate(req.body,shcema,(err,result)=>{
@@ -36,7 +35,7 @@ router.post('/sign_up',(req,res)=>{
             spotifySchema.user.findOne({email:req.body.email}).exec().then(user=>{
                 if(user){
                     
-                    res.status(409).json({
+                    res.status(403).json({
                         message:'Mail exists'
                     });
 
@@ -59,16 +58,29 @@ router.post('/sign_up',(req,res)=>{
                                 country :req.body.country ,
                                 birthDate:req.body.birthday ,
                                 product:"free" ,
-                                userType:"user",
-                                tracksInQueue:[]
+                                userType:"user" ,
+                                type:"user" ,
+                                images:[] ,
+                                follow:[] ,
+                                followedBy:[] ,
+                                like:[] ,
+                                createPlaylist:[] ,
+                                saveAlbum:[] ,
+                                playHistory:[]                        
                             });
                             
                             user
                                 .save()
                                 .then(result =>{
                 
+                                    var token = jwt.sign(
+                                                        { _id: user._id,product: user.product},
+                                                        jwtSeret.secret, 
+                                                        {expiresIn: '24h'}
+                                                );
+                                      
                                     res.status(201).json({
-                                        message:'User created'
+                                        token
                                     });
                                     
                                 })
@@ -77,18 +89,8 @@ router.post('/sign_up',(req,res)=>{
                                         error:err
                                     });
                                 });
-                                const payload = {
-                                    id: user.id,
-                                    
-                                  };
-                                  var token = jwt.sign({ _id: user._id,product: user.product}, jwtSeret.secret, {
-                                    expiresIn: '24h' // 1 day
-                                  });
-                                 
-                                  // return the information including token as JSON
-                                  //res.json({success: true, token: 'JWT ' + token});
-                                  res.send(token);
-                           // res.redirect('/login');
+                              
+                                  
 
                         }
 
@@ -98,55 +100,11 @@ router.post('/sign_up',(req,res)=>{
 
 
             });
-           
-
-
-            
+        
         }
-
-
-
 
     });
 
-
 });
-
-router.get('/users/:id',auth.auth,(req,res,next)=>{
-    spotifySchema.user.find({_id:req.params.id}).exec().then(user=>{
-        if(user){
-
-            res.status(200);
-            res.send(user);
-            
-        }
-        else {
-            res.status(404).json({
-                message:'user not found'
-            });
-            
-        }        
-}).catch(next);
-})
-
-router.get('/:id',(req,res,next)=>{
-    spotifySchema.user.find({_id:req.params.id}).exec().then(user=>{
-        if(user){
-
-            res.status(200);
-            res.send(user);
-            
-        }
-        else {
-            res.status(403).json({
-                message:'user not found'
-            });
-            
-        }        
-}).catch(next);
-})
-
-
-
 
 module.exports = router;

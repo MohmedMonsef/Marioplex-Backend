@@ -4,16 +4,6 @@ const Album =require('../public-api/album-api');
 const User = require('../public-api/user-api');
 const {auth:checkAuth} = require('../middlewares/isMe');
 
-// get album
-router.get('/albums/:album_id',checkAuth,async (req,res)=>{
-    
-    const albumID = req.params.album_id;
-   
-    const album = await Album.getAlbumById(albumID);
-    if(!album) res.sendStatus(404); //not found
-    else res.send(album); 
-
-})
 router.delete('/me/albums',checkAuth,async (req,res)=>{
     
     const albumID = req.body.ids;
@@ -50,6 +40,18 @@ router.put('/me/Albums',checkAuth,async (req,res)=>{
     }
     
 })
+
+// get album
+router.get('/albums/:album_id',checkAuth,async (req,res)=>{
+    
+    const albumID = req.params.album_id;
+   
+    const album = await Album.getAlbumArtist(albumID);
+    if(!album) res.sendStatus(404); //not found
+    else res.send(album); 
+
+})
+
 router.get('/albums',checkAuth,async (req,res)=>{
     
     var albumIDs = req.body.ids;
@@ -61,6 +63,7 @@ router.get('/albums',checkAuth,async (req,res)=>{
     else res.status(200).send(album);
 
 })
+
 router.get('/albums/:id/tracks',checkAuth,async (req,res)=>{
     
     const albumID = req.params.id;

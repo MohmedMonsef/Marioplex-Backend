@@ -5,7 +5,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 const connection=require('../DBconnection/connection');
 const User=require('./user-api');
 const track=require('./track-api');
-
+const artist=require('./artist-api');
  const Album =  {
     
     addTrack  : async function(AlbumId,Track){     
@@ -14,7 +14,7 @@ const track=require('./track-api');
             trackId:Track._id
         });
        await album.save();
-},
+    },
     getAlbumById  : async function(albumID){
         
             // connect to db and find album with the same id then return it as json file
@@ -27,6 +27,28 @@ const track=require('./track-api');
             
 
     },
+    getAlbumArtist : async function(albumID){
+        
+        // connect to db and find album with the same id then return it as json file
+        // if found return album else return 0
+        let album = await this.getAlbumById(albumID);
+        console.log(album);
+        if(album){
+            let Artist= await artist.getArtist(album.artistId);
+            if(Artist){
+                return {Album:album,Artist:Artist};
+            }
+            else {
+                return {Album:album}
+            }
+        }
+        else{
+            return 0;
+        }
+            
+        
+
+    },
     findIndexOfTrackInAlbum: async function(trackId,album) {
         for(let i=0;i <album.hasTracks.length;i++ ){
             if(album.hasTracks[i].trackId==trackId)   return i;     
@@ -37,6 +59,7 @@ const track=require('./track-api');
         
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
+        
         var Album=[]
         if(albumIds==undefined)return 0;
         for(var i=0;i <albumIds.length;i++){
@@ -46,14 +69,23 @@ const track=require('./track-api');
             }
         }
         if(Album.length>0){
-        return Album;
+            AlbumWithArtist=[]
+            for(let i=0;i<Album.length;i++){
+               let Artist= await artist.getArtist(Album[i].artistId);
+               if(Artist){
+                AlbumWithArtist.push({Album:Album[i],Artist:Artist});
+               }
+
+            }
+            return AlbumWithArtist;
+        
         }
         else{
             return 0;
         }
         
 
-},
+    },
     getTracksAlbum  : async function(albumID){
         
         // connect to db and find album with the same id then return it as json file

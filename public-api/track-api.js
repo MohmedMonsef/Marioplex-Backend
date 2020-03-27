@@ -122,13 +122,30 @@ const connection=require('../DBconnection/connection');
     },
       // create Track for an artist
     // params : artist-id
-    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets,artistID){
+    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets,artistID,albumID){
         let track=new trackDocument({
             externalId:url ,
             availableMarkets:AvailableMarkets ,
             trackNumber:TrackNumber ,
             name:Name,
-            artistId:artistID
+            artistId:artistID,
+            albumId:albumID,
+            discNumber:1 ,
+            explicit:false ,
+            type:"Track" ,
+            acousticness:10 ,
+            danceability:23 ,
+            energy:100 ,
+            instrumentalness:4 ,
+            key:90 ,
+            liveness:25 ,
+            loudness:70 ,
+            mode:56 ,
+            speechiness:67 ,
+            tempo:76 ,
+            timeSignature:'2-1-2000' ,
+            valence:70
+
         }); 
        await track.save();
        console.log(track);

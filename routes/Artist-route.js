@@ -60,7 +60,6 @@ router.get('/Artists/:artist_id/toptracks',[checkAuth],async (req,res)=>{
 });
 
 router.put('/Artists/:artist_id/Albums',[checkAuth,checkType,checkContent],async (req,res)=>{
-    const Album = req.body.Album;
     const artistID=req.params.artist_id;
     const artistAlbum = await Artist.addAlbum(artistID,req.body.Name,req.body.Label,req.body.Availablemarkets,req.body.Albumtype,req.body.ReleaseDate,req.body.Genre);
     if(!artistAlbum) return res.status(404); //not found
@@ -72,7 +71,7 @@ router.put('/Artists/:artist_id/Albums/:album_id/tracks',[checkAuth,checkType,ch
 // create track its external id=req.file.id
 //add rest info to the track
 console.log(req.file);
-let track=await Track.createTrack(req.file.id,req.body.name,req.body.TrackNum,req.body.availableMarkets,req.params.artist_id);
+let track=await Track.createTrack(req.file.id,req.body.name,req.body.TrackNum,req.body.availableMarkets,req.params.artist_id,req.params.album_id);
 await Album.addTrack(req.params.album_id,track);
 await Artist.addTrack(req.params.artist_id,track._id);
 return res.status(200).send(track);

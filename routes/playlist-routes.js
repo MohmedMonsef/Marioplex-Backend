@@ -8,6 +8,7 @@ const {content:checkContent} = require('../middlewares/content');
 
 //get playlist
 router.get('/playlist/:playlist_id',checkAuth,async (req,res)=>{
+
     const playlistId = req.params.playlist_id;
     const playlist = await User.getPlaylist(playlistId,req.query.snapshot,req.user._id);
     if(!playlist) res.status(400).send("Not found !"); //not found
@@ -18,24 +19,29 @@ router.get('/playlist/:playlist_id',checkAuth,async (req,res)=>{
 router.post('/users/playlists',checkAuth,async (req,res)=>{
     
     const userID = req.user._id; // get it from desierialize auth
-    
+ 
     const { errors, isValid } = validatePlaylistInput(req.body);
     // Check validation
     if (!isValid) {
       return res.status(400).json(errors);
     }
+    let details=req.body;
+    console.log(details);
+    if(details.name==undefined){return res.status(400).json("Invalid Input");}
     // to create playlist &add it to user
-    const createPlaylist= await  User.createdPlaylist(userID,req.body.name);
+    const createPlaylist= await  User.createdPlaylist(userID,details.name,details.Description);
     if(createPlaylist) res.send( createPlaylist);
     else  res.send({error:"can not create"}); // if can not create for unexpected reason
+
 })
 
 router.put('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
     const playlistID = req.params.playlist_id;
+
      const updatedUser= await  User.followPlaylist(userID,playlistID,req.body.isPrivate);
      if (updatedUser) res.send({success:" followed this playlist successfully"});
-     else res.status(400).send('this playlist is followed before');
+     else res.status(400).send('this playlist cant be followed');
   
 })
 
@@ -54,10 +60,10 @@ router.delete('/me/delete/:playlist_id',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth
     const playlistId = req.params.playlist_id;
     const updatedUser= await User.deletePlaylist(userID,playlistId);
+
     if(!updatedUser) res.status(400).send({error:'can not delete !'}); // if user already liked the song
     else res.status(200).send({success:'Delete successfully'});
 
-    
 
 })
 //add track to a playlist
@@ -116,7 +122,7 @@ router.put('/playlists/:playlist_id/public',[checkAuth,checkContent],async (req,
     let authorizedFollow=await Playlist.checkFollowPlaylistByUser(user,req.params.playlist_id);
     if(!authorized&&!authorizedFollow){return res.status(403).send("FORBIDDEN");}
     let done=await Playlist.changePublic(user,req.params.playlist_id);
-    if(!done) return res.status(404).send("NOT FOUND");
+    if(!done) return res.status(404).send("Cant be PUblic");
     return res.status(200).send("CHANGED");
 })
 
@@ -132,7 +138,7 @@ router.delete('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
     let authorized=await User.checkAuthorizedPlaylist(req.user._id,req.params.playlist_id);
     if(!authorized){return res.status(403).send("FORBIDDEN");}
     let tracksids=[];
-     tracksids=req.query.tracks.split(',');
+     tracksids=(req.query.tracks)?req.query.tracks.split(','):[];
     let result=await Playlist.removePlaylistTracks(req.params.playlist_id,tracksids,req.query.snapshot);
     if(!result) return res.status(404).send("NO Tracks Delelted");
     return res.status(200).send(result);

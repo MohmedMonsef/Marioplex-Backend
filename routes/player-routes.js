@@ -99,19 +99,27 @@ router.get('/me/queue',checkAuth,async (req,res)=>{
   if(!tracks) res.status(400).json({error:'couldnt get queue'});
   else res.status(200).json(tracks);
 })
+//to repeat
+router.put('/player/repeat',checkAuth,async (req,res)=>{
+  const userID = req.user._id;
+  const repeat = User.repreatPlaylist(userID,req.query.state);
+  if(!repeat) res.status(400).json({error:"couldn't repeat playlist"});
+  else res.status(200).json({success:"is_repeat playlist: "+req.query.state})
+})
+
 // resume player 
 router.put('/me/player/play',checkAuth,async (req,res)=>{
   const userID = req.user._id;
   const player = User.resumePlaying(userID);
   if(!player) res.status(404).json({error:"couldn't resume playing"});
-  else res.status(200).json({success:"resumed playing"})
+  else res.status(204).json({success:"resumed playing"})
 })
 // pause player 
 router.put('/me/player/pause',checkAuth,async (req,res)=>{
   const userID = req.user._id;
   const player = User.pausePlaying(userID);
   if(!player) res.status(404).json({error:"couldn't resume playing"});
-  else res.status(200).json({success:"resumed playing"})
+  else res.status(204).json({success:"paused playing"})
 })
 //toggle shuffle
 router.put('/me/player/shuffle',checkAuth,async (req,res)=>{

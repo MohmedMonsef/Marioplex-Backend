@@ -41,6 +41,7 @@ const Playlist=new Schema({
   ownerId:mongoose.Schema.Types.ObjectId ,
   type:String ,
   collaborative:Boolean ,
+  Description:String,
   name:String ,
   isPublic:Boolean ,
   images:[Image] ,

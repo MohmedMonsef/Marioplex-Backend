@@ -61,6 +61,7 @@ const User =  {
             return User;
         });
         return User;
+
     },
 
     likeTrack: async function(userID,trackID){
@@ -137,6 +138,7 @@ const User =  {
          
     
 
+
     followPlaylist: async function(userID,playlistID,isprivate){
         const user = await this.getUserById(userID);
         if(!user){ return 0; }
@@ -158,22 +160,28 @@ const User =  {
             return isDelete;
           
     },
+
     getPlaylist:async function (playlistId,snapshot,userId){
         const user = await this.getUserById(userId);
-        return await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
-
+        const playlist = await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
+        const  owner = await this.getUserById(playlist[0].ownerId);
+        playlist.push({ownerName:owner?owner.displayName:undefined});
+        return playlist;
+    
     },
-    createdPlaylist:async  function (userID,playlistName){
+
+    createdPlaylist:async  function (userID,playlistName,Description){
             const user = await this.getUserById(userID);
             // create new playlist
-            const createdPlaylist = await Playlist.createPlaylist(playlistName);
+            const createdPlaylist = await Playlist.createPlaylist(userID,playlistName,Description);
             //add to user 
             if(user.createPlaylist){
                 user.createPlaylist.push({
                     playListId: createdPlaylist._id,
                     addedAt:  Date.now() ,
-                    isLocal : 'false' 
+                    isPrivate : false  
                 });
+
             }
             else{
                 user.createPlaylist = [];
@@ -266,11 +274,15 @@ const User =  {
         const user = await this.getUserById(userID);
         
         const queu = await Player.createQueue(user,isPlaylist,sourceId,trackID);
-        console.log(queu);
+        //console.log(queu);
         if(!queu) return 0;
         const player = await Player.setPlayerInstance(user,isPlaylist,sourceId,trackID);
         if(!player) return 0;
         return 1;
+    },
+    repreatPlaylist:async function(userID,state){
+        const user = await this.getUserById(userID);
+        return await Player.repreatPlaylist(user,state);
     },
     getQueue: async function(userId){
         const user = await this.getUserById(userId);

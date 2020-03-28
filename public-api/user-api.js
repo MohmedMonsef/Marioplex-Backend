@@ -24,27 +24,27 @@ const User =  {
     update : async function(userID,Display_Name,Password,Email,Country){
         const user = await this.getUserById(userID);
         if(user){
-            spotifySchema.user.findOne({email:req.body.email}).exec().then(User=>{
-                
-                    if(Display_Name!=undefined){
+            userDocument.findOne({email:Email}).exec().then(User=>{
+                    
+                    if(Display_Name != undefined ){
                         user.displayName=Display_Name;
-        
                     }
-                    if(Password!=undefined){
+                    if(Password != undefined ){
                         bcrypt.hash(Password,10,(err,hash)=>{
                             if(!err) {
                                 user.password=hash;
                             }
                         })
                     }
-                    if(Email!=undefined && !User){
+                    if(Email != undefined && !User){
                         user.email=Email;
                     }
-                    if(Country!=undefined){
+                    if(Country != undefined){
                         user.country=Country;
                     }
+                    user.save();
                     return 1;
-                
+                    
             })
         }
         else return 0;
@@ -162,13 +162,12 @@ const User =  {
     },
 
     getPlaylist:async function (playlistId,snapshot,userId){
-        const user = await this.getUserById(userId);
-        const playlist = await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
+        const user = await this.getUserById(userId);   
+         const playlist = await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
         const  owner = await this.getUserById(playlist[0].ownerId);
         playlist.push({ownerName:owner?owner.displayName:undefined});
         return playlist;
-    
-    },
+        },
 
     createdPlaylist:async  function (userID,playlistName,Description){
             const user = await this.getUserById(userID);

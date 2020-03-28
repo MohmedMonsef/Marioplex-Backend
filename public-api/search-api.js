@@ -143,25 +143,11 @@ function Fuzzysearch(name,field,schema){
         results = search(subName[i],field,schema);
         Results=Results.concat(results);
     }
-    // if(Results.length==0){
-    //     halfSubName=[]
-    //     for( let i=0;i<subName.length;i++){
-    //     len=subName.length;
-    //     halfSubName.push(subName[i].substring(0, len / 2));
-    //     halfSubName.push(subName[i].substring(len / 2));
-    //     }
-    //     for( let i=0;i<halfSubName.length;i++){
-    //         results = search(halfSubName[i],field,schema);
-    //         Results=Results.concat(results);
-    //     }
-    // }
-    
+   
     return removeDupliactes(results);
 }
 
 const removeDupliactes = (values) => {
-
-
     var Unique = values.filter(function(x) {
         return x._id ;
       });

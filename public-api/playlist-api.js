@@ -9,6 +9,7 @@ const Track =require('./track-api');
 const Album =require('./album-api');
 const Artist =require('./Artist-api');
 
+
 const Playlist =  {
 
 
@@ -52,8 +53,7 @@ const Playlist =  {
                     tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.name,albumId:albumId,albumName:album.name});                
                 }
             }
-            
-            playlistJson.push({id:playlist._id,type:playlist.type,name:playlist.name,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images,tracks:tracks});
+            playlistJson.push({id:playlist._id,type:playlist.type,name:playlist.name,ownerId:playlist.ownerId,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images,tracks:tracks});
             return playlistJson;
         } 
             return 0;
@@ -87,6 +87,63 @@ const Playlist =  {
         snapshot:[]
     })
 
+    await Playlist.save();
+    const album1=new albumDocument({
+        name:"album1"
+    }) 
+    await album1.save();
+    const album2=new albumDocument({
+        name:"album2"
+    })
+    await album2.save();
+    const album3=new albumDocument({
+        name:"album3"
+    }) 
+    await album3.save();
+    const album4=new albumDocument({
+        name:"album4"
+    }) 
+    await album4.save();
+    const artist1=new artistDocument({
+        name:"artist1"
+    }) 
+    await artist1.save();
+    const artist2=new artistDocument({
+        name:"artist4"
+    }) 
+    await artist2.save();
+    const track1=new trackDocument({
+        name:"track1",
+        albumId:album1._id,
+        artistId:artist1._id
+    })
+    await track1.save();
+    const track2=new trackDocument({
+        name:"track2",
+        albumId:album2._id,
+        artistId:artist1._id
+    
+    })
+    await track2.save();
+    const track3=new trackDocument({
+        name:"track3",
+        albumId:album3._id,
+        artistId:artist1._id
+    
+    })
+    await track3.save();
+    const track4=new trackDocument({
+        name:"track4",
+        albumId:album4._id,
+        artistId:artist2._id
+    
+    })
+    await track4.save();
+    Playlist.snapshot.push({hasTracks:[]})
+    Playlist.snapshot[0].hasTracks.push(track2._id);
+    Playlist.snapshot[0].hasTracks.push(track4._id);
+    Playlist.snapshot[0].hasTracks.push(track3._id);
+    Playlist.snapshot[0].hasTracks.push(track1._id);
     await Playlist.save();
     return Playlist;
     },
@@ -193,7 +250,7 @@ const Playlist =  {
 
             let playlist=await this.getPlaylist(playlistID);
             if(!playlist) return 0;
-            console.log(playlist);
+           // console.log(playlist);
             let len=playlist.snapshot.length;
             let tracks=[];
             if(len){
@@ -205,7 +262,7 @@ const Playlist =  {
                 tracks.push(tracksIds[i]);
             }
             let uniquetracks=await this.removeDups(tracks);
-            console.log(uniquetracks);
+            //console.log(uniquetracks);
             playlist.snapshot.push({
                 hasTracks:uniquetracks,
                 action:'Add Tracks'
@@ -278,7 +335,7 @@ const Playlist =  {
               let playlist=await playlistDocument.findById(playlistID);
               if(!playlist) return false;
               playlist.collaborative=!playlist.collaborative;
-              console.log(user);
+              //console.log(user);
               if(playlist.collaborative){
                   playlist.isPublic=false;
                   for (var i=0;i<user.createPlaylist.length;i++){
@@ -367,7 +424,7 @@ const Playlist =  {
                            for(var j=0;j<tracks.length;j++){
                                if(tracksids[i]==tracks[j]._id){
                                    tracks.splice(j,1);
-                                   console.log(tracks);
+                                   //consle.log(tracks);
                                }
                            }
                        }

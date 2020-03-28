@@ -1,0 +1,22 @@
+error:
+status-->404       no mes
+------------------------------------
+correct:
+status--> 200       & mes: example
+{
+    "genre": [
+        "genre1",
+        "genre2",
+        "genre3"
+    ],
+    "_id": "5e7ef28326e2fa0da04f81ae",
+    "info": "i am a good artist ",
+    "popularity": 0,
+    "type": "Artist",
+    "Name": "artist1",
+    "userId": "5e7ee6e326e2fa0da04f81ab",
+    "images": [],
+    "addAlbums": [],
+    "addTracks": [],
+    "__v": 0
+}

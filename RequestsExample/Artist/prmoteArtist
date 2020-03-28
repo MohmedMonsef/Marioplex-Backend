@@ -1,0 +1,12 @@
+correct:
+status--> 200      & mes: Artist Succeded
+------------------------------------
+error:
+status--> 403      & mes: sorry you can't be an Artist
+if not enter genre 
+status--> 403      & mes:  should give me genre
+
+Note: if can promote successfully we will send email to user email
+
+if error in token will be
+status--> 400      & mes: Invalid Token

@@ -1,0 +1,7 @@
+correct :
+status-->200   & mes: Queue is created successfully
+
+-------------------------------------------------
+
+erorr:
+status-->400   & mes: can not create queue

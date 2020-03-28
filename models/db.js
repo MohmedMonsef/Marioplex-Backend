@@ -123,7 +123,12 @@ const User=new Schema({
     addedAt:Date ,
     type:String ,
   }],
+  followPlaylist:[{
+    playListId: mongoose.Schema.Types.ObjectId,
+    isPrivate:Boolean
+    //ref: 'Playlist'
 
+  }],
   queue:{
     lastInPlaylistIndex:Number,
     queuIndex:Number,  

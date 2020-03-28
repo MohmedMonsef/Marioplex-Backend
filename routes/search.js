@@ -42,6 +42,9 @@ router.get('/search',checkAuth,async (req,res)=>{
         if(profiles.length==0) res.send({}); //not found
         else res.send(profiles);    
     }
+    else{
+        res.send(404);
+    }
 })
 
 module.exports = router;

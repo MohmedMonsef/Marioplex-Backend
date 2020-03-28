@@ -16,7 +16,7 @@ const User =  {
         const user = await userDocument.findById(userId,(err,user)=>{
             if(err) return 0;
             return user;
-        });
+        }).catch((err)=>0);
         
         return user;
     },
@@ -54,8 +54,10 @@ const User =  {
         
     },
     me:async function(userID,reqID){
-        let user = await this.getUserById(userID);
-        if(!user){ return 0; }
+        const user = await this.getUserById(userID);
+        console.log(user)
+        if(!user){ console.log(user)
+            return 0; }
         playlistInfo={}
         var i;
         for(i=0;i<user.createPlaylist.length;i++){

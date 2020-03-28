@@ -121,5 +121,5 @@ router.put('/me/player/shuffle',checkAuth,async (req,res)=>{
   if(!isShuffle) res.status(400).json({error:'can not shuffle '});
   else res.status(200).json({success:'Do successfully'});
 })
- 
+
 module.exports = router;

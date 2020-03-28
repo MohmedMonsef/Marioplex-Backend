@@ -118,10 +118,9 @@ const User=new Schema({
   }],
 
   playHistory:[{
-    tracks: {trackId: mongoose.Schema.Types.ObjectId}	,
+    trackId: mongoose.Schema.Types.ObjectId	,
       //ref: 'Track'
-    addedAt:Date ,
-    type:String ,
+   
   }],
   followPlaylist:[{
     playListId: mongoose.Schema.Types.ObjectId,

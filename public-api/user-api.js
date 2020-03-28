@@ -16,7 +16,7 @@ const User =  {
         const user = await userDocument.findById(userId,(err,user)=>{
             if(err) return 0;
             return user;
-        });
+        }).catch((err)=>0);
         
         return user;
     },
@@ -53,6 +53,41 @@ const User =  {
         
         
     },
+    me:async function(userID,reqID){
+        const user = await this.getUserById(userID);
+        console.log(user)
+        if(!user){ console.log(user)
+            return 0; }
+        playlistInfo={}
+        var i;
+        for(i=0;i<user.createPlaylist.length;i++){
+            if((user.createPlaylist[i].isPrivate==true&&user._id==reqID)||user.createPlaylist[i].isPrivate==false){
+                let playlist=await Playlist.getPlaylist(user.createPlaylist[i].playListId)
+                if(playlist){
+                    Playlists={}
+                    Playlists["_id"]=playlist._id
+                    Playlists["name"]=playlist.name
+                    Playlists["type"]=playlist.type
+                    Playlists["images"]=playlist.images
+                    playlistInfo[i]={playlist:Playlists}
+                    console.log(playlistInfo)
+                }
+            }
+
+        }
+        users={}
+        users["_id"]=user._id
+        users["displayName"]=user.displayName
+        users["images"]=user.images
+        users["type"]=user.type
+        playlistInfo[i]={user:users};
+        console.log(playlistInfo)
+        return playlistInfo;
+            
+        
+        
+    },
+
     deleteAccount:async function(userID){
         const user = await this.getUserById(userID);
         if(!user){ return 0; }

@@ -1,0 +1,202 @@
+request 
+
+type=top
+one object artist or track
+
+/search?type=top&name=amr
+statusCode=200
+respnse
+{
+    "_id": "5e76461b7ee20d39b463988c",
+    "images": [],
+    "info": "this is Amr diab",
+    "type": "Artist",
+    "genre": [
+        "pop"
+    ]
+}
+
+/search?type=top&name=alby
+statusCode=200
+{
+    "track": {
+        "_id": "5e76473d2050ae2428e27096",
+        "name": "alby etmnah",
+        "type": "track"
+    },
+    "artist": {
+        "_id": "5e76461b7ee20d39b463988c",
+        "images": [],
+        "info": "this is Amr diab",
+        "type": "Artist"
+    },
+    "album": {
+        "_id": "5e764ab5eaa4533e7869d026",
+        "name": "diabiat",
+        "images": [],
+        "type": "album"
+    }
+}
+
+
+
+
+request 
+
+type=track
+objects of tracks
+
+/search?type=track&name=amr
+statusCode=200
+{
+    "0": {
+        "track": {
+            "_id": "5e76473d2050ae2428e27096",
+            "name": "alby etmnah",
+            "type": "track"
+        },
+        "artist": {
+            "_id": "5e76461b7ee20d39b463988c",
+            "images": [],
+            "info": "this is Amr diab",
+            "type": "Artist"
+        },
+        "album": {
+            "_id": "5e764ab5eaa4533e7869d026",
+            "name": "diabiat",
+            "images": [],
+            "type": "album"
+        }
+    },
+    "1": {
+        "track": {
+            "_id": "5e7647670174b61bf47e34b8",
+            "name": "alby w ana 3ayzo ally rohy feh",
+            "type": "track"
+        },
+        "artist": {
+            "_id": "5e76461b7ee20d39b463988c",
+            "images": [],
+            "info": "this is Amr diab",
+            "type": "Artist"
+        },
+        "album": {
+            "_id": "5e764ab5eaa4533e7869d026",
+            "name": "diabiat",
+            "images": [],
+            "type": "album"
+        }
+    }
+}
+
+
+request 
+
+type=playlist
+objects of playlists
+
+/search?type=playlist&name=diab
+statusCode=200
+{
+    "0": {
+        "playlist": {
+            "_id": "5e7648805401214fa04b803a",
+            "name": "Amr diab",
+            "type": "function String() { [native code] }",
+            "images": []
+        },
+        "owner": {
+            "_id": "5e695daf488e9342b8b18bcf",
+            "displayName": "dina",
+            "images": []
+        }
+    }
+}
+
+
+request 
+
+type=profile
+objects of profiles
+
+/search?type=profile&name=dina
+statusCode=200
+{
+    "0": {
+        "_id": "5e69339d636cee27cced5f3f",
+        "displayName": "dina",
+        "images": []
+    },
+    "1": {
+        "_id": "5e6934a81ab0591380beaad9",
+        "displayName": "dina",
+        "images": []
+    },
+    "2": {
+        "_id": "5e6935eb50239338dc223b39",
+        "displayName": "dina",
+        "images": []
+    },
+    "3": {
+        "_id": "5e693618b38a480dc4e59705",
+        "displayName": "dina",
+        "images": []
+    },
+    "4": {
+        "_id": "5e693632f586e80820082cbd",
+        "displayName": "dina",
+        "images": []
+    },
+    "5": {
+        "_id": "5e69373ccf98730bac01513d",
+        "displayName": "dina",
+        "images": []
+    }
+}
+
+request 
+
+type=artist
+objects of artists
+
+/search?type=artist&name=amr
+statusCode=200
+{
+    "0": {
+        "_id": "5e76461b7ee20d39b463988c",
+        "images": [],
+        "info": "this is Amr diab",
+        "type": "Artist",
+        "genre": [
+            "pop"
+        ]
+    }
+}
+
+
+request 
+
+type=album
+objects of albums
+
+/search?type=album&name=at
+statusCode=200
+{
+    "0": {
+        "album": {
+            "_id": "5e764ab5eaa4533e7869d026",
+            "name": "diabiat",
+            "images": [],
+            "type": "album"
+        },
+        "artist": {
+            "_id": "5e76461b7ee20d39b463988c",
+            "images": [],
+            "info": "this is Amr diab",
+            "type": "Artist",
+            "genre": [
+                "pop"
+            ]
+        }
+    }
+}

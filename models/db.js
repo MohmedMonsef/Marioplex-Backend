@@ -116,7 +116,7 @@ const User=new Schema({
   }],
 
   playHistory:[{
-    tracks: {trackId: mongoose.Schema.Types.ObjectId} ,
+    tracks: {trackId: mongoose.Schema.Types.ObjectId}	,
       //ref: 'Track'
     addedAt:Date ,
     type:String ,
@@ -153,7 +153,6 @@ const Artist=new Schema({
     popularity:Number,
     genre:[String] ,
     type:String ,
-    Name:String ,
     images:[Image] ,
     userId: mongoose.Schema.Types.ObjectId ,
       //ref: 'User'

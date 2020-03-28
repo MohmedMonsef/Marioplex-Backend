@@ -90,9 +90,14 @@ const connection=require('../DBconnection/connection');
     //user like track by track-id
     //params : user , track-id
      likeTrack : async function(user,trackID){
+
         // check if user already liked the track
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
+        const track = await this.getTrack(trackID);
+        if(!track) return 0;
+        if(!track.like) track.like = 0;
+        
         if(this.checkIfUserLikeTrack(user,trackID)){
             return 0;
         }
@@ -100,7 +105,11 @@ const connection=require('../DBconnection/connection');
             user.like.push({
                 trackId: trackID
             });
+        
             await user.save();
+            track.like += 1;
+            // save track
+            await track.save().catch();
             return 1;
             
         }
@@ -109,6 +118,11 @@ const connection=require('../DBconnection/connection');
             trackId: trackID
         });
         await user.save().catch();
+        
+        // add count to the like attribute of track
+        track.like += 1;
+        // save track
+        await track.save().catch();
         return 1;
 
     },
@@ -120,15 +134,25 @@ const connection=require('../DBconnection/connection');
         // if user.like.contains({track_id:track.track_id})
         // if  found then remove track.track_id from user likes and return the updated user
         // else return 0 as he didn't like the track
+        const track = await this.getTrack(trackID);
+        if(!track) return 0;
+        if(!track.like) track.like = 0;
+
         if(!this.checkIfUserLikeTrack(user,trackID)){
             return 0;
         }
         for(let i=0;i <user.like.length;i++ ){
             if(user.like[i].trackId == trackID){
                 user.like.splice(i,1);
+                break;
             }
         }
+        // decrement track likes by one
+        track.like -= 1;
+        
         await user.save().catch();
+        // save track
+        await track.save().catch();
         return 1;
     },
       // create Track for an artist
@@ -155,7 +179,8 @@ const connection=require('../DBconnection/connection');
             speechiness:67 ,
             tempo:76 ,
             timeSignature:Date.now() ,
-            valence:70
+            valence:70,
+            like:0
 
         }); 
        await track.save();

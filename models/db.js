@@ -32,7 +32,8 @@ const Track=new Schema({
   speechiness:Number ,
   tempo:Number ,
   timeSignature:Date ,
-  valence:Number
+  valence:Number,
+  like:Number
 
 
 });

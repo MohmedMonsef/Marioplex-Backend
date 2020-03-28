@@ -33,7 +33,7 @@ function checkAuthentication(req,res,next){
         res.redirect("/login");
     }
 }
-router.get('/facebook', passport.authenticate('facebook',{ scope:[ 'email'] }));
+router.get('/facebook', passport.authenticate('facebook',{ scope: ['user_birthday','user_gender','user_hometown','user_photos','user_friends','email']  }));
 
 router.get('/facebook/callback',passport.authenticate('facebook', {  successRedirect: '/auth/facebookJWT',failureRedirect: '/login' }));
 

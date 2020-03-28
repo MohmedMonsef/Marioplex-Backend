@@ -89,6 +89,7 @@ const User=new Schema({
   userType:String ,
   displayName:String ,
   product:String ,
+  isFacebook:Boolean,
   follow:[{
     id: mongoose.Schema.Types.ObjectId,
     //ref: 'User'

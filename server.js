@@ -15,9 +15,9 @@ const Track=require('./routes/Track-routes');
 const playlist=require('./routes/playlist-routes');
 const Artist=require('./routes/Artist-route');
 const Library=require('./routes/Library-routes');
-const userProfile=require('./routes/userprofile')
+const userProfile=require('./routes/user-profile-routes')
 const login=require('./routes/login');
-const signup=require('./routes/signup');
+const signup=require('./routes/signup-routes');
 const search=require('./routes/search')
 require('./config/passport');
 

@@ -24,28 +24,37 @@ const User =  {
     update : async function(userID,Display_Name,Password,Email,Country){
         const user = await this.getUserById(userID);
         if(user){
-            userDocument.findOne({email:Email}).exec().then(User=>{
-                    
-                    if(Display_Name != undefined ){
-                        user.displayName=Display_Name;
-                    }
-                    if(Password != undefined ){
-                        bcrypt.hash(Password,10,(err,hash)=>{
-                            if(!err) {
-                                user.password=hash;
-                            }
-                        })
-                    }
-                    if(Email != undefined && !User){
-                        user.email=Email;
-                    }
-                    if(Country != undefined){
-                        user.country=Country;
-                    }
-                    user.save();
-                    return 1;
-                    
-            })
+            if(user.isFacebook){
+                //if from facebok change country only
+               if(Country) user.country = Country;
+                console.log(user.country,Country);
+
+            }else{
+                // else update the
+                if(Display_Name != undefined ){
+                    user.displayName=Display_Name;
+                }
+                if(Password != undefined ){
+                    bcrypt.hash(Password,10,(err,hash)=>{
+                        if(!err) {
+                            user.password=hash;
+                        }
+                    })
+                }
+                if(Email != undefined){
+                    // check email is not used in the website
+                    const UserByEmail = await userDocument.findOne({email:Email});
+                    if(!UserByEmail) user.email=Email;
+                    else return 0;//email is found before
+                }
+                if(Country != undefined){
+                    user.country=Country;
+                }
+                
+            }
+            await user.save();
+            return 1;
+            
         }
         else return 0;
             
@@ -93,6 +102,8 @@ const User =  {
             if(err) return 0;
             return User;
         });
+        // delete user himseld from db
+        await userDocument.findByIdAndDelete(userID);
         return User;
 
     },

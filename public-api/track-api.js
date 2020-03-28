@@ -20,6 +20,17 @@ const connection=require('../DBconnection/connection');
             
 
     },
+    getFullTrack: async function(trackID){
+        const track = await this.getTrack(trackID);
+        if(!track) return 0; //not found
+        // get both album and artist of the track
+        const album = await albumDocument.findById(track.albumId);
+        if(!album) return 0; //not found
+        const artist = await artistDocument.findById(track.artistId);
+        if(!artist) return 0; 
+       
+        return {track:track,album:{name:album.name,_id:album._id,artist:{name:artist.name,_id:artist._id}}}
+    },
     // get several tracks
     // params : array of track ids
     getTracks : async function(tracksIDs){
@@ -143,7 +154,7 @@ const connection=require('../DBconnection/connection');
             mode:56 ,
             speechiness:67 ,
             tempo:76 ,
-            timeSignature:'2-1-2000' ,
+            timeSignature:Date.now() ,
             valence:70
 
         }); 

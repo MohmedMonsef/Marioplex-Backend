@@ -16,11 +16,11 @@ module.exports = (passport) => {
             clientID: FACEBOOK_APP_ID,
             clientSecret: FACEBOOK_APP_SECRET,
             callbackURL: "/auth/facebook/callback",
-            profileFields: ['id', 'emails', 'name'] 
+            profileFields: ['id', 'emails', 'name','gender','photos','birthday','hometown','displayName']
+           
         },
         async function(accessToken, refreshToken, profile, done) {
-              // TO DO 
-              // CHECK IF USER IN DB IF TRUE THEN LOG HIM IN ELSE CREATE A NEW ACCOUNT FOR USER
+              
                if(profile){
                    //console.log(profile);
                     const user = await userDocument.findOne({ email:profile.emails[0].value },(err,user)=>{
@@ -35,17 +35,29 @@ module.exports = (passport) => {
                         // create user
                         const newUser = await new userDocument({
                             email:profile.emails[0].value,
-                            displayName:profile.username,
+                            displayName:profile.displayName,
                             gender:profile.gender,
-
+                            isFacebook:true,
+                            product:"free" ,
+                            userType:"user" ,
+                            type:"user" ,
+                            images:profile.photos ,
+                            birthDate:profile._json.birthday ,
+                            follow:[] ,
+                            followedBy:[] ,
+                            like:[] ,
+                            createPlaylist:[] ,
+                            saveAlbum:[] ,
+                            playHistory:[]
 
 
                         }).save();
                        
                         return done(null,newUser);
                     }
-                   
+               
                }
+               
                return done(true,null);
         }
     ));

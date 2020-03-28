@@ -22,16 +22,13 @@ router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
     
     const trackID = req.params.track_id;
     const user = await User.getUserById(req.user._id);
-    const track = await Track.getTrack(trackID);
+    if(!user){ res.status(403).json({"error":"user not allowed"}); return ;}
+    const fullTrack = await Track.getFullTrack(trackID);
+    if(!fullTrack){ res.status(404).json({"error":"track not found"}); return;}
     const isLiked = Track.checkIfUserLikeTrack(user,trackID)?true:false;
-    if(!track) res.sendStatus(404).json({error:"track not found"}); //not found
-    // get both album and artist of the track
-    const album = await Album.getAlbumById(track.albumId);
-    if(!album) res.sendStatus(404).json({error:"album not found"});; //not found
-    const artist = await Artist.getArtist(track.artistId);
-    if(!artist) res.sendStatus(404).json({error:"artist not found"});; //not found
+    
     // if all are found return them in new created json object
-    res.json({track:track,isLiked:isLiked,album:album,artist:artist}); 
+    res.json({fullTrack,isLiked:isLiked}); 
 
 })
 // get tracks

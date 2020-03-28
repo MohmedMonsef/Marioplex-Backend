@@ -60,13 +60,15 @@ router.post('/sign_up',(req,res)=>{
                                 product:"free" ,
                                 userType:"user" ,
                                 type:"user" ,
+                                isFacebook:false,
                                 images:[] ,
                                 follow:[] ,
                                 followedBy:[] ,
                                 like:[] ,
                                 createPlaylist:[] ,
                                 saveAlbum:[] ,
-                                playHistory:[]                        
+                                playHistory:[]
+
                             });
                             
                             user

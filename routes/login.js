@@ -41,12 +41,12 @@ router.post("/login", (req, res) => {
             
           };
           var token = jwt.sign({ _id: user._id,product: user.product,userType:user.userType}, jwtSeret.secret, {
-            expiresIn: '36767467347h' // 1 day
+            expiresIn: '24h' // 1 day
           });
          
           // return the information including token as JSON
           //res.json({success: true, token: 'JWT ' + token});
-          res.send(token);
+          res.send({token});
         } else {
           res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
         }

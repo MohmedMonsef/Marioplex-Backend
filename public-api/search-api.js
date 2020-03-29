@@ -66,7 +66,6 @@ const Search =  {
             let artist=await this.getTop(albumName)
             if(artist){
 
-                console.log(artist)
                 album=await artistApi.getAlbums(artist,groups,country,limit,offset);
 
             }
@@ -76,10 +75,9 @@ const Search =  {
                 album= Fuzzysearch(albumName,'name',album);  
             
             }
-            Album={}
+            Album=[]
             for(let i=0;i<album.length;i++){
                 let albums=await album_api.getAlbumArtist(album[i]._id);
-                console.log(albums);
                 if(albums){
                     album={}
                     album["_id"]=albums.Album._id
@@ -95,9 +93,10 @@ const Search =  {
                     artist["type"]=albums.Artist.type
                     artist["genre"]=albums.Artist.genre
                     }
-                    Album[i]={album,artist}
+                    Album.push({album,artist});
                 }
             }
+           // console.log(Album);
             return Album;
     
     
@@ -115,7 +114,7 @@ const Search =  {
                 Track= Fuzzysearch(Name,'name',track); 
             
             }
-            trackInfo={}
+            trackInfo=[]
             for( let i=0;i<Track.length;i++){
                 let artist=await artist_api.getArtist(Track[i].artistId)
                 Artist={}
@@ -141,7 +140,7 @@ const Search =  {
                 tracks["name"]=Track[i].name
                 tracks["type"]=Track[i].type
                 tracks["images"]=Track[i].images
-                trackInfo[i]={track:tracks,artist:Artist,album:Album}
+                trackInfo.push({track:tracks,artist:Artist,album:Album});
             
         }
         return trackInfo;
@@ -149,15 +148,29 @@ const Search =  {
 
     },
     getTopResults :async function(Name){
-        
+        console.log("topres");
         const artist= await this.getTop(Name);
         if(artist){
-            
             let artist=await this.getArtistProfile(Name)
             return artist[0]
         }
         let track=await this.getTrack(Name);
-        return track[0]
+        if(track.length!=0){
+            console.log("track");
+        return track[0];
+        }
+        let album=await this.getAlbum(Name);
+        console.log(album);
+        if(album.length!=0){
+            console.log("album");
+        return album[0];
+        }
+        let playlist=await this.getPlaylist(Name);
+        if(playlist.length!=0){
+            console.log("playlist");
+        return playlist[0];
+        }
+
     },
     getArtistProfile  : async function(name){
         
@@ -185,7 +198,7 @@ const Search =  {
 
                 }
             }
-            if(ArtistInfo=={})return 0;
+            if(ArtistInfo.length==0)return 0;
             return ArtistInfo;
         
         }

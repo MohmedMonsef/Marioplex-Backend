@@ -1,4 +1,4 @@
- const router = require('express').Router();
+const router = require('express').Router();
 
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
@@ -22,24 +22,24 @@ router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
     
     const trackID = req.params.track_id;
     const user = await User.getUserById(req.user._id);
-    const track = await Track.getTrack(trackID);
-    const isLiked = Track.checkIfUserLikeTrack(user,trackID)?true:false;
-    if(!track) res.sendStatus(404).json({error:"track not found"}); //not found
-    // get both album and artist of the track
-    const album = await Album.getAlbumById(track.albumId);
-    if(!album) res.sendStatus(404).json({error:"album not found"});; //not found
-    const artist = await Artist.getArtist(track.artistId);
-    if(!artist) res.sendStatus(404).json({error:"artist not found"});; //not found
+    if(!user){ res.status(403).json({"error":"user not allowed"}); return ;}
+    const fullTrack = await Track.getFullTrack(trackID,user);
+    if(!fullTrack){ res.status(404).json({"error":"track not found"}); return;}
     // if all are found return them in new created json object
-    res.json({track:track,isLiked:isLiked,album:album,artist:artist}); 
+    res.json(fullTrack); 
 
 })
 // get tracks
 router.get('/tracks/',checkAuth,async (req,res)=>{
-    const trackIDs = req.query.ids.split(',');
-    const tracks = await Track.getTracks(trackIDs);
-    if(!tracks) res.status(404).send({error:"tracks with those id's are not found"});
-    else res.json(tracks);
+    if (req.body.ids){
+        
+        const user = await User.getUserById(req.user._id);
+        const trackIDs = req.body.ids.split(',');
+        const tracks = await Track.getTracks(trackIDs,user);
+        if(tracks.length==0) res.status(404).send({error:"tracks with those id's are not found"});
+        else res.json(tracks);
+    }
+else res.status(404).send({error:"tracks id's are required"});
 })
 // get track audio feature/analysis
 router.get('/track/audio-features/:track_id',checkAuth,async (req,res)=>{
@@ -50,10 +50,13 @@ router.get('/track/audio-features/:track_id',checkAuth,async (req,res)=>{
 
 // get tracks audio feature/analysis 
 router.get('/tracks/audio-features/',checkAuth,async (req,res)=>{
-    const trackIDs = req.query.ids.split(',');
+    if(req.body.ids){
+    const trackIDs = req.body.ids.split(',');
     const audioFeatures = await Track.getAudioFeaturesTracks(trackIDs);
-    if(!audioFeatures) res.status(404).send({error:"no tracks with this id"});
+    if(audioFeatures.length==0) res.status(404).send({error:"no tracks with this id"});
     else res.json(audioFeatures);
+    }
+    else  res.status(404).send({error:"tracks id's are required"});
 })
 
 // user like track

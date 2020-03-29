@@ -20,15 +20,28 @@ const connection=require('../DBconnection/connection');
             
 
     },
+    getFullTrack: async function(trackID,user){
+        const track = await this.getTrack(trackID);
+        if(!track) return 0; //not found
+        // get both album and artist of the track
+        const album = await albumDocument.findById(track.albumId);
+        if(!album) return 0; //not found
+        const artist = await artistDocument.findById(track.artistId);
+        if(!artist) return 0; 
+        const isLiked = await this.checkIfUserLikeTrack(user,trackID)?true:false;
+        return {track:track,isLiked:isLiked,album:{name:album.name,_id:album._id,artist:{name:artist.name,_id:artist._id}}}
+    },
     // get several tracks
     // params : array of track ids
-    getTracks : async function(tracksIDs){
-            let tracks = {};
-            for(let trackID of tracksIDs){
-                tracks[trackID] = await this.getTrack(trackID);
-                if(!tracks[trackID])return 0;
-            }
-            return tracks;
+    getTracks : async function(tracksIDs,user){
+        let tracks = [];
+        for(let trackID of tracksIDs){
+            let track = await this.getFullTrack(trackID,user);
+            if(!track)continue
+            tracks.push(track);
+        }
+        return tracks;
+           
     },
 
     // get audio feature track
@@ -57,12 +70,14 @@ const connection=require('../DBconnection/connection');
     // get audio of features of several tracks 
     // params : trackIDs
     getAudioFeaturesTracks : async function(tracksIDs){
-        let audioFeatures = {};
+        let audioFeatures = [];
         for(let trackID of tracksIDs){
-            const audioFeature = await this.getAudioFeaturesTrack(trackID);
-            if(!audioFeatures) return 0;
-            audioFeatures[trackID] = audioFeature;
+            let audioFeature = await this.getAudioFeaturesTrack(trackID);
+            console.log(audioFeature)
+            if(audioFeature!=0) 
+                audioFeatures.push(audioFeature);
         }
+     
         return audioFeatures;
     },
 
@@ -79,9 +94,14 @@ const connection=require('../DBconnection/connection');
     //user like track by track-id
     //params : user , track-id
      likeTrack : async function(user,trackID){
+
         // check if user already liked the track
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
+        const track = await this.getTrack(trackID);
+        if(!track) return 0;
+        if(!track.like) track.like = 0;
+        
         if(this.checkIfUserLikeTrack(user,trackID)){
             return 0;
         }
@@ -89,7 +109,11 @@ const connection=require('../DBconnection/connection');
             user.like.push({
                 trackId: trackID
             });
+        
             await user.save();
+            track.like += 1;
+            // save track
+            await track.save().catch();
             return 1;
             
         }
@@ -98,6 +122,11 @@ const connection=require('../DBconnection/connection');
             trackId: trackID
         });
         await user.save().catch();
+        
+        // add count to the like attribute of track
+        track.like += 1;
+        // save track
+        await track.save().catch();
         return 1;
 
     },
@@ -109,15 +138,25 @@ const connection=require('../DBconnection/connection');
         // if user.like.contains({track_id:track.track_id})
         // if  found then remove track.track_id from user likes and return the updated user
         // else return 0 as he didn't like the track
+        const track = await this.getTrack(trackID);
+        if(!track) return 0;
+        if(!track.like) track.like = 0;
+
         if(!this.checkIfUserLikeTrack(user,trackID)){
             return 0;
         }
         for(let i=0;i <user.like.length;i++ ){
             if(user.like[i].trackId == trackID){
                 user.like.splice(i,1);
+                break;
             }
         }
+        // decrement track likes by one
+        track.like -= 1;
+        
         await user.save().catch();
+        // save track
+        await track.save().catch();
         return 1;
     },
       // create Track for an artist
@@ -143,12 +182,13 @@ const connection=require('../DBconnection/connection');
             mode:56 ,
             speechiness:67 ,
             tempo:76 ,
-            timeSignature:'2-1-2000' ,
-            valence:70
+            timeSignature:Date.now() ,
+            valence:70,
+            like:0
 
         }); 
        await track.save();
-       //console.log(track);
+       console.log(track);
        return track;
       
 }
@@ -157,5 +197,3 @@ const connection=require('../DBconnection/connection');
 }
 
 module.exports = Track;
-
-

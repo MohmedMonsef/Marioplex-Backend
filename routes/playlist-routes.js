@@ -38,10 +38,11 @@ router.post('/users/playlists',checkAuth,async (req,res)=>{
 router.put('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
     const playlistID = req.params.playlist_id;
+    const isPrivate = req.body.isPrivate || false;
 
-     const updatedUser= await  User.followPlaylist(userID,playlistID,req.body.isPrivate);
-     if (updatedUser) res.send({success:" followed this playlist successfully"});
-     else res.status(400).send('this playlist cant be followed');
+     const updatedUser= await  User.followPlaylist(userID,playlistID,isPrivate);
+     if (updatedUser) res.status(200).send({success:" followed this playlist successfully"});
+     else res.status(400).send({"error":'this playlist cant be followed'});
   
 })
 
@@ -50,8 +51,8 @@ router.delete('/playlists/:playlist_id/followers',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth
     const playlistID = req.params.playlist_id;
     const updatedUser= await  User.unfollowPlaylist(userID,playlistID);
-    if(updatedUser) res.send({success:"unfollowed this playlist successfully"}); // if user already liked the song
-    else res.status(400).send({error:"user did not follow this playlist "});
+    if(updatedUser) res.status(200).send({success:"unfollowed this playlist successfully"}); // if user already liked the song
+    else res.status(400).send({"error":"user did not follow this playlist "});
 
 });
 // delete playlist 
@@ -72,9 +73,9 @@ router.post('/playlists/:playlist_id/tracks',checkAuth,async (req,res)=>{
         return res.status(401).send('Bad Request');
     }
     let tracksids=req.body.tracks.split(',');
-    const tracks=await Playlist.addTrackToPlaylist(req.params.playlist_id,tracksids);
-    if(!tracks) return res.status(404).send('NOT FOUND');
-    return res.status(200).send(tracks);
+    const playlist =await Playlist.addTrackToPlaylist(req.params.playlist_id,tracksids);
+    if(!playlist) return res.status(404).send({"error":'can not add tracks'});
+    return res.status(201).send(playlist.snapshot[playlist.snapshot.length]);
    
 })
 //update created playlists details  {name,description => done + {image} not done yet}
@@ -83,7 +84,7 @@ router.put('/playlists/:playlist_id',[checkAuth,checkContent],async (req,res)=>{
     if(!authorized){return res.status(403).send("FORBIDDEN");}
     let details=req.body;
     const playlist=await Playlist.updatePlaylistDetails(req.params.playlist_id,details);
-    if(!playlist) return res.status(404).send('NOT FOUND');
+    if(!playlist) return res.status(404).send({"error":'cannot update playlist'});
     return res.status(200).send(playlist);
 })
 //get current user playlists (Created && Followed)
@@ -138,8 +139,8 @@ router.delete('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
     let authorized=await User.checkAuthorizedPlaylist(req.user._id,req.params.playlist_id);
     if(!authorized){return res.status(403).send("FORBIDDEN");}
     let tracksids=[];
-     tracksids=(req.body.tracks)?req.body.tracks.split(','):[];
-     console.log(tracksids);
+     tracksids=(req.body.track_ids)?req.body.track_ids.split(','):[];
+   //  console.log(tracksids);
     let result=await Playlist.removePlaylistTracks(req.params.playlist_id,tracksids,req.body.snapshot);
     if(!result) return res.status(404).send("NO Tracks Delelted");
     return res.status(200).send(result);

@@ -37,7 +37,7 @@ router.put('/me/update',checkAuth,(req,res)=>{
             const user=  await User.update(userID,req.body.Display_Name,req.body.Password,req.body.Email,req.body.Country);
             if(user){
                 res.status(200).json({
-                    message:"information has been updated successfully"
+                    "success":"information has been updated successfully"
                 });
             }  
             else res.status(404).json({"error":"user not found"});         

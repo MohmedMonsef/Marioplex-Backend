@@ -1,0 +1,457 @@
+error:
+in case no results found at all
+status-->404       & mes: No results found
+
+------------------------------------
+correct:
+status-->200       & example with name=m , type=artist
+{
+    "artist": [
+        {
+            "_id": "5e80d12a53e67b1e284a0f66",
+            "name": "yomna",
+            "images": [],
+            "info": "Artist yomna",
+            "type": "Artist",
+            "genre": [
+                "pop",
+                "jazz"
+            ]
+        },
+        {
+            "_id": "5e80c9b614c8566d6cd9b40e",
+            "name": "nada",
+            "images": [],
+            "info": "Artist Nada",
+            "type": "Artist",
+            "genre": [
+                "pop",
+                "jazz",
+                "rock"
+            ]
+        }
+    ]
+}
+
+----------------------------
+
+status-->200       & example with name=da , type=top
+{
+    "top": {
+        "_id": "5e80c9b614c8566d6cd9b40e",
+        "name": "nada",
+        "images": [],
+        "info": "Artist Nada",
+        "type": "Artist",
+        "genre": [
+            "pop",
+            "jazz",
+            "rock"
+        ]
+    }
+}
+
+-----------------------------------
+status-->200       & example with name=lo , type=track
+{
+  {
+    "track": [
+        {
+            "track": {
+                "_id": "5e80d0d253e67b1e284a0f51",
+                "name": "LOVE ME",
+                "type": "Track"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist"
+            },
+            "album": {
+                "_id": "5e80d09753e67b1e284a0f4c",
+                "name": "be your self",
+                "images": [],
+                "type": "Album"
+            }
+        },
+        {
+            "track": {
+                "_id": "5e80d0e053e67b1e284a0f57",
+                "name": "MY LOVE",
+                "type": "Track"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist"
+            },
+            "album": {
+                "_id": "5e80d09753e67b1e284a0f4c",
+                "name": "be your self",
+                "images": [],
+                "type": "Album"
+            }
+        },
+        {
+            "track": {
+                "_id": "5e80d0e953e67b1e284a0f5d",
+                "name": "I love you",
+                "type": "Track"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist"
+            },
+            "album": {
+                "_id": "5e80d09753e67b1e284a0f4c",
+                "name": "be your self",
+                "images": [],
+                "type": "Album"
+            }
+        }
+    ]
+}
+}
+-------------------------------
+status-->200       & example with name=k , type=track,artist //there is some tracks but no artists found
+{
+    "track": [
+        {
+            "track": {
+                "_id": "5e80d66153e67b1e284a0f8b",
+                "name": "track1"
+            },
+            "artist": {},
+            "album": {
+                "_id": "5e80d66153e67b1e284a0f85",
+                "name": "album1",
+                "images": []
+            }
+        },
+        {
+            "track": {
+                "_id": "5e80d66153e67b1e284a0f8c",
+                "name": "track2"
+            },
+            "artist": {},
+            "album": {
+                "_id": "5e80d66153e67b1e284a0f86",
+                "name": "album2",
+                "images": []
+            }
+        },
+        {
+            "track": {
+                "_id": "5e80d66153e67b1e284a0f8d",
+                "name": "track3"
+            },
+            "artist": {},
+            "album": {
+                "_id": "5e80d66153e67b1e284a0f87",
+                "name": "album3",
+                "images": []
+            }
+        },
+        {
+            "track": {
+                "_id": "5e80d66153e67b1e284a0f8e",
+                "name": "track4"
+            },
+            "artist": {},
+            "album": {
+                "_id": "5e80d66153e67b1e284a0f88",
+                "name": "album4",
+                "images": []
+            }
+        },
+        {
+            "track": {
+                "_id": "5e80d0f753e67b1e284a0f63",
+                "name": "Fun with kids",
+                "type": "Track"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist"
+            },
+            "album": {
+                "_id": "5e80d09753e67b1e284a0f4c",
+                "name": "be your self",
+                "images": [],
+                "type": "Album"
+            }
+        }
+    ],
+    "artist": 0
+}
+
+----------------------------------
+status-->200       & example with name=we , type=album
+{
+    "album": [
+        {
+            "album": {
+                "_id": "5e80cc4414c8566d6cd9b411",
+                "name": "Welcome to Hell",
+                "images": [],
+                "type": "Album"
+            },
+            "artist": {
+                "_id": "5e80c9b614c8566d6cd9b40e",
+                "name": "nada",
+                "images": [],
+                "info": "Artist Nada",
+                "type": "Artist",
+                "genre": [
+                    "pop",
+                    "jazz",
+                    "rock"
+                ]
+            }
+        },
+        {
+            "album": {
+                "_id": "5e80d06f53e67b1e284a0f46",
+                "name": "we and I",
+                "images": [],
+                "type": "Album"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist",
+                "genre": [
+                    "pop",
+                    "jazz"
+                ]
+            }
+        },
+        {
+            "album": {
+                "_id": "5e80d07d53e67b1e284a0f48",
+                "name": "can we meet",
+                "images": [],
+                "type": "Album"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist",
+                "genre": [
+                    "pop",
+                    "jazz"
+                ]
+            }
+        }
+    ]
+}
+
+----------------------------------
+status-->200       & example with name=o , type=playlist
+{
+    "playlist": [
+        {
+            "playlist": {
+                "_id": "5e80d6d0d3f6f33ba459f730",
+                "name": "NOON",
+                "type": "playlist",
+                "images": []
+            },
+            "owner": {
+                "_id": "5e80c6af14c8566d6cd9b400",
+                "displayName": "nadam",
+                "images": [],
+                "type": "user"
+            }
+        },
+        {
+            "playlist": {
+                "_id": "5e80d6e5d3f6f33ba459f738",
+                "name": "We found Love",
+                "type": "playlist",
+                "images": []
+            },
+            "owner": {
+                "_id": "5e80c6af14c8566d6cd9b400",
+                "displayName": "nadam",
+                "images": [],
+                "type": "user"
+            }
+        },
+        {
+            "playlist": {
+                "_id": "5e80d65f53e67b1e284a0f83",
+                "name": "Spacetoon",
+                "type": "playlist",
+                "images": []
+            },
+            "owner": {
+                "_id": "5e80c6af14c8566d6cd9b400",
+                "displayName": "nadam",
+                "images": [],
+                "type": "user"
+            }
+        }
+    ]
+}
+
+----------------------------------
+status-->200       & example with name=y , type=profile
+
+{
+    "profile": [
+        {
+            "_id": "5e80c7e614c8566d6cd9b40c",
+            "displayName": "aay",
+            "images": [],
+            "type": "user"
+        }
+    ]
+}
+
+----------------------------------
+status-->200       & example with name=ki , type=top,artist,profile,playlist,track,album
+
+{
+    "top": {
+        "track": {
+            "_id": "5e80d0f753e67b1e284a0f63",
+            "name": "Fun with kids",
+            "type": "Track"
+        },
+        "artist": {
+            "_id": "5e80cfef53e67b1e284a0f42",
+            "name": "nour",
+            "images": [],
+            "info": "Artist Nour",
+            "type": "Artist"
+        },
+        "album": {
+            "_id": "5e80d09753e67b1e284a0f4c",
+            "name": "be your self",
+            "images": [],
+            "type": "Album"
+        }
+    },
+    "artist": 0,
+    "profile": 0,
+    "playlist": 0,
+    "track": [
+        {
+            "track": {
+                "_id": "5e80d0f753e67b1e284a0f63",
+                "name": "Fun with kids",
+                "type": "Track"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist"
+            },
+            "album": {
+                "_id": "5e80d09753e67b1e284a0f4c",
+                "name": "be your self",
+                "images": [],
+                "type": "Album"
+            }
+        }
+    ],
+    "album": [
+        {
+            "album": {
+                "_id": "5e80cc2b14c8566d6cd9b40f",
+                "name": "HELLO KIDS",
+                "images": [],
+                "type": "Album"
+            },
+            "artist": {
+                "_id": "5e80c9b614c8566d6cd9b40e",
+                "name": "nada",
+                "images": [],
+                "info": "Artist Nada",
+                "type": "Artist",
+                "genre": [
+                    "pop",
+                    "jazz",
+                    "rock"
+                ]
+            }
+        },
+        {
+            "album": {
+                "_id": "5e80cc8514c8566d6cd9b41b",
+                "name": "kill me heal me",
+                "images": [],
+                "type": "Album"
+            },
+            "artist": {
+                "_id": "5e80c9b614c8566d6cd9b40e",
+                "name": "nada",
+                "images": [],
+                "info": "Artist Nada",
+                "type": "Artist",
+                "genre": [
+                    "pop",
+                    "jazz",
+                    "rock"
+                ]
+            }
+        },
+        {
+            "album": {
+                "_id": "5e80d08953e67b1e284a0f4a",
+                "name": "fun kids",
+                "images": [],
+                "type": "Album"
+            },
+            "artist": {
+                "_id": "5e80cfef53e67b1e284a0f42",
+                "name": "nour",
+                "images": [],
+                "info": "Artist Nour",
+                "type": "Artist",
+                "genre": [
+                    "pop",
+                    "jazz"
+                ]
+            }
+        },
+        {
+            "album": {
+                "_id": "5e80cc6414c8566d6cd9b417",
+                "name": "Konnichiwa",
+                "images": [],
+                "type": "Album"
+            },
+            "artist": {
+                "_id": "5e80c9b614c8566d6cd9b40e",
+                "name": "nada",
+                "images": [],
+                "info": "Artist Nada",
+                "type": "Artist",
+                "genre": [
+                    "pop",
+                    "jazz",
+                    "rock"
+                ]
+            }
+        }
+    ]
+}
+

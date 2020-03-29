@@ -19,10 +19,11 @@ router.get('/search',checkAuth,async (req,res)=>{
     }
     else if(type[i]=="track"){
         const artist = await search.getTrack(name);
-        if(artist.length!=0)SearchResult["track"]=0 //not found
+        if(artist.length==0)SearchResult["track"]=0 //not found
         else SearchResult["track"]=artist 
     }
     else if(type[i]=="album"){
+       
         const albums = await search.getAlbum(name,req.query.groups,req.query.country,req.query.limit,req.query.offset);
         if(albums.length==0) SearchResult["album"]=0 //not found
         else SearchResult["album"]=albums  
@@ -35,7 +36,7 @@ router.get('/search',checkAuth,async (req,res)=>{
         }
     else if(type[i]=="playlist"){
         const playlists = await search.getPlaylist(name);
-        if(playlists=={}) SearchResult["playlist"]=0 //not found
+        if(playlists.length==0) SearchResult["playlist"]=0 //not found
         else SearchResult["playlist"]=playlists   
         
     }
@@ -48,8 +49,13 @@ router.get('/search',checkAuth,async (req,res)=>{
         continue;
     }
 }
-if(SearchResult=={}){return res.status(404).send("No results found");}
-return res.status(200).send(SearchResult);
+for(let search in SearchResult){
+    if(SearchResult[search]!=0){
+        return res.status(200).send(SearchResult);
+    }
+}
+return res.status(404).send("No results found");
+
 })
 
 module.exports = router;

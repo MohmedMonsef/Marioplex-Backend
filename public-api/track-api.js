@@ -29,7 +29,8 @@ const connection=require('../DBconnection/connection');
         const artist = await artistDocument.findById(track.artistId);
         if(!artist) return 0; 
         const isLiked = await this.checkIfUserLikeTrack(user,trackID)?true:false;
-        return {track:track,isLiked:isLiked,album:{name:album.name,_id:album._id,artist:{name:artist.name,_id:artist._id}}}
+        console.log(artist.Name);
+        return {track:track,isLiked:isLiked,album:{name:album.name,_id:album._id,artist:{name:artist.Name,_id:artist._id}}}
     },
     // get several tracks
     // params : array of track ids
@@ -70,15 +71,20 @@ const connection=require('../DBconnection/connection');
     // get audio of features of several tracks 
     // params : trackIDs
     getAudioFeaturesTracks : async function(tracksIDs){
-        let audioFeatures = [];
-        for(let trackID of tracksIDs){
-            let audioFeature = await this.getAudioFeaturesTrack(trackID);
-            console.log(audioFeature)
-            if(audioFeature!=0) 
-                audioFeatures.push(audioFeature);
-        }
-     
+        
+    let audioFeatures = {};
+    var count=0;
+    for(let trackID of tracksIDs){
+        const audioFeature = await this.getAudioFeaturesTrack(trackID);
+        if(audioFeature) {
+            audioFeatures[trackID] = audioFeature;
+            count++;
+        } 
+    }
+    
+    if(count)
         return audioFeatures;
+    return 0;
     },
 
     // check if user liked a track

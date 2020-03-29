@@ -7,7 +7,7 @@ const Artist = require('../public-api/artist-api');
 const {auth:checkAuth} = require('../middlewares/isMe');
 
 // get track
-router.get('/track/:track_id',checkAuth,async (req,res)=>{
+router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
     
     const trackID = req.params.track_id;
    
@@ -18,7 +18,7 @@ router.get('/track/:track_id',checkAuth,async (req,res)=>{
 })
 
 // get track with some user info as like
-router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
+router.get('/track/:track_id',checkAuth,async (req,res)=>{
     
     const trackID = req.params.track_id;
     const user = await User.getUserById(req.user._id);
@@ -53,7 +53,7 @@ router.get('/tracks/audio-features/',checkAuth,async (req,res)=>{
     if(req.body.ids){
     const trackIDs = req.body.ids.split(',');
     const audioFeatures = await Track.getAudioFeaturesTracks(trackIDs);
-    if(audioFeatures.length==0) res.status(404).send({error:"no tracks with this id"});
+    if(!audioFeatures) res.status(404).send({error:"no tracks with this id"});
     else res.json(audioFeatures);
     }
     else  res.status(404).send({error:"tracks id's are required"});
@@ -67,7 +67,7 @@ router.put('/me/like/:track_id',checkAuth,async (req,res)=>{
     const updatedUser= await  User.likeTrack(userID,trackID);
     // TO DO
     // SEND HTTP CODES AND IMPLEMENT ERROR OBJECT
-    if(!updatedUser) res.send({error:"already liked the song"}); // if user already liked the song
+    if(!updatedUser) res.status(404).send({error:"already liked the song"}); // if user already liked the song
     else res.send({success:"liked the song successfully"});
 
 });
@@ -79,7 +79,7 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
     const updatedUser= await User.unlikeTrack(userID,trackID);
     // TO DO
     // SEND HTTP CODES AND IMPLEMENT ERROR OBJECT
-    if(!updatedUser) res.send({error:"user didnt liked the song before"}); // if user already liked the song
+    if(!updatedUser) res.status(404).send({error:"user didnt liked the song before"}); // if user already liked the song
     else res.send({success:"unliked the song successfully"});
 
 });

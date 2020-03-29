@@ -1,0 +1,123 @@
+error:
+if there is one id is right it will consider correct and ignore the not correct
+if all ids not correct
+status--> 404              & mes: error:"tracks with those id's are not found"
+if not send ids param
+status--> 404              & mes: error:"tracks id's are required"
+------------------------------------------------------
+Correct:
+status:  200               
+example:
+[
+    {
+        "track": {
+            "availableMarkets": [
+                "ttyt,rewwf,fff"
+            ],
+            "_id": "5e7f58bb4fe2420d34a881db",
+            "trackNumber": 55,
+            "name": "frist",
+            "artistId": "5e7ef28326e2fa0da04f81ae",
+            "albumId": "5e7f44905cce7d09a82e5a75",
+            "discNumber": 1,
+            "explicit": false,
+            "type": "Track",
+            "acousticness": 10,
+            "danceability": 23,
+            "energy": 100,
+            "instrumentalness": 4,
+            "key": 90,
+            "liveness": 25,
+            "loudness": 70,
+            "mode": 56,
+            "speechiness": 67,
+            "tempo": 76,
+            "timeSignature": "2000-01-31T22:00:00.000Z",
+            "valence": 70,
+            "__v": 0
+        },
+        "isLiked": true,
+        "album": {
+            "name": "album1",
+            "_id": "5e7f44905cce7d09a82e5a75",
+            "artist": {
+                "name": "artist1",
+                "_id": "5e7ef28326e2fa0da04f81ae"
+            }
+        }
+    },
+    {
+        "track": {
+            "availableMarkets": [
+                "ttyt,rewwf,fff"
+            ],
+            "_id": "5e7f58bb4fe2420d34a881db",
+            "trackNumber": 55,
+            "name": "frist",
+            "artistId": "5e7ef28326e2fa0da04f81ae",
+            "albumId": "5e7f44905cce7d09a82e5a75",
+            "discNumber": 1,
+            "explicit": false,
+            "type": "Track",
+            "acousticness": 10,
+            "danceability": 23,
+            "energy": 100,
+            "instrumentalness": 4,
+            "key": 90,
+            "liveness": 25,
+            "loudness": 70,
+            "mode": 56,
+            "speechiness": 67,
+            "tempo": 76,
+            "timeSignature": "2000-01-31T22:00:00.000Z",
+            "valence": 70,
+            "__v": 0
+        },
+        "isLiked": true,
+        "album": {
+            "name": "album1",
+            "_id": "5e7f44905cce7d09a82e5a75",
+            "artist": {
+                "name": "artist1",
+                "_id": "5e7ef28326e2fa0da04f81ae"
+            }
+        }
+    },
+    {
+        "track": {
+            "availableMarkets": [
+                "ttyt,rewwf,fff"
+            ],
+            "_id": "5e7f5c6328a1a2111841e5d6",
+            "trackNumber": 55,
+            "name": "frist",
+            "artistId": "5e7ef28326e2fa0da04f81ae",
+            "albumId": "5e7f44905cce7d09a82e5a75",
+            "discNumber": 1,
+            "explicit": false,
+            "type": "Track",
+            "acousticness": 10,
+            "danceability": 23,
+            "energy": 100,
+            "instrumentalness": 4,
+            "key": 90,
+            "liveness": 25,
+            "loudness": 70,
+            "mode": 56,
+            "speechiness": 67,
+            "tempo": 76,
+            "timeSignature": "2000-01-31T22:00:00.000Z",
+            "valence": 70,
+            "__v": 0
+        },
+        "isLiked": false,
+        "album": {
+            "name": "album1",
+            "_id": "5e7f44905cce7d09a82e5a75",
+            "artist": {
+                "name": "artist1",
+                "_id": "5e7ef28326e2fa0da04f81ae"
+            }
+        }
+    }
+]

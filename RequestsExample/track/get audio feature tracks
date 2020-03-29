@@ -1,0 +1,41 @@
+error:
+if there is one id is right it will consider correct and ignore the not correct
+if all ids not correct
+status--> 404              & mes: error:"no tracks with this id"
+if not send ids param
+status--> 404              & mes: error:"tracks id's are required"
+if repeate id it will send once get by res[id]
+------------------------------------------------------
+Correct:
+status:  200               
+example:
+{
+    "5e7f58bb4fe2420d34a881db": {
+        "explicit": false,
+        "acousticness": 10,
+        "danceability": 23,
+        "energy": 23,
+        "instrumentalness": 4,
+        "key": 90,
+        "liveness": 25,
+        "loudness": 70,
+        "mode": 56,
+        "speechiness": 67,
+        "tempo": 76,
+        "valence": 70
+    },
+    "5e7f5c6328a1a2111841e5d6": {
+        "explicit": false,
+        "acousticness": 10,
+        "danceability": 23,
+        "energy": 23,
+        "instrumentalness": 4,
+        "key": 90,
+        "liveness": 25,
+        "loudness": 70,
+        "mode": 56,
+        "speechiness": 67,
+        "tempo": 76,
+        "valence": 70
+    }
+}

@@ -24,6 +24,16 @@ const Track=require('./track-api');
         console.log(artist);
         return artist;
     },
+    checkArtisthasAlbum:async function(artistId,albumId){
+        if (await Album.getAlbumById(albumId)){
+            artist=await this.getArtist(artistId);
+            if(!artist) return 0;
+            if(artist.addAlbums){
+                return await artist.addAlbums.find(album => album.albumId == albumId);    
+            }  
+        }
+        return 0;
+    },
     // get artist by id
     // params : artist-id
     getArtist  : async function(ArtistID){
@@ -38,6 +48,7 @@ const Track=require('./track-api');
     // create album for an artist
     // params : artist-id
     addAlbum  : async function(ArtistID,Name,Label,Avmarkets,Albumtype,ReleaseDate,Genre){
+        if(!await this.getArtist(ArtistID))  return 0;
         let spotifyAlbums=spotify.album;
         let album=await new spotifyAlbums({
             name:Name ,
@@ -78,10 +89,11 @@ const Track=require('./track-api');
     // get several Artists
     // params : array of Artists ids
     getArtists : async function(artistsIDs){
-        let artists = {};
+        let artists = [];
         for(let artistID of artistsIDs){
-            artists[artistID] = await this.getArtist(artistID);
-            if(!artists[artistID])return 0;
+            let artist = await this.getArtist(artistID);
+            if(!artist)continue
+            artists.push(artist);
         }
         return artists;
 },
@@ -150,7 +162,8 @@ getRelatedArtists : async function(artistID){
         for(var i=0;i<Artists[Artist].genre.length;i++){
             for(var j=0;j<artist.genre.length;j++){
                 if(Artists[Artist].genre[i]==artist.genre[j]){
-                    RelatedArtists.push(Artists[Artist]);
+                    if( !RelatedArtists.find(artist1=> artist1._id == Artists[Artist]._id))
+                            RelatedArtists.push(Artists[Artist]);
                     continue;
                 }
             }

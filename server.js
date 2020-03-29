@@ -21,6 +21,7 @@ const signup=require('./routes/signup-routes');
 const search=require('./routes/search')
 require('./config/passport');
 
+
 const player = require('./routes/player-routes')
 const facebook = require('./authentication/facebook-routes');
 const forgpass = require('./routes/Forgpass-route');

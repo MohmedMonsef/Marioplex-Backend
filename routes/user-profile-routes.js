@@ -8,10 +8,10 @@ const {auth:checkAuth} = require('../middlewares/isMe');
 router.get('/users/:id',checkAuth,async(req,res)=>{
     const user = await User.me(req.params.id,req.user._id);
     if(user){
-        res.send(user);
+        res.send(user);    
     }
-    else {
-        res.status(404);
+    else{
+       res.sendStatus(404)
     }         
         
     

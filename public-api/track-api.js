@@ -20,7 +20,7 @@ const connection=require('../DBconnection/connection');
             
 
     },
-    getFullTrack: async function(trackID){
+    getFullTrack: async function(trackID,user){
         const track = await this.getTrack(trackID);
         if(!track) return 0; //not found
         // get both album and artist of the track
@@ -28,18 +28,21 @@ const connection=require('../DBconnection/connection');
         if(!album) return 0; //not found
         const artist = await artistDocument.findById(track.artistId);
         if(!artist) return 0; 
-       
-        return {track:track,album:{name:album.name,_id:album._id,artist:{name:artist.name,_id:artist._id}}}
+        const isLiked = await this.checkIfUserLikeTrack(user,trackID)?true:false;
+        console.log(artist.Name);
+        return {track:track,isLiked:isLiked,album:{name:album.name,_id:album._id,artist:{name:artist.Name,_id:artist._id}}}
     },
     // get several tracks
     // params : array of track ids
-    getTracks : async function(tracksIDs){
-            let tracks = {};
-            for(let trackID of tracksIDs){
-                tracks[trackID] = await this.getTrack(trackID);
-                if(!tracks[trackID])return 0;
-            }
-            return tracks;
+    getTracks : async function(tracksIDs,user){
+        let tracks = [];
+        for(let trackID of tracksIDs){
+            let track = await this.getFullTrack(trackID,user);
+            if(!track)continue
+            tracks.push(track);
+        }
+        return tracks;
+           
     },
 
     // get audio feature track
@@ -68,13 +71,20 @@ const connection=require('../DBconnection/connection');
     // get audio of features of several tracks 
     // params : trackIDs
     getAudioFeaturesTracks : async function(tracksIDs){
-        let audioFeatures = {};
-        for(let trackID of tracksIDs){
-            const audioFeature = await this.getAudioFeaturesTrack(trackID);
-            if(!audioFeatures) return 0;
+        
+    let audioFeatures = {};
+    var count=0;
+    for(let trackID of tracksIDs){
+        const audioFeature = await this.getAudioFeaturesTrack(trackID);
+        if(audioFeature) {
             audioFeatures[trackID] = audioFeature;
-        }
+            count++;
+        } 
+    }
+    
+    if(count)
         return audioFeatures;
+    return 0;
     },
 
     // check if user liked a track
@@ -193,5 +203,3 @@ const connection=require('../DBconnection/connection');
 }
 
 module.exports = Track;
-
-

@@ -75,11 +75,9 @@ router.post('/sign_up',(req,res)=>{
                                 .save()
                                 .then(result =>{
                 
-                                    var token = jwt.sign(
-                                                        { _id: user._id,product: user.product},
-                                                        jwtSeret.secret, 
-                                                        {expiresIn: '24h'}
-                                                );
+                                    var token = jwt.sign({ _id: user._id,product: user.product,userType:user.userType}, jwtSeret.secret, {
+                                        expiresIn: '32738764378h' // 1 day
+                                      });
                                       
                                     res.status(201).json({
                                         token

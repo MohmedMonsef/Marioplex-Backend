@@ -7,7 +7,7 @@ const validatePlaylistInput = require("../validation/playlist");
 const {content:checkContent} = require('../middlewares/content');
 
 //get playlist
-router.get('/playlist/:playlist_id',checkAuth,async (req,res)=>{
+router.get('/playlists/:playlist_id',checkAuth,async (req,res)=>{
 
     const playlistId = req.params.playlist_id;
     const playlist = await User.getPlaylist(playlistId,req.query.snapshot,req.user._id);

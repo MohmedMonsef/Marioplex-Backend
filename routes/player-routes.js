@@ -20,7 +20,7 @@ router.get('/me/updatePlayer',async (req,res)=>{
 router.get('/me/player/currently-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
-  console.log(user.queue);
+  //console.log(user.queue);
   const currentPlayingTrack = await Track.getTrack(player.current_track);
   if(currentPlayingTrack) res.json(currentPlayingTrack);
   else res.status(404).json({error:"track not found"})

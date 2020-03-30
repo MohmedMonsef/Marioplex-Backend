@@ -9,18 +9,19 @@ const bodyparser = require('body-parser');
 const logger = require('morgan');
 const passport = require('passport');
 const session = require('express-session')
+const browse=require('./routes/browse')
+const album=require('./routes/album')
+const Track=require('./routes/Track-routes');
+const playlist=require('./routes/playlist-routes');
+const Artist=require('./routes/Artist-route');
+const Library=require('./routes/Library-routes');
+const userProfile=require('./routes/user-profile-routes')
+const login=require('./routes/login');
+const signup=require('./routes/signup-routes');
+const search=require('./routes/search')
 require('./config/passport');
 
-const browse =require('./routes/browse')
-const album =require('./routes/album')
-const Track =require('./routes/Track-routes');
-const playlist =require('./routes/playlist-routes');
-const Artist = require('./routes/Artist-route');
-const Library =require('./routes/Library-routes');
-const userProfile =require('./routes/userprofile')
-const login =require('./routes/login');
-const signup =require('./routes/signup');
-const search =require('./routes/search')
+
 const player = require('./routes/player-routes')
 const facebook = require('./authentication/facebook-routes');
 const forgpass = require('./routes/Forgpass-route');
@@ -50,7 +51,7 @@ app.use(browse);
 app.use(Artist);
 
 //connect to db before test run
-const API_PORT= process.env.API_PORT||5000;
+const API_PORT= process.env.API_PORT||3000;
 
 app.use(function(error,req,res,next){
     res.status(500);

@@ -97,6 +97,7 @@ const Player = {
             if(user.playHistory.length > 50)user.playHistory.pop();
             user.playHistory.unshift({
                 trackId:trackID
+        
             });
             await user.save();
             return 1;

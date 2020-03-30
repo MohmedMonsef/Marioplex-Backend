@@ -20,7 +20,7 @@ router.get('/me/updatePlayer',async (req,res)=>{
 router.get('/me/player/currently-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
-  console.log(user.queue);
+  //console.log(user.queue);
   const currentPlayingTrack = await Track.getTrack(player.current_track);
   if(currentPlayingTrack) res.json(currentPlayingTrack);
   else res.status(404).json({error:"track not found"})
@@ -129,5 +129,19 @@ router.put('/me/player/shuffle',checkAuth,async (req,res)=>{
   if(!isShuffle) res.status(400).json({error:'can not shuffle '});
   else res.status(200).json({success:'Do successfully'});
 })
- 
+// get recent played
+router.get('/me/player/recently-played',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const playHistory = await Player.getRecentTracks(user,req.query.limit);
+  if(!playHistory)  res.status(400).json({error:'can not get playhistory '});
+  else res.status(200).json(playHistory);
+})
+// add to recent played
+router.put('/me/player/recently-played/:track_id',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const playHistory = await Player.addRecentTrack(user,req.params.track_id);
+  if(!playHistory)  res.status(400).json({error:'can not add to playhistory '});
+  else res.status(203).json({"success":"added successfully"});
+})
+
 module.exports = router;

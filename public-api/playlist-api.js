@@ -190,10 +190,11 @@ const Playlist =  {
             return 0;
         },
         addTrackToPlaylist : async function(playlistID,tracksIds){
-
+            
+            if(!tracksIds || tracksIds.length == 0) return 0;
             let playlist=await this.getPlaylist(playlistID);
             if(!playlist) return 0;
-           // console.log(playlist);
+            //console.log(playlist);
             let len=playlist.snapshot.length;
             let tracks=[];
             if(len){
@@ -202,6 +203,8 @@ const Playlist =  {
             }
         }
             for(let i=0;i<tracksIds.length;i++){
+                // check if trackid is valid mongoose object id
+                if(!mongoose.Types.ObjectId.isValid(tracksIds[i]) ) return 0;
                 tracks.push(tracksIds[i]);
             }
             let uniquetracks=await this.removeDups(tracks);
@@ -396,9 +399,10 @@ const Playlist =  {
                     }
                     if(!found){return 0;}
                 }
-               console.log(found);
+               //console.log(found);
                     for (var i=0;i<playlist.snapshot[len-1].hasTracks.length;i++)
                        {
+                           // to check track still exist in DB
                             let track=await Track.getTrack(playlist.snapshot[len-1].hasTracks[i]);
                             if(track)
                             {
@@ -406,21 +410,25 @@ const Playlist =  {
                             }
                        }
                        let orderedtracks=[];
-                       console.log(start);
-                       console.log(before);
-                       let stindex=Number(start);
+                       // check start is in range
+                       start--;
+                       let stindex=Number(start) < 1 ? 0 : Number(start) > tracks.length ? tracks.length-1:Number(start) ;
+                       // check that lenght in range
                        let endindex=(!length)?Number(stindex+1):(stindex+length-1);
-                     console.log(endindex);
-                       for(var i=stindex;i<endindex;i++){
-                        orderedtracks.push(tracks[i]);
+                       endindex = endindex > tracks.length-1 ? tracks.length-1:endindex; 
+                       before--;
+                       before = before < 0?0:before > tracks.length-1?tracks.length-1:before; 
+                       // add tracks in range to order tracks
+                       for(let i=stindex;i<=endindex;i++){
+                           orderedtracks.push(tracks[i]);
                        }
-                       console.log(orderedtracks);
-                       tracks.splice(stindex,endindex-stindex);
-                       console.log(tracks);
-                       for(let i=0;i<orderedtracks.length;i++){
-                        tracks.splice(i+Number(before),0,orderedtracks[i]);
-                       }
-                       console.log(tracks);
+                       //console.log(stindex,endindex,tracks,orderedtracks);
+                       // remove tracks in this range from tracks in snashot
+                       tracks.splice(stindex,endindex-stindex+1);
+                       //console.log(tracks);
+                       // add those tracks before the inserted before index
+                      if(before != 0) tracks.splice(before,0,...orderedtracks);
+                      else tracks.unshift(...orderedtracks);
                      playlist.snapshot.push({
                         hasTracks:tracks,
                         action:'reorder Tracks'

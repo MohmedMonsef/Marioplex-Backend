@@ -32,7 +32,8 @@ const Track=new Schema({
   speechiness:Number ,
   tempo:Number ,
   timeSignature:Date ,
-  valence:Number
+  valence:Number,
+  like:Number
 
 
 });
@@ -89,6 +90,7 @@ const User=new Schema({
   userType:String ,
   displayName:String ,
   product:String ,
+  isFacebook:Boolean,
   follow:[{
     id: mongoose.Schema.Types.ObjectId,
     //ref: 'User'
@@ -120,8 +122,14 @@ const User=new Schema({
     //ref: 'Album'
   }],
   playHistory:[{
-    trackId:mongoose.Schema.Types.ObjectId
+    trackId: mongoose.Schema.Types.ObjectId	,
       //ref: 'Track'
+   
+  }],
+  followPlaylist:[{
+    playListId: mongoose.Schema.Types.ObjectId,
+    isPrivate:Boolean
+    //ref: 'Playlist'
 
   }],
   queue:{

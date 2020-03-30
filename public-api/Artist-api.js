@@ -174,13 +174,13 @@ if(RelatedArtists.length>20) RelatedArtists.slice(0,20);
 return RelatedArtists;
 },
     // get top tracks of a country for an Artist
-getTopTracks : async function(artistID,country){
+getTopTracks : async function(artistID,country,user){
         let TopTracks=[];
         let tracks={};
         let artist = await this.getArtist(artistID);
         if(!artist)return 0;
     for(let i=0;i<artist.addTracks.length;i++){
-        let track=await Track.getTrack(artist.addTracks[i].trackId);
+        let track=await Track.getTrack(artist.addTracks[i].trackId,user);
         if(track){tracks[artist.addTracks[i].trackId]=track;}
     }
     for(let track in tracks){
@@ -194,13 +194,13 @@ getTopTracks : async function(artistID,country){
     TopTracks.slice(0,10);
     return TopTracks;
 },
-getTracks : async function(artistID){
+getTracks : async function(artistID,user){
     let SpecificTracks=[];
     let tracks={};
     let artist = await this.getArtist(artistID);
     if(!artist)return 0;
 for(let i=0;i<artist.addTracks.length;i++){
-    let track=await Track.getTrack(artist.addTracks[i].trackId);
+    let track=await Track.getFullTrack(artist.addTracks[i].trackId,user);
         if(track){tracks[artist.addTracks[i].trackId]=track;}
 }
 for(let Track in tracks){

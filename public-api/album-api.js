@@ -86,7 +86,7 @@ const artist=require('./artist-api');
         
 
     },
-    getTracksAlbum  : async function(albumID){
+    getTracksAlbum  : async function(albumID,user){
         
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
@@ -97,12 +97,12 @@ const artist=require('./artist-api');
         }
         else{
 
-            for(i=0;i<album.hasTracks.length;i++)
-            var Track=track.getTrack(album.hasTracks[i].trackId);
+            for(i=0;i<album.hasTracks.length;i++){
+            var Track=await track.getFullTrack(album.hasTracks[i].trackId,user);
             if(Track){
                 Tracks.push(Track);
             }
-
+        }
         }
         if(Tracks.length==0){
             return 0;
@@ -135,25 +135,39 @@ const artist=require('./artist-api');
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
-            if(albumID==undefined) return 0;
-            for(let i=0;i<albumID.length;i++){
-                if(this.checkIfUserSaveAlbum(user,albumID[i])!=undefined){
+            if(albumID==undefined) return 2;
+            let albums=[];
+            for(let j=0;j<albumID.length;j++){
+                let album=await this.getAlbumById(albumID[j]);
+                if(album){
+                    albums.push(albumID[j]);
+                }
+            }
+            if(albums.length==0){return 2;}
+            let count=0;
+            for(let i=0;i<albums.length;i++){
+                if(this.checkIfUserSaveAlbum(user,albums[i])==undefined){
                     if(user.saveAlbum){
                         user.saveAlbum.push({
-                            albumId: albumID[i],
+                            albumId: albums[i],
                             savedAt: Date.now()
                         });
                         await user.save();
                         
                         
                     }
-                    user.saveAlbum = [];
+                 else{   user.saveAlbum = [];
                     user.saveAlbum.push({
-                        albumId: albumID[i],
+                        albumId: albums[i],
                         savedAt: Date.now()
                     });
                     await user.save();
+                }
                  }
+                 else{count++;}
+                }
+                if(count==albums.length){
+                    return 0;
                 }
                 return 1;
 
@@ -162,15 +176,22 @@ const artist=require('./artist-api');
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
+        let found=false;
         if(albumID==undefined) return 0;
         for(let j=0;j<albumID.length;j++){
             if(this.checkIfUserSaveAlbum(user,albumID[j])){
+                found=true;
                 for(let i=0;i <user.saveAlbum.length;i++ ){
                     if(user.saveAlbum[i].albumId == albumID[j]){
                         user.saveAlbum.splice(i,1);
                     }
                 }
                 await user.save().catch();
+            }
+            else{
+                if((!found&&(j==(albumID.length-1)))||(albumID.length==1)){
+                    return 0;
+                }
             }     
         }
         return 1;

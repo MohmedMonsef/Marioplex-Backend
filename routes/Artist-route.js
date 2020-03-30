@@ -35,8 +35,8 @@ router.get('/Artists/:artist_id/Albums',[checkAuth],async (req,res)=>{
 });
 //get Tracks
 router.get('/Artists/:artist_id/Tracks',[checkAuth],async (req,res)=>{
-
-    const tracks = await Artist.getTracks(req.params.artist_id);
+    let user=await User.getUserById(req.user._id);
+    const tracks = await Artist.getTracks(req.params.artist_id,user);
     if(tracks.length==0||tracks==0) return res.status(404).send({error:"tracks are not found"});
     else return res.status(200).json(tracks);
 });
@@ -50,8 +50,8 @@ router.get('/Artists/:artist_id/related_artists',[checkAuth],async (req,res)=>{
 
 // get Top Tracks
 router.get('/Artists/:artist_id/toptracks',[checkAuth],async (req,res)=>{
-
-    const tracks = await Artist.getTopTracks(req.params.artist_id,req.query.country);
+    let user=await User.getUserById(req.user._id);
+    const tracks = await Artist.getTopTracks(req.params.artist_id,req.query.country,user);
     if(tracks.length==0||tracks==0) return res.status(404).send({error:"no top tracks in this country are not found"});
     else return res.status(200).json(tracks);
 });

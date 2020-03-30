@@ -61,8 +61,8 @@ router.get('/albums/:album_id',checkAuth,async (req,res)=>{
     const albumID = req.params.album_id;
    
     const album = await Album.getAlbumArtist(albumID);
-    if(!album) res.sendStatus(404); //not found
-    else res.send(album); 
+    if(!album) res.status(404).send("NO Albums found"); //not found
+    else res.status(200).send(album); 
 
 })
 

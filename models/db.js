@@ -140,6 +140,8 @@ const User=new Schema({
       trackId:   mongoose.Schema.Types.ObjectId,
         //ref: 'Track'
       isQueue:Boolean,
+      isPlaylist:Boolean,
+      playlistId:mongoose.Schema.Types.ObjectId
         }]
 },
   player:{

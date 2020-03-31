@@ -280,7 +280,7 @@ const User =  {
             if(user.userType=="Artist"){
                 return false;
             }
-            let artist=await Artist.createArtist(userID,info,name,genre);
+            let artist=await Artist.createArtist(user,info,name,genre);
             if(!artist) return false;
             user.userType="Artist";
             await user.save();

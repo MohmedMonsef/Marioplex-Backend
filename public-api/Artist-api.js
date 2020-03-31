@@ -3,17 +3,21 @@ const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 
+
  const Artist =  {
 
-    createArtist: async function(userID,Info,name,Genre){
 
+    createArtist: async function(user,Info,name,Genre){
+        var userName;
+        if(!name)  userName=user.displayName;
+        else       userName=name;
         let artist=new artistDocument({
             info:Info ,
             popularity:0,
             genre:Genre ,
             type:"Artist" ,
-            Name:name,
-            userId:userID,
+            Name:userName,
+            userId:user._id,
             popularity:0,
             images:[], 
             addAlbums:[],
@@ -21,7 +25,6 @@ const Track=require('./track-api');
 
         });
         await artist.save();
-        console.log(artist);
         return artist;
     },
     checkArtisthasAlbum:async function(artistId,albumId){
@@ -172,14 +175,24 @@ getRelatedArtists : async function(artistID){
 if(RelatedArtists.length>20) RelatedArtists.slice(0,20);
 return RelatedArtists;
 },
+findMeAsArtist:async function(userId){
+   
+    const artist = await artistDocument.findOne({ userId: userId },(err,artist)=>{
+        if(err) return 0;
+        return artist;
+    }).catch((err)=>0);
+    console.log(artist)
+    return artist;
+},
+
     // get top tracks of a country for an Artist
-getTopTracks : async function(artistID,country,user){
+getTopTracks : async function(artistID,country){
         let TopTracks=[];
         let tracks={};
         let artist = await this.getArtist(artistID);
         if(!artist)return 0;
     for(let i=0;i<artist.addTracks.length;i++){
-        let track=await Track.getTrack(artist.addTracks[i].trackId,user);
+        let track=await Track.getTrack(artist.addTracks[i].trackId);
         if(track){tracks[artist.addTracks[i].trackId]=track;}
     }
     for(let track in tracks){
@@ -193,13 +206,13 @@ getTopTracks : async function(artistID,country,user){
     TopTracks.slice(0,10);
     return TopTracks;
 },
-getTracks : async function(artistID,user){
+getTracks : async function(artistID){
     let SpecificTracks=[];
     let tracks={};
     let artist = await this.getArtist(artistID);
     if(!artist)return 0;
 for(let i=0;i<artist.addTracks.length;i++){
-    let track=await Track.getFullTrack(artist.addTracks[i].trackId,user);
+    let track=await Track.getTrack(artist.addTracks[i].trackId);
         if(track){tracks[artist.addTracks[i].trackId]=track;}
 }
 for(let Track in tracks){

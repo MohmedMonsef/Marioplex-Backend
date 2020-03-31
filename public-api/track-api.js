@@ -167,9 +167,10 @@ const connection=require('../DBconnection/connection');
     },
       // create Track for an artist
     // params : artist-id
-    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets,artistID,albumID){
+    createTrack  : async function(url,Name,TrackNumber,AvailableMarkets,artistID,albumID,duration){
         let track=new trackDocument({
             externalId:url ,
+            duration,duration,
             availableMarkets:AvailableMarkets ,
             trackNumber:TrackNumber ,
             name:Name,

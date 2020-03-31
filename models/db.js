@@ -11,6 +11,7 @@ const Track=new Schema({
   artistId:mongoose.Schema.Types.ObjectId,
   albumId:mongoose.Schema.Types.ObjectId,
   availableMarkets:[String] ,
+  duration:Number,
   discNumber:Number ,
   trackNumber:Number ,
   durationMs:Number ,

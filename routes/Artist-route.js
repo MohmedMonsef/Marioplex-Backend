@@ -19,7 +19,7 @@ router.get('/Artists/:artist_id',checkAuth,async (req,res)=>{
 });
 
 // get Artists
-router.get('/me/Artists',[checkAuth],async (req,res)=>{
+router.get('/Artists',[checkAuth],async (req,res)=>{
     const artistsIDs = req.query.artists_ids.split(',');
     const artists = await Artist.getArtists(artistsIDs);
     if(artists.length==0) return res.status(404).send({error:"artists with those id's are not found"});
@@ -35,8 +35,8 @@ router.get('/Artists/:artist_id/Albums',[checkAuth],async (req,res)=>{
 });
 //get Tracks
 router.get('/Artists/:artist_id/Tracks',[checkAuth],async (req,res)=>{
-    let user=await User.getUserById(req.user._id);
-    const tracks = await Artist.getTracks(req.params.artist_id,user);
+
+    const tracks = await Artist.getTracks(req.params.artist_id);
     if(tracks.length==0||tracks==0) return res.status(404).send({error:"tracks are not found"});
     else return res.status(200).json(tracks);
 });
@@ -50,26 +50,27 @@ router.get('/Artists/:artist_id/related_artists',[checkAuth],async (req,res)=>{
 
 // get Top Tracks
 router.get('/Artists/:artist_id/toptracks',[checkAuth],async (req,res)=>{
-    let user=await User.getUserById(req.user._id);
-    const tracks = await Artist.getTopTracks(req.params.artist_id,req.query.country,user);
+    
+    const tracks = await Artist.getTopTracks(req.params.artist_id,req.query.country);
     if(tracks.length==0||tracks==0) return res.status(404).send({error:"no top tracks in this country are not found"});
     else return res.status(200).json(tracks);
 });
 
-router.put('/Artists/:artist_id/Albums',[checkAuth,checkType,checkContent],async (req,res)=>{
-    const artistID=req.params.artist_id;
-    const artistAlbum = await Artist.addAlbum(artistID,req.body.Name,req.body.Label,req.body.Availablemarkets,req.body.Albumtype,req.body.ReleaseDate,req.body.Genre);
+router.put('/Artists/me/Albums',[checkAuth,checkType,checkContent],async (req,res)=>{
+   const artist =await Artist.findMeAsArtist(req.user._id);
+    const artistAlbum = await Artist.addAlbum(artist._id,req.body.name,req.body.label,req.body.availablemarkets,req.body.albumtype,req.body.releaseDate,req.body.genre);
     if(!artistAlbum) return res.status(404).send(" "); //not found
     else return res.status(200).send(artistAlbum); 
 });
 
-router.put('/Artists/:artist_id/Albums/:album_id/tracks',[checkAuth,checkType,checkContent,uploadTrack.single('file')],async (req,res)=>{
+router.put('/Artists/me/Albums/:album_id/tracks',[checkAuth,checkType,checkContent,uploadTrack.single('file')],async (req,res)=>{
 // create track its external id=req.file.id
 //add rest info to the track
-if (await  Artist.checkArtisthasAlbum(req.params.artist_id,req.params.album_id)){
-    let track=await Track.createTrack(req.file.id,req.body.name,req.body.TrackNum,req.body.availableMarkets,req.params.artist_id,req.params.album_id);
+const artist =await Artist.findMeAsArtist(req.user._id);
+if (await  Artist.checkArtisthasAlbum(artist._id,req.params.album_id)){
+    let track=await Track.createTrack(req.file.id,req.body.name,req.body.trackNum,req.body.availableMarkets,artist._id,req.params.album_id,req.body.duration);
     await Album.addTrack(req.params.album_id,track);
-    await Artist.addTrack(req.params.artist_id,track._id);
+    await Artist.addTrack(artist._id,track._id);
     return res.status(200).send(track);
 }
 else  return res.status(400).send("error in one of ids")
@@ -78,7 +79,7 @@ else  return res.status(400).send("error in one of ids")
 router.post('/me/ToArtist',[checkAuth],async (req,res)=>{
     if(req.body.genre){
    let genre=req.body.genre.split(',');
-    let isartist=await User.promoteToArtist(req.user._id,req.body.info,req.body.Name,genre);
+    let isartist=await User.promoteToArtist(req.user._id,req.body.info,req.body.name,genre);
     if(!isartist){return res.status(403).send("sorry you can't be an Artist");}
     return res.status(200).send("Artist Succeded");
     }

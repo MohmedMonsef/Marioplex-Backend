@@ -11,6 +11,8 @@ const Track=new Schema({
   artistId:mongoose.Schema.Types.ObjectId,
   albumId:mongoose.Schema.Types.ObjectId,
   availableMarkets:[String] ,
+  url:String,
+  images:[Image] ,
   duration:Number,
   discNumber:Number ,
   trackNumber:Number ,
@@ -146,10 +148,21 @@ const User=new Schema({
 },
   player:{
     last_playlist_track_index:Number,
-    current_track: mongoose.Schema.Types.ObjectId,
-      //ref: 'Track'
-    next_track: mongoose.Schema.Types.ObjectId,
-    prev_track: mongoose.Schema.Types.ObjectId,
+    current_track:{
+      trackId: mongoose.Schema.Types.ObjectId,
+      isPlaylist:Boolean,
+      playlistId: mongoose.Schema.Types.ObjectId
+    },
+    next_track:{
+      trackId: mongoose.Schema.Types.ObjectId,
+      isPlaylist:Boolean,
+      playlistId: mongoose.Schema.Types.ObjectId
+    },
+    prev_track:{
+      trackId: mongoose.Schema.Types.ObjectId,
+      isPlaylist:Boolean,
+      playlistId: mongoose.Schema.Types.ObjectId
+    },
     is_playing:Boolean,
     is_shuffled:Boolean,
     current_source:mongoose.Schema.Types.ObjectId,

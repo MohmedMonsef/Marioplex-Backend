@@ -67,7 +67,8 @@ router.post('/sign_up',(req,res)=>{
                                 like:[] ,
                                 createPlaylist:[] ,
                                 saveAlbum:[] ,
-                                playHistory:[]
+                                playHistory:[],
+                                player:{}
 
                             });
                             

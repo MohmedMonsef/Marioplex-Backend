@@ -301,7 +301,6 @@ const User =  {
     },
     updateUserPlayer: async function(userID,isPlaylist,sourceId,trackID){
         const user = await this.getUserById(userID);
-        
         const queu = await Player.createQueue(user,isPlaylist,sourceId,trackID);
         //console.log(queu);
         if(!queu) return 0;

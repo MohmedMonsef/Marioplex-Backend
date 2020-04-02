@@ -63,19 +63,24 @@ router.put('/Artists/me/Albums',[checkAuth,checkType,checkContent],async (req,re
     else return res.status(200).send(artistAlbum); 
 });
 
-router.put('/Artists/me/Albums/:album_id/tracks',[checkAuth,checkType,checkContent,uploadTrack.single('file')],async (req,res)=>{
-// create track its external id=req.file.id
-//add rest info to the track
-const artist =await Artist.findMeAsArtist(req.user._id);
-if (await  Artist.checkArtisthasAlbum(artist._id,req.params.album_id)){
-    let track=await Track.createTrack(req.file.id,req.body.name,req.body.trackNum,req.body.availableMarkets,artist._id,req.params.album_id,req.body.duration);
-    await Album.addTrack(req.params.album_id,track);
-    await Artist.addTrack(artist._id,track._id);
-    return res.status(200).send(track);
-}
-else  return res.status(400).send("error in one of ids")
-});
+// router.put('/Artists/me/Albums/:album_id/tracks',[checkAuth,checkType,uploadTrack.fields({name:"high"},{name:"medium"},{name:"low"})],async (req,res)=>{
+// // create track its external id=req.file.id
+// //add rest info to the track
+// const artist =await Artist.findMeAsArtist(req.user._id);
+// if (await  Artist.checkArtisthasAlbum(artist._id,req.params.album_id)){
+//     let track=await Track.createTrack(req.file.id,req.body.name,req.body.trackNum,req.body.availableMarkets,artist._id,req.params.album_id,req.body.duration);
+//     await Album.addTrack(req.params.album_id,track);
+//     await Artist.addTrack(artist._id,track._id);
+//     return res.status(200).send(track);
+// }
+// else  return res.status(400).send("error in one of ids")
+// });
+router.post('/artists/me/albums/:album_id/tracks',checkAuth,[uploadTrack.fields([{name:"high"},{name:"medium"},{name:"low"}])],async (req,res)=>{
+  
 
+    
+res.send('gg');
+})
 router.post('/me/ToArtist',[checkAuth],async (req,res)=>{
     if(req.body.genre){
    let genre=req.body.genre.split(',');

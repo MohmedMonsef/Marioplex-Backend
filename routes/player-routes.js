@@ -23,11 +23,10 @@ router.get('/me/player/currently-playing',checkAuth,async (req,res)=>{
   //console.log(user.queue);
   var currentPlayingTrack = await Track.getFullTrack(player.current_track.trackId,user);
   if(currentPlayingTrack){
-    var currentTrack={};
-    currentTrack["fullTrack"]=currentPlayingTrack;
-    currentTrack["isPlaylist"]=player.current_track.isPlaylist;
-    currentTrack["playlistId"]=player.current_track.playlistId;
-     res.send(ncurrentTrack);
+    currentPlayingTrack["isPlaylist"]=player.current_track.isPlaylist;
+    currentPlayingTrack["playlistId"]=player.current_track.playlistId;
+    currentPlayingTrack['isPlayable']=true;
+     res.send(currentPlayingTrack);
     }
   else res.status(404).json({error:"track not found"})
 })
@@ -38,11 +37,10 @@ router.get('/me/player/next-playing',checkAuth,async (req,res)=>{
   const player = user.player;
   var nextPlayingTrack = await Track.getFullTrack(player.next_track.trackId,user);
   if(nextPlayingTrack){
-    var nextTrack={};
-    nextTrack["fullTrack"]=nextPlayingTrack;
-    nextTrack["isPlaylist"]=player.next_track.isPlaylist;
-    nextTrack["playlistId"]=player.next_track.playlistId;
-     res.send(nextTrack);
+    nextPlayingTrack["isPlaylist"]=player.next_track.isPlaylist;
+    nextPlayingTrack["playlistId"]=player.next_track.playlistId;
+    nextPlayingTrack['isPlayable']=false;
+     res.send(nextPlayingTrack);
     }
 
   else res.status(404).json({error:"track not found"})
@@ -57,11 +55,11 @@ router.get('/me/player/prev-playing',checkAuth,async (req,res)=>{
   console.log(user.player);
   var prevPlayingTrack = await Track.getFullTrack(player.prev_track.trackId,user);
   if(prevPlayingTrack){
-    var prevTrack={};
-    prevTrack["fullTrack"]=prevPlayingTrack;
-    prevTrack["isPlaylist"]=player.prev_track.isPlaylist;
-    prevTrack["playlistId"]=player.prev_track.playlistId;
-     res.send(prevTrack);
+    
+    prevPlayingTrack["isPlaylist"]=player.prev_track.isPlaylist;
+    prevPlayingTrack["playlistId"]=player.prev_track.playlistId;
+    prevPlayingTrack['pisPlayable']=false;
+     res.send(prevPlayingTrack);
     }
   else res.status(404).json({error:"track not found"})
 })
@@ -93,12 +91,11 @@ router.post('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
   const skip = await Player.skipNext(user)
   if(skip==2){
     if(nextPlayingTrack){
-      var nextTrack={};
-      nextTrack["fullTrack"]=nextPlayingTrack;
-      nextTrack["isPlaylist"]=player.next_track.isPlaylist;
-      nextTrack["playlistId"]=player.next_track.playlistId;
-      nextTrack["fristInSource"]=true;
-       res.send(nextTrack);
+      nextPlayingTrack["isPlaylist"]=player.next_track.isPlaylist;
+      nextPlayingTrack["playlistId"]=player.next_track.playlistId;
+      nextPlayingTrack["isPlayable"]=true;
+      nextPlayingTrack["fristInSource"]=true;
+       res.send(nextPlayingTrack);
     
      
     }
@@ -107,11 +104,11 @@ router.post('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
   }
   else{
     if(nextPlayingTrack){
-      var nextTrack={};
-      nextTrack["fullTrack"]=nextPlayingTrack;
-      nextTrack["isPlaylist"]=player.next_track.isPlaylist;
-      nextTrack["playlistId"]=player.next_track.playlistId;
-       res.send(nextTrack);
+    
+      nextPlayingTrack["isPlaylist"]=player.next_track.isPlaylist;
+      nextPlayingTrack["playlistId"]=player.next_track.playlistId;
+      nextPlayingTrack["isPlayable"]=true;
+       res.send(nextPlayingTrack);
       }
     else res.status(404).json({error:'track not found'})
   }
@@ -123,11 +120,10 @@ router.post('/me/player/prev-playing',checkAuth,async (req,res)=>{
   var prevPlayingTrack = await Track.getFullTrack(player.prev_track.trackId,user);
   const skip = await Player.skipPrevious(user);
   if(prevPlayingTrack){
-    var prevTrack={};
-    prevTrack["fullTrack"]=prevPlayingTrack;
-    prevTrack["isPlaylist"]=player.prev_track.isPlaylist;
-    prevTrack["playlistId"]=player.prev_track.playlistId;
-     res.send(prevTrack);
+    prevPlayingTrack["isPlaylist"]=player.prev_track.isPlaylist;
+    prevPlayingTrack["playlistId"]=player.prev_track.playlistId;
+    prevPlayingTrack["isPlayable"]=true;
+     res.send(prevPlayingTrack);
     }
   else res.status(404).json({error:'track not found'})
 })

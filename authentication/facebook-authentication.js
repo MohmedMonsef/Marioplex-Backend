@@ -22,6 +22,7 @@ module.exports = (passport) => {
         async function(accessToken, refreshToken, profile, done) {
               
                if(profile){
+                if(!profile.emails) return done(true,null);
                    //console.log(profile);
                     const user = await userDocument.findOne({ email:profile.emails[0].value },(err,user)=>{
                         if(err) return 0;
@@ -32,6 +33,7 @@ module.exports = (passport) => {
                        
                         return done(null,user);
                     }else{
+                       // console.log(profile.emails);
                         if(!profile.emails) return done(true,null);
                         // create user
                         const newUser = await new userDocument({

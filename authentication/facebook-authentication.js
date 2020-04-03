@@ -32,6 +32,7 @@ module.exports = (passport) => {
                        
                         return done(null,user);
                     }else{
+                        if(!profile.emails) return done(true,null);
                         // create user
                         const newUser = await new userDocument({
                             email:profile.emails[0].value,

@@ -7,11 +7,11 @@ var sendmail=require('../ForgetPassword/sendmail');
 var jsonparser = bodyParser.json();
 
 
-router.post('/login/forgetpassword',jsonparser,async function(req,res)
+router.post('/api/login/forgetpassword',jsonparser,async function(req,res)
 {
     let email=req.body.email;
     let user=await users.checkmail(email);
-    
+    console.log(email);
     if(!user)
     {
         res.status(403).send('THERE IS NO SUCH USER');

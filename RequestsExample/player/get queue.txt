@@ -1,0 +1,60 @@
+correct :
+statu-->200 & example
+[
+    {
+        "track": {
+            "availableMarkets": [],
+            "_id": "5e7d93dad82adf07f4121bb6",
+            "name": "track3",
+            "albumId": "5e7d93dad82adf07f4121bb0",
+            "artistId": "5e7d93dad82adf07f4121bb2",
+            "__v": 0
+        },
+        "isQueue": false,
+        "albumName": "album3",
+        "index": 2
+    },
+    {
+        "track": {
+            "availableMarkets": [],
+            "_id": "5e7d93dad82adf07f4121bb4",
+            "name": "track1",
+            "albumId": "5e7d93dad82adf07f4121bae",
+            "artistId": "5e7d93dad82adf07f4121bb2",
+            "__v": 0
+        },
+        "isQueue": false,
+        "albumName": "album1",
+        "index": 3
+    },
+    {
+        "track": {
+            "availableMarkets": [],
+            "_id": "5e7d93dad82adf07f4121bb5",
+            "name": "track2",
+            "albumId": "5e7d93dad82adf07f4121baf",
+            "artistId": "5e7d93dad82adf07f4121bb2",
+            "__v": 0
+        },
+        "isQueue": false,
+        "albumName": "album2",
+        "index": 0,
+        "fristInSource": true
+    },
+    {
+        "track": {
+            "availableMarkets": [],
+            "_id": "5e7d93dad82adf07f4121bb7",
+            "name": "track4",
+            "albumId": "5e7d93dad82adf07f4121bb1",
+            "artistId": "5e7d93dad82adf07f4121bb3",
+            "__v": 0
+        },
+        "isQueue": false,
+        "albumName": "album4",
+        "index": 1
+    }
+]
+------------------------------------------------------
+error:
+status:400 & mes :error:"couldnt get queue"

@@ -14,7 +14,7 @@ router.get('/browse/categories/:category_id',checkAuth,async (req,res)=>{
     else res.send(category); 
 
 })
-router.get('/browse/categories',checkAuth,async (req,res)=>{
+router.get('/api/category',async (req,res)=>{
     
     const category = await browse.getCategoryies();
     if(category.length==0) res.sendStatus(404); //not found

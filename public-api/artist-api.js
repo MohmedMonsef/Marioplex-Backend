@@ -3,17 +3,21 @@ const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 
+
  const Artist =  {
 
-    createArtist: async function(userID,Info,name,Genre){
 
+    createArtist: async function(user,Info,name,Genre){
+        var userName;
+        if(!name)  userName=user.displayName;
+        else       userName=name;
         let artist=new artistDocument({
             info:Info ,
             popularity:0,
             genre:Genre ,
             type:"Artist" ,
-            Name:name,
-            userId:userID,
+            Name:userName,
+            userId:user._id,
             popularity:0,
             images:[], 
             addAlbums:[],
@@ -21,8 +25,17 @@ const Track=require('./track-api');
 
         });
         await artist.save();
-        console.log(artist);
         return artist;
+    },
+    checkArtisthasAlbum:async function(artistId,albumId){
+        if (await Album.getAlbumById(albumId)){
+            artist=await this.getArtist(artistId);
+            if(!artist) return 0;
+            if(artist.addAlbums){
+                return await artist.addAlbums.find(album => album.albumId == albumId);    
+            }  
+        }
+        return 0;
     },
     // get artist by id
     // params : artist-id
@@ -38,6 +51,7 @@ const Track=require('./track-api');
     // create album for an artist
     // params : artist-id
     addAlbum  : async function(ArtistID,Name,Label,Avmarkets,Albumtype,ReleaseDate,Genre){
+        if(!await this.getArtist(ArtistID))  return 0;
         let spotifyAlbums=spotify.album;
         let album=await new spotifyAlbums({
             name:Name ,
@@ -78,10 +92,11 @@ const Track=require('./track-api');
     // get several Artists
     // params : array of Artists ids
     getArtists : async function(artistsIDs){
-        let artists = {};
+        let artists = [];
         for(let artistID of artistsIDs){
-            artists[artistID] = await this.getArtist(artistID);
-            if(!artists[artistID])return 0;
+            let artist = await this.getArtist(artistID);
+            if(!artist)continue
+            artists.push(artist);
         }
         return artists;
 },
@@ -150,7 +165,8 @@ getRelatedArtists : async function(artistID){
         for(var i=0;i<Artists[Artist].genre.length;i++){
             for(var j=0;j<artist.genre.length;j++){
                 if(Artists[Artist].genre[i]==artist.genre[j]){
-                    RelatedArtists.push(Artists[Artist]);
+                    if( !RelatedArtists.find(artist1=> artist1._id == Artists[Artist]._id))
+                            RelatedArtists.push(Artists[Artist]);
                     continue;
                 }
             }
@@ -159,6 +175,16 @@ getRelatedArtists : async function(artistID){
 if(RelatedArtists.length>20) RelatedArtists.slice(0,20);
 return RelatedArtists;
 },
+findMeAsArtist:async function(userId){
+   
+    const artist = await artistDocument.findOne({ userId: userId },(err,artist)=>{
+        if(err) return 0;
+        return artist;
+    }).catch((err)=>0);
+    console.log(artist)
+    return artist;
+},
+
     // get top tracks of a country for an Artist
 getTopTracks : async function(artistID,country){
         let TopTracks=[];

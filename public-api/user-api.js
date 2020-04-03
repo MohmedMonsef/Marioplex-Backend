@@ -24,28 +24,37 @@ const User =  {
     update : async function(userID,Display_Name,Password,Email,Country){
         const user = await this.getUserById(userID);
         if(user){
-            userDocument.findOne({email:Email}).exec().then(User=>{
-                    
-                    if(Display_Name != undefined ){
-                        user.displayName=Display_Name;
-                    }
-                    if(Password != undefined ){
-                        bcrypt.hash(Password,10,(err,hash)=>{
-                            if(!err) {
-                                user.password=hash;
-                            }
-                        })
-                    }
-                    if(Email != undefined && !User){
-                        user.email=Email;
-                    }
-                    if(Country != undefined){
-                        user.country=Country;
-                    }
-                    user.save();
-                    return 1;
-                    
-            })
+            if(user.isFacebook){
+                //if from facebok change country only
+               if(Country) user.country = Country;
+                console.log(user.country,Country);
+
+            }else{
+                // else update the
+                if(Display_Name != undefined ){
+                    user.displayName=Display_Name;
+                }
+                if(Password != undefined ){
+                    bcrypt.hash(Password,10,(err,hash)=>{
+                        if(!err) {
+                            user.password=hash;
+                        }
+                    })
+                }
+                if(Email != undefined){
+                    // check email is not used in the website
+                    const UserByEmail = await userDocument.findOne({email:Email});
+                    if(!UserByEmail) user.email=Email;
+                    else return 0;//email is found before
+                }
+                if(Country != undefined){
+                    user.country=Country;
+                }
+                
+            }
+            await user.save();
+            return 1;
+            
         }
         else return 0;
             
@@ -56,35 +65,18 @@ const User =  {
     me:async function(userID,reqID){
         const user = await this.getUserById(userID);
         console.log(user)
-        if(!user){ console.log(user)
+        if(!user){
             return 0; }
-        playlistInfo={}
-        var i;
-        for(i=0;i<user.createPlaylist.length;i++){
-            if((user.createPlaylist[i].isPrivate==true&&user._id==reqID)||user.createPlaylist[i].isPrivate==false){
-                let playlist=await Playlist.getPlaylist(user.createPlaylist[i].playListId)
-                if(playlist){
-                    Playlists={}
-                    Playlists["_id"]=playlist._id
-                    Playlists["name"]=playlist.name
-                    Playlists["type"]=playlist.type
-                    Playlists["images"]=playlist.images
-                    playlistInfo[i]={playlist:Playlists}
-                    console.log(playlistInfo)
-                }
-            }
 
-        }
-        users={}
-        users["_id"]=user._id
-        users["displayName"]=user.displayName
-        users["images"]=user.images
-        users["type"]=user.type
-        playlistInfo[i]={user:users};
-        console.log(playlistInfo)
-        return playlistInfo;
+  
+        userPublic={}
+        userPublic["_id"]=user._id;
+        userPublic["displayName"]=user.displayName;
+        userPublic["images"]=user.images;
+        userPublic["type"]=user.type;
+        userPublic["followedBy"] = user.followedBy;
+        return userPublic;
             
-        
         
     },
 
@@ -95,6 +87,8 @@ const User =  {
             if(err) return 0;
             return User;
         });
+        // delete user himseld from db
+        await userDocument.findByIdAndDelete(userID);
         return User;
 
     },
@@ -144,7 +138,24 @@ const User =  {
         const addTrack = await this.addTrack(user,trackID,playlistID);
         return addTrack;
     },
-    
+    getUserFollowingArtist: async function (userID){
+        const user = await this.getUserById(userID);
+        console.log(user)
+
+        if(!user.follow.length){return 0;}
+        let Artist=[]
+        for(let i=0;i<user.follow.length;i++){
+            let User=await this.getUserById(user.follow[i].id);
+            if(User){
+                let artists=await artistDocument.find({userId:User._id});
+                if(artists){
+                    Artist.push(artists[0]);
+                }
+            }
+        }
+        return Artist;
+        
+    },
 
 
 
@@ -152,7 +163,6 @@ const User =  {
     checkmail: async function (email){
    
         let user=await userDocument.findOne({email:email});
-        
         if(!user)
         {
             return false;
@@ -197,9 +207,12 @@ const User =  {
     },
 
     getPlaylist:async function (playlistId,snapshot,userId){
-        const user = await this.getUserById(userId);
-        return await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
-    },
+        const user = await this.getUserById(userId);   
+         const playlist = await Playlist.getPlaylistWithTracks (playlistId,snapshot,user);
+        const  owner = await this.getUserById(playlist[0].ownerId);
+        playlist.push({ownerName:owner?owner.displayName:undefined});
+        return playlist;
+        },
 
     createdPlaylist:async  function (userID,playlistName,Description){
             const user = await this.getUserById(userID);
@@ -282,7 +295,7 @@ const User =  {
             if(user.userType=="Artist"){
                 return false;
             }
-            let artist=await Artist.createArtist(userID,info,name,genre);
+            let artist=await Artist.createArtist(user,info,name,genre);
             if(!artist) return false;
             user.userType="Artist";
             await user.save();
@@ -303,13 +316,16 @@ const User =  {
     },
     updateUserPlayer: async function(userID,isPlaylist,sourceId,trackID){
         const user = await this.getUserById(userID);
-        
         const queu = await Player.createQueue(user,isPlaylist,sourceId,trackID);
-        console.log(queu);
+        //console.log(queu);
         if(!queu) return 0;
         const player = await Player.setPlayerInstance(user,isPlaylist,sourceId,trackID);
         if(!player) return 0;
         return 1;
+    },
+    repreatPlaylist:async function(userID,state){
+        const user = await this.getUserById(userID);
+        return await Player.repreatPlaylist(user,state);
     },
     getQueue: async function(userId){
         const user = await this.getUserById(userId);

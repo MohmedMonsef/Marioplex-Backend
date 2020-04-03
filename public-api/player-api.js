@@ -38,57 +38,25 @@ const Player = {
 
     // update user player object each time he plays new track
     setPlayerInstance: async function(user,isPlaylist,id,trackID){
-    
-        // first check if there is a queue
+        user.player.next_track={};
+        user.player.prev_track={};
+        user.player.current_track={};
+        
+       
         if(user.queue.tracksInQueue){
+           
             // get next from the queue directly
            // get next track and prev Track in playlist by checking for id greater than track id
-           const {"next_track":nextTrack,"prev_track":prevTrack,"last_playlist_track_index":current_index} = this.getPrevAndNext(user.queue.tracksInQueue,trackID,user);
-            user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
-            user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
-            user.player["current_track"] = trackID;
-            user.player["last_playlist_track_index"] = current_index;
-            user.player["is_playing"] = true;
-            await user.save();
-            console.log(user.player);
+           
+           user.player.current_track['isPlaylist']=isPlaylist==true||isPlaylist=='true'?true:false;
+           user.player.current_track['trackId'] = trackID;
+           user.player.current_track['playlistId'] = id;
+           await user.save();
+           await this.setNextPrevCurrent(user,trackID);
            return 1;
-        }else{
-            // get next and previous form playlist or album he is currently in
-    
-        // if the new track the user is playing from a plylist then get track and get it's previus and next from the playlist
-        if(isPlaylist){
-            // get playlist
-            const playlist = await Playlist.getPlaylist(id);
-            if(!playlist) return 0; // no playlist was found
-            // check if there is snapshot or not
-            if(!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{hasTracks:[]}];
-            // get next track and prev Track in playlist by checking for id greater than track id
-            
-            const {"next_track":nextTrack,"prev_track":prevTrack,"last_playlist_track_index":current_index} = this.getPrevAndNext(playlist.snapshot[playlist.snapshot.length-1].hasTracks,trackID,user);            // update user player info 
-            user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
-            user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
-            user.player["current_track"] = trackID;
-            user.player["last_playlist_track_index"] = current_index;
-            user.player["is_playing"] = true;
-            await user.save();
-            return 1;
-        }else{
-            // the track is from album 
-            // get album
-            const album = await Album.getAlbumById(id);
-            if(!album) return 0; // no playlist was found
-            // get next track and prev track in album by checking for id greater than track id
-            const {"next_track":nextTrack,"prev_track":prevTrack,"last_playlist_track_index":current_index} = this.getPrevAndNext(album.hasTracks,trackID,user);
-             // update user player info 
-             user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
-             user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
-             user.player["current_track"] = trackID;
-             user.player["last_playlist_track_index"] = current_index;
-             user.player["is_playing"] = true;
-            await user.save();
-            return 1;
         }
-    }
+        return 0;
+    
             
     },
     // add  a track to user recent tracks
@@ -97,6 +65,7 @@ const Player = {
             if(user.playHistory.length > 50)user.playHistory.pop();
             user.playHistory.unshift({
                 trackId:trackID
+        
             });
             await user.save();
             return 1;
@@ -128,12 +97,12 @@ const Player = {
     // to fill queue
     createQueue: async function(user,isPlaylist,id,trackID)
     {
-        user.player.isPlaylist=isPlaylist;
+       
         user.player.current_source=id;
-       if(isPlaylist) 
+       if(isPlaylist=='true'||isPlaylist==true) 
        {
+            user.player.isPlaylist=true;
             const playlist = await Playlist.getPlaylist(id);
-          
             if(!playlist) return 0;
             sourceName = playlist.name;
             user.queue = {};
@@ -152,7 +121,9 @@ const Player = {
                 }
                 user.queue.tracksInQueue.push({
                     trackId : playlist.snapshot[playlist.snapshot.length-1].hasTracks[j],
-                    isQueue: false
+                    isQueue: false,
+                    isPlaylist:true,
+                    playlistId:id
                 });
                 i++;
             }
@@ -163,6 +134,7 @@ const Player = {
             console.log(user.queue);
             return 1;
        }else{
+        user.player.isPlaylist=false;
         const album = await Album.getAlbumById(id);
         if(!album) return 0;
         sourceName = album.name;
@@ -177,7 +149,9 @@ const Player = {
         for(let track of album.hasTracks){
             user.queue.tracksInQueue.push({
                 trackId : track.trackId,
-                isQueue: false
+                isQueue: false,
+                isPlaylist:false,
+                playlistId:id
             });
             i++;
         }
@@ -187,18 +161,21 @@ const Player = {
        }        
     },
 
-    addToQueue:async function(user,trackID){
+    addToQueue:async function(user,trackID,isPlaylist,playlistId){
        
        if(!user.queue){
            user.queue = {};
            user.queue.tracksInQueue = [{
                trackId:trackID,
                isQueue:true,
-              
+               isPlaylist:isPlaylist=='true'||isPlaylist==true?true:false,
+               playlistId:playlistId
            }];
            await user.save();
            user.queue.queuIndex = 0;
-           user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
+           user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId;
+           user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;
+           user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId;
            await user.save();
            return 1;
        }else{
@@ -206,9 +183,13 @@ const Player = {
             user.queue.tracksInQueue = [{
                 trackId:trackID,
                 isQueue:true,
+                isPlaylist:isPlaylist=='true'||isPlaylist==true?true:false,
+                playlistId:playlistId
             }];
             user.queue.queuIndex = 0;
-            user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
+            user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId;
+           user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;
+           user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId;
             user.player["last_playlist_track_index"] ++;
             await user.save(); return 1;
            }else{
@@ -217,9 +198,13 @@ const Player = {
                user.queue.tracksInQueue.splice(0,0,{
                    trackId:trackID,
                    isQueue:true,
+                   isPlaylist:isPlaylist=='true'||isPlaylist==true?true:false,
+                   playlistId:playlistId
                });
                user.queue.queuIndex = 0;
-               user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
+               user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId;
+               user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;
+               user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId;
                user.player["last_playlist_track_index"] ++;
                await user.save();
                return 1;
@@ -229,7 +214,8 @@ const Player = {
                user.queue.tracksInQueue.splice(index,0,{
                    trackId:trackID,
                    isQueue:true,
-                 
+                   isPlaylist:isPlaylist=='true'||isPlaylist==true?true:false,
+                   playlistId:playlistId
                });
                user.queue.queuIndex = index+1;
                user.player["last_playlist_track_index"] ++;
@@ -244,23 +230,35 @@ const Player = {
     // to skip to next 
       skipNext:async function(user){
         
-        user.player["current_track"]=user.player["next_track"];
+        user.player.current_track=user.player.next_track;
        // await user.save();  //won't be saved probably cuz the id obj is unique so the user.save() should be at the end only
         if(user.queue.queuIndex == -1){
-            user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+            user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+            user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].isPlaylist;
+            user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].playlistId;
            if (user.player["last_playlist_track_index"]==user.queue.tracksInQueue.length-1){
                  user.player["last_playlist_track_index"]=0;
-                 user.player["next_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].trackId;
+                 user.player.next_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].trackId;
+                 user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].isPlaylist;
+                 user.player.next_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].playlistId;
+                
                  await user.save();
                  return 2;
             }      
             else  user.player["last_playlist_track_index"] =user.player["last_playlist_track_index"] +1 ;
             
            if (user.player["last_playlist_track_index"]>=user.queue.tracksInQueue.length-1){
-                user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
+                user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId;
+                user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;
+                user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId;
+           
             }
-            else
-                user.player["next_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].trackId;
+            else{
+                user.player.next_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].trackId;
+                user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].isPlaylist;
+                user.player.next_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].playlistId;
+           
+            }
             await user.save();
         }
        else{
@@ -268,23 +266,37 @@ const Player = {
                 user.queue.tracksInQueue.splice(0,1);
                 user.player["last_playlist_track_index"]--;
                 if (user.player["last_playlist_track_index"]>=user.queue.tracksInQueue.length-1){                    
-                    user.player["next_track"] = user.queue.tracksInQueue[0].trackId;
+                    user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId;
+                    user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;
+                    user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId;
+    
                 }
-                else
-                    user.player["next_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].trackId;
+                else{
+                    user.player.next_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].trackId;
+                    user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].isPlaylist;
+                    user.player.next_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]+1].playlistId;
 
-                user.queue.queuIndex = -1;
-                user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+                }
+                    user.queue.queuIndex = -1;
+                    user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+                    user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].isPlaylist;
+                    user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].playlistId;
+                
+                    user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
                 await user.save();
             }
            else{
-            user.queue.tracksInQueue.splice(user.queue.queuIndex,1);
-            user.player["last_playlist_track_index"]--;
-            user.queue.queuIndex =user.queue.queuIndex-1;
-            const index=user.queue.queuIndex;
-            user.player["next_track"] = user.queue.tracksInQueue[index].trackId;        
-             user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;;
-             await user.save();
+                user.queue.tracksInQueue.splice(user.queue.queuIndex,1);
+                user.player["last_playlist_track_index"]--;
+                user.queue.queuIndex =user.queue.queuIndex-1;
+                const index=user.queue.queuIndex;
+                user.player.next_track['trackId'] = user.queue.tracksInQueue[index].trackId;
+                user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[index].isPlaylist;
+                user.player.next_track['playlistId'] = user.queue.tracksInQueue[index].playlistId;
+                user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+                user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].isPlaylist;
+                user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].playlistId;
+                await user.save();
             }
        }
         return 1;
@@ -292,18 +304,23 @@ const Player = {
 
     //skip to previous
     skipPrevious:async function(user){
-        const current=await user.player["current_track"];
+        const current=await user.player.current_track['trackId'];
         const lastplaylist=await await user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
         if (lastplaylist+1 == current+1  ) {
            
-            user.player["current_track"]=user.player["prev_track"];
+            user.player.current_track=user.player.prev_track;
           //  await user.save();
             if ( user.queue.queuIndex ==-1)
                 {
-                    user.player["next_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;        
+                    user.player.next_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+                    user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].isPlaylist;
+                    user.player.next_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].playlistId;
+                           
                     await user.save();
                     if(user.player["last_playlist_track_index"] == 1){
-                        user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;;
+                        user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                        user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].isPlaylist;
+                        user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].playlistId;
                         user.player["last_playlist_track_index"]=0;
                         await user.save();
                     }
@@ -312,32 +329,48 @@ const Player = {
                     
                         if(user.player["last_playlist_track_index"]==0){   
                             user.player["last_playlist_track_index"]=user.queue.tracksInQueue.length-1;
-                            user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;;
-                            
+                            user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;
+                            user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].isPlaylist;
+                            user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].playlistId;
+                           
+                       
                         }
                         else{
-                            user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;;
-                            user.player["last_playlist_track_index"]--;
+                            user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;
+                            user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].isPlaylist;
+                            user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].playlistId;
+                           
+                             user.player["last_playlist_track_index"]--;
                         }
                     }
                     await user.save();
                     return 0;
             }
             else{
-        
-                user.player["next_track"] = user.queue.tracksInQueue[user.queue.queuIndex].trackId;        
+                user.player.next_track['trackId'] = user.queue.tracksInQueue[user.queue.queuIndex].trackId;
+                user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[user.queue.queuIndex].isPlaylist;
+                user.player.next_track['playlistId'] = user.queue.tracksInQueue[user.queue.queuIndex].playlistId;
+                           
                 if(user.player["last_playlist_track_index"] == user.queue.queuIndex+2){
-                    user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                    user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                    user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].isPlaylist;
+                    user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].playlistId;
+                           
                     user.player["last_playlist_track_index"]--;
                     await user.save();
                 }
                 else{ 
                     if(user.player["last_playlist_track_index"]==user.queue.queuIndex+1){   
                         user.player["last_playlist_track_index"]=user.queue.tracksInQueue.length-1;
-                        user.player["prev_track"] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;
+                        user.player.prev_track['trackId'] =  user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].trackId;
+                        user.player.prev_track['isPlaylist'] =  user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].isPlaylist;
+                        user.player.prev_track['playlistId'] =  user.queue.tracksInQueue[user.queue.tracksInQueue.length-2].playlistId;
+                      
                     }
                 else{
-                    user.player["prev_track"] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;;
+                    user.player.prev_track['trackId'] =  user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].trackId;
+                    user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].isPlaylist;
+                    user.player.prev_track['playlistId'] =  user.queue.tracksInQueue[user.player["last_playlist_track_index"]-2].playlistId;
                     user.player["last_playlist_track_index"]--;
                 }
                 }
@@ -346,12 +379,20 @@ const Player = {
             }
         }
         else{
-            
-                user.player["current_track"]=user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
-                if(user.player["last_playlist_track_index"]==user.queue.queuIndex+1)
-                     user.player["prev_track"]=user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
-                else
-                    user.player["prev_track"]=user.queue.tracksInQueue[user.player["last_playlist_track_index"]-1].trackId;
+            user.player.current_track['trackId'] =  user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+            user.player.current_track['isPlaylist'] =user.queue.tracksInQueue[user.player["last_playlist_track_index"]].isPlaylist;
+            user.player.current_track['playlistId'] =  user.queue.tracksInQueue[user.player["last_playlist_track_index"]].playlistId;
+            if(user.player["last_playlist_track_index"]==user.queue.queuIndex+1){
+                user.player.prev_track['trackId'] =  user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].isPlaylist;
+                user.player.prev_track['playlistId'] =  user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].playlistId;
+                
+            }
+            else{
+                user.player.prev_track['trackId'] =  user.queue.tracksInQueue[user.player["last_playlist_track_index"]-1].trackId;
+                user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]-1].isPlaylist;
+                user.player.prev_track['playlistId'] =  user.queue.tracksInQueue[user.player["last_playlist_track_index"]-1].playlistId;
+            }
             
             await user.save();
             return 0;
@@ -359,6 +400,7 @@ const Player = {
     },
     // get next songs in user queue
     getQueue: async function(user){
+        console.log('4787234879')
         const queue = user.queue;
         let tracks = [];
         if(!queue) return 0;
@@ -366,23 +408,39 @@ const Player = {
         const queueIndex = queue.queuIndex;
         // get tracks that was added to queue
         for(let i=0;i<queueIndex;i++){
-            const track = await Track.getTrack(queue.tracksInQueue[i].trackId);
+            const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId,user);
             if(!track) return 0;
             const album5=await Album.getAlbumById(track.albumId); 
-            tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album5.name,index:i});
+            tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i});
          }
+        
         const lastplaylistIndex = user.player.last_playlist_track_index < 0? 0:user.player.last_playlist_track_index;
+        console.log(lastplaylistIndex)
         // get tracks that was next in playlist
-        for(let i=lastplaylistIndex;i<queue.tracksInQueue.length;i++){
-            const track = await Track.getTrack(queue.tracksInQueue[i].trackId);
+        for(let i=lastplaylistIndex+1;i<queue.tracksInQueue.length;i++){
+            const track = await await Track.getFullTrack(queue.tracksInQueue[i].trackId,user);
             
             if(!track) return 0;
-                const album4=await Album.getAlbumById(track.albumId);
+               // const album4=await Album.getAlbumById(track.albumId);
                 if(i==queueIndex+1)
-                    tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name,index:i,fristInSource:true});        
-                tracks.push({track:track,isQueue:queue.tracksInQueue[i].isQueue,albumName:album4.name,index:i});
+                    tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,fristInSource:true});        
+                else
+                    tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i});
            
          }
+         //if repeat should display all the queue
+          if(user.player.is_repeat){
+              console.log(user.player.is_repeat)
+            for(let i=queueIndex+1;i<lastplaylistIndex+1;i++){
+              const track=  await Track.getFullTrack(queue.tracksInQueue[i].trackId,user);
+                if(!track) return 0;
+                   // const album4=await Album.getAlbumById(track.albumId);
+                    if(i==queueIndex+1)
+                        tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,fristInSource:true});        
+                        else
+                        tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,albumName:album4.name,index:i});
+             } 
+       }
         return tracks;
 
     },
@@ -415,45 +473,48 @@ const Player = {
             user.queue.tracksInQueue[randomIndex].trackId=temp;
             await user.save();
         }
-        const {"next_track":nextTrack,"prev_track":prevTrack,"last_playlist_track_index":current_index} = this.getPrevAndNext(user.queue.tracksInQueue,track_last_playlist,user);            // update user player info 
-        user.player["next_track"] = nextTrack ? nextTrack.trackId:undefined;
-        user.player["prev_track"] = prevTrack? prevTrack.trackId:undefined;
-        user.player["current_track"] = track_last_playlist;
-        user.player["last_playlist_track_index"] = current_index;
-        await user.save();
-        return 1
+        return await this.setNextPrevCurrent(user,track_last_playlist);
+        
     },
     // to make queue same playlist order
     fillByplaylist:async function(user){
+        const track_last_playlist=user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
         if(user.player.isPlaylist) {
             const playlist = await Playlist.getPlaylist(user.player.current_source);
             if(!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{hasTracks:[]}];
             if(playlist.snapshot[playlist.snapshot.length-1].hasTracks.length==0){
                 await user.save();
-                return 1;
+                
+                return await this.setNextPrevCurrent(user,track_last_playlist);
+            
             }
             let i=user.queue.queuIndex+1;
             for(let j=0;j< playlist.snapshot[playlist.snapshot.length-1].hasTracks.length;j++){
                 user.queue.tracksInQueue[i].trackId=playlist.snapshot[playlist.snapshot.length-1].hasTracks[j];
+                user.queue.tracksInQueue[i].isPlaylist=user.player.isPlaylist;
+                user.queue.tracksInQueue[i].playlistId=user.player.current_source;
                 i++;
             }
             await user.save();
-            return 1;
+            return await this.setNextPrevCurrent(user,track_last_playlist);
+            
        }
        else{
         const album = await Album.getAlbumById(user.player.current_source);
         if(!album) return 0;
         if(!album.hasTracks){
             await user.save();
-            return 1;
+            return await this.setNextPrevCurrent(user,track_last_playlist);
         }
         let i=0;
         for(let track of album.hasTracks){
             user.queue.tracksInQueue[i].trackId=track.trackId;
+            user.queue.tracksInQueue[i].isPlaylist=user.player.isPlaylist;
+            user.queue.tracksInQueue[i].playlistId=user.player.current_source;
             i++;
         }
         await user.save();
-        return 1;
+        return await this.setNextPrevCurrent(user,track_last_playlist);
        }
     },
     //shuffle
@@ -462,11 +523,53 @@ const Player = {
            if(state=='true')
                  return await  this.shuffleQueue(user);
             else
+            
                 return await this.fillByplaylist(user);
        }
        return 0
-    }
+    },
 
+    setNextPrevCurrent:async function(user,lastTrack){
+      // console.log(lastTrack);
+        for (let i=user.queue.queuIndex+1;i<user.queue.tracksInQueue.length;i++){
+            //console.log(lastTrack);
+            if (user.queue.tracksInQueue[i].trackId==lastTrack){
+                
+                user.player["last_playlist_track_index"]= i ;
+                await user.save(); 
+                console.log(user.queue.tracksInQueue[i-1].trackId);
+
+                user.player.prev_track['trackId'] =i-1>user.queue.queuIndex?user.queue.tracksInQueue[i-1].trackId:user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
+                user.player.prev_track['isPlaylist'] =i-1>user.queue.queuIndex?user.queue.tracksInQueue[i-1].isPlaylist:user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].isPlaylist;
+                user.player.prev_track['playlistId'] = i-1>user.queue.queuIndex?user.queue.tracksInQueue[i-1].playlistId:user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].playlistId;
+                 if(user.queue.queuIndex>-1){
+                    user.player.next_track['trackId'] =user.queue.tracksInQueue[user.queue.queuIndex].trackId;
+                    user.player.next_track['isPlaylist'] =user.queue.tracksInQueue[user.queue.queuIndex].isPlaylist;
+                    user.player.next_track['playlistId'] = user.queue.tracksInQueue[user.queue.queuIndex].playlistId;
+             
+                }
+                else{
+                    user.player.next_track['trackId'] =i+1>user.queue.tracksInQueue.length-1?user.queue.tracksInQueue[0].trackId:user.queue.tracksInQueue[i+1].trackId;
+                    user.player.next_track['isPlaylist'] =i+1>user.queue.tracksInQueue.length-1?user.queue.tracksInQueue[0].isPlaylist:user.queue.tracksInQueue[i+1].isPlaylist;
+                    user.player.next_track['playlistId'] = i+1>user.queue.tracksInQueue.length-1?user.queue.tracksInQueue[0].playlistId:user.queue.tracksInQueue[i+1].playlistId;
+             
+                }
+                await user.save(); 
+                return 1;
+            }           
+        }
+    },
+    repreatPlaylist:async function(user,state){
+        if (state=='true'||state==true) 
+           user.player["is_repeat"]=true;
+        else if(state=='false'|| state==false)
+                user.player["is_repeat"]=false;
+            else
+            return 0;
+        await user.save();
+        return 1;
+
+    }
 
 }
 

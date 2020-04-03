@@ -11,9 +11,10 @@ require('../config/passport');
 User= spotifySchema.User
 
 //request
-router.post("/login", (req, res) => {
+router.post("/api/login", (req, res) => {
     // Form validation
-  
+    console.log(req.body)
+ 
     const { errors, isValid } = validateLoginInput(req.body);
   
     // Check validation
@@ -23,7 +24,6 @@ router.post("/login", (req, res) => {
   
     const email = req.body.email;
     const password = req.body.password;
-  
     // Find user by email
     spotifySchema.user.findOne({email:req.body.email}).exec().then(user=>{
        // Check if user exists
@@ -46,7 +46,8 @@ router.post("/login", (req, res) => {
          
           // return the information including token as JSON
           //res.json({success: true, token: 'JWT ' + token});
-          res.send(token);
+
+          res.send({token});
         } else {
           res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});
         }

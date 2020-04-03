@@ -15,11 +15,12 @@ const Track=require('./routes/Track-routes');
 const playlist=require('./routes/playlist-routes');
 const Artist=require('./routes/Artist-route');
 const Library=require('./routes/Library-routes');
-const userProfile=require('./routes/userprofile')
+const userProfile=require('./routes/user-profile-routes')
 const login=require('./routes/login');
-const signup=require('./routes/signup');
+const signup=require('./routes/signup-routes');
 const search=require('./routes/search')
 require('./config/passport');
+
 
 const player = require('./routes/player-routes')
 const facebook = require('./authentication/facebook-routes');
@@ -50,7 +51,7 @@ app.use(browse);
 app.use(Artist);
 
 //connect to db before test run
-const API_PORT= process.env.API_PORT||5000;
+const API_PORT= process.env.API_PORT||3000;
 
 app.use(function(error,req,res,next){
     res.status(500);

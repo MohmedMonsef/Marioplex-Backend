@@ -12,8 +12,8 @@ require('../config/passport');
 const passport =require('passport');
 
 
-router.post('/sign_up',(req,res)=>{
-
+router.post('/api/signup',(req,res)=>{
+console.log(req.body.user);
     const shcema = joi.object().keys({
         email: joi.string().trim().email().required() ,
         password: joi.string().required(),
@@ -23,16 +23,16 @@ router.post('/sign_up',(req,res)=>{
         username:joi.string().required()
     });
 
-    joi.validate(req.body,shcema,(err,result)=>{
+    joi.validate(req.body.user,shcema,(err,result)=>{
         if(err){
-
+            console.log("first");
             res.status(500).json({
                 error:err
             })
 
         } else {
 
-            spotifySchema.user.findOne({email:req.body.email}).exec().then(user=>{
+            spotifySchema.user.findOne({email:req.body.user.email}).exec().then(user=>{
                 if(user){
                     
                     res.status(403).json({
@@ -42,8 +42,9 @@ router.post('/sign_up',(req,res)=>{
                 }
                 else{
 
-                    bcrypt.hash(req.body.password,10,(err,hash)=>{
+                    bcrypt.hash(req.body.user.password,10,(err,hash)=>{
                         if(err) {
+                            console.log("second");
 
                             return res.status(500).json({error:err});
 
@@ -51,33 +52,34 @@ router.post('/sign_up',(req,res)=>{
 
                             const user=new spotifySchema.user({
                                 _id: mongoose.Types.ObjectId(),
-                                email: req.body.email ,
+                                email: req.body.user.email ,
                                 password: hash,
-                                displayName: req.body.username ,
-                                gender: req.body.gender ,
-                                country :req.body.country ,
-                                birthDate:req.body.birthday ,
+                                displayName: req.body.user.username ,
+                                gender: req.body.user.gender ,
+                                country :req.body.user.country ,
+                                birthDate:req.body.user.birthday ,
                                 product:"free" ,
                                 userType:"user" ,
                                 type:"user" ,
+                                isFacebook:false,
                                 images:[] ,
                                 follow:[] ,
                                 followedBy:[] ,
                                 like:[] ,
                                 createPlaylist:[] ,
                                 saveAlbum:[] ,
-                                playHistory:[]                        
+                                playHistory:[],
+                                player:{}
+
                             });
                             
-                            user
-                                .save()
+                            
+                            user.save()
                                 .then(result =>{
                 
-                                    var token = jwt.sign(
-                                                        { _id: user._id,product: user.product},
-                                                        jwtSeret.secret, 
-                                                        {expiresIn: '24h'}
-                                                );
+                                    var token = jwt.sign({ _id: user._id,product: user.product,userType:user.userType}, jwtSeret.secret, {
+                                        expiresIn: '24h' // 1 day
+                                      });
                                       
                                     res.status(201).json({
                                         token
@@ -85,6 +87,8 @@ router.post('/sign_up',(req,res)=>{
                                     
                                 })
                                 .catch(err=>{
+                                    console.log("third");
+
                                     res.status(500).json({
                                         error:err
                                     });

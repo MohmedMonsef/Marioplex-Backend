@@ -1,0 +1,11 @@
+follow:
+erorr:
+status-->400  & mes:  this playlist is followed before
+correct:
+status-->200  & mes:  "success": " followed this playlist successfully"
+-----------------------------------------------------
+unfollow:
+error:
+status-->400  & mes:  "error": "user did not follow this playlist "
+correct:
+status-->200  & mes:  "success": "unfollowed this playlist successfully" 

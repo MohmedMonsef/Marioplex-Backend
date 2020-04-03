@@ -20,9 +20,15 @@ router.get('/me/updatePlayer',async (req,res)=>{
 router.get('/me/player/currently-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
-  console.log(user.queue);
-  const currentPlayingTrack = await Track.getTrack(player.current_track);
-  if(currentPlayingTrack) res.json(currentPlayingTrack);
+  //console.log(user.queue);
+  var currentPlayingTrack = await Track.getFullTrack(player.current_track.trackId,user);
+  if(currentPlayingTrack){
+    var currentTrack={};
+    currentTrack["fullTrack"]=currentPlayingTrack;
+    currentTrack["isPlaylist"]=player.current_track.isPlaylist;
+    currentTrack["playlistId"]=player.current_track.playlistId;
+     res.send(ncurrentTrack);
+    }
   else res.status(404).json({error:"track not found"})
 })
 
@@ -30,8 +36,15 @@ router.get('/me/player/currently-playing',checkAuth,async (req,res)=>{
 router.get('/me/player/next-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
-  const nextPlayingTrack = await Track.getTrack(player.next_track);
-  if(nextPlayingTrack) res.json(nextPlayingTrack);
+  var nextPlayingTrack = await Track.getFullTrack(player.next_track.trackId,user);
+  if(nextPlayingTrack){
+    var nextTrack={};
+    nextTrack["fullTrack"]=nextPlayingTrack;
+    nextTrack["isPlaylist"]=player.next_track.isPlaylist;
+    nextTrack["playlistId"]=player.next_track.playlistId;
+     res.send(nextTrack);
+    }
+
   else res.status(404).json({error:"track not found"})
 })
 
@@ -42,8 +55,14 @@ router.get('/me/player/prev-playing',checkAuth,async (req,res)=>{
   const player = user.player;
   console.log(user.queue);
   console.log(user.player);
-  const prevPlayingTrack = await Track.getTrack(player.prev_track);
-  if(prevPlayingTrack) res.json(prevPlayingTrack);
+  var prevPlayingTrack = await Track.getFullTrack(player.prev_track.trackId,user);
+  if(prevPlayingTrack){
+    var prevTrack={};
+    prevTrack["fullTrack"]=prevPlayingTrack;
+    prevTrack["isPlaylist"]=player.prev_track.isPlaylist;
+    prevTrack["playlistId"]=player.prev_track.playlistId;
+     res.send(prevTrack);
+    }
   else res.status(404).json({error:"track not found"})
 })
 // create queue fo player
@@ -58,9 +77,9 @@ router.post('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
  
  }) 
 // add track to user player queue
- router.post('/player/add-to-queue/:trackId',checkAuth,async (req,res)=>{
+ router.post('/player/add-to-queue/:playlistId/:trackId',checkAuth,async (req,res)=>{
   const trackId =req.params.trackId;
-  const addToQueue = await User.addToQueue(req.user._id,trackId);
+  const addToQueue = await User.addToQueue(req.user._id,trackId,req.query.isPlaylist,req.params.playlistId);
   if( addToQueue == 0) res.status(400).send('can not add queue ! ');
   else res.send('add successfully');
 
@@ -69,17 +88,31 @@ router.post('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
  router.post('/me/player/next-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
-  const nextPlayingTrack = await Track.getTrack(player.next_track);
-  const skip = await Player.skipNext(user);
-  let track=[];
+  console.log(player.next_track.isPlaylist)
+  var nextPlayingTrack = await Track.getFullTrack(player.next_track.trackId,user);
+  const skip = await Player.skipNext(user)
   if(skip==2){
-    track.push({track:nextPlayingTrack,fristInSource:true})
-    if(nextPlayingTrack) res.json(track);
+    if(nextPlayingTrack){
+      var nextTrack={};
+      nextTrack["fullTrack"]=nextPlayingTrack;
+      nextTrack["isPlaylist"]=player.next_track.isPlaylist;
+      nextTrack["playlistId"]=player.next_track.playlistId;
+      nextTrack["fristInSource"]=true;
+       res.send(nextTrack);
+    
+     
+    }
+    
     else res.status(404).json({error:'track not found'})
   }
   else{
-    track.push({track:nextPlayingTrack})
-    if(nextPlayingTrack) res.json(track);
+    if(nextPlayingTrack){
+      var nextTrack={};
+      nextTrack["fullTrack"]=nextPlayingTrack;
+      nextTrack["isPlaylist"]=player.next_track.isPlaylist;
+      nextTrack["playlistId"]=player.next_track.playlistId;
+       res.send(nextTrack);
+      }
     else res.status(404).json({error:'track not found'})
   }
   })
@@ -87,9 +120,15 @@ router.post('/createQueue/:playlist_id/:trackId',checkAuth,async (req,res)=>{
 router.post('/me/player/prev-playing',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
   const player = user.player;
-  const prevPlayingTrack = await Track.getTrack(player.prev_track);
+  var prevPlayingTrack = await Track.getFullTrack(player.prev_track.trackId,user);
   const skip = await Player.skipPrevious(user);
-  if(prevPlayingTrack) res.json(prevPlayingTrack);
+  if(prevPlayingTrack){
+    var prevTrack={};
+    prevTrack["fullTrack"]=prevPlayingTrack;
+    prevTrack["isPlaylist"]=player.prev_track.isPlaylist;
+    prevTrack["playlistId"]=player.prev_track.playlistId;
+     res.send(prevTrack);
+    }
   else res.status(404).json({error:'track not found'})
 })
 // get user queue 
@@ -99,6 +138,14 @@ router.get('/me/queue',checkAuth,async (req,res)=>{
   if(!tracks) res.status(400).json({error:'couldnt get queue'});
   else res.status(200).json(tracks);
 })
+//to repeat
+router.put('/player/repeat',checkAuth,async (req,res)=>{
+  const userID = req.user._id;
+  const repeat = User.repreatPlaylist(userID,req.query.state);
+  if(!repeat) res.status(400).json({error:"couldn't repeat playlist"});
+  else res.status(200).json({success:"is_repeat playlist: "+req.query.state})
+})
+
 // resume player 
 router.put('/me/player/play',checkAuth,async (req,res)=>{
   const userID = req.user._id;
@@ -121,5 +168,19 @@ router.put('/me/player/shuffle',checkAuth,async (req,res)=>{
   if(!isShuffle) res.status(400).json({error:'can not shuffle '});
   else res.status(200).json({success:'Do successfully'});
 })
- 
+// get recent played
+router.get('/me/player/recently-played',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const playHistory = await Player.getRecentTracks(user,req.query.limit);
+  if(!playHistory)  res.status(400).json({error:'can not get playhistory '});
+  else res.status(200).json(playHistory);
+})
+// add to recent played
+router.put('/me/player/recently-played/:track_id',checkAuth,async (req,res)=>{
+  const user = await User.getUserById(req.user._id);
+  const playHistory = await Player.addRecentTrack(user,req.params.track_id);
+  if(!playHistory)  res.status(400).json({error:'can not add to playhistory '});
+  else res.status(203).json({"success":"added successfully"});
+})
+
 module.exports = router;

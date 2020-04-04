@@ -1,0 +1,17 @@
+error:
+status-->404  & mes: error:"track not found"
+-------------------------------------------
+correct:
+status-->200 & example
+
+
+{
+    "availableMarkets": [],
+    "_id": "5e7cfb12787e2e19581691c2",
+    "name": "track2",
+    "albumId": "5e7cfb12787e2e19581691bc",
+    "artistId": "5e7cfb12787e2e19581691bf",
+    "__v": 0
+}
+
+but  track have also albumName  & artistName

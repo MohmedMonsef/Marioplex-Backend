@@ -1,0 +1,227 @@
+[
+    {
+        "user": {
+            "userId": "5e70351bc6367c46a08c255a"
+        },
+        "genre": [
+            "pop"
+        ],
+        "_id": "5e6d056e0bfa4c37c0d6d760",
+        "info": "this is Fake Amr diab hahaha",
+        "popularity": 100,
+        "addAlbums": [
+            {
+                "_id": "5e6d528f5687d92ef8e31b92",
+                "albumId": "5e6d528e5687d92ef8e31b91"
+            },
+            {
+                "_id": "5e6d53a45687d92ef8e31b94",
+                "albumId": "5e6d53a45687d92ef8e31b93"
+            },
+            {
+                "_id": "5e6d545f5687d92ef8e31b96",
+                "albumId": "5e6d545f5687d92ef8e31b95"
+            },
+            {
+                "_id": "5e6d55835687d92ef8e31b99",
+                "albumId": "5e6d55825687d92ef8e31b98"
+            },
+            {
+                "_id": "5e6d56b70d8fc14070cc13e4",
+                "albumId": "5e6d56b60d8fc14070cc13e3"
+            },
+            {
+                "_id": "5e6d56e93aee1f0a184b8c87",
+                "albumId": "5e6d56e83aee1f0a184b8c86"
+            },
+            {
+                "_id": "5e6d5701532aef3aa44f5ade",
+                "albumId": "5e6d5700532aef3aa44f5add"
+            },
+            {
+                "_id": "5e6d570d165db84058bc60f0",
+                "albumId": "5e6d570d165db84058bc60ef"
+            },
+            {
+                "_id": "5e6d5728a5007641ecaa9a89",
+                "albumId": "5e6d5728a5007641ecaa9a88"
+            },
+            {
+                "_id": "5e6d573f94520514b0608635",
+                "albumId": "5e6d573e94520514b0608634"
+            },
+            {
+                "_id": "5e6d57a2524b4845500d776d",
+                "albumId": "5e6d57a2524b4845500d776c"
+            },
+            {
+                "_id": "5e6d57dae8d5074660087d4d",
+                "albumId": "5e6d57dae8d5074660087d4c"
+            },
+            {
+                "_id": "5e711966b993494b1c7cd142",
+                "albumId": "5e711965b993494b1c7cd141"
+            },
+            {
+                "_id": "5e7119f0f93a441f4441f1c7",
+                "albumId": "5e7119eef93a441f4441f1c6"
+            },
+            {
+                "_id": "5e711a38f93a441f4441f1c9",
+                "albumId": "5e711a38f93a441f4441f1c8"
+            },
+            {
+                "_id": "5e711a7ada6baa2ec8c14570",
+                "albumId": "5e711a77da6baa2ec8c1456f"
+            },
+            {
+                "_id": "5e711ac7f8063636286a7f91",
+                "albumId": "5e711ac5f8063636286a7f90"
+            },
+            {
+                "_id": "5e711b8e3fbab856c8fe637a",
+                "albumId": "5e711b8d3fbab856c8fe6379"
+            },
+            {
+                "_id": "5e711baf799b7b3f98a88155",
+                "albumId": "5e711bad799b7b3f98a88154"
+            },
+            {
+                "_id": "5e711f01057a5d53a89e06ef",
+                "albumId": "5e711eff057a5d53a89e06ee"
+            },
+            {
+                "_id": "5e711f1f1a62d23718a95077",
+                "albumId": "5e711f1d1a62d23718a95076"
+            },
+            {
+                "_id": "5e711f5077184556881ecd9a",
+                "albumId": "5e711f4f77184556881ecd99"
+            },
+            {
+                "_id": "5e712110150e6b55cc21fdb4",
+                "albumId": "5e712110150e6b55cc21fdb3"
+            },
+            {
+                "_id": "5e712184de28e6531c3e9898",
+                "albumId": "5e712184de28e6531c3e9897"
+            }
+        ],
+        "addTracks": [
+            {
+                "_id": "5e6e693185eb154e28db720e"
+            },
+            {
+                "_id": "5e6e69c685eb154e28db7227"
+            },
+            {
+                "_id": "5e6e69fc85eb154e28db722c"
+            },
+            {
+                "_id": "5e6e6a38c260c634d4457727"
+            },
+            {
+                "_id": "5e6e6a4ff686ca22388a7770"
+            },
+            {
+                "_id": "5e6e6a84a8065f53a42af8a4"
+            },
+            {
+                "_id": "5e6e6acc5f9a674bc8427c81"
+            },
+            {
+                "_id": "5e6e6aee4b6917338ca7d617"
+            },
+            {
+                "_id": "5e6e6b3965059a0e0cdda693"
+            },
+            {
+                "_id": "5e6e6b92866ecc3dc8e934c9"
+            },
+            {
+                "_id": "5e6e6bcf2431754f5433e5be"
+            },
+            {
+                "_id": "5e6e6bf7d725e448043ffa45"
+            },
+            {
+                "_id": "5e6e6c36fd0a0e4c743eead4"
+            },
+            {
+                "_id": "5e6e6c711b19bf2a98babc7e"
+            },
+            {
+                "_id": "5e6e6c90d9ee6b2f70d3b7d7",
+                "trackId": "5e6e6c8ed9ee6b2f70d3b7d5"
+            },
+            {
+                "_id": "5e6e6ca4448cb742806764d9",
+                "trackId": "5e6e6ca3448cb742806764d7"
+            },
+            {
+                "_id": "5e6e6ccf07f72252041654ed",
+                "trackId": "5e6e6ccc07f72252041654eb"
+            },
+            {
+                "_id": "5e6e6d0207f72252041654f2",
+                "trackId": "5e6e6d0207f72252041654f0"
+            },
+            {
+                "_id": "5e6e6d71b906640e5c5760e4",
+                "trackId": "5e6e6d70b906640e5c5760e2"
+            },
+            {
+                "_id": "5e6e6dd86d80170afc336028",
+                "trackId": "5e6e6dd66d80170afc336026"
+            },
+            {
+                "_id": "5e6e6e176d80170afc336041",
+                "trackId": "5e6e6e166d80170afc33603f"
+            },
+            {
+                "_id": "5e6e6ec3d9619c063470e7f7",
+                "trackId": "5e6e6ec1d9619c063470e7f5"
+            },
+            {
+                "_id": "5e712a702e668d59ec20fc4f",
+                "trackId": "5e712a6f2e668d59ec20fc4d"
+            },
+            {
+                "_id": "5e712aaa7011c30e04f4c5fa",
+                "trackId": "5e712aa77011c30e04f4c5f8"
+            },
+            {
+                "_id": "5e712b997011c30e04f4c613",
+                "trackId": "5e712b987011c30e04f4c611"
+            },
+            {
+                "_id": "5e712d4079d4a255acdc6a7a",
+                "trackId": "5e712d3979d4a255acdc6a78"
+            }
+        ],
+        "__v": 50
+    },
+    {
+        "genre": [
+            "pop",
+            "jazz"
+        ],
+        "_id": "5e6d0b1231ea843704a9bd95",
+        "info": "this is pop1",
+        "popularity": 100,
+        "addAlbums": [],
+        "addTracks": [],
+        "__v": 0
+    },
+    {
+        "genre": [
+            "pop"
+        ],
+        "_id": "5e6d0b92f21eea1c8860530f",
+        "info": "this is pop2",
+        "popularity": 100,
+        "addAlbums": [],
+        "addTracks": [],
+        "__v": 0
+    }
+]

@@ -1,0 +1,96 @@
+
+error
+status-->404       & mes: error:"no artists are found"
+------------------------------------
+correct:
+status-->200       & mes: example
+[
+    {
+        "availableMarkets": [
+            "us,yu,ywgd"
+        ],
+        "_id": "5e7f44905cce7d09a82e5a75",
+        "name": "album1",
+        "albumType": "type1",
+        "popularity": 0,
+        "genre": "genre1",
+        "releaseDate": "2020-02-20T00:00:00.000Z",
+        "label": "yyuwhhxb",
+        "images": [],
+        "artistId": "5e7ef28326e2fa0da04f81ae",
+        "type": "Album",
+        "hasTracks": [],
+        "__v": 0
+    },
+    {
+        "availableMarkets": [
+            "us,yu,ywgd"
+        ],
+        "_id": "5e7f4bf85cce7d09a82e5a77",
+        "name": "album1",
+        "albumType": "type1",
+        "popularity": 0,
+        "genre": "genre1",
+        "releaseDate": "2020-02-20T00:00:00.000Z",
+        "label": "yyuwhhxb",
+        "images": [],
+        "artistId": "5e7ef28326e2fa0da04f81ae",
+        "type": "Album",
+        "hasTracks": [],
+        "__v": 0
+    },
+    {
+        "availableMarkets": [],
+        "_id": "5e7f4c925cce7d09a82e5a79",
+        "name": "album1",
+        "albumType": "type1",
+        "popularity": 0,
+        "genre": "genre1",
+        "releaseDate": "2020-02-20T00:00:00.000Z",
+        "label": "yyuwhhxb",
+        "images": [],
+        "artistId": "5e7ef28326e2fa0da04f81ae",
+        "type": "Album",
+        "hasTracks": [],
+        "__v": 0
+    },
+    {
+        "availableMarkets": [],
+        "_id": "5e7f4c985cce7d09a82e5a7b",
+        "name": "album1",
+        "albumType": "type1",
+        "popularity": 0,
+        "genre": "genre1",
+        "releaseDate": "2020-02-20T00:00:00.000Z",
+        "label": "yyuwhhxb",
+        "images": [],
+        "artistId": "5e7ef28326e2fa0da04f81ae",
+        "type": "Album",
+        "hasTracks": [],
+        "__v": 0
+    },
+    {
+        "availableMarkets": [],
+        "_id": "5e7f4ca05cce7d09a82e5a7d",
+        "albumType": "type1",
+        "popularity": 0,
+        "genre": "genre1",
+        "releaseDate": "2020-02-20T00:00:00.000Z",
+        "label": "yyuwhhxb",
+        "images": [],
+        "artistId": "5e7ef28326e2fa0da04f81ae",
+        "type": "Album",
+        "hasTracks": [],
+        "__v": 0
+    },
+    {
+        "availableMarkets": [],
+        "_id": "5e7f4d475cce7d09a82e5a7f",
+        "popularity": 0,
+        "images": [],
+        "artistId": "5e7ef28326e2fa0da04f81ae",
+        "type": "Album",
+        "hasTracks": [],
+        "__v": 0
+    }
+]

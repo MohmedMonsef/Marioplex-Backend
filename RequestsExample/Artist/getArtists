@@ -1,0 +1,45 @@
+error:
+if there is any id correct will consider correct request and ignore this id
+but if all not correct it will be error
+status-->404      & mes: error:"albums with those specifications are not found"
+------------------------------------
+correct:
+status-->200       & mes: 
+[
+    {
+        "genre": [
+            "genre1",
+            "genre2",
+            "genre3"
+        ],
+        "_id": "5e7ef28326e2fa0da04f81ae",
+        "info": "i am a good artist ",
+        "popularity": 0,
+        "type": "Artist",
+        "Name": "artist1",
+        "userId": "5e7ee6e326e2fa0da04f81ab",
+        "images": [],
+        "addAlbums": [],
+        "addTracks": [],
+        "__v": 0
+    },
+      {
+        "genre": [
+            "genre1",
+            "genre2",
+            "genre3"
+        ],
+        "_id": "5e7ef28326e2fa0da04f81af",
+        "info": "i am a good artist ",
+        "popularity": 0,
+        "type": "Artist",
+        "Name": "artist2",
+        "userId": "5e7ee6e326e2fa0da04f81ad",
+        "images": [],
+        "addAlbums": [],
+        "addTracks": [],
+        "__v": 0
+    }
+
+]
+

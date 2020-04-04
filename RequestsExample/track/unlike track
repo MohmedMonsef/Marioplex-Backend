@@ -1,0 +1,13 @@
+error:
+status--> 404             
+example:
+{
+    "error": "user didnt liked the song before"
+}
+------------------------------------------------------
+Correct:
+status:   200              
+example:
+{
+    "success": "unliked the song successfully"
+}

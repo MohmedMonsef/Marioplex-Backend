@@ -91,7 +91,6 @@ router.put('/playlists/:playlist_id',[checkAuth,checkContent],async (req,res)=>{
 router.get('/me/playlists',[checkAuth],async (req,res)=>{
 
     const playlists=await Playlist.getUserPlaylists(req.user._id,req.query.limit,req.query.offset,true);
-    if(playlists.length==0) return res.status(404).send('NOT FOUND');
     return res.status(200).send(playlists);
    
 })

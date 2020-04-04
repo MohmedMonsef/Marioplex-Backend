@@ -236,6 +236,7 @@ const User =  {
                 });
             }
             await user.save().catch();
+            await Playlist.followPlaylits(user,createdPlaylist._id,false);
             return createdPlaylist;
         },
 

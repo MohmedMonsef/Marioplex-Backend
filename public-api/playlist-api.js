@@ -254,16 +254,6 @@ const Playlist =  {
                 if(!user) return 0;
                 let playlistsIds=[];
                 let playlists=[];
-                    for (var i=0;i<user.createPlaylist.length;i++){
-                        if(isuser){
-                        playlistsIds.push(user.createPlaylist[i].playListId);
-                        }
-                        else{
-                            if(!user.createPlaylist[i].isPrivate){
-                                playlistsIds.push(user.createPlaylist[i].playListId);
-                            }
-                        }
-                    }
                     for (var i=0;i<user.followPlaylist.length;i++){
                         if(isuser){
                             playlistsIds.push(user.followPlaylist[i].playListId);

@@ -49,7 +49,7 @@ const storage = new GridFsStorage({
           const fileInfo = {
             filename: filename,
             bucketName: 'uploads',
-            metadata:{originalName: file.originalname,quality:file.fieldname,userId:req.user._id,trackId:trackID}
+            metadata:{originalName: req.query.name,quality:file.fieldname,userId:req.user._id,trackId:trackID}
              
           };
           resolve(fileInfo);

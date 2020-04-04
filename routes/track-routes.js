@@ -1,9 +1,11 @@
 const router = require('express').Router();
-
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
 const Album = require('../public-api/album-api');
 const Artist = require('../public-api/artist-api');
+const {auth:checkAuth} = require('../middlewares/is-me');
+const mongoose = require('mongoose')
+
 router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
     const trackID = req.params.track_id;
    
@@ -80,6 +82,50 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
 
 });
 
+// set android route which will just serve webm media file
+
+
+router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
+    const quality = req.query.quality;// high low medium
+    // TO DO : check if premium to allow high
+    // set default quality to medium if not specified
+    if(qualit != "high" || qualit != "medium" || qualit != "low" ) quality = "medium";
+    const trackID  = req.params.track_id;
+    const track = await Track.getTrack(trackID);
+    if(!track){
+        res.status(404).json({"error":"no track found with this id"});
+        return 0;
+    }
+    // get file from gridfs
+       gfs.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackID),"metadata.quality":quality},function (err, file) {
+        if (err) {res.send(500).send("server error while sending track");return 0;}
+        // send range response 
+        const range = req.headers.range;
+        if(range){
+        console.log('range')
+        var parts = req.headers['range'].replace(/bytes=/, "").split("-");
+        var partialstart = parts[0];
+        var partialend = parts[1];
+    
+        var start = parseInt(partialstart, 10);
+        var end = partialend ? parseInt(partialend, 10) : file.length -1;
+        var chunksize = (end-start)+1;
+        //const readStream = fs.createReadStream(filePath, { start, end });
+        //const file = fs.createReadStream('./song.mp3', { start, end })
+        res.writeHead(206, {
+            'Content-Range': 'bytes ' + start + '-' + end + '/' + file.length,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': file.contentType
+        });
+        }
+        const readstream = gfs.createReadStream(file.filename);
+        readstream.pipe(res);
+        });
+    
+    
+   
+})
 
 
 module.exports = router; 

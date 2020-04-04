@@ -3,10 +3,10 @@ var FuzzySearch = require('fuzzy-search');
 
 
 // initialize db 
-const artistApi=require('./Artist-api');
+const artistApi=require('./artist-api');
 const user_api=require('./user-api');
 const track=require('./track-api');
-const artist_api=require('./Artist-api');
+const artist_api=require('./artist-api');
 const album_api=require('./album-api');
 
 const Search =  {

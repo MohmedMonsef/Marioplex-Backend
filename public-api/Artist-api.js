@@ -242,5 +242,3 @@ return SpecificTracks;
 }
 
 module.exports = Artist;
-
-

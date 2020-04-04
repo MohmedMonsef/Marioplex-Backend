@@ -45,9 +45,9 @@ router.put('/me/update',checkAuth,(req,res)=>{
     })
 })
 
-router.get('/me',checkAuth,async(req,res,next)=>{
+router.get('/api/me',checkAuth,async(req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
-    
+    console.log(userID);
     await spotifySchema.user.find({_id:userID},{
         displayName:1,
         email:1,
@@ -58,10 +58,12 @@ router.get('/me',checkAuth,async(req,res,next)=>{
         images:1
     }).exec().then(user=>{
         if(user){
-            res.status(200);
-            res.send(user);   
+  
+
+            return res.status(200).send(user);
+               
         }     
-    }).catch(next);
+    });
 })
 
 router.delete('/remove',checkAuth,async(req,res,next)=>{

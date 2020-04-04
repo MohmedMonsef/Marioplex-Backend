@@ -97,16 +97,12 @@ const Search =  {
                     album["name"]=albums.Album.name
                     album["images"]=albums.Album.images
                     album["type"]=albums.Album.type
-                    artist={}
                     if(albums.Artist){
-                    artist["_id"]=albums.Artist._id
-                    artist["name"]=albums.Artist.Name
-                    artist["images"]=albums.Artist.images
-                    artist["info"]=albums.Artist.info
-                    artist["type"]=albums.Artist.type
-                    artist["genre"]=albums.Artist.genre
+                    album["artistId"]=albums.Artist._id
+                    album["artistName"]=albums.Artist.Name
+                    album["artistType"]=albums.Artist.type
                     }
-                    Album.push({album,artist});
+                    Album.push(album);
                 }
             }
            // console.log(Album);
@@ -134,30 +130,25 @@ const Search =  {
             trackInfo=[]
             for( let i=0;i<Track.length;i++){
                 let artist=await artist_api.getArtist(Track[i].artistId)
-                Artist={}
-                if(artist){
-                    
-                    Artist["_id"]=artist._id
-                    Artist["name"]=artist.Name
-                    Artist["images"]=artist.images
-                    Artist["info"]=artist.info
-                    Artist["type"]=artist.type
+                tracks={}
+                if(artist){               
+                    tracks["artistId"]=artist._id
+                    tracks["artistName"]=artist.Name
+                    tracks["artistimages"]=artist.images
+                    tracks["artistType"]=artist.type
                 }
-                Album={}
                 let album=await album_api.getAlbumById(Track[i].albumId)
                 if(album){
-                    
-                    Album["_id"]=album._id
-                    Album["name"]=album.name
-                    Album["images"]=album.images
-                    Album["type"]=album.type
+                    tracks["albumId"]=album._id
+                    tracks["albumName"]=album.name
+                    tracks["albumImages"]=album.images
+                    tracks["albumType"]=album.type
                 }
-                tracks={}
                 tracks["_id"]=Track[i]._id
                 tracks["name"]=Track[i].name
                 tracks["type"]=Track[i].type
                 tracks["images"]=Track[i].images
-                trackInfo.push({track:tracks,artist:Artist,album:Album});
+                trackInfo.push(tracks);
             
         }
         return trackInfo;
@@ -165,7 +156,6 @@ const Search =  {
 
     },
     getTopResults :async function(Name){
-        console.log("topres");
         const artist= await this.getTop(Name);
         if(artist){
             let artist=await this.getArtistProfile(Name)
@@ -173,19 +163,20 @@ const Search =  {
         }
         let track=await this.getTrack(Name);
         if(track.length!=0){
-            console.log("track");
         return track[0];
         }
         let album=await this.getAlbum(Name);
         console.log(album);
         if(album.length!=0){
-            console.log("album");
         return album[0];
         }
         let playlist=await this.getPlaylist(Name);
         if(playlist.length!=0){
-            console.log("playlist");
         return playlist[0];
+        }
+        let profile=await this.getUserProfile(Name);
+        if(profile.length!=0){
+        return profile[0];
         }
 
     },
@@ -263,19 +254,19 @@ const Search =  {
         playlistInfo=[]
         for( let i=0;i<playlist.length;i++){
                 let User=await user_api.getUserById(playlist[i].ownerId)
-                user={}
-                if(User){
-                    user["_id"]=User._id
-                    user["displayName"]=User.displayName
-                    user["images"]=User.images
-                    user["type"]=User.type
-                }
                 Playlist={}
+                if(User){
+                    Playlist["ownerId"]=User._id
+                    Playlist["ownerName"]=User.displayName
+                    Playlist["ownerImages"]=User.images
+                    Playlist["ownerType"]=User.type
+                }
+                
                 Playlist["_id"]=playlist[i]._id
                 Playlist["name"]=playlist[i].name
                 Playlist["type"]=playlist[i].type
                 Playlist["images"]=playlist[i].images
-                playlistInfo.push({playlist:Playlist,owner:user})
+                playlistInfo.push(Playlist)
             
         }
         return playlistInfo;

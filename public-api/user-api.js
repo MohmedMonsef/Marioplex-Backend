@@ -139,7 +139,24 @@ const User =  {
         const addTrack = await this.addTrack(user,trackID,playlistID);
         return addTrack;
     },
-    
+    getUserFollowingArtist: async function (userID){
+        const user = await this.getUserById(userID);
+        console.log(user)
+
+        if(!user.follow.length){return 0;}
+        let Artist=[]
+        for(let i=0;i<user.follow.length;i++){
+            let User=await this.getUserById(user.follow[i].id);
+            if(User){
+                let artists=await artistDocument.find({userId:User._id});
+                if(artists){
+                    Artist.push(artists[0]);
+                }
+            }
+        }
+        return Artist;
+        
+    },
 
 
 

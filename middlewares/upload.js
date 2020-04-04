@@ -57,6 +57,7 @@ const storage = new GridFsStorage({
       });
     }
   });
+
   const upload = multer({
      storage,
      onError : function(err, next) {

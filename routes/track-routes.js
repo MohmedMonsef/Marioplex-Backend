@@ -3,7 +3,7 @@ const router = require('express').Router();
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
 const Album = require('../public-api/album-api');
-const Artist = require('../public-api/Artist-api');
+const Artist = require('../public-api/artist-api');
 const {auth:checkAuth} = require('../middlewares/is-me');
 const upload = require('../middlewares/upload');
 // get track

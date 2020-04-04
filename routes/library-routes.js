@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const Library =require('../public-api/Library-api');
+const Library =require('../public-api/library-api');
 const User =require('../public-api/user-api')
 const {auth:checkAuth} = require('../middlewares/is-me');
 

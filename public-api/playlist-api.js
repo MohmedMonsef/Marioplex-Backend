@@ -66,7 +66,7 @@ const Playlist =  {
                     const album =await Album.getAlbumById(albumId);
                     const artist =await Artist.getArtist(artistId);
                     if(!album || !artist){return 0;}
-                    tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.name,albumId:albumId,albumName:album.name});                
+                    tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.Name,albumId:albumId,albumName:album.name});                
                 }
             }
             playlistJson.push({id:playlist._id,type:playlist.type,name:playlist.name,ownerId:playlist.ownerId,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images,tracks:tracks});
@@ -276,7 +276,8 @@ const Playlist =  {
                     }
                     for(var i=0;i<playlistsIds.length;i++){
                         let playlist=await this.getPlaylist(playlistsIds[i]);
-                        playlists.push(playlist);
+                        let owner =await userDocument.findById(playlist.ownerId);
+                        playlists.push({id:playlist._id,name:playlist.name,ownerId:playlist.ownerId,owner:owner.displayName,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images});
                     }
                     let start=0;
                     let end=playlists.length;

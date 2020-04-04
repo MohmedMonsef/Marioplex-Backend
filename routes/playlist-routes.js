@@ -128,11 +128,13 @@ router.put('/playlists/:playlist_id/public',[checkAuth,checkContent],async (req,
 })
 // get tracks in playlist
 router.get('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{
-
-    let tracks=await Playlist.getPlaylistTracks(req.params.playlist_id);
-    if(!tracks){return res.status(401).send("no tracks");}
-    if(tracks.length==0) return res.status(404).send("NO Tracks in this playlist yet");
-    return res.status(200).send(tracks);
+    console.log("tracks");
+       let user=await User.getUserById(req.user._id);
+        if(!user) return res.status(404).send("NOT FOUND");
+        let tracks=await Playlist.getPlaylistWithTracks(req.params.playlist_id,req.query.snapshot,user);
+        if(!tracks){return res.status(401).send("no tracks");}
+        if(tracks.length==0) return res.status(404).send("NO Tracks in this playlist yet");
+        return res.status(200).send(tracks);
 })
 // delete tracks from playlist
 router.delete('/playlists/:playlist_id/tracks',[checkAuth],async (req,res)=>{

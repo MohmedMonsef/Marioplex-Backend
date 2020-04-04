@@ -1,0 +1,47 @@
+response
+{
+    "Album": {
+        "availableMarkets": [
+            "Eg"
+        ],
+        "_id": "5e764ab5eaa4533e7869d026",
+        "artistId": "5e76461b7ee20d39b463988c",
+        "name": "diabiat",
+        "type": "album",
+        "albumType": "Love",
+        "popularity": 100,
+        "genre": "pop",
+        "hasTracks": [],
+        "images": [],
+        "__v": 0
+    },
+    "Artist": {
+        "genre": [
+            "pop"
+        ],
+        "_id": "5e76461b7ee20d39b463988c",
+        "info": "this is Amr diab",
+        "popularity": 100,
+        "type": "Artist",
+        "userId": "5e68139dbaa5a70758626553",
+        "addAlbums": [
+            {
+                "albumId": "5e764ab5eaa4533e7869d026"
+            }
+        ],
+        "addTracks": [
+            {
+                "trackId": "5e76473d2050ae2428e27096"
+            },
+            {
+                "trackId": "5e7647670174b61bf47e34b8"
+            }
+        ],
+        "__v": 0,
+        "images": []
+    }
+}
+status code=200
+if success
+status code=404
+if not found any thing

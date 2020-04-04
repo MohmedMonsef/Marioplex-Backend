@@ -1,0 +1,20 @@
+correct:
+statu-->200 & example:
+[
+    {
+        "track": {
+            "availableMarkets": [],
+            "_id": "5e7cfb12787e2e19581691c2",
+            "name": "track2",
+            "albumId": "5e7cfb12787e2e19581691bc",
+            "artistId": "5e7cfb12787e2e19581691bf",
+   	     "artistName":"sdfd",
+    	     "albumName":"fghgh"
+            "__v": 0
+        }
+    }
+]
+
+error
+status--->400 & mes:error:'track not found' 
+

@@ -1,0 +1,21 @@
+when invalid token :
+status--->400  mes : Invalid Token
+when empty name
+status--->400  mes : "name": "name field is required"
+-------------------------------------------------------
+when correct
+status---->300 
+json reponse : example:
+
+{
+    "_id": "5e7c6ea7151b011dc82d6cee",
+    "type": "playlist",
+    "collaborative": false,
+    "name": "playlist1",
+    "isPublic": true,
+    "snapshot": [],
+    "images": [],
+    "__v": 0
+}
+
+ 

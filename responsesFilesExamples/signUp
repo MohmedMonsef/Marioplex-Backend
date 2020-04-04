@@ -1,0 +1,29 @@
+request
+{
+        "email":"dinaalyahmed@gmail.com" ,
+        "password":"18888" ,
+        "gender":"f" ,
+        "country":"egypt" ,
+        "birthday":"1999-10-03",
+        "username":"dina"
+}
+response
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTdiOGUwZWY2MThiYTI5MGNiN2ZjZTgiLCJwcm9kdWN0IjoiZnJlZSIsImlhdCI6MTU4NTE1NTU5OCwiZXhwIjoxNTg1MjQxOTk4fQ.Vo2afUVeJsa5P_m0C19KSpWnrWANYXd28ONNXHGSVnY"
+}
+status code=201
+
+
+response
+{
+    
+    "message": "Mail exists"
+}
+status code =403
+
+response
+{
+    "error":{}
+}
+status code =500
+

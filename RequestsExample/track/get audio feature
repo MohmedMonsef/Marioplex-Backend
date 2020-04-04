@@ -1,0 +1,20 @@
+error:
+status--> 404              & mes: error:"no track with this id"
+------------------------------------------------------
+Correct:
+status:  200               
+example:
+{
+    "explicit": false,
+    "acousticness": 10,
+    "danceability": 23,
+    "energy": 23,
+    "instrumentalness": 4,
+    "key": 90,
+    "liveness": 25,
+    "loudness": 70,
+    "mode": 56,
+    "speechiness": 67,
+    "tempo": 76,
+    "valence": 70
+}

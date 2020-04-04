@@ -4,11 +4,7 @@ const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
 const Album = require('../public-api/album-api');
 const Artist = require('../public-api/artist-api');
-const {auth:checkAuth} = require('../middlewares/isMe');
-const upload = require('../middlewares/upload');
-// get track
 router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
-    
     const trackID = req.params.track_id;
    
     const track = await Track.getTrack(trackID);

@@ -1,8 +1,6 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 
 
-// initialize db 
-const connection=require('../DBconnection/connection');
 
  const Track =  {
     
@@ -26,8 +24,12 @@ const connection=require('../DBconnection/connection');
         // get both album and artist of the track
         const album = await albumDocument.findById(track.albumId);
         if(!album) return 0; //not found
+        album.popularity++;
+        await album.save();
         const artist = await artistDocument.findById(track.artistId);
         if(!artist) return 0; 
+        artist.popularity++;
+        await artist.save();
         const isLiked = await this.checkIfUserLikeTrack(user,trackID)?true:false;
         console.log(artist.Name);
         return {track:track,isLiked:isLiked,album:{name:album.name,_id:album._id,artist:{name:artist.Name,_id:artist._id}}}

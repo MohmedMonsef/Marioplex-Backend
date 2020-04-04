@@ -2,12 +2,12 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 
 
 // initialize db 
-const connection=require('../DBconnection/connection');
 const mongoose = require('mongoose');
 
 const Track =require('./track-api');
 const Album =require('./album-api');
-const Artist =require('./Artist-api');
+const Artist =require('./artist-api');
+
 
 
 const Playlist =  {
@@ -25,6 +25,23 @@ const Playlist =  {
         }).catch((err)=> 0);
         return playlist;
 
+    },
+     
+    getPopularPlaylists:async function(){
+        // with - is from big to small and without is from small to big
+        var replaylists =[]
+        const  playlists = await playlistDocument.find({}).sort('-popularity')
+        if(playlists){
+                var limit;// to limit the num of playlists by frist 20 only but should check if num of albums less than 10  
+                if(playlists.length<20)      limit=playlists.length;
+                else  limit =20 ; 
+            for(let i=0;i<limit;i++){
+                const user1 = await userDocument.findById(playlists[i].ownerId);
+                replaylists.push({owner:{id:playlists[i].ownerId,type:"user",name:user1.displayName},collaborative:playlists[i].collaborative,type:'playlist',name:playlists[i].name,images:playlists[i].images,id:playlists[i]._id,Description:playlists[i].Description, isPublic:playlists[i].isPublic});
+            }
+        }
+        const replaylistsJson={playlists:replaylists};
+        return replaylistsJson;
     },
     //for routes
     getPlaylistWithTracks : async function(playlistId,snapshotID,user){    
@@ -50,7 +67,7 @@ const Playlist =  {
                     const album =await Album.getAlbumById(albumId);
                     const artist =await Artist.getArtist(artistId);
                     if(!album || !artist){return 0;}
-                    tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.name,albumId:albumId,albumName:album.name});                
+                    tracks.push({trackid:track1.id,name:track1.name,artistId:artistId,artistName:artist.Name,albumId:albumId,albumName:album.name});                
                 }
             }
             playlistJson.push({id:playlist._id,type:playlist.type,name:playlist.name,ownerId:playlist.ownerId,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images,tracks:tracks});
@@ -260,7 +277,8 @@ const Playlist =  {
                     }
                     for(var i=0;i<playlistsIds.length;i++){
                         let playlist=await this.getPlaylist(playlistsIds[i]);
-                        playlists.push(playlist);
+                        let owner =await userDocument.findById(playlist.ownerId);
+                        playlists.push({id:playlist._id,name:playlist.name,ownerId:playlist.ownerId,owner:owner.displayName,collaborative:playlist.collaborative,isPublic:playlist.isPublic,images:playlist.images});
                     }
                     let start=0;
                     let end=playlists.length;

@@ -1,11 +1,18 @@
 const router = require('express').Router();
 
-const Library =require('../public-api/Library-api');
+const Library =require('../public-api/library-api');
+const User =require('../public-api/user-api')
+const {auth:checkAuth} = require('../middlewares/is-me');
 
-const {auth:checkAuth} = require('../middlewares/isMe');
 
+router.get('/me/followingArtist',checkAuth,async (req,res)=>{
 
+    const userID = req.user._id;
+    const checks=await User.getUserFollowingArtist(userID);
+    if(!checks) res.status(404); //not found
+    else res.status(200).json(checks); 
 
+});
 router.get('/me/albums/contains',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
@@ -32,6 +39,7 @@ router.get('/me/albums',checkAuth,async (req,res)=>{
     const albums=await Library.getSavedAlbums(userID,req.query.limit,req.query.offset);
     if(!albums) res.status(404); //not found
     else res.status(200).json(albums); 
+    console.log(albums)
 
 });
 

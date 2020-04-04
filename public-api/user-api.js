@@ -1,13 +1,11 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 const Track =  require('./track-api');
-const Playlist =  require('./Playlist-api');
+const Playlist =  require('./playlist-api');
 // initialize db 
 const bcrypt=require('bcrypt');
-const Artist=require('./Artist-api');
-const sendmail=require('../ForgetPassword/sendmail');
+const Artist=require('./artist-api');
+const sendmail=require('../forget-password/sendmail');
 const Player =require('./player-api');
-// initialize db 
-const connection=require('../DBconnection/connection');
 
 const User =  {
     
@@ -139,7 +137,24 @@ const User =  {
         const addTrack = await this.addTrack(user,trackID,playlistID);
         return addTrack;
     },
-    
+    getUserFollowingArtist: async function (userID){
+        const user = await this.getUserById(userID);
+        console.log(user)
+
+        if(!user.follow.length){return 0;}
+        let Artist=[]
+        for(let i=0;i<user.follow.length;i++){
+            let User=await this.getUserById(user.follow[i].id);
+            if(User){
+                let artists=await artistDocument.find({userId:User._id});
+                if(artists){
+                    Artist.push(artists[0]);
+                }
+            }
+        }
+        return Artist;
+        
+    },
 
 
 
@@ -221,7 +236,6 @@ const User =  {
                 });
             }
             await user.save().catch();
-            await Playlist.followPlaylits(user,createdPlaylist._id,false);
             return createdPlaylist;
         },
 

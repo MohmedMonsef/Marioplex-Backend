@@ -3,7 +3,7 @@ const router = express.Router();
 const joi = require('joi');
 const User = require('../public-api/user-api');
 const spotifySchema = require('../models/db');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 router.get('/users/:id',checkAuth,async(req,res)=>{
     const user = await User.me(req.params.id,req.user._id);
@@ -45,9 +45,9 @@ router.put('/me/update',checkAuth,(req,res)=>{
     })
 })
 
-router.get('/me',checkAuth,async(req,res,next)=>{
+router.get('/me',checkAuth,async(req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
-    
+    console.log(userID);
     await spotifySchema.user.find({_id:userID},{
         displayName:1,
         email:1,
@@ -58,10 +58,12 @@ router.get('/me',checkAuth,async(req,res,next)=>{
         images:1
     }).exec().then(user=>{
         if(user){
-            res.status(200);
-            res.send(user);   
+  
+
+            return res.status(200).send(user);
+               
         }     
-    }).catch(next);
+    });
 })
 
 router.delete('/remove',checkAuth,async(req,res,next)=>{

@@ -1,7 +1,8 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 const Playlist = require('./playlist-api');
 const Album = require('./album-api');
-const Track =require('./track-api')
+const Track =require('./track-api');
+const Artist =require('./artist-api')
 
 const Player = {
 
@@ -79,11 +80,73 @@ const Player = {
         }
         
     },
-    // clear user recent played track history
+    getRecentlyHomePage:async function(user){
+        if(user.playHistory){
+            let recentPlaying=[];
+            let playHistory=user.playHistory;
+            let limit;
+            if(playHistory.length<20)       limit =playHistory.length;
+            else     limit =20;
+            for(let i=0;i<limit;i++){
+                console.log(playHistory[i].sourceType)
+                if(playHistory[i].sourceType=='album'){
+                    const album = await Album.getAlbumById(playHistory[i].sourceId);
+                    console.log(playHistory[i].sourceId)
+                    if(!album)  continue;
+                    ///////////////////
+                    //  TO DO  add to recent in apidoc & add this function 
+                    //  TO DO handle repeate
+                    //////////////////
+                    const artist = await Artist.getArtist(album.artistId);
+                    recentPlaying.push({id:album._id,name:album.name,type:"album",album_type:album.albumType,images:album.images,availableMarkets:album.availableMarkets,artist:{type:'artist',id:album.artistId,name:artist.Name}})
+                }
+                else if(playHistory[i].sourceType=='artist'){
+                    const artist = await Artist.getArtist(playHistory[i].sourceId);
+                    if(!artist)     continue;
+                    recentPlaying.push({genre:artist.genre,type:'artist',name:artist.Name,images:artist.images,id:artist._id,info:artist.info});
+                }
+                else if(playHistory[i].sourceType=='playlist'){
+                    const playlist = await Playlist.getPlaylist(playHistory[i].sourceId); 
+                    if(!playlist)   continue;
+                    const user1 = await userDocument.findById(playlist.ownerId);
+                    recentPlaying.push({owner:{id:playlist.ownerId,type:"user",name:user1.displayName},collaborative:playlist.collaborative,type:'playlist',name:playlist.name,images:playlist.images,id:playlist._id,Description:playlist.Description, isPublic:playlist.isPublic});
+                }
+            }
+            const recently ={recentlyPlaying:recentPlaying};
+            return recently;
+        }
+        return 0;
+        
+    },
+    
     clearRecentTracks: async function(user){
         user.playHistory = [];
         await user.save();
         return 1;
+    },
+    // add  a track to user recent tracks
+    addRecentTrack: async function(user,trackID,sourceType,sourceId){
+        if(user.playHistory){
+            if(user.playHistory.length > 50)user.playHistory.pop();
+            user.playHistory.unshift({
+                trackId:trackID,
+                sourceId:sourceId	,
+                sourceType:sourceType
+        
+            });
+            await user.save();
+            return 1;
+        }else{
+            user.playHistory = [];
+            user.playHistory.push({
+                trackId:trackID,
+                sourceId:sourceId	,
+                sourceType:sourceType
+            });
+            await user.save();
+            return 1;
+        }
+        
     },
     // get recent tracks played by user
     getRecentTracks:  function(user,limit){
@@ -411,7 +474,7 @@ const Player = {
             const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId,user);
             if(!track) return 0;
             const album5=await Album.getAlbumById(track.albumId); 
-            tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i});
+            tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,isPlayable:false});
          }
         
         const lastplaylistIndex = user.player.last_playlist_track_index < 0? 0:user.player.last_playlist_track_index;
@@ -423,9 +486,9 @@ const Player = {
             if(!track) return 0;
                // const album4=await Album.getAlbumById(track.albumId);
                 if(i==queueIndex+1)
-                    tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,fristInSource:true});        
+                    tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,isPlayable:false,fristInSource:true});        
                 else
-                    tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i});
+                    tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,isPlayable:false});
            
          }
          //if repeat should display all the queue
@@ -436,9 +499,9 @@ const Player = {
                 if(!track) return 0;
                    // const album4=await Album.getAlbumById(track.albumId);
                     if(i==queueIndex+1)
-                        tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,fristInSource:true});        
+                        tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,index:i,fristInSource:true,isPlayable:false});        
                         else
-                        tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,albumName:album4.name,index:i});
+                        tracks.push({fulltrack:track,isQueue:queue.tracksInQueue[i].isQueue,playlistId:queue.tracksInQueue[i].PlaylistId,isPlaylist:queue.tracksInQueue[i].isPlaylist,albumName:album4.name,index:i,isPlayable:false});
              } 
        }
         return tracks;

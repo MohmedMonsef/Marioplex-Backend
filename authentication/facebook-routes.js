@@ -7,8 +7,6 @@ const jwt =require('jsonwebtoken');
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 
 
-// initialize db 
-const connection=require('../DBconnection/connection');
 // initialize the strategy
 require('./facebook-authentication')(passport);
 
@@ -41,12 +39,76 @@ router.get('/facebookJWT',checkAuthentication,(req,res)=>{
     const id = req.session.passport.user;
     //res.send('hh')
    var token = jwt.sign({ _id: id,product:req.session.passport.user.product}, jwtSeret.secret, {
-        expiresIn: '24h' // 1 day
+
+        expiresIn: '3209832702h' // 1 day
      });
      
       // return the information including token as JSON
-      res.json({success: true, token: 'JWT ' + token});
+      res.json({ token: token});
      // res.send(token);
 });
+
+router.get('/facebookAndroid',async (req,res)=>{
+    let email = req.body.email;
+    if(!email){
+        res.status(403).send("No Email");
+        return 0;
+    }
+    const user = await userDocument.findOne({ email:email },(err,user)=>{
+
+        if(err) return 0;
+        return user;
+    });
+    if(user){
+        // user in db
+       
+        const id = user._id;
+    //res.send('hh')
+   var token = jwt.sign({ _id: id,product:user.product}, jwtSeret.secret, {
+
+        expiresIn: '3209832702h' // 1 day
+     });
+     
+      // return the information including token as JSON
+      res.json({ token: token});
+    }else{
+
+      
+        // create user
+        const newUser = await new userDocument({
+            email:email,
+
+            displayName:req.body.name,
+            gender:req.body.gender,
+            isFacebook:true,
+            product:"free" ,
+            userType:"user" ,
+            type:"user" ,
+            images:req.body.photos ,
+            birthDate:req.body.birthday ,
+            follow:[] ,
+            followedBy:[] ,
+            like:[] ,
+            createPlaylist:[] ,
+            saveAlbum:[] ,
+            playHistory:[]
+
+
+        }).save();
+       
+        var token = jwt.sign({ _id: newUser._id,product:newUser.product}, jwtSeret.secret, {
+
+            expiresIn: '3209832702h' // 1 day
+         });
+         
+          // return the information including token as JSON
+          res.status(200).json({ token: token});
+    }
+}
+
+
+
+
+)
 
 module.exports = router;

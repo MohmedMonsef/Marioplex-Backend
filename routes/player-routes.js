@@ -3,7 +3,7 @@ const router = require('express').Router();
 const Player =require('../public-api/player-api');
 const User = require('../public-api/user-api');
 const Track = require('../public-api/track-api')
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 // update the player api instance
 // just for test route
@@ -172,9 +172,10 @@ router.get('/me/player/recently-played',checkAuth,async (req,res)=>{
   else res.status(200).json(playHistory);
 })
 // add to recent played
-router.put('/me/player/recently-played/:track_id',checkAuth,async (req,res)=>{
+// add to recent played
+router.put('/me/player/recently-played/:source_id/:track_id',checkAuth,async (req,res)=>{
   const user = await User.getUserById(req.user._id);
-  const playHistory = await Player.addRecentTrack(user,req.params.track_id);
+  const playHistory = await Player.addRecentTrack(user,req.params.track_id,req.query.sourceType,req.params.source_id);
   if(!playHistory)  res.status(400).json({error:'can not add to playhistory '});
   else res.status(203).json({"success":"added successfully"});
 })

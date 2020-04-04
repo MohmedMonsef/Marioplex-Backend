@@ -2,7 +2,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 
 
 // initialize db 
-const connection=require('../DBconnection/connection');
+const connection=require('../db-connection/connection');
 const User=require('./user-api');
 const track=require('./track-api');
 const artist=require('./artist-api');
@@ -26,6 +26,41 @@ const artist=require('./artist-api');
             return album;
             
 
+    },
+     // new releases for home page 
+     getNewReleases:async function(){
+        // with - is from big to small and without is from small to big
+    var reAlbums =[]
+      const  albums = await albumDocument.find({}).sort('-releaseDate')
+      if(albums){
+          var limit;// to limit the num of albums by frist 10 only but should check if num of albums less than 10  
+          if(albums.length<20)      limit=albums.length;
+          else  limit =20 ;
+          
+      for(let i=0;i<limit;i++){
+        const artist1= await artist.getArtist(albums[i].artistId);
+        reAlbums.push({album_type:albums[i].albumType,artist:{type:'artist',id:albums[i].artistId,name:artist1.Name},available_markets:albums[i].availableMarkets,images:albums[i].images,id:albums[i]._id,name:albums[i].name,type:'album'});
+      }
+        }
+        const reAlbumsJson={albums:reAlbums};
+        return reAlbumsJson;
+    },
+
+    getPopularAlbums:async function(){
+        // with - is from big to small and without is from small to big
+        var reAlbums =[]
+        const  albums = await albumDocument.find({}).sort('-popularity')
+        if(albums){
+                var limit;// to limit the num of albums by frist 20 only but should check if num of albums less than 10  
+                if(albums.length<20)      limit=albums.length;
+                else  limit =20 ; 
+            for(let i=0;i<limit;i++){
+                const artist1= await artist.getArtist(albums[i].artistId);
+                reAlbums.push({album_type:albums[i].albumType,artist:{type:'artist',id:albums[i].artistId,name:artist1.Name},available_markets:albums[i].availableMarkets,images:albums[i].images,id:albums[i]._id,name:albums[i].name,type:'album'});
+            }
+        }
+        const reAlbumsJson={albums:reAlbums};
+        return reAlbumsJson;
     },
     getAlbumArtist : async function(albumID){
         

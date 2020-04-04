@@ -27,6 +27,23 @@ const Track=require('./track-api');
         await artist.save();
         return artist;
     },
+    
+    getPopularArtists:async function(){
+        // with - is from big to small and without is from small to big
+        var reArtists =[]
+        const  artists = await artistDocument.find({}).sort('-popularity')
+        if(artists){
+                var limit;// to limit the num of artists by frist 20 only but should check if num of albums less than 10  
+                if(artists.length<20)      limit=artists.length;
+                else  limit =20 ; 
+            for(let i=0;i<limit;i++){
+               
+                reArtists.push({genre:artists[i].genre,type:'artist',name:artists[i].Name,images:artists[i].images,id:artists[i]._id,info:artists[i].info});
+            }
+        }
+        const reArtistsJson={artists:reArtists};
+        return reArtistsJson;
+    },
     checkArtisthasAlbum:async function(artistId,albumId){
         if (await Album.getAlbumById(albumId)){
             artist=await this.getArtist(artistId);
@@ -225,5 +242,3 @@ return SpecificTracks;
 }
 
 module.exports = Artist;
-
-

@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
-const auth=require('../middlewares/isMe')
+const auth=require('../middlewares/is-me')
 require('../config/passport');
 
 const passport =require('passport');
@@ -77,7 +77,7 @@ router.post('/sign_up',(req,res)=>{
                                 .then(result =>{
                 
                                     var token = jwt.sign({ _id: user._id,product: user.product,userType:user.userType}, jwtSeret.secret, {
-                                        expiresIn: '24h' // 1 day
+                                        expiresIn: '9043809348h' // 1 day
                                       });
                                       
                                     res.status(201).json({

@@ -1,10 +1,10 @@
 const router = require('express').Router();
 
-const Artist =require('../public-api/Artist-api');
+const Artist =require('../public-api/artist-api');
 const Album =require('../public-api/album-api');
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 const {content:checkContent} = require('../middlewares/content');
 const {isArtist:checkType} = require('../middlewares/check-type');
 const {upload:uploadTrack} = require('../middlewares/upload');

@@ -1,7 +1,5 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 var FuzzySearch = require('fuzzy-search');
-
-
 // initialize db 
 const artistApi=require('./Artist-api');
 const connection=require('../DBconnection/connection');
@@ -156,7 +154,6 @@ const Search =  {
 
     },
     getTopResults :async function(Name){
-        console.log("topres");
         const artist= await this.getTop(Name);
         if(artist){
             let artist=await this.getArtistProfile(Name)
@@ -164,23 +161,19 @@ const Search =  {
         }
         let track=await this.getTrack(Name);
         if(track.length!=0){
-            console.log("track");
         return track[0];
         }
         let album=await this.getAlbum(Name);
         console.log(album);
         if(album.length!=0){
-            console.log("album");
         return album[0];
         }
         let playlist=await this.getPlaylist(Name);
         if(playlist.length!=0){
-            console.log("playlist");
         return playlist[0];
         }
         let profile=await this.getUserProfile(Name);
         if(profile.length!=0){
-            console.log("profile");
         return profile[0];
         }
 

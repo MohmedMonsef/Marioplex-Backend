@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const Artist =require('../public-api/Artist-api');
+const Artist =require('../public-api/artist-api');
 const Album =require('../public-api/album-api');
 const Player = require('../public-api/player-api');
 const User = require('../public-api/user-api');

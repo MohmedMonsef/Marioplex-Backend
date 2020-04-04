@@ -5,7 +5,7 @@ const Album =require('../public-api/album-api');
 const Player = require('../public-api/player-api');
 const User = require('../public-api/user-api');
 const Playlist =require('../public-api/playlist-api');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 
 router.get('/browse/new-releases',async (req,res)=>{

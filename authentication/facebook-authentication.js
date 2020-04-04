@@ -7,7 +7,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 
 
 // initialize db 
-const connection=require('../DBconnection/connection');
+const connection=require('../db-connection/connection');
 // get jwt middleware
 const JWT = require('../config/passport-jwt');
 

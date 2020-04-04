@@ -1,8 +1,6 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 
 
-// initialize db 
-const connection=require('../DBconnection/connection');
 
  const Track =  {
     

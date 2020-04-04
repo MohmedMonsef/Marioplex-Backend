@@ -3,7 +3,7 @@ const router = express.Router();
 const joi = require('joi');
 const User = require('../public-api/user-api');
 const spotifySchema = require('../models/db');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 router.get('/users/:id',checkAuth,async(req,res)=>{
     const user = await User.me(req.params.id,req.user._id);

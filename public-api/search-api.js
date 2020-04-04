@@ -4,7 +4,6 @@ var FuzzySearch = require('fuzzy-search');
 
 // initialize db 
 const artistApi=require('./Artist-api');
-const connection=require('../DBconnection/connection');
 const user_api=require('./user-api');
 const track=require('./track-api');
 const artist_api=require('./Artist-api');

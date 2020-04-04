@@ -3,11 +3,9 @@ const Track =  require('./track-api');
 const Playlist =  require('./playlist-api');
 // initialize db 
 const bcrypt=require('bcrypt');
-const Artist=require('./Artist-api');
-const sendmail=require('../ForgetPassword/sendmail');
+const Artist=require('./artist-api');
+const sendmail=require('../forget-password/sendmail');
 const Player =require('./player-api');
-// initialize db 
-const connection=require('../DBconnection/connection');
 
 const User =  {
     

@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const search =require('../public-api/search-api');
 const User = require('../public-api/user-api');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 // get album
 router.get('/api/search',async (req,res)=>{

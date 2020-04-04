@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const Album =require('../public-api/album-api');
 const User = require('../public-api/user-api');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 router.delete('/me/albums',checkAuth,async (req,res)=>{
     if(req.body.ids==undefined){

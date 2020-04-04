@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const browse =require('../public-api/browse-api');
 const User = require('../public-api/user-api');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 // get album
 router.get('/browse/categories/:category_id',async (req,res)=>{

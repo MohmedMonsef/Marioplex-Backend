@@ -3,7 +3,7 @@ const router = require('express').Router();
 const Player =require('../public-api/player-api');
 const User = require('../public-api/user-api');
 const Track = require('../public-api/track-api')
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 // update the player api instance
 // just for test route

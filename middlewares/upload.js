@@ -6,7 +6,7 @@ const mongoURI="mongodb+srv://nada:nada@spotifycluster-i2m7n.mongodb.net/Spotify
 const localhostnada='mongodb://localhost/spotifytest';
 const localhost = 'mongodb://localhost:27017/test';
 const Track =require('../public-api/track-api');
-const Artist =require('../public-api/Artist-api');
+const Artist =require('../public-api/artist-api');
 let trackID = "";
 // all file qualities must have same name
 const storage = new GridFsStorage({

@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const Library =require('../public-api/Library-api');
 const User =require('../public-api/user-api')
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 
 
 router.get('/api/me/followingArtist',checkAuth,async (req,res)=>{

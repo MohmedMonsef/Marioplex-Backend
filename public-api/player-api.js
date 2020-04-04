@@ -2,7 +2,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 const Playlist = require('./playlist-api');
 const Album = require('./album-api');
 const Track =require('./track-api');
-const Artist =require('./Artist-api')
+const Artist =require('./artist-api')
 
 const Player = {
 

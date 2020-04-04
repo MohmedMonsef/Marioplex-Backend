@@ -2,7 +2,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 
 
 // initialize db 
-const connection=require('../DBconnection/connection');
+const connection=require('../db-connection/connection');
 const User=require('./user-api');
 const track=require('./track-api');
 const playlist=require('./playlist-api');

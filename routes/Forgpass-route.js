@@ -2,7 +2,7 @@ const express=require('express');
 const router=express.Router();
 const bodyParser=require('body-parser');
 var users=require('../public-api/user-api');
-var sendmail=require('../ForgetPassword/sendmail');
+var sendmail=require('../forget-password/sendmail');
 
 var jsonparser = bodyParser.json();
 

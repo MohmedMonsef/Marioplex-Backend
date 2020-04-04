@@ -2,7 +2,7 @@
 
 const Playlist =require('../public-api/playlist-api');
 const User = require('../public-api/user-api');
-const {auth:checkAuth} = require('../middlewares/isMe');
+const {auth:checkAuth} = require('../middlewares/is-me');
 const validatePlaylistInput = require("../validation/playlist");
 const {content:checkContent} = require('../middlewares/content');
 

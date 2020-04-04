@@ -1,4 +1,4 @@
-const connection=require('./DBconnection/connection');
+const connection=require('./db-connection/connection');
 const express = require('express');
 const app =express();
 //connect to database
@@ -12,8 +12,8 @@ const browse=require('./routes/browse');
 const album=require('./routes/album');
 const Track=require('./routes/track-routes');
 const playlist=require('./routes/playlist-routes');
-const Artist=require('./routes/Artist-route');
-const Library=require('./routes/Library-routes');
+const Artist=require('./routes/artist-route');
+const Library=require('./routes/library-routes');
 const userProfile=require('./routes/user-profile-routes');
 const homePage =require('./routes/home-page-routes');
 const login=require('./routes/login');
@@ -24,7 +24,7 @@ require('./config/passport');
 
 const player = require('./routes/player-routes')
 const facebook = require('./authentication/facebook-routes');
-const forgpass = require('./routes/Forgpass-route');
+const forgpass = require('./routes/forgpass-route');
 
 
 app.use(cors());

@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
-const auth=require('../middlewares/isMe')
+const auth=require('../middlewares/is-me')
 require('../config/passport');
 
 const passport =require('passport');

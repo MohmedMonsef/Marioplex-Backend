@@ -2,7 +2,7 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
-
+const artist_api = require('./artist-api');
 
  const Library =  {
     

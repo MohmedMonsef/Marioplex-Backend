@@ -45,7 +45,7 @@ router.put('/me/update',checkAuth,(req,res)=>{
     })
 })
 
-router.get('/api/me',checkAuth,async(req,res)=>{
+router.get('/me',checkAuth,async(req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
     console.log(userID);
     await spotifySchema.user.find({_id:userID},{

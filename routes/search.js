@@ -5,7 +5,7 @@ const User = require('../public-api/user-api');
 const {auth:checkAuth} = require('../middlewares/is-me');
 
 // get album
-router.get('/api/search',async (req,res)=>{
+router.get('/search',async (req,res)=>{
     
     const name = req.query.name;
     const type = req.query.type.split(',');

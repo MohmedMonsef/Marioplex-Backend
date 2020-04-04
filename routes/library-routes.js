@@ -5,7 +5,7 @@ const User =require('../public-api/user-api')
 const {auth:checkAuth} = require('../middlewares/is-me');
 
 
-router.get('/api/me/followingArtist',checkAuth,async (req,res)=>{
+router.get('/me/followingArtist',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
     const checks=await User.getUserFollowingArtist(userID);
@@ -13,7 +13,7 @@ router.get('/api/me/followingArtist',checkAuth,async (req,res)=>{
     else res.status(200).json(checks); 
 
 });
-router.get('/api/me/albums/contains',checkAuth,async (req,res)=>{
+router.get('/me/albums/contains',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
     const albumsIDs = req.query.albums_ids.split(',');
@@ -23,7 +23,7 @@ router.get('/api/me/albums/contains',checkAuth,async (req,res)=>{
 
 });
 
-router.get('/api/me/tracks/contains',checkAuth,async (req,res)=>{
+router.get('/me/tracks/contains',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
     const tracksIDs = req.query.tracks_ids.split(',');
@@ -33,7 +33,7 @@ router.get('/api/me/tracks/contains',checkAuth,async (req,res)=>{
 
 });
 
-router.get('/api/me/albums',checkAuth,async (req,res)=>{
+router.get('/me/albums',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
     const albums=await Library.getSavedAlbums(userID,req.query.limit,req.query.offset);
@@ -43,7 +43,7 @@ router.get('/api/me/albums',checkAuth,async (req,res)=>{
 
 });
 
-router.get('/api/me/tracks',checkAuth,async (req,res)=>{
+router.get('/me/tracks',checkAuth,async (req,res)=>{
 
     const userID = req.user._id;
     const tracks=await Library.getSavedTracks(userID,req.query.limit,req.query.offset);

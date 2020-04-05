@@ -48,7 +48,7 @@ router.get('/facebookJWT',checkAuthentication,(req,res)=>{
      // res.send(token);
 });
 
-router.get('/facebookAndroid',async (req,res)=>{
+router.post('/facebookAndroid',async (req,res)=>{
     let email = req.body.email;
     if(!email){
         res.status(403).send("No Email");

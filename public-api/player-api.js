@@ -475,7 +475,7 @@ const Player = {
         if (user.player.is_repeat || user.player.is_shuffled) {
 
             //console.log(user.player.is_repeat)
-            for (let i = queueIndex + 1; i < lastplaylistIndex + 1; i++) {
+            for (let i = queueIndex + 1; i < lastplaylistIndex; i++) {
                 const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
                 if (!track) return 0;
                 // const album4=await Album.getAlbumById(track.albumId);

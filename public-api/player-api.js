@@ -454,7 +454,8 @@ const Player = {
             const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
             if (!track) return 0;
             const album5 = await Album.getAlbumById(track.albumId);
-            tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
+            const sourse = queue.tracksInQueue[i].playlistId;
+            tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: sourse, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
         }
 
         const lastplaylistIndex = user.player.last_playlist_track_index < 0 ? 0 : user.player.last_playlist_track_index;
@@ -464,11 +465,13 @@ const Player = {
             const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
 
             if (!track) return 0;
+            //console.log(queue.tracksInQueue[i].playlistId)
             // const album4=await Album.getAlbumById(track.albumId);
+            const sourse = queue.tracksInQueue[i].playlistId;
             if (i == queueIndex + 1)
-                tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false, fristInSource: true });
+                tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: sourse, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false, fristInSource: true });
             else
-                tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
+                tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: sourse, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
 
         }
 
@@ -481,10 +484,11 @@ const Player = {
                 const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
                 if (!track) return 0;
                 // const album4=await Album.getAlbumById(track.albumId);
+                const sourse = queue.tracksInQueue[i].playlistId;
                 if (i == queueIndex + 1)
-                    tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, fristInSource: true, isPlayable: false });
+                    tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: sourse, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, fristInSource: true, isPlayable: false });
                 else
-                    tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
+                    tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: sourse, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
             }
         }
         return tracks;

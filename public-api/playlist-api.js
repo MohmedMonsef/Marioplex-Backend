@@ -67,10 +67,12 @@ const Playlist = {
                     const artist = await Artist.getArtist(artistId);
                     if (!album || !artist) { return 0; }
                     const isLiked = await Track.checkIfUserLikeTrack(user, track1.id) ? true : false;
-                    tracks.push({ trackid: track1.id, name: track1.name, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name,isLiked:isLiked });
+                    tracks.push({ trackid: track1.id, name: track1.name, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked });
                 }
             }
-            playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks });
+            const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;
+            // console.log(followPlaylist)
+            playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks, isfollowed: followPlaylist });
             return playlistJson;
         }
         return 0;
@@ -78,12 +80,12 @@ const Playlist = {
 
 
 
-    checkIfUserHasPlaylist: function(user, playlistID) {
+    checkIfUserHasPlaylist: async function(user, playlistID) {
 
         const userPlaylists = user.createPlaylist;
 
         if (userPlaylists) {
-            return userPlaylists.find(playlist => playlist.playListId == playlistID);
+            return await userPlaylists.find(playlist => playlist.playListId + 1 == playlistID + 1);
         }
         return 0;
     },
@@ -137,12 +139,12 @@ const Playlist = {
     },
 
     //follow playlist
-    checkFollowPlaylistByUser: function(user, playlistID) {
+    checkFollowPlaylistByUser: async function(user, playlistID) {
 
         const followedplaylists = user.followPlaylist;
 
         if (followedplaylists) {
-            const followed = followedplaylists.find(playlist => playlist.playListId == playlistID);
+            const followed = await followedplaylists.find(playlist => playlist.playListId + 1 == playlistID + 1);
 
             return followed
         }

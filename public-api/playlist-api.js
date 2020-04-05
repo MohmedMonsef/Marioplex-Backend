@@ -66,7 +66,8 @@ const Playlist = {
                     const album = await Album.getAlbumById(albumId);
                     const artist = await Artist.getArtist(artistId);
                     if (!album || !artist) { return 0; }
-                    tracks.push({ trackid: track1.id, name: track1.name, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name });
+                    const isLiked = await Track.checkIfUserLikeTrack(user, track1.id) ? true : false;
+                    tracks.push({ trackid: track1.id, name: track1.name, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name,isLiked:isLiked });
                 }
             }
             playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks });

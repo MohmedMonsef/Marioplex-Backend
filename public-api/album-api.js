@@ -83,8 +83,11 @@ const artist=require('./artist-api');
             if(track){
                 albumInfo['track']=track;
             }
+            else{
+                albumInfo['track']=[]
+            }
             return albumInfo;
-        }
+            }
         else{
             return 0;
         }

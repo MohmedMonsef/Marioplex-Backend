@@ -593,14 +593,14 @@ const Player = {
     },
 
     setNextPrevCurrent:async function(user,lastTrack){
-      // console.log(lastTrack);
+    
         for (let i=user.queue.queuIndex+1;i<user.queue.tracksInQueue.length;i++){
-            //console.log(lastTrack);
+           
             if (user.queue.tracksInQueue[i].trackId==lastTrack){
                 
                 user.player["last_playlist_track_index"]= i ;
                 await user.save(); 
-                console.log(user.queue.tracksInQueue[i-1].trackId);
+               
 
                 user.player.prev_track['trackId'] =i-1>user.queue.queuIndex?user.queue.tracksInQueue[i-1].trackId:user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].trackId;
                 user.player.prev_track['isPlaylist'] =i-1>user.queue.queuIndex?user.queue.tracksInQueue[i-1].isPlaylist:user.queue.tracksInQueue[user.queue.tracksInQueue.length-1].isPlaylist;

@@ -36,12 +36,8 @@ router.post("/login", (req, res) => {
         if (isMatch) {
           // User matched
           // Create JWT Payload
-          const payload = {
-            id: user.id,
-            
-          };
           var token = jwt.sign({ _id: user._id,product: user.product,userType:user.userType}, jwtSeret.secret, {
-            expiresIn: '874024h' // 1 day
+            expiresIn: '874024h' 
           });
          
           // return the information including token as JSON

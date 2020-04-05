@@ -37,10 +37,10 @@ router.get('/facebook/callback',passport.authenticate('facebook', {  successRedi
 
 router.get('/facebookJWT',checkAuthentication,(req,res)=>{
     const id = req.session.passport.user;
-    //res.send('hh')
-   var token = jwt.sign({ _id: id,product:req.session.passport.user.product}, jwtSeret.secret, {
 
-        expiresIn: '3209832702h' // 1 day
+   var token = jwt.sign({ _id: id,product:req.session.passport.user.product,userType:req.session.passport.user.userType}, jwtSeret.secret, {
+
+        expiresIn: '3209832702h'
      });
      
       // return the information including token as JSON
@@ -64,9 +64,9 @@ router.get('/facebookAndroid',async (req,res)=>{
        
         const id = user._id;
     //res.send('hh')
-   var token = jwt.sign({ _id: id,product:user.product}, jwtSeret.secret, {
+   var token = jwt.sign({ _id: id,product:user.product,userType:user.userType}, jwtSeret.secret, {
 
-        expiresIn: '3209832702h' // 1 day
+        expiresIn: '3209832702h' 
      });
      
       // return the information including token as JSON
@@ -96,9 +96,9 @@ router.get('/facebookAndroid',async (req,res)=>{
 
         }).save();
        
-        var token = jwt.sign({ _id: newUser._id,product:newUser.product}, jwtSeret.secret, {
+        var token = jwt.sign({ _id: newUser._id,product:newUser.product,userType:newUser.userType}, jwtSeret.secret, {
 
-            expiresIn: '3209832702h' // 1 day
+            expiresIn: '3209832702h'
          });
          
           // return the information including token as JSON

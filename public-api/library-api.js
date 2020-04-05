@@ -143,7 +143,7 @@ const artist_api = require('./artist-api');
             trackInfo.push(tracks);
         
             }
-            return trackInfo;            
+            return {"tracks":trackInfo,"ownerName":user.displayName};            
         },
 }
 

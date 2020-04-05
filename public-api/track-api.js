@@ -19,6 +19,7 @@ const Track = {
 
     },
     getFullTrack: async function(trackID, user) {
+
         const track = await this.getTrack(trackID);
         if (!track) return 0; //not found
         // get both album and artist of the track
@@ -31,7 +32,8 @@ const Track = {
         artist.popularity++;
         await artist.save();
         const isLiked = await this.checkIfUserLikeTrack(user, trackID) ? true : false;
-        //console.log(artist.Name);
+        //console.log(user)
+        //console.log(isLiked);
         return { track: track, isLiked: isLiked, album: { name: album.name, _id: album._id, artist: { name: artist.Name, _id: artist._id } } }
     },
     // get several tracks
@@ -46,7 +48,6 @@ const Track = {
         return tracks;
 
     },
-
     // get audio feature track
     // params :  trackid
     getAudioFeaturesTrack: async function(trackID) {
@@ -93,9 +94,10 @@ const Track = {
     checkIfUserLikeTrack: function(user, trackID) {
 
         const tracksUserLiked = user.like;
+        //console.log(tracksUserLiked)
         // if user.like.contains({track_id:track.track_id})
         if (tracksUserLiked) {
-            return tracksUserLiked.find(track => track.trackId == trackID);
+            return tracksUserLiked.find(track => track.trackId + 1 == trackID + 1);
         }
         return 0;
     },

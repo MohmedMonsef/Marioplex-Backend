@@ -461,7 +461,7 @@ const Player = {
         //console.log(lastplaylistIndex)
         // get tracks that was next in playlist
         for (let i = lastplaylistIndex + 1; i < queue.tracksInQueue.length; i++) {
-            const track = await await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
+            const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
 
             if (!track) return 0;
             // const album4=await Album.getAlbumById(track.albumId);

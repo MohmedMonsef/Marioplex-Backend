@@ -472,7 +472,8 @@ const Player = {
 
         }
         //if repeat should display all the queue
-        if (user.player.is_repeat) {
+        if (user.player.is_repeat || user.player.is_shuffled) {
+
             //console.log(user.player.is_repeat)
             for (let i = queueIndex + 1; i < lastplaylistIndex + 1; i++) {
                 const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
@@ -562,11 +563,18 @@ const Player = {
     //shuffle
     setShuffle: async function(state, user) {
         if (user.queue.tracksInQueue) {
-            if (state == 'true')
+            if (state == 'true') {
+                user.player['is_shuffled'] = true;
+                await user.save();
                 return await this.shuffleQueue(user);
-            else
 
-                return await this.fillByplaylist(user);
+            } else {
+                user.player['is_shuffled'] = false;
+                await user.save();
+                const ret = await this.fillByplaylist(user);
+                //console.log(ret)
+                return ret;
+            }
         }
         return 0
     },
@@ -575,7 +583,7 @@ const Player = {
 
         for (let i = user.queue.queuIndex + 1; i < user.queue.tracksInQueue.length; i++) {
 
-            if (user.queue.tracksInQueue[i].trackId == lastTrack) {
+            if (user.queue.tracksInQueue[i].trackId + 1 == lastTrack + 1) {
 
                 user.player["last_playlist_track_index"] = i;
                 await user.save();

@@ -16,6 +16,27 @@ router.get('/users/:id', checkAuth, async(req, res) => {
 
 })
 
+router.get('/me-player', checkAuth, async(req, res) => {
+    const userID = req.user._id; // get it from desierialize auth 
+    //console.log(userID);
+    await spotifySchema.user.find({ _id: userID }, {
+        displayName: 1,
+        email: 1,
+        birthDate: 1,
+        country: 1,
+        product: 1,
+        gender: 1,
+        images: 1,
+        player: 1
+    }).exec().then(user => {
+        if (user) {
+
+
+            return res.status(200).send(user);
+
+        }
+    });
+})
 router.put('/me/update', checkAuth, (req, res) => {
     const shcema = joi.object().keys({
         Email: joi.string().trim().email(),

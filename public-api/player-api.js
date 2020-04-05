@@ -471,18 +471,20 @@ const Player = {
                 tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
 
         }
+
+
         //if repeat should display all the queue
         if (user.player.is_repeat || user.player.is_shuffled) {
 
-            //console.log(user.player.is_repeat)
             for (let i = queueIndex + 1; i < lastplaylistIndex; i++) {
+
                 const track = await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);
                 if (!track) return 0;
                 // const album4=await Album.getAlbumById(track.albumId);
                 if (i == queueIndex + 1)
                     tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, fristInSource: true, isPlayable: false });
                 else
-                    tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, albumName: album4.name, index: i, isPlayable: false });
+                    tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: queue.tracksInQueue[i].PlaylistId, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });
             }
         }
         return tracks;

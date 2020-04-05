@@ -69,13 +69,14 @@
      })
      //add track to a playlist
  router.post('/playlists/:playlist_id/tracks', checkAuth, async(req, res) => {
+         console.log(req.body.tracks)
          if (req.body.tracks == undefined) {
              return res.status(401).send('Bad Request');
          }
          let tracksids = req.body.tracks.split(',');
          const playlist = await Playlist.addTrackToPlaylist(req.params.playlist_id, tracksids);
          if (!playlist) return res.status(404).send({ "error": 'can not add tracks' });
-         return res.status(201).send(playlist.snapshot[playlist.snapshot.length]);
+         return res.status(201).send(playlist.snapshot[playlist.snapshot.length - 1]);
 
      })
      //update created playlists details  {name,description => done + {image} not done yet}

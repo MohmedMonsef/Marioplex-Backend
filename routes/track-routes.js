@@ -86,10 +86,12 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
 
 
 router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
-    const quality = req.query.quality;// high low medium
+    let type = req.query.type;// high low medium
     // TO DO : check if premium to allow high
+     if(req.user.product == "free" && type == "high" ) type = "medium"
     // set default quality to medium if not specified
-    if(qualit != "high" || qualit != "medium" || qualit != "low" ) quality = "medium";
+
+    if(type != "high" || type != "medium" || type != "low" ) type = "medium";
     const trackID  = req.params.track_id;
     const track = await Track.getTrack(trackID);
     if(!track){
@@ -97,7 +99,7 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
         return 0;
     }
     // get file from gridfs
-       gfs.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackID),"metadata.quality":quality},function (err, file) {
+       gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackID),"metadata.type":type},function (err, file) {
         if (err) {res.send(500).send("server error while sending track");return 0;}
         // send range response 
         const range = req.headers.range;
@@ -110,17 +112,32 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
         var start = parseInt(partialstart, 10);
         var end = partialend ? parseInt(partialend, 10) : file.length -1;
         var chunksize = (end-start)+1;
-        //const readStream = fs.createReadStream(filePath, { start, end });
-        //const file = fs.createReadStream('./song.mp3', { start, end })
+       // console.log('Range ',start,'-',end);
+
+        
         res.writeHead(206, {
             'Content-Range': 'bytes ' + start + '-' + end + '/' + file.length,
             'Accept-Ranges': 'bytes',
             'Content-Length': chunksize,
             'Content-Type': file.contentType
         });
+     gfsTracks.createReadStream({
+            _id:file._id,
+            range:{
+                startPos: start,
+                    endPos: end
+            }
+        }).pipe(res);
+        }else{
+            res.header('Content-Length', file.length);
+            res.header('Content-Type', file.contentType);
+
+            gfsTracks.createReadStream({
+                _id: file._id
+            }).pipe(res);
         }
-        const readstream = gfs.createReadStream(file.filename);
-        readstream.pipe(res);
+      
+       
         });
     
     

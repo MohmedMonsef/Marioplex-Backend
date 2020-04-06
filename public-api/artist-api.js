@@ -1,6 +1,6 @@
 const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
 const spotify=require('../models/db');
-const Album=require('./album-api');
+
 const Track=require('./track-api');
 
 
@@ -45,8 +45,8 @@ const Track=require('./track-api');
         return reArtistsJson;
     },
     checkArtisthasAlbum:async function(artistId,albumId){
-        if (await Album.getAlbumById(albumId)){
-            artist=await this.getArtist(artistId);
+        if (await albumDocument.findById(albumId)){
+            const artist=await this.getArtist(artistId);
             if(!artist) return 0;
             if(artist.addAlbums){
                 return await artist.addAlbums.find(album => album.albumId == albumId);    
@@ -124,7 +124,7 @@ const Track=require('./track-api');
             let artist = await this.getArtist(artistID);
             if(!artist)return 0;
         for(let i=0;i<artist.addAlbums.length;i++){
-            albums[artist.addAlbums[i].albumId]=await Album.getAlbumById(artist.addAlbums[i].albumId);
+            albums[artist.addAlbums[i].albumId]=awaitalbumDocument.findById(artist.addAlbums[i].albumId);
         }
 
         if(groups!=undefined&&country!=undefined){
@@ -198,7 +198,7 @@ findMeAsArtist:async function(userId){
         if(err) return 0;
         return artist;
     }).catch((err)=>0);
-    console.log(artist)
+    //console.log(artist)
     return artist;
 },
 

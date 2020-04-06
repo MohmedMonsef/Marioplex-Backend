@@ -5,7 +5,8 @@ const bcrypt=require('bcrypt');
 const Grid = require('gridfs-stream');
 mongoose.Promise=global.Promise;
 // set gfs object ot be global
-global.gfs = undefined;
+global.gfsTracks = undefined;
+global.gfsImages = undefined;
 module.exports= function(app){
     const atlasSpotify ='mongodb+srv://Spotify:spotifyapp@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
    
@@ -18,9 +19,11 @@ module.exports= function(app){
 
     
     mongoose.connection.once('open',()=>{
-        gfs = new Grid(mongoose.connection.db, mongoose.mongo);
-        // set gfs collection
-        gfs.collection('uploads');
+        gfsTracks = new Grid(mongoose.connection.db, mongoose.mongo);
+        gfsImages = new Grid(mongoose.connection.db, mongoose.mongo);
+        // set gfs collections
+        gfsTracks.collection('tracks');
+        gfsImages.collection('images');
        
   
     

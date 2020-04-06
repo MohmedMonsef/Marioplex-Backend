@@ -11,14 +11,12 @@ router.get('/users/:id', checkAuth, async(req, res) => {
     const user = await User.me(req.params.id, req.user._id);
     if (user) {
         res.send(user);
-    } 
-    else {
+    } else {
         res.sendStatus(404)
     }
-
 })
 
-//GET USER'S PRIVATE PROFILE WITH PLAYER
+//GET USER'S PRIVATE PROFILE WITH PLAYER with player info
 router.get('/me-player', checkAuth, async(req, res) => {
     const userID = req.user._id; // get it from desierialize auth 
     await spotifySchema.user.find({ _id: userID }, {

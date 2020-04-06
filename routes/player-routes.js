@@ -47,8 +47,6 @@ router.get('/me/player/prev-playing', checkAuth, async(req, res) => {
 
         const user = await User.getUserById(req.user._id);
         const player = user.player;
-        // console.log(user.queue);
-        //console.log(user.player);
         var prevPlayingTrack = await Track.getFullTrack(player.prev_track.trackId, user);
         if (prevPlayingTrack) {
 
@@ -161,7 +159,6 @@ router.get('/me/player/recently-played', checkAuth, async(req, res) => {
         if (!playHistory) res.status(400).json({ error: 'can not get playhistory ' });
         else res.status(200).json(playHistory);
     })
-    // add to recent played
     // add to recent played
 router.put('/me/player/recently-played/:source_id/:track_id', checkAuth, async(req, res) => {
     const user = await User.getUserById(req.user._id);

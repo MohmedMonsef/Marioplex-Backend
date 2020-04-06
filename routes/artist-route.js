@@ -104,16 +104,6 @@ router.post('/artists/me/albums/:album_id/tracks',checkAuth,checkType,async (req
  
  
 })
-router.post('/me/ToArtist',[checkAuth],async (req,res)=>{
-    if(req.body.genre){
-   let genre=req.body.genre.split(',');
-    let isartist=await User.promoteToArtist(req.user._id,req.body.info,req.body.name,genre);
-    if(!isartist){return res.status(403).send("sorry you can't be an Artist");}
-    return res.status(200).send("Artist Succeded");
-    }
-    else return res.status(403).send("should give me genre");
-   
-    });
 
 
 

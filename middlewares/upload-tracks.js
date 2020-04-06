@@ -10,7 +10,7 @@ const Artist =require('../public-api/artist-api');
 
 // all file qualities must have same name
 const storage = new GridFsStorage({
-    url: localhost ,
+    url: mongoURI ,
     file:async  (req, file) => {
       //console.log(file);
       //console.log(req.user)

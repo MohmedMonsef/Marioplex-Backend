@@ -88,10 +88,12 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
 router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
     let type = req.query.type;// high low medium
     // TO DO : check if premium to allow high
+    if(type != "review"){
      if(req.user.product == "free" && type == "high" ) type = "medium"
     // set default quality to medium if not specified
 
     if(type != "high" || type != "medium" || type != "low" ) type = "medium";
+    }
     const trackID  = req.params.track_id;
     const track = await Track.getTrack(trackID);
     if(!track){

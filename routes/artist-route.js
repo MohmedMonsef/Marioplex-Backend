@@ -116,7 +116,7 @@ router.post('/me/ToArtist',[checkAuth],async (req,res)=>{
     });
 
 
-})
+
 router.post('/me/ToArtist', [checkAuth], async(req, res) => {
     if (req.body.genre) {
         let genre = req.body.genre.split(',');

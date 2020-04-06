@@ -94,9 +94,12 @@ const Search = {
                 album["_id"] = albums._id
                 album["name"] = albums.name
                 album["images"] = albums.images
+                album["type"] = "Album";
                 if (albums) {
                     album["artistId"] = albums.artistId;
-                    album["artistName"] = albums.artistName; 
+                    album["artistName"] = albums.artistName;
+                    album["artistType"] = "Artist";
+
                 }
                 Album.push(album);
             }

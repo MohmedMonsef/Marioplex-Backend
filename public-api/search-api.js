@@ -91,14 +91,12 @@ const Search = {
             let albums = await album_api.getAlbumArtist(allalbum[i]._id);
             if (albums) {
                 album = {}
-                album["_id"] = albums.Album._id
-                album["name"] = albums.Album.name
-                album["images"] = albums.Album.images
-                album["type"] = albums.Album.type
-                if (albums.Artist) {
-                    album["artistId"] = albums.Artist._id
-                    album["artistName"] = albums.Artist.Name
-                    album["artistType"] = albums.Artist.type
+                album["_id"] = albums._id
+                album["name"] = albums.name
+                album["images"] = albums.images
+                if (albums) {
+                    album["artistId"] = albums.artistId;
+                    album["artistName"] = albums.artistName; 
                 }
                 Album.push(album);
             }

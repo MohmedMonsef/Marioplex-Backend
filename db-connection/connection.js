@@ -9,10 +9,10 @@ module.exports= function(app){
    
     const atlas ='mongodb+srv://nada:nada@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
 
-    const localhost = 'mongodb://localhost:27017/test' ;
+    const localhost = 'mongodb://localhost:27017/spotify' ;
     const localhostnada='mongodb://localhost/spotifytest';
     const bahaa ="mongodb+srv://bahaaEldeen:123@spotifycluster-i2m7n.mongodb.net/test?retryWrites=true&w=majority";
-    mongoose.connect(atlas,{  useNewUrlParser: true, useCreateIndex: true ,useUnifiedTopology:true});
+    mongoose.connect(localhost,{  useNewUrlParser: true, useCreateIndex: true ,useUnifiedTopology:true});
 
     
     mongoose.connection.once('open',()=>{

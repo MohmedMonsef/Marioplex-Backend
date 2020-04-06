@@ -1,14 +1,12 @@
 const router = require('express').Router();
-
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
 const Album = require('../public-api/album-api');
 const Artist = require('../public-api/artist-api');
 const {auth:checkAuth} = require('../middlewares/is-me');
-const upload = require('../middlewares/upload');
-// get track
+const mongoose = require('mongoose')
+
 router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
-    
     const trackID = req.params.track_id;
    
     const track = await Track.getTrack(trackID);
@@ -84,6 +82,67 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
 
 });
 
+// set android route which will just serve webm media file
+
+
+router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
+    let type = req.query.type;// high low medium
+    // TO DO : check if premium to allow high
+     if(req.user.product == "free" && type == "high" ) type = "medium"
+    // set default quality to medium if not specified
+
+    if(type != "high" || type != "medium" || type != "low" ) type = "medium";
+    const trackID  = req.params.track_id;
+    const track = await Track.getTrack(trackID);
+    if(!track){
+        res.status(404).json({"error":"no track found with this id"});
+        return 0;
+    }
+    // get file from gridfs
+       gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackID),"metadata.type":type},function (err, file) {
+        if (err) {res.send(500).send("server error while sending track");return 0;}
+        // send range response 
+        const range = req.headers.range;
+        if(range){
+        console.log('range')
+        var parts = req.headers['range'].replace(/bytes=/, "").split("-");
+        var partialstart = parts[0];
+        var partialend = parts[1];
+    
+        var start = parseInt(partialstart, 10);
+        var end = partialend ? parseInt(partialend, 10) : file.length -1;
+        var chunksize = (end-start)+1;
+       // console.log('Range ',start,'-',end);
+
+        
+        res.writeHead(206, {
+            'Content-Range': 'bytes ' + start + '-' + end + '/' + file.length,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': file.contentType
+        });
+     gfsTracks.createReadStream({
+            _id:file._id,
+            range:{
+                startPos: start,
+                    endPos: end
+            }
+        }).pipe(res);
+        }else{
+            res.header('Content-Length', file.length);
+            res.header('Content-Type', file.contentType);
+
+            gfsTracks.createReadStream({
+                _id: file._id
+            }).pipe(res);
+        }
+      
+       
+        });
+    
+    
+   
+})
 
 
 module.exports = router; 

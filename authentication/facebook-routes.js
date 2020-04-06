@@ -13,7 +13,7 @@ require('./facebook-authentication')(passport);
 // serialize user
 passport.serializeUser(function(user, done) {
   
-    done(null, user.id);
+    done(null, user._id);
 });
   
 passport.deserializeUser(async function(id, done) {
@@ -35,10 +35,11 @@ router.get('/facebook', passport.authenticate('facebook',{ scope: ['user_birthda
 
 router.get('/facebook/callback',passport.authenticate('facebook', {  successRedirect: '/auth/facebookJWT',failureRedirect: '/login' }));
 
-router.get('/facebookJWT',checkAuthentication,(req,res)=>{
+router.get('/facebookJWT',checkAuthentication,async (req,res)=>{
     const id = req.session.passport.user;
-
-   var token = jwt.sign({ _id: id,product:req.session.passport.user.product,userType:req.session.passport.user.userType}, jwtSeret.secret, {
+    const user = await userDocument.findById(id);
+    //console.log(user);
+   var token = jwt.sign({ _id: id,product:user.product,userType:user.userType}, jwtSeret.secret, {
 
         expiresIn: '3209832702h'
      });

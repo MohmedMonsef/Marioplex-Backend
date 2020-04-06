@@ -1,7 +1,7 @@
-const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
-const spotify = require('../models/db');
-const Album = require('./album-api');
-const Track = require('./track-api');
+const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackDocument,playlist:playlistDocument,category:categoryDocument} = require('../models/db');
+const spotify=require('../models/db');
+
+const Track=require('./track-api');
 
 
 const Artist = {
@@ -44,13 +44,13 @@ const Artist = {
         const reArtistsJson = { artists: reArtists };
         return reArtistsJson;
     },
-    checkArtisthasAlbum: async function(artistId, albumId) {
-        if (await Album.getAlbumById(albumId)) {
-            artist = await this.getArtist(artistId);
-            if (!artist) return 0;
-            if (artist.addAlbums) {
-                return await artist.addAlbums.find(album => album.albumId == albumId);
-            }
+    checkArtisthasAlbum:async function(artistId,albumId){
+        if (await albumDocument.findById(albumId)){
+            const artist=await this.getArtist(artistId);
+            if(!artist) return 0;
+            if(artist.addAlbums){
+                return await artist.addAlbums.find(album => album.albumId == albumId);    
+            }  
         }
         return 0;
     },

@@ -11,9 +11,9 @@ require('../config/passport');
 
 const passport = require('passport');
 
-
+// route for user sign up
 router.post('/sign_up', (req, res) => {
-
+    // set joi validation schema to check correctness of data
     const shcema = joi.object().keys({
         email: joi.string().trim().email().required(),
         password: joi.string().required(),
@@ -25,13 +25,13 @@ router.post('/sign_up', (req, res) => {
 
     joi.validate(req.body, shcema, (err, result) => {
         if (err) {
-
+            // if not valid set status to 500
             res.status(500).json({
                 error: err
             })
 
         } else {
-
+            // if valid check that email didnt exist before
             spotifySchema.user.findOne({ email: req.body.email }).exec().then(user => {
                 if (user) {
 
@@ -40,7 +40,7 @@ router.post('/sign_up', (req, res) => {
                     });
 
                 } else {
-
+                    // if new email then set user up in database and hash the password
                     bcrypt.hash(req.body.password, 10, (err, hash) => {
                         if (err) {
 
@@ -76,7 +76,7 @@ router.post('/sign_up', (req, res) => {
                             user
                                 .save()
                                 .then(result => {
-
+                                    // set jwt then send it as response
                                     var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
                                         expiresIn: '9043809348h'
                                     });
@@ -87,6 +87,7 @@ router.post('/sign_up', (req, res) => {
 
                                 })
                                 .catch(err => {
+                                    // if error send 500 status code something went wrong
                                     res.status(500).json({
                                         error: err
                                     });

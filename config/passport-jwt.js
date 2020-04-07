@@ -12,7 +12,7 @@ module.exports = {
 // sign in with jwt this function is called whenever user is logging in to save a jwt token in the headers
  jwtSign : function(user){
 const options = {
-    expiresIn: '1d'
+    expiresIn: '908009280h'
   };
   const payload = {
     user: user

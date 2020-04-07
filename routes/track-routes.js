@@ -63,8 +63,6 @@ router.put('/me/like/:track_id',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth 
     const trackID = req.params.track_id;
     const updatedUser= await  User.likeTrack(userID,trackID);
-    // TO DO
-    // SEND HTTP CODES AND IMPLEMENT ERROR OBJECT
     if(!updatedUser) res.status(404).send({error:"already liked the song"}); // if user already liked the song
     else res.send({success:"liked the song successfully"});
 
@@ -75,8 +73,7 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
     const userID = req.user._id; // get it from desierialize auth
     const trackID = req.params.track_id;
     const updatedUser= await User.unlikeTrack(userID,trackID);
-    // TO DO
-    // SEND HTTP CODES AND IMPLEMENT ERROR OBJECT
+    
     if(!updatedUser) res.status(404).send({error:"user didnt liked the song before"}); // if user already liked the song
     else res.send({success:"unliked the song successfully"});
 
@@ -86,9 +83,10 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
 
 
 router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
-    let type = req.query.type;// high low medium
-    // TO DO : check if premium to allow high
+    let type = req.query.type;// high low medium or review
+   
     if(type != "review"){
+    // if not premium and user asked for high quality then send it as low
      if(req.user.product == "free" && type == "high" ) type = "medium"
     // set default quality to medium if not specified
 
@@ -113,10 +111,7 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
     
         var start = parseInt(partialstart, 10);
         var end = partialend ? parseInt(partialend, 10) : file.length -1;
-        var chunksize = (end-start)+1;
-       // console.log('Range ',start,'-',end);
-
-        
+        var chunksize = (end-start)+1;      
         res.writeHead(206, {
             'Content-Range': 'bytes ' + start + '-' + end + '/' + file.length,
             'Accept-Ranges': 'bytes',
@@ -131,6 +126,7 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
             }
         }).pipe(res);
         }else{
+            // if doesnt support range then send it sequential using pipe method in nodejs
             res.header('Content-Length', file.length);
             res.header('Content-Type', file.contentType);
 

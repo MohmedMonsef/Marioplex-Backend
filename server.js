@@ -25,6 +25,7 @@ const facebook = require('./authentication/facebook-routes');
 const forgpass = require('./routes/forgpass-route');
 
 require('./config/passport');
+
 app.use(cors());
 app.use(bodyparser.urlencoded({extended:false}));
 app.use(bodyparser.json());
@@ -34,20 +35,20 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //routes
-app.use(homePage);
-app.use(Library);
-app.use(forgpass);
-app.use(userProfile)
-app.use(search);
-app.use(album);
-app.use(login);
-app.use(signup);
-app.use(Track);
-app.use(player);
-app.use(playlist);
-app.use('/auth',facebook);
-app.use(browse);
-app.use(Artist);
+app.use('/api',homePage);
+app.use('/api',Library);
+app.use('/api',forgpass);
+app.use('/api',userProfile)
+app.use('/api',search);
+app.use('/api',album);
+app.use('/api',login);
+app.use('/api',signup);
+app.use('/api',Track);
+app.use('/api',player);
+app.use('/api',playlist);
+app.use('/api/auth',facebook);
+app.use('/api',browse);
+app.use('/api',Artist);
 
 //connect to db before test run
 const API_PORT= process.env.PORT||3000;

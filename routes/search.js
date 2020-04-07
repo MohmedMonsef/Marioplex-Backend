@@ -4,18 +4,16 @@ const search = require('../public-api/search-api');
 const User = require('../public-api/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 
-// get album
+//SEARCH FOR A WORD OR CHAR, QUERY PARAMS: name, type
 router.get('/search', async(req, res) => {
 
     const name = req.query.name;
     const type = req.query.type.split(',');
     let SearchResult = {};
     for (let i = 0; i < type.length; i++) {
-        //console.log(type[i]);
         if (type[i] == "top") {
             const artist = await search.getTopResults(name);
-            if (artist == {}) SearchResult["top"] = []
-                //not found
+            if (artist == {}) SearchResult["top"] = []//not found
             else SearchResult["top"] = artist
         } else if (type[i] == "track") {
             const artist = await search.getTrack(name);
@@ -50,6 +48,7 @@ router.get('/search', async(req, res) => {
         }
     }
     return res.status(404).send("No results found");
+    
 })
 
 module.exports = router;

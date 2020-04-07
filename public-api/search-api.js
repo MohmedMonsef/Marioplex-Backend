@@ -10,7 +10,10 @@ const artist_api = require('./artist-api');
 const album_api = require('./album-api');
 
 const Search = {
+
+    //get all users
     getUsers: async function() {
+
         let user = await userDocument.find({}, (err, user) => {
             if (err) return 0;
             return user;
@@ -18,22 +21,29 @@ const Search = {
         return user;
 
     },
+
+    //get all albums
     getAlbums: async function() {
         let album = await albumDocument.find({}, (err, album) => {
             if (err) return 0;
             return album;
         }).catch((err) => 0);
         return album;
-    },
-    getUserByname: async function(name) {
 
+    },
+
+    //get user by name
+    //params: name
+    getUserByname: async function(name) {
 
         const user = await this.getUsers();
         if (user.length == 0) return 0;
         return Fuzzysearch(name, 'displayName', user);
 
-
     },
+
+    //get top result by search name
+    //params: Name
     getTop: async function(Name) {
 
         const artist = await this.getArtistProfile(Name);
@@ -42,7 +52,10 @@ const Search = {
             return artist[0]._id
         }
         return 0;
+
     },
+
+    //get all playlists
     getPlaylists: async function() {
         let playlist = await playlistDocument.find({ isPublic: true }, (err, playlist) => {
             if (err) return 0;
@@ -50,6 +63,8 @@ const Search = {
         }).catch((err) => 0);
         return playlist;
     },
+
+    //get all tracks
     getTracks: async function() {
         let track = await trackDocument.find({}, (err, track) => {
             if (err) return 0;
@@ -57,7 +72,11 @@ const Search = {
         }).catch((err) => 0);
         return track;
     },
+
+    //search for an exact match of the name sent
+    //params: array, name
     exactmatch: async function(array, name) {
+
         let firstname;
         for (let i = 0; i < array.length; i++) {
             subname = array[i].Name.split(' ');
@@ -65,22 +84,24 @@ const Search = {
             if (firstname == name) {
                 return array[i]._id;
             }
-
         }
         return 0;
+
     },
 
+    //get all albums with the name albumName
+    //params: albumName, groups, country, limit, offset
     getAlbum: async function(albumName, groups, country, limit, offset) {
 
         var allalbum;
         let allartists = await artistDocument.find({});
         let artist = await this.exactmatch(allartists, albumName);
-        //console.log(artist);
         if (artist) {
 
             allalbum = await artistApi.getAlbums(artist, groups, country, limit, offset);
 
-        } else {
+        } 
+        else {
             allalbum = await this.getAlbums();
             if (allalbum.length == 0) return allalbum;
             allalbum = Fuzzysearch(albumName, 'name', allalbum);
@@ -104,22 +125,23 @@ const Search = {
                 Album.push(album);
             }
         }
-        // console.log(Album);
         return Album;
-
-
+        
     },
+
+    //get all tracks with Name
+    //params: Name
     getTrack: async function(Name) {
 
         var Track;
-
         let allartists = await artistDocument.find({});
         let artist = await this.exactmatch(allartists, Name);
         if (artist) {
 
             Track = await artistApi.getTracks(artist);
 
-        } else {
+        } 
+        else {
             const track = await this.getTracks();
             if (track == 0) return track;
             Track = Fuzzysearch(Name, 'name', track);
@@ -151,8 +173,10 @@ const Search = {
         }
         return trackInfo;
 
-
     },
+
+    //get top results with Name
+    //params: Name
     getTopResults: async function(Name) {
         const artist = await this.getTop(Name);
         if (artist) {
@@ -164,7 +188,6 @@ const Search = {
             return track[0];
         }
         let album = await this.getAlbum(Name);
-        //console.log(album);
         if (album.length != 0) {
             return album[0];
         }
@@ -178,11 +201,12 @@ const Search = {
         }
 
     },
+
+    //get all artist profile with name
+    //params: name
     getArtistProfile: async function(name) {
 
-
         let ArtistInfo = [];
-
         let User = await this.getUserByname(name);
         if (User.length == 0) return 0;
         else {
@@ -206,10 +230,12 @@ const Search = {
             }
             if (ArtistInfo.length == 0) return 0;
             return ArtistInfo;
-
         }
 
     },
+    
+    //get artist profile of id
+    //params: artistID
     getArtist: async function(artistID) {
         let artist = await artistDocument.find({ userId: artistID }, (err, artist) => {
             if (err) return 0;
@@ -218,13 +244,14 @@ const Search = {
         return artist;
     },
 
+    //get all user profiles with name
+    //params: name
     getUserProfile: async function(name) {
 
         UserInfo = []
         let User = await this.getUserByname(name);
         if (User.length == 0) return User;
         else {
-            //console.log(User);
             for (let i = 0; i < User.length; i++) {
                 if (User[i].userType == "Artist") {
                     continue;
@@ -243,6 +270,9 @@ const Search = {
         }
 
     },
+
+    //get all playlists with Name
+    //params Name
     getPlaylist: async function(Name) {
 
         let playlist = await this.getPlaylists();
@@ -267,22 +297,28 @@ const Search = {
 
         }
         return playlistInfo;
-
-
     }
+
 }
 module.exports = Search;
 
+//search for name in schema
+//params: field, name, schema  
 function search(name, field, schema) {
+
     const searcher = new FuzzySearch(schema, [field], {
         caseSensitive: false,
         sort: true
     });
     const users = searcher.search(name);
     return users;
+
 }
 
+//use fuzzy search to search for field in schema with name
+//params: name, field, schema
 function Fuzzysearch(name, field, schema) {
+
     Results = []
     subName = name.split(' ');
     let results = search(name, field, schema);
@@ -292,8 +328,11 @@ function Fuzzysearch(name, field, schema) {
         Results = Results.concat(results);
     }
     return removeDupliactes(Results);
+
 }
 
+//remove duplicates from array
+//params: values
 const removeDupliactes = (values) => {
 
     let newArray = [];

@@ -6,61 +6,70 @@ const artist_api = require('./artist-api');
 
  const Library =  {
     
-  
+    //check if user saves albums
+    //params: array of AlbumsIDs, UserID
     checkSavedAlbums  : async function(AlbumsIDs,UserID){
-             let Checks=[];
-             let found=false;
-            const user = await userDocument.findById(UserID,(err,user)=>{
-                if(err) return 0;
-                return user;
-            }).catch((err)=> 0);
-            for (var i=0;i<AlbumsIDs.length;i++){
-                found=false;
-                for(let Album in user.saveAlbum){
-                    if(user.saveAlbum[Album].albumId==AlbumsIDs[i]){
-                        Checks.push(true);
-                        found=true;
-                    }
-                }
-                if(!found){
-                    Checks.push(false);
-                }
-            }
-            return Checks;
-    },
-    checkSavedTracks  : async function(TracksIDs,UserID){
+
         let Checks=[];
         let found=false;
-       const user = await userDocument.findById(UserID,(err,user)=>{
-           if(err) return 0;
-           return user;
-       }).catch((err)=> 0);
-       for (var i=0;i<TracksIDs.length;i++){
-           found=false;
-           for(let Track in user.like){
-               if(user.like[Track].trackId==TracksIDs[i]){
-                   Checks.push(true);
-                   found=true;
-               }
-           }
-           if(!found){
-               Checks.push(false);
-           }
-       }
-       return Checks;
+        const user = await userDocument.findById(UserID,(err,user)=>{
+            if(err) return 0;
+            return user;
+        }).catch((err)=> 0);
+        for (var i=0;i<AlbumsIDs.length;i++){
+            found=false;
+            for(let Album in user.saveAlbum){
+                if(user.saveAlbum[Album].albumId==AlbumsIDs[i]){
+                    Checks.push(true);
+                    found=true;
+                }
+            }
+            if(!found){
+                Checks.push(false);
+            }
+        }    
+        return Checks;   
 
-},
+    },
+    //check if user saves tracks
+    //params: array of TracksIDs, UserID
+    checkSavedTracks  : async function(TracksIDs,UserID){
 
-    // get  Albums for User
-    getSavedAlbums : async function(UserID,limit,offset){
-        let Albums=[];
-        let user = await userDocument.findById(UserID);
-        if(!user)return 0;
-        if(!user.saveAlbum.length){return 0;}
-        for(let i=0;i<user.saveAlbum.length;i++){
-            let album=await Album.getAlbumById(user.saveAlbum[i].albumId);
-           if(album) Albums.push(album);
+        let Checks=[];
+        let found=false;
+        const user = await userDocument.findById(UserID,(err,user)=>{
+            if(err) return 0;
+            return user;
+        }).catch((err)=> 0);
+        for (var i=0;i<TracksIDs.length;i++){
+            found=false;
+            for(let Track in user.like){
+                if(user.like[Track].trackId==TracksIDs[i]){
+                    Checks.push(true);
+                    found=true;
+                }
+            }
+            if(!found){
+                Checks.push(false);
+            }
         }
+        return Checks;
+       
+    },
+
+    //get  saved albums for a user
+    //params: UserID, limit, offset
+    getSavedAlbums : async function(UserID,limit,offset){
+
+        let Albums = [];
+        let user = await userDocument.findById(UserID);
+        if(!user) return 0;
+        if(!user.saveAlbum.length) return 0;
+        for(let i=0;i<user.saveAlbum.length;i++){ 
+            let album=await Album.getAlbumById(user.saveAlbum[i].albumId);
+            if(album) Albums.push(album);
+        }
+
         let start=0;
         let end=(Albums.length>20)?20:Albums.length;
         if(offset!=undefined){
@@ -82,12 +91,15 @@ const artist_api = require('./artist-api');
             }
          
         }
-        return albumInfo;       
+        return albumInfo;      
+
     },
     
     
-    // get  Albums for User
+    //get  saved traks for a user
+    //params: UserID, limit, offset
     getSavedTracks : async function(UserID,limit,offset){
+
         let Tracks=[];
         let user = await userDocument.findById(UserID);
         if(!user)return 0;
@@ -132,10 +144,12 @@ const artist_api = require('./artist-api');
             tracks["type"]=Tracks[i].type
             tracks["images"]=Tracks[i].images
             trackInfo.push(tracks);
-        
             }
-            return {"tracks":trackInfo,"ownerName":user.displayName};            
+            return {"tracks":trackInfo,"ownerName":user.displayName}; 
+
         },
+
+        
 }
 
 module.exports = Library;

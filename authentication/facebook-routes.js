@@ -35,7 +35,7 @@ function checkAuthentication(req,res,next){
 router.get('/facebook', passport.authenticate('facebook',{ scope: ['user_birthday','user_gender','user_hometown','user_photos','user_friends','email']  }));
 
 // set up the call back url that facebook will redirect to after authenticating the user
-router.get('/facebook/callback',passport.authenticate('facebook', {  successRedirect: '/auth/facebookJWT',failureRedirect: '/login' }));
+router.get('/facebook/callback',passport.authenticate('facebook', {  successRedirect: '/api/auth/facebookJWT',failureRedirect: '/login' }));
 
 // custom route to generate jwt token for user if succeded to login from facebook
 router.get('/facebookJWT',checkAuthentication,async (req,res)=>{

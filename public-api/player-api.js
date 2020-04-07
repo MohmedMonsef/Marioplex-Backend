@@ -38,6 +38,7 @@ const Player = {
 
     // update user player object each time he plays new track
     setPlayerInstance: async function(user, isPlaylist, id, trackID) {
+        if(!user.player) user.player = {};
         user.player.next_track = {};
         user.player.prev_track = {};
         user.player.current_track = {};

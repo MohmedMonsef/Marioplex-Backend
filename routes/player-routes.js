@@ -19,7 +19,6 @@ router.get('/me/updatePlayer', async(req, res) => {
 router.get('/me/player/currently-playing', checkAuth, async(req, res) => {
     const user = await User.getUserById(req.user._id);
     const player = user.player;
-    //console.log(user.queue);
     var currentPlayingTrack = await Track.getFullTrack(player.current_track.trackId, user);
     if (currentPlayingTrack) {
         currentPlayingTrack["isPlaylist"] = player.current_track.isPlaylist;
@@ -44,7 +43,6 @@ router.get('/me/player/next-playing', checkAuth, async(req, res) => {
 
 //get prev track playing
 router.get('/me/player/prev-playing', checkAuth, async(req, res) => {
-
         const user = await User.getUserById(req.user._id);
         const player = user.player;
         var prevPlayingTrack = await Track.getFullTrack(player.prev_track.trackId, user);
@@ -79,7 +77,6 @@ router.post('/player/add-to-queue/:playlistId/:trackId', checkAuth, async(req, r
 router.post('/me/player/next-playing', checkAuth, async(req, res) => {
         const user = await User.getUserById(req.user._id);
         const player = user.player;
-        console.log(player.next_track.isPlaylist)
         var nextPlayingTrack = await Track.getFullTrack(player.next_track.trackId, user);
         const skip = await Player.skipNext(user)
         if (skip == 2) {

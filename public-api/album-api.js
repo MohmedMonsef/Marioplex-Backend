@@ -64,12 +64,24 @@ const artist=require('./artist-api');
         const reAlbumsJson={albums:reAlbums};
         return reAlbumsJson;
     },
-    getAlbumArtist : async function(albumID){
+    getAlbumArtist : async function(albumID,userID){
         
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
+        
         let album = await this.getAlbumById(albumID);
         let albumInfo={}
+        let user=await userDocument.findById(userID);
+        if(user){
+            let isSaved=await this.checkIfUserSaveAlbum(user,albumID);
+            if(isSaved){
+                albumInfo['isSaved']=true;
+            }
+            else{
+                albumInfo['isSaved']=false;
+            }
+       
+        }
         if(album){
             let Artist= await artist.getArtist(album.artistId);
             let track=await this.getTracksAlbum(albumID);
@@ -171,7 +183,6 @@ const artist=require('./artist-api');
     //user like track by track-id
     //params : user , track-id
     checkIfUserSaveAlbum: function(user,albumID){
-        
         const albumsUserSaved = user.saveAlbum;
         // if user.like.contains({track_id:track.track_id})
         if(albumsUserSaved){

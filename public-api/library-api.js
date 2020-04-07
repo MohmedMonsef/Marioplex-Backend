@@ -76,11 +76,11 @@ const artist_api = require('./artist-api');
         Albums.slice(start,end);
         albumInfo=[]
         for(let i=0;i<Albums.length;i++){
-            let albums=await Album.getAlbumArtist(Albums[i]._id);
+            let albums=await Album.getAlbumArtist(Albums[i]._id,UserID);
             if(albums){
                 albumInfo.push(albums);
             }
-            
+         
         }
         return albumInfo;       
     },

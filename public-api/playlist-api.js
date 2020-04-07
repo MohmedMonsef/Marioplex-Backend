@@ -45,7 +45,9 @@ const Playlist = {
     //for routes
     getPlaylistWithTracks: async function(playlistId, snapshotID, user) {
         const playlist = await this.getPlaylist(playlistId);
-        if (playlist.isPublic || this.checkIfUserHasPlaylist(user, playlistId) || this.checkFollowPlaylistByUser(user, playlistId)) {
+        let checkfollow=await this.checkFollowPlaylistByUser(user, playlistId);
+        let checkcreate=await this.checkIfUserHasPlaylist(user, playlistId);
+        if (playlist.isPublic || checkcreate || checkfollow) {
             var playlistJson = [];
             var tracks = [];
             let snapshot;
@@ -156,7 +158,7 @@ const Playlist = {
     followPlaylits: async function(user, playlistID, isPrivate) {
         let check = await this.getPlaylist(playlistID);
         if (!check) { return 0; }
-        const followedBefore = this.checkFollowPlaylistByUser(user, playlistID)
+        const followedBefore = await this.checkFollowPlaylistByUser(user, playlistID)
         if (followedBefore) {
             return 0;
         }
@@ -187,7 +189,7 @@ const Playlist = {
     unfollowPlaylist: async function(user, playlistID) {
         let check = await this.getPlaylist(playlistID);
         if (!check) { return 0; }
-        const followedBefore = this.checkFollowPlaylistByUser(user, playlistID)
+        const followedBefore = await this.checkFollowPlaylistByUser(user, playlistID)
 
         if (!followedBefore) {
 

@@ -6,19 +6,19 @@
  const validatePlaylistInput = require("../validation/playlist");
  const { content: checkContent } = require('../middlewares/content');
 
- //get playlist
+ //GET PLAYLIST - PATH PARAMS: playlist_id
  router.get('/playlists/:playlist_id', checkAuth, async(req, res) => {
 
      const playlistId = req.params.playlist_id;
      const playlist = await User.getPlaylist(playlistId, req.query.snapshot, req.user._id);
-     if (!playlist) res.status(400).send("Not found !"); //not found
+     if (!playlist) res.status(400).send("Not found !"); 
      else res.send(playlist);
  })
 
- // user create playlist
+ // CURRENT USER CREATE PLAYLIST - BODY PARAMS : name-Description
  router.post('/users/playlists', checkAuth, async(req, res) => {
 
-         const userID = req.user._id; // get it from desierialize auth
+         const userID = req.user._id; 
 
          const { errors, isValid } = validatePlaylistInput(req.body);
          // Check validation
@@ -26,7 +26,6 @@
              return res.status(400).json(errors);
          }
          let details = req.body;
-         //console.log(details);
          if (details.name == undefined) { return res.status(400).json("Invalid Input"); }
          // to create playlist &add it to user
          const createPlaylist = await User.createdPlaylist(userID, details.name, details.Description);
@@ -34,7 +33,7 @@
          else res.send({ error: "can not create" }); // if can not create for unexpected reason
 
      })
-     // user follow playlist
+     // FOLLOW PLAYLIST - PATH PARAMS : playlist_id - BODY PARAMS:isPrivate
  router.put('/playlists/:playlist_id/followers', checkAuth, async(req, res) => {
      const userID = req.user._id; // get it from desierialize auth 
      const playlistID = req.params.playlist_id;

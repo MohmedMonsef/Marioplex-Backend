@@ -15,7 +15,7 @@ module.exports = (passport) => {
         passport.use(new FacebookStrategy({
             clientID: FACEBOOK_APP_ID,
             clientSecret: FACEBOOK_APP_SECRET,
-            callbackURL: "/auth/facebook/callback", 
+            callbackURL: "api/auth/facebook/callback", 
             profileFields: ['id', 'emails', 'name','gender','photos','birthday','hometown','displayName'] // required info from facebook user
            
         },

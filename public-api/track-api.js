@@ -4,8 +4,10 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 
 const Track = {
 
-    // get track by id
-    // params : track-id
+    /** 
+    *  get track by id
+    * @param : track-id {mongoose ObjectId}
+    **/
     getTrack: async function(trackID) {
 
         // connect to db and find track with the same id then return it as json file
@@ -18,6 +20,11 @@ const Track = {
 
 
     },
+    /** 
+    *  get full track object by id
+    * @param : track-id {mongoose ObjectId}
+    * @param : user {user object}
+    **/
     getFullTrack: async function(trackID, user) {
 
         const track = await this.getTrack(trackID);
@@ -32,12 +39,13 @@ const Track = {
         artist.popularity++;
         await artist.save();
         const isLiked = await this.checkIfUserLikeTrack(user, trackID) ? true : false;
-        //console.log(user)
-        //console.log(isLiked);
+        
         return { track: track, isLiked: isLiked, album: { name: album.name, _id: album._id, artist: { name: artist.Name, _id: artist._id } } }
     },
-    // get several tracks
-    // params : array of track ids
+    /** 
+    *  get several tracks
+    * @param : array of track ids
+    */
     getTracks: async function(tracksIDs, user) {
         let tracks = [];
         for (let trackID of tracksIDs) {
@@ -48,8 +56,10 @@ const Track = {
         return tracks;
 
     },
-    // get audio feature track
-    // params :  trackid
+    /** 
+    *  get audio features for track
+    * @param : track-id {mongoose ObjectId}
+    **/
     getAudioFeaturesTrack: async function(trackID) {
         const track = await this.getTrack(trackID);
         if (!track) return 0;
@@ -71,8 +81,10 @@ const Track = {
         }
         return audioFeatures;
     },
-    // get audio of features of several tracks 
-    // params : trackIDs
+    /** 
+    *  get audio features for tracks
+    * @param : track-ids {mongoose ObjectId}
+    **/
     getAudioFeaturesTracks: async function(tracksIDs) {
 
         let audioFeatures = {};
@@ -90,19 +102,25 @@ const Track = {
         return 0;
     },
 
-    // check if user liked a track
+    /** 
+    *  check if user like track
+    * @param : user {mongoose object}
+    * @param : track-id {mongoose ObjectId}
+    **/
     checkIfUserLikeTrack: function(user, trackID) {
 
         const tracksUserLiked = user.like;
-        //console.log(tracksUserLiked)
-        // if user.like.contains({track_id:track.track_id})
+        
         if (tracksUserLiked) {
             return tracksUserLiked.find(track => track.trackId + 1 == trackID + 1);
         }
         return 0;
     },
-    //user like track by track-id
-    //params : user , track-id
+    /** 
+    * user like track
+    * @param : user {mongoose object}
+    * @param : track-id {mongoose ObjectId}
+    **/
     likeTrack: async function(user, trackID) {
 
         // check if user already liked the track
@@ -141,8 +159,11 @@ const Track = {
 
     },
 
-    //user unlike track by track-id
-    //params : user , track-id
+    /** 
+    * user unlike track
+    * @param : user {mongoose object}
+    * @param : track-id {mongoose ObjectId}
+    **/
     unlikeTrack: async function(user, trackID) {
         // check if user already liked the track
         // if user.like.contains({track_id:track.track_id})
@@ -169,14 +190,20 @@ const Track = {
         await track.save().catch();
         return 1;
     },
-    // create Track for an artist
-    // params : artist-id
+    /** 
+    * user like track
+    * @param : url {string} url of string
+    * @param : trackNumber {Number} number of track in album
+    * @param : availableMarkets {Array} markets
+    * @param : artistID {mongoose object ID}
+    * @param : albumID {mongoose object ID}
+    * @param : duration {Number} 
+    **/
     createTrack: async function(url, Name, TrackNumber, AvailableMarkets, artistID, albumID, duration) {
         let track = new trackDocument({
             url: url,
             images: [],
-            duration,
-            duration,
+            duration:duration,
             availableMarkets: AvailableMarkets,
             trackNumber: TrackNumber,
             name: Name,
@@ -185,23 +212,23 @@ const Track = {
             discNumber: 1,
             explicit: false,
             type: "Track",
-            acousticness: 10,
-            danceability: 23,
-            energy: 100,
-            instrumentalness: 4,
-            key: 90,
-            liveness: 25,
-            loudness: 70,
-            mode: 56,
-            speechiness: 67,
-            tempo: 76,
+            acousticness: Math.floor(Math.random()*100),
+            danceability:  Math.floor(Math.random()*100),
+            energy:  Math.floor(Math.random()*100),
+            instrumentalness:  Math.floor(Math.random()*100),
+            key:  Math.floor(Math.random()*100),
+            liveness:  Math.floor(Math.random()*100),
+            loudness:  Math.floor(Math.random()*100),
+            mode:  Math.floor(Math.random()*100),
+            speechiness:  Math.floor(Math.random()*100),
+            tempo:  Math.floor(Math.random()*100),
             timeSignature: Date.now(),
-            valence: 70,
+            valence:  Math.floor(Math.random()*100),
             like: 0
 
         });
         await track.save();
-        //console.log(track);
+        
         return track;
 
     }

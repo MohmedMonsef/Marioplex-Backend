@@ -2,6 +2,7 @@ const jwt=require('jsonwebtoken');
 const jwtSecret = require('../config/jwt-key').secret;
 function auth(req,res,next){
 
+  // check the jwt token user sends in the header
     
 
 const token=req.header('x-auth-token');

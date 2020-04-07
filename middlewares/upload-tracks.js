@@ -8,12 +8,11 @@ const localhost = 'mongodb://localhost:27017/test';
 const Track =require('../public-api/track-api');
 const Artist =require('../public-api/artist-api');
 
-// all file qualities must have same name
+
 const storage = new GridFsStorage({
     url: mongoURI ,
     file:async  (req, file) => {
-      //console.log(file);
-      //console.log(req.user)
+     
       // check extension of the track to be webm audio/video 
      
       if(file.mimetype != "video/webm" && file.mimetype  != 'audio/webm'){throw Error("file not supported");};

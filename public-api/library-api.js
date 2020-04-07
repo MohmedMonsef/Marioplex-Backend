@@ -78,16 +78,9 @@ const artist_api = require('./artist-api');
         for(let i=0;i<Albums.length;i++){
             let albums=await Album.getAlbumArtist(Albums[i]._id);
             if(albums){
-                album={}
-                album["_id"]=albums._id
-                album["name"]=albums.name
-                album["images"]=albums.images
-                if(albums.Artist){
-                album["artistId"]=albums.artistId
-                album["artistName"]=albums.artistName
-                }
-                albumInfo.push(album);
+                albumInfo.push(albums);
             }
+            
         }
         return albumInfo;       
     },

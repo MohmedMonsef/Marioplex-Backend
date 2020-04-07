@@ -175,8 +175,7 @@ const Track = {
         let track = new trackDocument({
             url: url,
             images: [],
-            duration,
-            duration,
+            duration:duration,
             availableMarkets: AvailableMarkets,
             trackNumber: TrackNumber,
             name: Name,

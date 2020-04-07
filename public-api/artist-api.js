@@ -211,7 +211,7 @@ const Artist = {
         if (!artist) return 0;
         for (let i = 0; i < artist.addTracks.length; i++) {
             let track = await Track.getTrack(artist.addTracks[i].trackId);
-            if (track) { tracks[artist.addTracks[i].trackId] = track; }
+            if (track) { tracks[artist.addTracks[i].trackId] = track; console.log(track); }
         }
         //FILTER TRACKS BASED ON THE COUNTRY
         for (let track in tracks) {

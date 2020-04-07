@@ -272,7 +272,9 @@ const Player = {
     /////////////////////////////////////////////
     // to skip to next 
     skipNext: async function(user) {
-
+        if(!user.player)user.player={};
+        if(!user.player.next_track) user.player.next_track = {};
+        if(!user.player.prev_track) user.player.prev_track = {};
         user.player.current_track = user.player.next_track;
         if (user.queue.queuIndex == -1) { // no element add by add to queue
             user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
@@ -327,9 +329,11 @@ const Player = {
                 user.player["last_playlist_track_index"]--;
                 user.queue.queuIndex = user.queue.queuIndex - 1;
                 const index = user.queue.queuIndex;
+               
                 user.player.next_track['trackId'] = user.queue.tracksInQueue[index].trackId;
                 user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[index].isPlaylist;
                 user.player.next_track['playlistId'] = user.queue.tracksInQueue[index].playlistId;
+                
                 user.player.prev_track['trackId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
                 user.player.prev_track['isPlaylist'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].isPlaylist;
                 user.player.prev_track['playlistId'] = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].playlistId;
@@ -341,6 +345,9 @@ const Player = {
 
     //skip to previous
     skipPrevious: async function(user) {
+        if(!user.player)user.player={};
+        if(!user.player.next_track) user.player.next_track = {};
+        if(!user.player.prev_track) user.player.prev_track = {};
         const current = await user.player.current_track['trackId'];
         const lastplaylist = await await user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
         if (lastplaylist + 1 == current + 1) {
@@ -559,6 +566,9 @@ const Player = {
     },
     // set next and prev and current when fill queue or shuffle
     setNextPrevCurrent: async function(user, lastTrack) {
+        if(!user.player)user.player={};
+        if(!user.player.next_track) user.player.next_track = {};
+        if(!user.player.prev_track) user.player.prev_track = {};
         for (let i = user.queue.queuIndex + 1; i < user.queue.tracksInQueue.length; i++) {
             if (user.queue.tracksInQueue[i].trackId + 1 == lastTrack + 1) {
                 user.player["last_playlist_track_index"] = i;
@@ -582,6 +592,7 @@ const Player = {
     },
     // put repeat playlist mode
     repreatPlaylist: async function(user, state) {
+        if(!user.player)user.player={};
         if (state == 'true' || state == true)
             user.player["is_repeat"] = true;
         else if (state == 'false' || state == false)

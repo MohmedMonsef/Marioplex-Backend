@@ -1,9 +1,7 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 
 
-// initialize db 
 const mongoose = require('mongoose');
-
 const Track = require('./track-api');
 const Album = require('./album-api');
 const Artist = require('./artist-api');
@@ -12,12 +10,10 @@ const Artist = require('./artist-api');
 const Playlist = {
 
 
-    // get track by id
-    // params : track-id
+    // get playlist by id
+    // params : playlistId
     getPlaylist: async function(playlistId) {
 
-        // connect to db and find track with the same id then return it as json file
-        // if found return playlist else return 0
         const playlist = await playlistDocument.findById(playlistId, (err, playlist) => {
             if (err) return 0;
             return playlist;
@@ -25,7 +21,7 @@ const Playlist = {
         return playlist;
 
     },
-
+    //get popular playlists based on popularity
     getPopularPlaylists: async function() {
         // with - is from big to small and without is from small to big
         var replaylists = []
@@ -43,6 +39,8 @@ const Playlist = {
         return replaylistsJson;
     },
     //for routes
+    //get playlist with tracks
+    //params: playlistId, snapshotID, user
     getPlaylistWithTracks: async function(playlistId, snapshotID, user) {
         const playlist = await this.getPlaylist(playlistId);
         let checkfollow=await this.checkFollowPlaylistByUser(user, playlistId);
@@ -62,7 +60,6 @@ const Playlist = {
             if (playlist.snapshot[snapshot] != undefined) {
                 for (let i = 0; i < playlist.snapshot[snapshot].hasTracks.length; i++) {
                     const track1 = await Track.getTrack(playlist.snapshot[snapshot].hasTracks[i]);
-                    //console.log(track1);
                     const artistId = track1.artistId;
                     const albumId = track1.albumId;
                     const album = await Album.getAlbumById(albumId);
@@ -73,7 +70,6 @@ const Playlist = {
                 }
             }
             const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;
-            // console.log(followPlaylist)
             playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks, isfollowed: followPlaylist });
             return playlistJson;
         }
@@ -81,7 +77,8 @@ const Playlist = {
     },
 
 
-
+    //check if user has a specific playlist
+    //params:user, playlistID
     checkIfUserHasPlaylist: async function(user, playlistID) {
 
         const userPlaylists = user.createPlaylist;
@@ -92,8 +89,8 @@ const Playlist = {
         return 0;
     },
 
-    // create playlist by playlist_name
-    // params : playlist name user 
+    // create playlist
+    // params : userid, Name, description
     createPlaylist: async function(userid, Name, description) {
         let desc = (description == undefined) ? "" : description;
         const Playlist = new playlistDocument({
@@ -118,14 +115,14 @@ const Playlist = {
         }
         return -1
     },
-    //to delete playlist
-
+    
+    //delete playlist
+    //params :user, playlistId
     deletePlaylist: async function(user, playlistId) {
         const playlist = await Playlist.getPlaylist(playlistId);
         if (playlist) {
             const userHasPlaylist = await Playlist.checkIfUserHasPlaylist(user, playlistId);
             if (userHasPlaylist) {
-                // connect to db and find play with the same id then return it as json file
                 for (let i = 0; i < user.createPlaylist.length; i++) {
 
                     if (user.createPlaylist[i].playListId == playlistId) {
@@ -140,7 +137,8 @@ const Playlist = {
         } else return 0;
     },
 
-    //follow playlist
+    //check if user followz playlist
+    //params:user, playlistID
     checkFollowPlaylistByUser: async function(user, playlistID) {
 
         const followedplaylists = user.followPlaylist;
@@ -152,9 +150,9 @@ const Playlist = {
         }
         return 0;
     },
-    //user follow playlist by playlist-id
-    //params : user , playlist-id
 
+    //user follow playlist
+    //params : user , playlist-id ,isPrivate
     followPlaylits: async function(user, playlistID, isPrivate) {
         let check = await this.getPlaylist(playlistID);
         if (!check) { return 0; }
@@ -185,7 +183,8 @@ const Playlist = {
         await user.save().catch();
         return 1;
     },
-
+    //user unfollows a playlist
+    //params:user, playlistID
     unfollowPlaylist: async function(user, playlistID) {
         let check = await this.getPlaylist(playlistID);
         if (!check) { return 0; }
@@ -209,12 +208,13 @@ const Playlist = {
         }
         return 0;
     },
+    //user adds track(s) to a specific playlist
+    //params: playlistID, tracksIds
     addTrackToPlaylist: async function(playlistID, tracksIds) {
 
         if (!tracksIds || tracksIds.length == 0) return 0;
         let playlist = await this.getPlaylist(playlistID);
         if (!playlist) return 0;
-        //console.log(playlist);
         let len = playlist.snapshot.length;
         let tracks = [];
         if (len) {
@@ -228,7 +228,6 @@ const Playlist = {
             tracks.push(tracksIds[i]);
         }
         let uniquetracks = await this.removeDups(tracks);
-        //console.log(uniquetracks);
         playlist.snapshot.push({
             hasTracks: uniquetracks,
             action: 'Add Tracks'
@@ -245,6 +244,9 @@ const Playlist = {
         });
         return Object.keys(unique);
     },
+
+    //user updates playlist details
+    //params :playlistId, details
     updatePlaylistDetails: async function(playlistId, details) {
 
         let playlist = await this.getPlaylist(playlistId);
@@ -253,6 +255,8 @@ const Playlist = {
         playlist = await this.getPlaylist(playlistId);
         return playlist;
     },
+    //get playlists of a user
+    //params:userId, limit, offset, isuser
     getUserPlaylists: async function(userId, limit, offset, isuser) {
         let user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -287,11 +291,13 @@ const Playlist = {
         playlists.slice(start, end);
         return playlists;
     },
+
+    //user toggles collaboration
+    //params:user, playlistID
     changeCollaboration: async function(user, playlistID) {
         let playlist = await playlistDocument.findById(playlistID);
         if (!playlist) return false;
         playlist.collaborative = !playlist.collaborative;
-        //console.log(user);
         if (playlist.collaborative) {
             playlist.isPublic = false;
             for (var i = 0; i < user.createPlaylist.length; i++) {
@@ -307,6 +313,9 @@ const Playlist = {
         return true;
 
     },
+
+    //user toggles public status
+    //params:user, playlistID
     changePublic: async function(user, playlistID) {
         let playlist = await playlistDocument.findById(playlistID);
         if (!playlist) return false;
@@ -333,6 +342,9 @@ const Playlist = {
         return false;
 
     },
+
+    //get playlist tracks (WITHOUT DETAILS OF THESE TRACKS)
+    //params:playlistID
     getPlaylistTracks: async function(playlistID) {
         let playlist = await playlistDocument.findById(playlistID);
         if (!playlist) return 0;
@@ -349,6 +361,8 @@ const Playlist = {
 
     },
 
+    //remove tracks from a given playlist
+    //params:playlistID, tracksids, snapshotid
     removePlaylistTracks: async function(playlistID, tracksids, snapshotid) {
         let playlist = await playlistDocument.findById(playlistID);
         if (!playlist) return 0;
@@ -376,7 +390,6 @@ const Playlist = {
             for (var j = 0; j < tracks.length; j++) {
                 if (tracksids[i] == tracks[j]._id) {
                     tracks.splice(j, 1);
-                    //consle.log(tracks);
                 }
             }
         }
@@ -388,6 +401,9 @@ const Playlist = {
         return playlist;
 
     },
+
+    //reorder tracks in a playlist
+    //params:playlistID, snapshotid, start, length, before
     reorderPlaylistTracks: async function(playlistID, snapshotid, start, length, before) {
         let playlist = await playlistDocument.findById(playlistID);
         if (!playlist) return 0;
@@ -405,7 +421,6 @@ const Playlist = {
             }
             if (!found) { return 0; }
         }
-        //console.log(found);
         for (var i = 0; i < playlist.snapshot[len - 1].hasTracks.length; i++) {
             // to check track still exist in DB
             let track = await Track.getTrack(playlist.snapshot[len - 1].hasTracks[i]);
@@ -426,10 +441,8 @@ const Playlist = {
         for (let i = stindex; i <= endindex; i++) {
             orderedtracks.push(tracks[i]);
         }
-        //console.log(stindex,endindex,tracks,orderedtracks);
         // remove tracks in this range from tracks in snashot
         tracks.splice(stindex, endindex - stindex + 1);
-        //console.log(tracks);
         // add those tracks before the inserted before index
         if (before != 0) tracks.splice(before, 0, ...orderedtracks);
         else tracks.unshift(...orderedtracks);

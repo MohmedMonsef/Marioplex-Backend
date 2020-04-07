@@ -1,5 +1,4 @@
  const router = require('express').Router();
-
  const Playlist = require('../public-api/playlist-api');
  const User = require('../public-api/user-api');
  const { auth: checkAuth } = require('../middlewares/is-me');
@@ -45,30 +44,29 @@
 
  })
 
- // user unfollow playlist
+ // USER UNFOLLOW PLAYLIST - PATH PARAMS : playlist_id
  router.delete('/playlists/:playlist_id/followers', checkAuth, async(req, res) => {
      const userID = req.user._id; // get it from desierialize auth
      const playlistID = req.params.playlist_id;
      const updatedUser = await User.unfollowPlaylist(userID, playlistID);
-     if (updatedUser) res.status(200).send({ success: "unfollowed this playlist successfully" }); // if user already liked the song
+     if (updatedUser) res.status(200).send({ success: "unfollowed this playlist successfully" }); 
      else res.status(400).send({ "error": "user did not follow this playlist " });
 
  });
- // delete playlist 
+ // DELETE PLAYLIST -  PATH PARAMS : playlist_id
  router.delete('/me/delete/playlists/:playlist_id', checkAuth, async(req, res) => {
 
          const userID = req.user._id; // get it from desierialize auth
          const playlistId = req.params.playlist_id;
          const updatedUser = await User.deletePlaylist(userID, playlistId);
 
-         if (!updatedUser) res.status(400).send({ error: 'can not delete !' }); // if user already liked the song
+         if (!updatedUser) res.status(400).send({ error: 'can not delete !' }); 
          else res.status(200).send({ success: 'Delete successfully' });
 
 
      })
-     //add track to a playlist
+     //ADD TRACK TO PLAYLIST - PATH PARAMS:playlist_id -BODY PARAMS:tracks (Array of ids)
  router.post('/playlists/:playlist_id/tracks', checkAuth, async(req, res) => {
-         console.log(req.body.tracks)
          if (req.body.tracks == undefined) {
              return res.status(401).send('Bad Request');
          }
@@ -78,7 +76,8 @@
          return res.status(201).send(playlist.snapshot[playlist.snapshot.length - 1]);
 
      })
-     //update created playlists details  {name,description => done + {image} not done yet}
+     //UPDATE CREATE PLAYLIST DETAILS  {name,description => done + {image} not done yet} 
+     //PATH PARAMS :playlist_id - BODY PARAMS :name,Description
  router.put('/playlists/:playlist_id', [checkAuth, checkContent], async(req, res) => {
          let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
          if (!authorized) { return res.status(403).send("FORBIDDEN"); }
@@ -87,7 +86,8 @@
          if (!playlist) return res.status(404).send({ "error": 'cannot update playlist' });
          return res.status(200).send(playlist);
      })
-     //get current user playlists (Created && Followed)
+     //GET CURRENT USER PLAYLISTS (Created && Followed)
+     //QUERY PARAMS : limit,offset
  router.get('/me/playlists', [checkAuth], async(req, res) => {
 
          const playlists = await Playlist.getUserPlaylists(req.user._id, req.query.limit, req.query.offset, true);
@@ -95,7 +95,8 @@
          return res.status(200).send(playlists);
 
      })
-     //get some user's public playlists (Followed&&Created)
+     //GET A USER'S PUBLIC PLAYLISTS (Followed&&Created)
+     //PATH PARAMS:user_id - QUERY PARAMS : limit,offset
  router.get('/users/:user_id/playlists', [checkAuth], async(req, res) => {
 
          const playlists = await Playlist.getUserPlaylists(req.params.user_id, req.query.limit, req.query.offset, false);
@@ -103,7 +104,8 @@
          return res.status(200).send(playlists);
 
      })
-     // change playlist callobrative attribute
+     // TOGGLE COLLABORATIVE 
+     //PATH PARAMS :playlist_id
  router.put('/playlists/:playlist_id/collaborative', [checkAuth, checkContent], async(req, res) => {
          let user = await User.getUserById(req.user._id);
          if (!user) return res.status(404).send("NOT FOUND");
@@ -114,7 +116,8 @@
          if (!done) return res.status(404).send("NOT FOUND");
          return res.status(200).send("CHANGED");
      })
-     // toggle playlist isPublic attribute
+      // TOGGLE isPublic 
+     //PATH PARAMS :playlist_id
  router.put('/playlists/:playlist_id/public', [checkAuth, checkContent], async(req, res) => {
          let user = await User.getUserById(req.user._id);
          if (!user) return res.status(404).send("NOT FOUND");
@@ -126,9 +129,9 @@
          if (!done) return res.status(404).send("Cant be PUblic");
          return res.status(200).send("CHANGED");
      })
-     // get tracks in playlist
+     // GET TRACKS IN PLAYLIST
+     //PATH PARAMS:playlist_id
  router.get('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
-         // console.log("tracks");
          let user = await User.getUserById(req.user._id);
          if (!user) return res.status(404).send("NOT FOUND");
          let tracks = await Playlist.getPlaylistWithTracks(req.params.playlist_id, req.query.snapshot, user);
@@ -136,18 +139,19 @@
          if (tracks.length == 0) return res.status(404).send("NO Tracks in this playlist yet");
          return res.status(200).send(tracks);
      })
-     // delete tracks from playlist
+     // DELETE TRACKS FROM PLAYLIST
+     //PATH PARAMS : playlist_id
  router.delete('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
          let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
          if (!authorized) { return res.status(403).send("FORBIDDEN"); }
          let tracksids = [];
          tracksids = (req.body.track_ids) ? req.body.track_ids.split(',') : [];
-         //  console.log(tracksids);
          let result = await Playlist.removePlaylistTracks(req.params.playlist_id, tracksids, req.body.snapshot);
          if (!result) return res.status(404).send("NO Tracks Delelted");
          return res.status(200).send(result);
      })
-     // reorder playlist
+     // REORDER PLAYLIST
+     //PATH PARAMS:playlist_id - BODY PARAMS : start,length,before
  router.put('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
      let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
      if (!authorized) { return res.status(403).send("FORBIDDEN"); }

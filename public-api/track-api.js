@@ -1,6 +1,6 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 
-
+const checkMonooseObjectID = require('../validation/mongoose-objectid')
 
 const Track = {
 
@@ -9,9 +9,10 @@ const Track = {
     * @param : track-id {mongoose ObjectId}
     **/
     getTrack: async function(trackID) {
-
+       
         // connect to db and find track with the same id then return it as json file
         // if found return track else return 0
+        if(!checkMonooseObjectID([trackID])) return 0;
         const track = await trackDocument.findById(trackID, (err, track) => {
             if (err) return 0;
             return track;
@@ -26,7 +27,7 @@ const Track = {
     * @param : user {user object}
     **/
     getFullTrack: async function(trackID, user) {
-
+        if(!checkMonooseObjectID([trackID])) return 0;
         const track = await this.getTrack(trackID);
         if (!track) return 0; //not found
         // get both album and artist of the track
@@ -47,6 +48,7 @@ const Track = {
     * @param : array of track ids
     */
     getTracks: async function(tracksIDs, user) {
+        if(!checkMonooseObjectID(trackIDs)) return 0;
         let tracks = [];
         for (let trackID of tracksIDs) {
             let track = await this.getFullTrack(trackID, user);
@@ -61,6 +63,7 @@ const Track = {
     * @param : track-id {mongoose ObjectId}
     **/
     getAudioFeaturesTrack: async function(trackID) {
+        if(!checkMonooseObjectID([trackID])) return 0;
         const track = await this.getTrack(trackID);
         if (!track) return 0;
         const audioFeatures = {
@@ -86,7 +89,7 @@ const Track = {
     * @param : track-ids {mongoose ObjectId}
     **/
     getAudioFeaturesTracks: async function(tracksIDs) {
-
+        if(!checkMonooseObjectID(trackIDs)) return 0;
         let audioFeatures = {};
         var count = 0;
         for (let trackID of tracksIDs) {
@@ -108,7 +111,7 @@ const Track = {
     * @param : track-id {mongoose ObjectId}
     **/
     checkIfUserLikeTrack: function(user, trackID) {
-
+        if(!checkMonooseObjectID([trackID])) return 0;
         const tracksUserLiked = user.like;
         
         if (tracksUserLiked) {
@@ -126,6 +129,7 @@ const Track = {
         // check if user already liked the track
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
+        if(!checkMonooseObjectID([trackID])) return 0;
         const track = await this.getTrack(trackID);
         if (!track) return 0;
         if (!track.like) track.like = 0;
@@ -168,7 +172,8 @@ const Track = {
         // check if user already liked the track
         // if user.like.contains({track_id:track.track_id})
         // if  found then remove track.track_id from user likes and return the updated user
-        // else return 0 as he didn't like the track
+        // else return 0 as he didn't like the 
+        if(!checkMonooseObjectID([trackID])) return 0;
         const track = await this.getTrack(trackID);
         if (!track) return 0;
         if (!track.like) track.like = 0;

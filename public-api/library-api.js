@@ -3,21 +3,24 @@ const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 const artist_api = require('./artist-api');
-
+const checkMonooseObjectID = require('../validation/mongoose-objectid')
  const Library =  {
     
     //check if user saves albums
     //params: array of AlbumsIDs, UserID
     checkSavedAlbums  : async function(AlbumsIDs,UserID){
-
+        if(!checkMonooseObjectID(AlbumsIDs)) return 0;
+        if(!checkMonooseObjectID([UserID])) return 0;
         let Checks=[];
         let found=false;
         const user = await userDocument.findById(UserID,(err,user)=>{
             if(err) return 0;
             return user;
         }).catch((err)=> 0);
+        if(!user.saveAlbum) user.saveAlbum = [];
         for (var i=0;i<AlbumsIDs.length;i++){
             found=false;
+            
             for(let Album in user.saveAlbum){
                 if(user.saveAlbum[Album].albumId==AlbumsIDs[i]){
                     Checks.push(true);
@@ -34,13 +37,15 @@ const artist_api = require('./artist-api');
     //check if user saves tracks
     //params: array of TracksIDs, UserID
     checkSavedTracks  : async function(TracksIDs,UserID){
-
+        if(!checkMonooseObjectID([UserID])) return 0;
+        if(!checkMonooseObjectID(TracksIDs)) return 0;
         let Checks=[];
         let found=false;
         const user = await userDocument.findById(UserID,(err,user)=>{
             if(err) return 0;
             return user;
         }).catch((err)=> 0);
+        if(!user.like) user.like = [];
         for (var i=0;i<TracksIDs.length;i++){
             found=false;
             for(let Track in user.like){
@@ -60,10 +65,11 @@ const artist_api = require('./artist-api');
     //get  saved albums for a user
     //params: UserID, limit, offset
     getSavedAlbums : async function(UserID,limit,offset){
-
+        if(!checkMonooseObjectID([UserID])) return 0;
         let Albums = [];
         let user = await userDocument.findById(UserID);
         if(!user) return 0;
+        if(!user.saveAlbum) user.saveAlbum = [];
         if(!user.saveAlbum.length) return 0;
         for(let i=0;i<user.saveAlbum.length;i++){ 
             let album=await Album.getAlbumById(user.saveAlbum[i].albumId);
@@ -99,10 +105,11 @@ const artist_api = require('./artist-api');
     //get  saved traks for a user
     //params: UserID, limit, offset
     getSavedTracks : async function(UserID,limit,offset){
-
+        if(!checkMonooseObjectID([UserID])) return 0;
         let Tracks=[];
         let user = await userDocument.findById(UserID);
         if(!user)return 0;
+        if(!user.like) user.like = [];
         if(!user.like.length){return 0;}
         for(let i=0;i<user.like.length;i++){
             let track=await Track.getTrack(user.like[i].trackId);
@@ -147,7 +154,7 @@ const artist_api = require('./artist-api');
             }
             return {"tracks":trackInfo,"ownerName":user.displayName}; 
 
-        },
+        }
 
         
 }

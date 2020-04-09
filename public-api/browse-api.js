@@ -6,12 +6,12 @@ const connection = require('../db-connection/connection');
 const User = require('./user-api');
 const track = require('./track-api');
 const playlist = require('./playlist-api');
-
+const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Browse = {
 
     //get category by id
     getCategoryById: async function(categoryID) {
-
+        if(!checkMonooseObjectID([categoryID])) return 0;
         let category = await categoryDocument.findById(categoryID, (err, category) => {
             if (err) return 0;
             return category;

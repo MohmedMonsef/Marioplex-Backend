@@ -78,6 +78,7 @@ const Search = {
     exactmatch: async function(array, name) {
 
         let firstname;
+        if(!array) array = [];
         for (let i = 0; i < array.length; i++) {
             subname = array[i].Name.split(' ');
             firstname = subname[0];
@@ -107,6 +108,7 @@ const Search = {
             allalbum = Fuzzysearch(albumName, 'name', allalbum);
 
         }
+        if(!allalbum) allalbum = [];
         Album = []
         for (let i = 0; i < allalbum.length; i++) {
             let albums = await album_api.getAlbumArtist(allalbum[i]._id);
@@ -148,6 +150,7 @@ const Search = {
         }
 
         trackInfo = []
+        if(!Track) Track = [];
         for (let i = 0; i < Track.length; i++) {
             let artist = await artist_api.getArtist(Track[i].artistId)
             tracks = {}
@@ -184,19 +187,19 @@ const Search = {
             return artist[0]
         }
         let track = await this.getTrack(Name);
-        if (track.length != 0) {
+        if (track && track.length != 0) {
             return track[0];
         }
         let album = await this.getAlbum(Name);
-        if (album.length != 0) {
+        if (album && album.length != 0) {
             return album[0];
         }
         let playlist = await this.getPlaylist(Name);
-        if (playlist.length != 0) {
+        if (playlist && playlist.length != 0) {
             return playlist[0];
         }
         let profile = await this.getUserProfile(Name);
-        if (profile.length != 0) {
+        if (profile && profile.length != 0) {
             return profile[0];
         }
 
@@ -208,6 +211,7 @@ const Search = {
 
         let ArtistInfo = [];
         let User = await this.getUserByname(name);
+        if(!User) User= [];
         if (User.length == 0) return 0;
         else {
             for (let i = 0; i < User.length; i++) {
@@ -250,6 +254,7 @@ const Search = {
 
         UserInfo = []
         let User = await this.getUserByname(name);
+        if(!User) User=[];
         if (User.length == 0) return User;
         else {
             for (let i = 0; i < User.length; i++) {
@@ -276,7 +281,7 @@ const Search = {
     getPlaylist: async function(Name) {
 
         let playlist = await this.getPlaylists();
-        if (playlist.length == 0) return playlist;
+        if (playlist && playlist.length == 0) return playlist;
         playlist = Fuzzysearch(Name, 'name', playlist);
         playlistInfo = []
         for (let i = 0; i < playlist.length; i++) {
@@ -320,6 +325,7 @@ function search(name, field, schema) {
 function Fuzzysearch(name, field, schema) {
 
     Results = []
+    if(!name)name='';
     subName = name.split(' ');
     let results = search(name, field, schema);
     Results = Results.concat(results);
@@ -337,6 +343,7 @@ const removeDupliactes = (values) => {
 
     let newArray = [];
     let uniqueObject = {};
+    if(!values) values=[];
     for (let i in values) {
         objTitle = values[i]['_id'];
         uniqueObject[objTitle] = values[i];

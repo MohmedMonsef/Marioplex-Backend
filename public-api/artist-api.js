@@ -9,6 +9,7 @@ const Artist = {
     //CREATE AN ARTIST - PARAMS: user-info-name-Genre
     createArtist: async function(user, Info, name, Genre) {
         var userName;
+        if(typeof(info) != "string" || typeof(name) != "string" ) return 0;
         //CHECK THE GIVEN NAME IF NULL THEN = USERNAME
         if (!name) userName = user.displayName;
         else userName = name;
@@ -69,6 +70,7 @@ const Artist = {
 
     // CREATE ALBUM FOR AN ARTIST - PARAMS : ArtistID-Name,Label,Avmarkets,Albumtype,ReleaseDate,Genre
     addAlbum: async function(ArtistID, Name, Label, Avmarkets, Albumtype, ReleaseDate, Genre) {
+        if(typeof(Name) != "string" || typeof(Label) != "string" ) return 0;
         if(!checkMonooseObjectID([ArtistID])) return 0;
         if (!await this.getArtist(ArtistID)) return 0;
         let spotifyAlbums = spotify.album;
@@ -125,6 +127,7 @@ const Artist = {
     },
     // GET SPECIFIC ALBUMS - Params :artistID,groups,country,limit,offset
     getAlbums: async function(artistID, groups, country, limit, offset) {
+        if(limit && typeof(limit) != "number" ) return 0;
         if(!checkMonooseObjectID([artistID])) return 0;
         let SpecificAlbums = [];
         let albums = {};
@@ -217,6 +220,7 @@ const Artist = {
 
     // GET TOP TRACKS IN A COUNTRY FOR AN ARTIST
     getTopTracks: async function(artistID, country) {
+        if(typeof(country) != "string") return 0;
         if(!checkMonooseObjectID([artistID])) return 0;
         let TopTracks = [];
         let tracks = {};

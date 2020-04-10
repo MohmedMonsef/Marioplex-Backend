@@ -205,6 +205,9 @@ const Track = {
     * @param : duration {Number} 
     **/
     createTrack: async function(url, Name, TrackNumber, AvailableMarkets, artistID, albumID, duration) {
+        if(typeof(url) != "string" || typeof(Name) != "string" || typeof(TrackNumber) != "number" || typeof(duration) != "number") return 0;
+        if(!checkMonooseObjectID([artistID,albumID])) return 0;
+        if(!AvailableMarkets) AvailableMarkets = [];
         let track = new trackDocument({
             url: url,
             images: [],

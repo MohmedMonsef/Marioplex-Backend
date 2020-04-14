@@ -15,14 +15,14 @@ passport.serializeUser(function(user, done) {
   
     done(null, user._id);
 });
-  
+// deserialize user
 passport.deserializeUser(async function(id, done) {
     await userDocument.findById(id, function(err, user) {
       
       done(err, user);
     });
 });
-
+// middleware to check if user logging in from facebook succeded or not
 function checkAuthentication(req,res,next){
     if(req.isAuthenticated()){
         //req.isAuthenticated() will return true if user is logged in
@@ -31,14 +31,17 @@ function checkAuthentication(req,res,next){
         res.redirect("/login");
     }
 }
+// set facebook parameters to ask for from the user
 router.get('/facebook', passport.authenticate('facebook',{ scope: ['user_birthday','user_gender','user_hometown','user_photos','user_friends','email']  }));
 
-router.get('/facebook/callback',passport.authenticate('facebook', {  successRedirect: '/auth/facebookJWT',failureRedirect: '/login' }));
+// set up the call back url that facebook will redirect to after authenticating the user
+router.get('/facebook/callback',passport.authenticate('facebook', {  successRedirect: '/api/auth/facebookJWT',failureRedirect: '/login' }));
 
+// custom route to generate jwt token for user if succeded to login from facebook
 router.get('/facebookJWT',checkAuthentication,async (req,res)=>{
     const id = req.session.passport.user;
     const user = await userDocument.findById(id);
-    //console.log(user);
+    
    var token = jwt.sign({ _id: id,product:user.product,userType:user.userType}, jwtSeret.secret, {
 
         expiresIn: '3209832702h'
@@ -46,9 +49,10 @@ router.get('/facebookJWT',checkAuthentication,async (req,res)=>{
      
       // return the information including token as JSON
       res.json({ token: token});
-     // res.send(token);
+     
 });
 
+// custom route to work with facebook sdk with android, where it set up the user in database when user login with facebook from android sdk
 router.post('/facebookAndroid',async (req,res)=>{
     let email = req.body.email;
     if(!email){
@@ -64,7 +68,7 @@ router.post('/facebookAndroid',async (req,res)=>{
         // user in db
        
         const id = user._id;
-    //res.send('hh')
+   
    var token = jwt.sign({ _id: id,product:user.product,userType:user.userType}, jwtSeret.secret, {
 
         expiresIn: '3209832702h' 

@@ -10,20 +10,20 @@ const  {user:userDocument,artist:artistDocument,album:albumDocument,track:trackD
 const connection=require('../db-connection/connection');
 // get jwt middleware
 const JWT = require('../config/passport-jwt');
-
+// setup facebook login strategy
 module.exports = (passport) => {
         passport.use(new FacebookStrategy({
             clientID: FACEBOOK_APP_ID,
             clientSecret: FACEBOOK_APP_SECRET,
-            callbackURL: "/auth/facebook/callback",
-            profileFields: ['id', 'emails', 'name','gender','photos','birthday','hometown','displayName']
+            callbackURL: "/api/auth/facebook/callback", 
+            profileFields: ['id', 'emails', 'name','gender','photos','birthday','hometown','displayName'] // required info from facebook user
            
         },
         async function(accessToken, refreshToken, profile, done) {
-              
+              // if recieved profile then log in user and check if he is in database then log in him 
+              // if not in database then create new user with facebook info and then send the token
                if(profile){
-                //if(!profile.emails) return done(true,null);
-                   //console.log(profile);
+
                    let correctEmail=(profile.emails==undefined)?profile.email:profile.emails[0].values;
                     const user = await userDocument.findOne({ email:correctEmail },(err,user)=>{
                         if(err) return 0;
@@ -34,8 +34,7 @@ module.exports = (passport) => {
                        
                         return done(null,user);
                     }else{
-                       // console.log(profile.emails);
-                     //   if(!profile.emails) return done(true,null);
+                    
                         // create user
                         const newUser = await new userDocument({
                             email:correctEmail,

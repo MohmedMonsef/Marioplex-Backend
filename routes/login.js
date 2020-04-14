@@ -10,7 +10,7 @@ const router=express.Router();
 require('../config/passport');
 User= spotifySchema.User
 
-//request
+//request to log in the user
 router.post("/login", (req, res) => {
     // Form validation
   
@@ -20,12 +20,12 @@ router.post("/login", (req, res) => {
     if (!isValid) {
       return res.status(400).json(errors);
     }
-  
+  // get element and password from body of the request
     const email = req.body.email;
     const password = req.body.password;
   
     // Find user by email
-    spotifySchema.user.findOne({email:req.body.email}).exec().then(user=>{
+    spotifySchema.user.findOne({email:email}).exec().then(user=>{
        // Check if user exists
       if (!user) {
         return res.status(404).json({ emailnotfound: "Email not found" });
@@ -36,16 +36,11 @@ router.post("/login", (req, res) => {
         if (isMatch) {
           // User matched
           // Create JWT Payload
-          const payload = {
-            id: user.id,
-            
-          };
           var token = jwt.sign({ _id: user._id,product: user.product,userType:user.userType}, jwtSeret.secret, {
-            expiresIn: '874024h' // 1 day
+            expiresIn: '874024h' 
           });
          
           // return the information including token as JSON
-          //res.json({success: true, token: 'JWT ' + token});
           res.send({token});
         } else {
           res.status(401).send({success: false, msg: 'Authentication failed. Wrong password.'});

@@ -3,64 +3,79 @@ const spotify=require('../models/db');
 const Album=require('./album-api');
 const Track=require('./track-api');
 const artist_api = require('./artist-api');
-
+const checkMonooseObjectID = require('../validation/mongoose-objectid')
  const Library =  {
     
-  
+    //check if user saves albums
+    //params: array of AlbumsIDs, UserID
     checkSavedAlbums  : async function(AlbumsIDs,UserID){
-             let Checks=[];
-             let found=false;
-            const user = await userDocument.findById(UserID,(err,user)=>{
-                if(err) return 0;
-                return user;
-            }).catch((err)=> 0);
-            for (var i=0;i<AlbumsIDs.length;i++){
-                found=false;
-                for(let Album in user.saveAlbum){
-                    if(user.saveAlbum[Album].albumId==AlbumsIDs[i]){
-                        Checks.push(true);
-                        found=true;
-                    }
-                }
-                if(!found){
-                    Checks.push(false);
-                }
-            }
-            return Checks;
-    },
-    checkSavedTracks  : async function(TracksIDs,UserID){
+        if(!checkMonooseObjectID(AlbumsIDs)) return 0;
+        if(!checkMonooseObjectID([UserID])) return 0;
         let Checks=[];
         let found=false;
-       const user = await userDocument.findById(UserID,(err,user)=>{
-           if(err) return 0;
-           return user;
-       }).catch((err)=> 0);
-       for (var i=0;i<TracksIDs.length;i++){
-           found=false;
-           for(let Track in user.like){
-               if(user.like[Track].trackId==TracksIDs[i]){
-                   Checks.push(true);
-                   found=true;
-               }
-           }
-           if(!found){
-               Checks.push(false);
-           }
-       }
-       return Checks;
+        const user = await userDocument.findById(UserID,(err,user)=>{
+            if(err) return 0;
+            return user;
+        }).catch((err)=> 0);
+        if(!user.saveAlbum) user.saveAlbum = [];
+        for (var i=0;i<AlbumsIDs.length;i++){
+            found=false;
+            
+            for(let Album in user.saveAlbum){
+                if(user.saveAlbum[Album].albumId==AlbumsIDs[i]){
+                    Checks.push(true);
+                    found=true;
+                }
+            }
+            if(!found){
+                Checks.push(false);
+            }
+        }    
+        return Checks;   
 
-},
-
-    // get  Albums for User
-    getSavedAlbums : async function(UserID,limit,offset){
-        let Albums=[];
-        let user = await userDocument.findById(UserID);
-        if(!user)return 0;
-        if(!user.saveAlbum.length){return 0;}
-        for(let i=0;i<user.saveAlbum.length;i++){
-            let album=await Album.getAlbumById(user.saveAlbum[i].albumId);
-           if(album) Albums.push(album);
+    },
+    //check if user saves tracks
+    //params: array of TracksIDs, UserID
+    checkSavedTracks  : async function(TracksIDs,UserID){
+        if(!checkMonooseObjectID([UserID])) return 0;
+        if(!checkMonooseObjectID(TracksIDs)) return 0;
+        let Checks=[];
+        let found=false;
+        const user = await userDocument.findById(UserID,(err,user)=>{
+            if(err) return 0;
+            return user;
+        }).catch((err)=> 0);
+        if(!user.like) user.like = [];
+        for (var i=0;i<TracksIDs.length;i++){
+            found=false;
+            for(let Track in user.like){
+                if(user.like[Track].trackId==TracksIDs[i]){
+                    Checks.push(true);
+                    found=true;
+                }
+            }
+            if(!found){
+                Checks.push(false);
+            }
         }
+        return Checks;
+       
+    },
+
+    //get  saved albums for a user
+    //params: UserID, limit, offset
+    getSavedAlbums : async function(UserID,limit,offset){
+        if(!checkMonooseObjectID([UserID])) return 0;
+        let Albums = [];
+        let user = await userDocument.findById(UserID);
+        if(!user) return 0;
+        if(!user.saveAlbum) user.saveAlbum = [];
+        if(!user.saveAlbum.length) return 0;
+        for(let i=0;i<user.saveAlbum.length;i++){ 
+            let album=await Album.getAlbumById(user.saveAlbum[i].albumId);
+            if(album) Albums.push(album);
+        }
+
         let start=0;
         let end=(Albums.length>20)?20:Albums.length;
         if(offset!=undefined){
@@ -76,30 +91,25 @@ const artist_api = require('./artist-api');
         Albums.slice(start,end);
         albumInfo=[]
         for(let i=0;i<Albums.length;i++){
-            let albums=await Album.getAlbumArtist(Albums[i]._id);
+            let albums=await Album.getAlbumArtist(Albums[i]._id,UserID);
             if(albums){
-                album={}
-                album["_id"]=albums.Album._id
-                album["name"]=albums.Album.name
-                album["images"]=albums.Album.images
-                album["type"]=albums.Album.type
-                if(albums.Artist){
-                album["artistId"]=albums.Artist._id
-                album["artistName"]=albums.Artist.Name
-                album["artistType"]=albums.Artist.type
-                }
-                albumInfo.push(album);
+                albumInfo.push(albums);
             }
+         
         }
-        return albumInfo;       
+        return albumInfo;      
+
     },
     
     
-    // get  Albums for User
+    //get  saved traks for a user
+    //params: UserID, limit, offset
     getSavedTracks : async function(UserID,limit,offset){
+        if(!checkMonooseObjectID([UserID])) return 0;
         let Tracks=[];
         let user = await userDocument.findById(UserID);
         if(!user)return 0;
+        if(!user.like) user.like = [];
         if(!user.like.length){return 0;}
         for(let i=0;i<user.like.length;i++){
             let track=await Track.getTrack(user.like[i].trackId);
@@ -141,10 +151,12 @@ const artist_api = require('./artist-api');
             tracks["type"]=Tracks[i].type
             tracks["images"]=Tracks[i].images
             trackInfo.push(tracks);
-        
             }
-            return trackInfo;            
-        },
+            return {"tracks":trackInfo,"ownerName":user.displayName}; 
+
+        }
+
+        
 }
 
 module.exports = Library;

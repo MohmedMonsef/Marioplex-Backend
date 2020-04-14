@@ -3,6 +3,7 @@ const express = require('express');
 const app =express();
 //connect to database
 connection(app);
+
 const cors = require('cors');
 const bodyparser = require('body-parser');
 const logger = require('morgan');
@@ -19,13 +20,11 @@ const homePage =require('./routes/home-page-routes');
 const login=require('./routes/login');
 const signup=require('./routes/signup-routes');
 const search=require('./routes/search');
-require('./config/passport');
-
-
 const player = require('./routes/player-routes')
 const facebook = require('./authentication/facebook-routes');
 const forgpass = require('./routes/forgpass-route');
 
+require('./config/passport');
 
 app.use(cors());
 app.use(bodyparser.urlencoded({extended:false}));
@@ -35,24 +34,24 @@ app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(homePage);
-app.use(Library);
-app.use(forgpass);
-app.use(userProfile)
-app.use(search);
-app.use(album);
-
-app.use(login);
-app.use(signup);
-app.use(Track);
-app.use(player);
-app.use(playlist);
-app.use('/auth',facebook);
-app.use(browse);
-app.use(Artist);
+//routes
+app.use('/api',homePage);
+app.use('/api',Library);
+app.use('/api',forgpass);
+app.use('/api',userProfile)
+app.use('/api',search);
+app.use('/api',album);
+app.use('/api',login);
+app.use('/api',signup);
+app.use('/api',Track);
+app.use('/api',player);
+app.use('/api',playlist);
+app.use('/api/auth',facebook);
+app.use('/api',browse);
+app.use('/api',Artist);
 
 //connect to db before test run
-const API_PORT= process.env.API_PORT||3000;
+const API_PORT= process.env.PORT||3000;
 
 app.use(function(error,req,res,next){
     res.status(500);

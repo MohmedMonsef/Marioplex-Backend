@@ -22,13 +22,10 @@ const storage = new GridFsStorage({
      
       return new Promise(async (resolve, reject) => {
         
-       // console.log(req.body);
-        // create track only for high quality
-      
           const fileInfo = {
             filename: req.filename,
             bucketName: 'images',
-            metadata:{userId:req.user._id,belongsTo:req.belongsTo}
+            metadata:{userId:req.user._id,belongsTo:req.belongsTo,sourcrId:req.sourcrId,imageId:req.imageId}
              
           };
           resolve(fileInfo);

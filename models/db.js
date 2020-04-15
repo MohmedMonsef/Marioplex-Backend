@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema= mongoose.Schema;
 const Image=new Schema({ 
     height:Number ,
-    wedth:Number ,
-    URL:String
+    width:Number ,
+    
 });
 
 
@@ -36,9 +36,9 @@ const Track=new Schema({
   tempo:Number ,
   timeSignature:Date ,
   valence:Number,
-  like:Number
-
-
+  like:Number,
+  key:String,
+  keyId:String
 });
 
 const Playlist=new Schema({

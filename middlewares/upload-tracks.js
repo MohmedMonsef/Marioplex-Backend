@@ -10,7 +10,7 @@ const Artist =require('../public-api/artist-api');
 
 
 const storage = new GridFsStorage({
-    url: mongoURI ,
+    url: localhost ,
     file:async  (req, file) => {
      
       // check extension of the track to be webm audio/video 

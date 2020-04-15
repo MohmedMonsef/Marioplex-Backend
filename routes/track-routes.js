@@ -3,7 +3,10 @@ const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
 const Album = require('../public-api/album-api');
 const Artist = require('../public-api/artist-api');
+const jwt=require('jsonwebtoken');
+const jwtSecret = require('../config/jwt-key').secret;
 const {auth:checkAuth} = require('../middlewares/is-me');
+
 const mongoose = require('mongoose')
 
 router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
@@ -90,7 +93,7 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
      if(req.user.product == "free" && type == "high" ) type = "medium"
     // set default quality to medium if not specified
 
-    if(type != "high" || type != "medium" || type != "low" ) type = "medium";
+    if(type != "high" || type != "medium" || type != "low" || type != "review" ) type = "medium";
     }
     const trackID  = req.params.track_id;
     const track = await Track.getTrack(trackID);
@@ -141,6 +144,88 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
     
    
 })
+// set web player route which will just serve encrypted webm media file
+router.get('/tracks/web-player/:track_id',async (req,res)=>{
+    let type = req.query.type;// high low medium or review
+    // get token as query parameter
+    const token=req.query.token;
+
+    if(!token){return res.status(401).send('No Available token');return 0;}
+
+    try{
+    const decoded=jwt.verify(token,jwtSecret);
+    req.user=decoded;
+   
+    }
+    catch(ex){
+    
+    return res.status(400).send('Invalid Token');
+    }
+   
+    // if not premium and user asked for high quality then send it as low
+     if(req.user.product == "free" && type == "high" ) type = "medium"
+
+    // set default quality to medium if not specified
+    if(type != "high" || type != "medium" || type != "low" ) type = "medium";
+
+    const trackID  = req.params.track_id;
+    const track = await Track.getTrack(trackID);
+    if(!track){
+        res.status(404).json({"error":"no track found with this id"});
+        return 0;
+    }
+    // get file from gridfs
+       gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackID),"metadata.type":type+"_enc"},function (err, file) {
+        if (err) {res.send(500).send("server error while sending track");return 0;}
+        // send range response 
+        const range = req.headers.range;
+        if(range){
+        console.log('range')
+        var parts = req.headers['range'].replace(/bytes=/, "").split("-");
+        var partialstart = parts[0];
+        var partialend = parts[1];
+    
+        var start = parseInt(partialstart, 10);
+        var end = partialend ? parseInt(partialend, 10) : file.length -1;
+        var chunksize = (end-start)+1;      
+        res.writeHead(206, {
+            'Content-Range': 'bytes ' + start + '-' + end + '/' + file.length,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': file.contentType
+        });
+     gfsTracks.createReadStream({
+            _id:file._id,
+            range:{
+                startPos: start,
+                    endPos: end
+            }
+        }).pipe(res);
+        }else{
+            // if doesnt support range then send it sequential using pipe method in nodejs
+            res.header('Content-Length', file.length);
+            res.header('Content-Type', file.contentType);
+
+            gfsTracks.createReadStream({
+                _id: file._id
+            }).pipe(res);
+        }
+      
+       
+        });
+})
+
+// set the route to get the track encryption key to decrypt the track
+router.get('/tracks/encryption/:track_id/keys',checkAuth,async (req,res)=>{
+    const trackId = req.params.track_id;
+    const track = await Track.getTrack(trackId);
+    if(!track)res.status(404).send({"error":"not found"});
+    else{
+        if(!track.key || !track.keyId) res.status(404).send({"error":"not found"});
+        else res.status(200).json({"key":track.key,"keyId":track.keyId});
+    } 
+})
+
 
 
 module.exports = router; 

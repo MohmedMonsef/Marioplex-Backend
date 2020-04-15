@@ -204,8 +204,9 @@ const Track = {
     * @param : albumID {mongoose object ID}
     * @param : duration {Number} 
     **/
-    createTrack: async function(url, Name, TrackNumber, AvailableMarkets, artistID, albumID, duration) {
-        if(typeof(url) != "string" || typeof(Name) != "string" || typeof(TrackNumber) != "number" || typeof(duration) != "number") return 0;
+    createTrack: async function(url, Name, TrackNumber, AvailableMarkets, artistID, albumID, duration,key,keyId) {
+        //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(TrackNumber) != "number" || typeof(duration) != "number") return 0;
+       
         if(!checkMonooseObjectID([artistID,albumID])) return 0;
         if(!AvailableMarkets) AvailableMarkets = [];
         let track = new trackDocument({
@@ -232,7 +233,9 @@ const Track = {
             tempo:  Math.floor(Math.random()*100),
             timeSignature: Date.now(),
             valence:  Math.floor(Math.random()*100),
-            like: 0
+            like: 0,
+            key:key,
+            keyId:keyId
 
         });
         await track.save();

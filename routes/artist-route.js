@@ -117,11 +117,10 @@ router.post('/artists/me/albums/:album_id/tracks',checkAuth,checkType,async (req
     let uploadInterval = setInterval(function(){
         if(isUploaded != 1){
             console.log('still uploading.....')
-            res.write('still uploading.....')
-
+            
         }else{
             console.log('end update')
-            res.end();
+            
             clearInterval(uploadInterval);
         }
     },1000)

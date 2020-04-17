@@ -77,7 +77,7 @@ router.post('/images/update/:source_id',checkAuth,async (req,res)=>{
     req.belongsTo = belongsTo;
     req.sourceId = sourceId;
     // get id of image if saved in db 
-    const imageId = await Image.uploadImage(userId,sourceId,belongsTo,image);
+    const imageId = await Image.updateImage(userId,sourceId,belongsTo,image);
     if(!imageId){
         res.status(403).json({"error":"cannot add image to db"});
         return 0;
@@ -86,7 +86,7 @@ router.post('/images/update/:source_id',checkAuth,async (req,res)=>{
     req.imageId = imageId;
     uploadImage.fields([{name:"image"}])(req,res,(err)=>{
         if(err){ 
-            res.status(403).send({"error":err.error});
+            res.status(403).send({"error":"cannot update image"});
             return 0;
       }else{
           res.status(200).json({"success":"updated succesfully"});

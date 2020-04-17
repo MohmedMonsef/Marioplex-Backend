@@ -309,7 +309,21 @@ const Track = {
         // delete from tracks
         await trackDocument.findByIdAndDelete(trackId);
         // delete from gridfs
-        await gfsTracks.files.deleteMany({"metadata.trackId":mongoose.Types.ObjectId(trackId)})
+        // await gfsTracks.files.re44({"metadata.trackId":mongoose.Types.ObjectId(trackId)},(err,files)=>{
+        //     console.log(files);
+        // })
+        await gfsTracks.files.find({"metadata.trackId":mongoose.Types.ObjectId(trackId)}).toArray(async function (err, files) {
+            if(files){
+                //console.log(files);
+                for(let file of files){
+                   // console.log(file,file._id)
+                    //await gfsTracks.chunks.deleteMany({files_id:mongoose.Types.ObjectId(file._id)})
+                    await  gfsTracks.db.collection('tracks.chunks').remove({files_id:mongoose.Types.ObjectId(file._id)});
+                    await gfsTracks.files.deleteMany({"metadata.trackId":mongoose.Types.ObjectId(trackId)})
+                }
+            }
+        })
+       // await gfsTracks.chunks.deleteMany({"files_id":mongoose.Types.ObjectId(trackId)})
 
         return 1;
 

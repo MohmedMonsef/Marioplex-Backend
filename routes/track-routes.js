@@ -226,6 +226,14 @@ router.get('/tracks/encryption/:track_id/keys',checkAuth,async (req,res)=>{
     } 
 })
 
+// delete track
+router.delete('/tracks/delete/:track_id',checkAuth,async (req,res)=>{
+    const userId = req.user._id;
+    const trackId = req.params.track_id;
+    const deleteTrack = await Track.deleteTrack(userId,trackId);
+    if(!deleteTrack) res.status(404).json({"error":"cannot delete track"});
+    else res.status(200).json({"success":"deleted track"});
+})
 
 
 module.exports = router; 

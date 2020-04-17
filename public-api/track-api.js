@@ -1,5 +1,5 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
-
+const mongoose = require('mongoose')
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 
 const Track = {
@@ -115,7 +115,7 @@ const Track = {
         const tracksUserLiked = user.like;
         
         if (tracksUserLiked) {
-            return tracksUserLiked.find(track => track.trackId + 1 == trackID + 1);
+            return tracksUserLiked.find(track => String(track.trackId) == String(trackID) );
         }
         return 0;
     },
@@ -182,7 +182,7 @@ const Track = {
             return 0;
         }
         for (let i = 0; i < user.like.length; i++) {
-            if (user.like[i].trackId == trackID) {
+            if (String(user.like[i].trackId) == String(trackID)) {
                 user.like.splice(i, 1);
                 break;
             }
@@ -200,14 +200,14 @@ const Track = {
     * @param : url {string} url of string
     * @param : trackNumber {Number} number of track in album
     * @param : availableMarkets {Array} markets
-    * @param : artistID {mongoose object ID}
+    * @param : artistId {mongoose object ID}
     * @param : albumID {mongoose object ID}
     * @param : duration {Number} 
     **/
-    createTrack: async function(url, Name, TrackNumber, AvailableMarkets, artistID, albumID, duration,key,keyId) {
+    createTrack: async function(url, Name, TrackNumber, AvailableMarkets, artistId, albumID, duration,key,keyId) {
         //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(TrackNumber) != "number" || typeof(duration) != "number") return 0;
        
-        if(!checkMonooseObjectID([artistID,albumID])) return 0;
+        if(!checkMonooseObjectID([artistId,albumID])) return 0;
         if(!AvailableMarkets) AvailableMarkets = [];
         let track = new trackDocument({
             url: url,
@@ -216,7 +216,7 @@ const Track = {
             availableMarkets: AvailableMarkets,
             trackNumber: TrackNumber,
             name: Name,
-            artistId: artistID,
+            artistId: artistId,
             albumId: albumID,
             discNumber: 1,
             explicit: false,
@@ -241,6 +241,77 @@ const Track = {
         await track.save();
         
         return track;
+
+    },
+    /**
+     * 
+     * @param {String} userId id of the user who own the track 
+     * @param {String} trackId id of the track to be deleted
+     * @returns {boolean}
+     */
+    deleteTrack: async function(userId,trackId){
+        if(!checkMonooseObjectID([userId,trackId])) return 0;
+        const user = await userDocument.findById(userId);
+        if(!user) return 0;
+        const track = await this.getTrack(trackId);
+        if(!track) return 0;
+        // check if user is the artist that own the track
+        const artist = await artistDocument.findOne({ userId: userId });
+        if(!artist) return 0;
+        // if artist dont own track then return 0
+        if(String(artist._id) != String(track.artistId)) return 0;
+        // delete track from artist,album,playlists,tracks,gridfs,track images
+        // delete from artist
+       
+        if(!artist.addTracks)return 0;
+        for(let i=0;i<artist.addTracks.length;i++){
+            if(String(artist.addTracks[i].trackId) == trackId){
+                artist.addTracks.splice(i,1);
+                break;
+            }
+        }
+        await artist.save();
+        // delete from album
+        const album = await albumDocument.findById(track.albumId);
+        
+        if(!album) return 0;
+        if(!album.hasTracks) return 0;
+        for(let i=0;i<album.hasTracks.length;i++){
+            if(String(album.hasTracks[i].trackId) == trackId){
+                album.hasTracks.splice(i,1);
+                break;
+            }
+        }
+        await album.save();
+        // delete from all playlist in the database
+        await playlistDocument.find({},async (err,files)=>{
+            if(err) return 0;
+            for(let playlist of files){
+                if(!playlist.hasTracks)continue;
+                for(let i=0;i<playlist.hasTracks.length;i++){
+                    if(String(playlist.hasTracks[i]) == trackId){
+                        playlist.hasTracks.splice(i,1);
+                        break;
+                    }
+                }
+                await playlist.save();
+            }
+        });
+        // delete track images
+        if(!track.images) track.images = [];
+        // delete image from gridfs
+        for(let image of track.images){
+            const imageFile = gfsImages.files.findOne({"metadata.imageId":mongoose.Types.ObjectId(image._id)});
+                const imageIdGridfs = imageFile ? imageFile._id : undefined;
+                if(!imageIdGridfs) continue;
+            await gfsImages.files.deleteOne({_id:imageIdGridfs});
+        }
+        // delete from tracks
+        await trackDocument.findByIdAndDelete(trackId);
+        // delete from gridfs
+        await gfsTracks.files.deleteMany({"metadata.trackId":mongoose.Types.ObjectId(trackId)})
+
+        return 1;
 
     }
 

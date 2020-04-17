@@ -5,6 +5,7 @@ const path = require('path');
 const Artist =require('../public-api/artist-api');
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
+const Album = require('../public-api/album-api')
 const {auth:checkAuth} = require('../middlewares/is-me');
 const {content:checkContent} = require('../middlewares/content');
 const {isArtist:checkType} = require('../middlewares/check-type');
@@ -94,10 +95,12 @@ router.post('/artists/me/albums/:album_id/tracks',checkAuth,checkType,async (req
     let key =  Buffer.from(req.query.key, 'hex').toString('base64').replace(/\+/g, "-").replace(/\//g, "_").replace(/=*$/, "");
     let keyId =  Buffer.from(req.query.keyId, 'hex').toString('base64').replace(/\+/g, "-").replace(/\//g, "_").replace(/=*$/, "");
   
-    const track = await Track.createTrack(String(filename),req.query.name,Number(req.query.trackNumber),availableMarkets,req.user._id,req.params.album_id,Number(req.query.duration),key,keyId);
-    if(!track){res.status(404).send("cannot create track");return 0;}
+    const track = await Track.createTrack(String(filename),req.query.name,Number(req.query.trackNumber),availableMarkets,artist._id,req.params.album_id,Number(req.query.duration),key,keyId);
+    if(!track){res.status(404).send("cannot create track in tracks");return 0;}
     const addTrack = await Artist.addTrack(artist._id,track._id);
-    if(!addTrack){res.status(404).send("cannot create track");return 0;}
+    if(!addTrack){res.status(404).send("cannot create track in artist");return 0;}
+    const addTrackAlbum = await Album.addTrack(req.params.album_id,track);
+    if(!addTrackAlbum){res.status(404).send("cannot create track in album");return 0;}
     req.trackID = track._id;    
     req.filename = filename;
     let isUploaded = 0;

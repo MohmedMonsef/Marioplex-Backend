@@ -18,6 +18,7 @@ const Album = {
                 trackId: Track._id
             });
             await album.save();
+            return 1;
         }
     },
     // get album by id

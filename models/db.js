@@ -99,10 +99,6 @@ const User=new Schema({
     id: mongoose.Schema.Types.ObjectId,
     //ref: 'User'
   }],
-  followedBy:[{
-    id: mongoose.Schema.Types.ObjectId,
-    //ref: 'User'
-  }],
   like:[{
     trackId: mongoose.Schema.Types.ObjectId
     //ref: 'Track'

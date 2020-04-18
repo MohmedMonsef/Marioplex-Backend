@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const Artist = require('./artist-api');
 const sendmail = require('../forget-password/sendmail');
 const Player = require('./player-api');
+const Image = require('./image-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 
 const User = {
@@ -94,13 +95,18 @@ const User = {
         if(!checkMonooseObjectID([userID])) return 0;
         const user = await this.getUserById(userID);
         if (!user) { return 0; }
-        const User = await userDocument.find({ follow: { id: user._id } }, (err, User) => {
-            if (err) return 0;
-            return User;
-        });
+        if(user.userType == 'Artist') return 0;
+        const spotify = await userDocument.find({displayName:'Spotify'});
+        if(!spotify) return 0;
+        for(let i=0;i<user.createPlaylist.length;i++){
+            let filter = { _id : user.createPlaylist[i].playListId};
+            let update = { ownerId : spotify._id};
+            await playlistDocument.findOneAndUpdate(filter,update);                  
+        }
+        //await Image.deleteImages(userID,userID,'user');
         // delete user himseld from db
         await userDocument.findByIdAndDelete(userID);
-        return User;
+        return 1;
 
     },
 
@@ -169,22 +175,63 @@ const User = {
         const user = await this.getUserById(userID);
         if(!user.follow) user.follow = [];
         if (!user.follow.length) { return 0; }
-        let Artist = []
+        let artists = []
         for (let i = 0; i < user.follow.length; i++) {
-            let User = await this.getUserById(user.follow[i].id);
-            if (User) {
-                let artists = await artistDocument.find({ userId: User._id });
-                if (artists) {
-                    Artist.push(artists[0]);
-                }
+            let artist = await Artist.getArtist(user.follow[i].id);
+            if (artist) {
+                let artistInfo={};
+                artistInfo['_id']=artist._id;
+                artistInfo['Name']=artist.Name;
+                artistInfo['images']=artist.images;
+                artistInfo['type']=artist.type;
+                artists.push(artistInfo);
             }
         }
-        return Artist;
-
+        return artists;
     },
-
-
-
+    UserFollowArtist: async function(userID,ArtistID){
+        if(!checkMonooseObjectID([userID])) return 0;
+        if(!checkMonooseObjectID([ArtistID])) return 0;
+        const user = await this.getUserById(userID);
+        let artist = await Artist.getArtist(ArtistID);
+        if(!user||!artist) return 0;
+        if(!user.follow) user.follow = [];
+        user.follow.push({'id': ArtistID});
+        await user.save();
+        return 1;
+    },
+    UserUnfollowArtist: async function(userID,ArtistID){
+        if(!checkMonooseObjectID([userID])) return 0;
+        if(!checkMonooseObjectID([ArtistID])) return 0;
+        const user = await this.getUserById(userID);
+        let artist = await Artist.getArtist(ArtistID);
+        if(!user||!artist) return 0;
+        if(!user.follow) user.follow = [];
+        if(!user.follow.length) return 0;
+        for (let i=0;i<user.follow.length;i++){
+            if(String(user.follow[i].id) == String(ArtistID)){
+                  user.follow.splice(i, 1);
+                  user.save();
+                  return 1;
+            }
+        }
+        return 0;
+        
+    },
+    CheckIfUserFollowArtist: async function(userID,ArtistID){
+        if(!checkMonooseObjectID([userID])) return 0;
+        if(!checkMonooseObjectID([ArtistID])) return 0;
+        const user = await this.getUserById(userID);
+        let artist = await Artist.getArtist(ArtistID);
+        if(!user||!artist) return 0;
+        if(!user.follow) user.follow = [];
+        if(!user.follow.length) return 0;
+        for (let i=0;i<user.follow.length;i++){
+            if(user.follow[i].id==ArtistID)
+            return true;
+        }
+        return false;
+    },
     //check if user email in db
     //params: email
     checkmail: async function(email) {

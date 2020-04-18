@@ -16,7 +16,7 @@ module.exports= function(app){
     const localhostnada='mongodb://localhost/seedsspotify';
     const bahaa ="mongodb+srv://bahaaEldeen:123@spotifycluster-i2m7n.mongodb.net/test?retryWrites=true&w=majority";
     const mlab = "mongodb://bahaa:123456b@ds157834.mlab.com:57834/spotify-demo"
-    mongoose.connect(mlab,{  useNewUrlParser: true, useCreateIndex: true ,useUnifiedTopology:true});
+    mongoose.connect(localhost,{  useNewUrlParser: true, useCreateIndex: true ,useUnifiedTopology:true});
 
     
     mongoose.connection.once('open',()=>{

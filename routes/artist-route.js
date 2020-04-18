@@ -1,9 +1,11 @@
 const router = require('express').Router();
+var progress = require('progress-stream');
 const crypto = require('crypto');
 const path = require('path');
 const Artist =require('../public-api/artist-api');
 const Track =require('../public-api/track-api');
 const User = require('../public-api/user-api');
+const Album = require('../public-api/album-api')
 const {auth:checkAuth} = require('../middlewares/is-me');
 const {content:checkContent} = require('../middlewares/content');
 const {isArtist:checkType} = require('../middlewares/check-type');
@@ -76,7 +78,7 @@ router.put('/Artists/me/Albums',[checkAuth,checkType,checkContent],async (req,re
 router.post('/artists/me/albums/:album_id/tracks',checkAuth,checkType,async (req,res)=>{
 
     // only artist upload songs
-    const artist =await Artist.findMeAsArtist(req.user._id);
+    const artist = await Artist.findMeAsArtist(req.user._id);
     if(!artist){  res.status(403).json({"error":"not an artist"});return 0;};
     if (await  Artist.checkArtisthasAlbum(artist._id,req.params.album_id)){
     // encrypt file name and send it to request to multer
@@ -89,23 +91,45 @@ router.post('/artists/me/albums/:album_id/tracks',checkAuth,checkType,async (req
                         return filename = buf.toString('hex') + path.extname(req.query.name);
         });
     let availableMarkets = req.query.availableMarkets ? req.query.availableMarkets.split(","):[];
-    const track = await Track.createTrack(filename,req.query.name,req.query.trackNumber,availableMarkets,req.user._id,req.params.album_id,req.query.duration);
-    await Artist.addTrack(artist._id,track._id);
+    // set up key and keyId to be base64 string
+    let key =  Buffer.from(req.query.key, 'hex').toString('base64').replace(/\+/g, "-").replace(/\//g, "_").replace(/=*$/, "");
+    let keyId =  Buffer.from(req.query.keyId, 'hex').toString('base64').replace(/\+/g, "-").replace(/\//g, "_").replace(/=*$/, "");
+  
+    const track = await Track.createTrack(String(filename),req.query.name,Number(req.query.trackNumber),availableMarkets,artist._id,req.params.album_id,Number(req.query.duration),key,keyId);
+    if(!track){res.status(404).send("cannot create track in tracks");return 0;}
+    const addTrack = await Artist.addTrack(artist._id,track._id);
+    if(!addTrack){res.status(404).send("cannot create track in artist");return 0;}
+    const addTrackAlbum = await Album.addTrack(req.params.album_id,track);
+    if(!addTrackAlbum){res.status(404).send("cannot create track in album");return 0;}
     req.trackID = track._id;    
     req.filename = filename;
-    
-   await uploadTrack.fields([{name:"high"},{name:"medium"},{name:"low"},{name:"review"}])(req,res,(err)=>{
+    let isUploaded = 0;
+    // upload track
+    uploadTrack.fields([{name:"high"},{name:"medium"},{name:"low"},{name:"review"},{name:"high_enc"},{name:"medium_enc"},{name:"low_enc"}])(req,res,(err)=>{
       if(err){ 
-          res.status(403).json({"error":err.error});
+          res.status(403).send({"error":err.error});
+          isUploaded = -1;
           return 0;
     }else{
         res.status(200).json({"success":"uploaded succesfully"});
+        isUploaded = 1;
+
     }
     });
     
+    let uploadInterval = setInterval(function(){
+        if(isUploaded != 1){
+            console.log('still uploading.....')
+            
+        }else{
+            console.log('end update')
+            
+            clearInterval(uploadInterval);
+        }
+    },1000)
 
     }else{
-      res.status(403).json({"error":"artist doesnt own the album"})
+      res.status(403).send({"error":"artist doesnt own the album"})
     }
     
  

@@ -23,7 +23,7 @@ const search=require('./routes/search');
 const player = require('./routes/player-routes')
 const facebook = require('./authentication/facebook-routes');
 const forgpass = require('./routes/forgpass-route');
-
+const images = require('./routes/image-route')
 require('./config/passport');
 
 app.use(cors());
@@ -49,6 +49,7 @@ app.use('/api',playlist);
 app.use('/api/auth',facebook);
 app.use('/api',browse);
 app.use('/api',Artist);
+app.use('/api',images);
 
 //connect to db before test run
 const API_PORT= process.env.PORT||3000;

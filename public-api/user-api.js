@@ -415,6 +415,37 @@ const User = {
         const isShuffle = await Player.setShuffle(state, user);
         if (!isShuffle) return 0;
         return 1;
+    },
+    // check if user can change track
+    /**
+     * 
+     * @param {string} userId 
+     * @param {string} trackId
+     * @returns {boolean} 
+     */
+    checkAuthorizedTrack: async function(userId,trackId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        // chekc if user is artist
+        const artist = await  Artist.findMeAsArtist(userId);
+        if(!artist) return 0;
+        const hasAccess = await Artist.checkArtistHasTrack(artist,trackId);
+        return hasAccess;
+    },
+    /**
+     * 
+     * @param {string} userId 
+     * @param {string} albumId 
+     * @returns {boolean}
+     */
+    checkAuthorizedAlbum: async function(userId,albumId){
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        // chekc if user is artist
+        const artist = await  Artist.findMeAsArtist(userId);
+        if(!artist) return 0;
+        const hasAccess = await Artist.checkArtisthasAlbum(artist._id,albumId);
+        return hasAccess;
     }
 
 }

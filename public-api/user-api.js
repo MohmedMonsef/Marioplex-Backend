@@ -417,6 +417,12 @@ const User = {
         return 1;
     },
     // check if user can change track
+    /**
+     * 
+     * @param {string} userId 
+     * @param {string} trackId
+     * @returns {boolean} 
+     */
     checkAuthorizedTrack: async function(userId,trackId){
         const user = await this.getUserById(userId);
         if(!user) return 0;
@@ -426,6 +432,12 @@ const User = {
         const hasAccess = await Artist.checkArtistHasTrack(artist,trackId);
         return hasAccess;
     },
+    /**
+     * 
+     * @param {string} userId 
+     * @param {string} albumId 
+     * @returns {boolean}
+     */
     checkAuthorizedAlbum: async function(userId,albumId){
         const user = await this.getUserById(userId);
         if(!user) return 0;

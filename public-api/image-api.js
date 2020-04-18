@@ -10,6 +10,14 @@ const checkMonooseObjectID = require('../validation/mongoose-objectid');
 const mongoose = require('mongoose');
 const Image = {
     // return the id of the image if it can be added or 0 if cant be added to db
+    /**
+     * 
+     * @param {string} userId   the user id 
+     * @param {string} sourceId the source id
+     * @param {string} belongsTo belongs to string
+     * @param {object} image image object
+     * @returns {boolean} 
+     */
     uploadImage: async function(userId,sourceId,belongsTo,image){
         
         if(!checkMonooseObjectID([userId,sourceId])) return 0;
@@ -87,6 +95,14 @@ const Image = {
 
     },
     // update images array and vlear previous images
+    /**
+     * 
+     * @param {string} userId   the user id 
+     * @param {string} sourceId the source id
+     * @param {string} belongsTo belongs to string
+     * @param {object} image image object
+     * @returns {boolean} 
+     */
     updateImage: async function(userId,sourceId,belongsTo,image){
         
         if(!checkMonooseObjectID([userId,sourceId])) return 0;
@@ -166,6 +182,14 @@ const Image = {
 
 
     },
+    /**
+     * 
+     * @param {string} imageId the image id 
+     * @param {string} userId   the user id 
+     * @param {string} sourceId the source id
+     * @param {string} belongsTo belongs to string
+     * @returns {boolean}
+     */
     deleteImage: async function(imageId,userId,sourceId,belongsTo){
         // remove image from database and from gridfs
         // check if user has access to delete image then delete the image
@@ -336,13 +360,19 @@ const Image = {
 
     },
     // delete single image from the array and return the new array after the deletion 
+    /**
+     * 
+     * @param {Array} images 
+     * @param {string} imageId
+     * @returns {boolean} 
+     */
     deleteImageFromArray: function (images,imageId){
         
         if(!images) return [];
      
         for(let i=0;i<images.length;i++){
          
-            if( images[i]._id == imageId  ){
+            if( String(images[i]._id) == String(imageId)  ){
                 
                 images.splice(i,1);
                
@@ -351,6 +381,13 @@ const Image = {
         }
         return 0;
     },
+    /**
+     * 
+     * @param {string} userId 
+     * @param {string} sourceId 
+     * @param {string} belongsTo
+     * @returns {boolean} 
+     */
     deleteImages: async function(userId,sourceId,belongsTo){
         // remove images from database and from gridfs
         // check if user has access to delete image then delete the image

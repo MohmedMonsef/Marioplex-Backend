@@ -1,7 +1,7 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 const mongoose = require('mongoose')
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
-
+const Image = require('./image-api')
 const Track = {
 
     /** 
@@ -300,12 +300,7 @@ const Track = {
         // delete track images
         if(!track.images) track.images = [];
         // delete image from gridfs
-        for(let image of track.images){
-            const imageFile = gfsImages.files.findOne({"metadata.imageId":mongoose.Types.ObjectId(image._id)});
-                const imageIdGridfs = imageFile ? imageFile._id : undefined;
-                if(!imageIdGridfs) continue;
-            await gfsImages.files.deleteOne({_id:imageIdGridfs});
-        }
+        await Image.deleteImages(userId,trackId,'track');
         // delete from tracks
         await trackDocument.findByIdAndDelete(trackId);
         // delete from gridfs

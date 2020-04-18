@@ -265,7 +265,7 @@ const Artist = {
         if(!artist || !trackId) return 0;
         if(!artist.addTracks) return 0;
         for(let track of artist.addTracks){
-            if(track.trackId == trackId) return 1;
+            if(String(track.trackId) == String(trackId)) return 1;
         }
         return 0;
     }

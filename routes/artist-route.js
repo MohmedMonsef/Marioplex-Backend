@@ -11,6 +11,7 @@ const {upload:uploadTrack} = require('../middlewares/upload-tracks');
 
 // get Artist - Path Params : artist_id
 router.get('/Artists/:artist_id', checkAuth, async(req, res) => {
+    if(req.params.artist_id==undefined){return res.status(403).send('Artist ID is undefined');}
     const artistID = req.params.artist_id;
     //GET THE ARTIST WITH THE GIVEN ID
     const artist = await Artist.getArtist(artistID);
@@ -22,6 +23,7 @@ router.get('/Artists/:artist_id', checkAuth, async(req, res) => {
 
 // get Artists - Query Params : artists_ids
 router.get('/Artists', [checkAuth], async(req, res) => {
+    if(req.query.artists_ids==undefined){return res.status(403).send('Artist IDs is undefined');}
     //SPLIT THE GIVEN COMMA SEPERATED LIST OF ARTISTS IDS
     const artistsIDs = req.query.artists_ids.split(',');
     //GET AN ARRAY OF ARTISTS WITH THE GIVEN IDS
@@ -33,6 +35,7 @@ router.get('/Artists', [checkAuth], async(req, res) => {
 
 // get Albums - Path Params : artist_id -Query Params : Album Specifications
 router.get('/Artists/:artist_id/Albums', [checkAuth], async(req, res) => {
+    if(req.params.artist_id==undefined){return res.status(403).send('Artist ID is undefined');}
     //GET ARRAY OF ALBUMS FOR AN ARTIST WITH THE SPECIFICATIONS GIVEN
     const albums = await Artist.getAlbums(req.params.artist_id, req.query.groups, req.query.country, req.query.limit, req.query.offset);
     //IF THE ARRAY IS EMPTY RETURN 404 ELSE RETURN 200 WITH THE ALBUMS ARRAY
@@ -41,6 +44,7 @@ router.get('/Artists/:artist_id/Albums', [checkAuth], async(req, res) => {
 });
 //get Tracks - Path Params : artist_id
 router.get('/Artists/:artist_id/Tracks', [checkAuth], async(req, res) => {
+    if(req.params.artist_id==undefined){return res.status(403).send('Artist ID is undefined');}
     //GET THE GIVEN ARTIST TRACKS
     const tracks = await Artist.getTracks(req.params.artist_id);
     if (tracks.length == 0 || tracks == 0) return res.status(404).send({ error: "tracks are not found" });
@@ -48,6 +52,7 @@ router.get('/Artists/:artist_id/Tracks', [checkAuth], async(req, res) => {
 });
 // get RelatedArtists - Path Params : artist_id
 router.get('/Artists/:artist_id/related_artists', [checkAuth], async(req, res) => {
+    if(req.params.artist_id==undefined){return res.status(403).send('Artist ID is undefined');}
     //GET THE RELATED ARTISTS BY GENRE TO THE GIVEN ARTIST
     const artists = await Artist.getRelatedArtists(req.params.artist_id);
     //RETURN 404 IF EMPTY ELSE RETURN THE ARTISTS
@@ -57,6 +62,8 @@ router.get('/Artists/:artist_id/related_artists', [checkAuth], async(req, res) =
 
 // get Top Tracks - Path Params : artist_id
 router.get('/Artists/:artist_id/top-tracks', [checkAuth], async(req, res) => {
+    if(req.params.artist_id==undefined){return res.status(403).send('Artist ID is undefined');}
+    if(req.query.country==undefined){return res.status(403).send('country code is Required');}
     //GET THE TOP TRACKS OF AN ARTIST IN A SPECIFIC COUNTRY
     const tracks = await Artist.getTopTracks(req.params.artist_id, req.query.country);
     if (tracks.length == 0 || tracks == 0) return res.status(404).send({ error: "no top tracks in this country are not found" });
@@ -64,17 +71,23 @@ router.get('/Artists/:artist_id/top-tracks', [checkAuth], async(req, res) => {
 });
 // create album 
 router.put('/Artists/me/Albums',[checkAuth,checkType,checkContent],async (req,res)=>{
+    if(req.params.artist_id==undefined){return res.status(403).send('Artist ID is undefined');}
+    if(req.body.name==undefined||req.body.label==undefined||req.body.availablemarkets==undefined||req.body.albumtype==undefined||req.body.releaseDate==undefined||req.body.genre==undefined){return res.status(403).send('Missing Data in the Album Data');}
+    if(req.body.name==""||req.body.label==""||req.body.availablemarkets==""||req.body.albumtype==""||req.body.releaseDate==""||req.body.genre==""){return res.status(403).send('Missing Data in the Album Data');}
+    let avMarkets=req.body.availablemarkets.split(',');
     //GET THE CURRENT ARTIST USER
    const artist =await Artist.findMeAsArtist(req.user._id);
    //ADD AN ALBUM TO THIS USER
-    const artistAlbum = await Artist.addAlbum(artist._id,req.body.name,req.body.label,req.body.availablemarkets,req.body.albumtype,req.body.releaseDate,req.body.genre);
+    const artistAlbum = await Artist.addAlbum(artist._id,req.body.name,req.body.label,avMarkets,req.body.albumtype,req.body.releaseDate,req.body.genre);
     if(!artistAlbum) return res.status(404).send(" "); 
     else return res.status(200).send(artistAlbum); 
 });
 
 // upload tracks - Path Params : album_id
 router.post('/artists/me/albums/:album_id/tracks',checkAuth,checkType,async (req,res)=>{
-
+    if(req.params.album_id==undefined){return res.status(403).send('Album ID is undefined');}
+    if(req.query.name==undefined||req.query.trackNumber==undefined||req.query.availableMarkets==undefined||req.query.duration==undefined){return res.status(403).send('Missing Data in the Track Data');}
+    if(req.query.name==""||req.query.trackNumber==""||req.query.availableMarkets==""||req.query.duration==""){return res.status(403).send('Missing Data in the Track Data');}
     // only artist upload songs
     const artist =await Artist.findMeAsArtist(req.user._id);
     if(!artist){  res.status(403).json({"error":"not an artist"});return 0;};
@@ -114,7 +127,7 @@ router.post('/artists/me/albums/:album_id/tracks',checkAuth,checkType,async (req
 
 //CLAIM USER TO ARTIST
 router.post('/me/ToArtist', [checkAuth], async(req, res) => {
-    if (req.body.genre) {
+    if (req.body.genre&&req.body.genre!="") {
         let genre = req.body.genre.split(',');
         //SEND THE REQUEST IF THE USER IS ALREADY AN ARTIST THEN RETURN 403 ELSE RETURN 200
         let isartist = await User.promoteToArtist(req.user._id, req.body.info, req.body.name, genre);

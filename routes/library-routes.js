@@ -16,7 +16,7 @@ const { auth: checkAuth } = require('../middlewares/is-me');
 
 //CHECK IF USER SAVES ALBUMS - QUERY PARAMS: albums_ids
 router.get('/me/albums/contains', checkAuth, async(req, res) => {
-
+    if(req.query.albums_ids==undefined||req.query.albums_ids==""){return res.status(403).send("No Album ids given");}
     const userID = req.user._id;
     const albumsIDs = req.query.albums_ids.split(',');
     const checks = await Library.checkSavedAlbums(albumsIDs, userID);
@@ -27,7 +27,7 @@ router.get('/me/albums/contains', checkAuth, async(req, res) => {
 
 //CHECK IF USER SAVES TRACKS - QUERY PARAMS: tracks_ids
 router.get('/me/tracks/contains', checkAuth, async(req, res) => {
-
+    if(req.query.tracks_ids==undefined||req.query.tracks_ids==""){return res.status(403).send("No Tracks ids given");}
     const userID = req.user._id;
     const tracksIDs = req.query.tracks_ids.split(',');
     const checks = await Library.checkSavedTracks(tracksIDs, userID);

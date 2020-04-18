@@ -321,11 +321,13 @@ const User = {
     promoteToArtist: async function(userID, info, name, genre) {
         if(!checkMonooseObjectID([userID])) return 0;
         user = await this.getUserById(userID);
+        
         if (!user) return false;
         if (user.userType == "Artist") {
             return false;
         }
         let artist = await Artist.createArtist(user, info, name, genre);
+        //console.log(artist)
         if (!artist) return false;
         user.userType = "Artist";
         await user.save();

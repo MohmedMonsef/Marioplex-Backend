@@ -9,7 +9,7 @@ const Artist = {
     //CREATE AN ARTIST - PARAMS: user-info-name-Genre
     createArtist: async function(user, Info, name, Genre) {
         var userName;
-        if(typeof(info) != "string" || typeof(name) != "string" ) return 0;
+       // if(typeof(info) != "string" || typeof(name) != "string" ) return 0;
         //CHECK THE GIVEN NAME IF NULL THEN = USERNAME
         if (!name) userName = user.displayName;
         else userName = name;

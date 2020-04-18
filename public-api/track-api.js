@@ -8,12 +8,12 @@ const Track = {
     *  get track by id
     * @param : track-id {mongoose ObjectId}
     **/
-    getTrack: async function(trackID) {
+    getTrack: async function(trackId) {
        
         // connect to db and find track with the same id then return it as json file
         // if found return track else return 0
-        if(!checkMonooseObjectID([trackID])) return 0;
-        const track = await trackDocument.findById(trackID, (err, track) => {
+        if(!checkMonooseObjectID([trackId])) return 0;
+        const track = await trackDocument.findById(trackId, (err, track) => {
             if (err) return 0;
             return track;
         }).catch((err) => 0);
@@ -26,9 +26,9 @@ const Track = {
     * @param : track-id {mongoose ObjectId}
     * @param : user {user object}
     **/
-    getFullTrack: async function(trackID, user) {
-        if(!checkMonooseObjectID([trackID])) return 0;
-        const track = await this.getTrack(trackID);
+    getFullTrack: async function(trackId, user) {
+        if(!checkMonooseObjectID([trackId])) return 0;
+        const track = await this.getTrack(trackId);
         if (!track) return 0; //not found
         // get both album and artist of the track
         const album = await albumDocument.findById(track.albumId);
@@ -39,7 +39,7 @@ const Track = {
         if (!artist) return 0;
         artist.popularity++;
         await artist.save();
-        const isLiked = await this.checkIfUserLikeTrack(user, trackID) ? true : false;
+        const isLiked = await this.checkIfUserLikeTrack(user, trackId) ? true : false;
         
         return { track: track, isLiked: isLiked, album: { name: album.name, _id: album._id, artist: { name: artist.Name, _id: artist._id } } }
     },
@@ -47,11 +47,11 @@ const Track = {
     *  get several tracks
     * @param : array of track ids
     */
-    getTracks: async function(tracksIDs, user) {
+    getTracks: async function(trackIds, user) {
         if(!checkMonooseObjectID(trackIDs)) return 0;
         let tracks = [];
-        for (let trackID of tracksIDs) {
-            let track = await this.getFullTrack(trackID, user);
+        for (let trackId of trackIds) {
+            let track = await this.getFullTrack(trackId, user);
             if (!track) continue
             tracks.push(track);
         }
@@ -62,9 +62,9 @@ const Track = {
     *  get audio features for track
     * @param : track-id {mongoose ObjectId}
     **/
-    getAudioFeaturesTrack: async function(trackID) {
-        if(!checkMonooseObjectID([trackID])) return 0;
-        const track = await this.getTrack(trackID);
+    getAudioFeaturesTrack: async function(trackId) {
+        if(!checkMonooseObjectID([trackId])) return 0;
+        const track = await this.getTrack(trackId);
         if (!track) return 0;
         const audioFeatures = {
 
@@ -88,14 +88,14 @@ const Track = {
     *  get audio features for tracks
     * @param : track-ids {mongoose ObjectId}
     **/
-    getAudioFeaturesTracks: async function(tracksIDs) {
+    getAudioFeaturesTracks: async function(trackIds) {
         if(!checkMonooseObjectID(trackIDs)) return 0;
         let audioFeatures = {};
         var count = 0;
-        for (let trackID of tracksIDs) {
-            const audioFeature = await this.getAudioFeaturesTrack(trackID);
+        for (let trackId of trackIds) {
+            const audioFeature = await this.getAudioFeaturesTrack(trackId);
             if (audioFeature) {
-                audioFeatures[trackID] = audioFeature;
+                audioFeatures[trackId] = audioFeature;
                 count++;
             }
         }
@@ -110,12 +110,12 @@ const Track = {
     * @param : user {mongoose object}
     * @param : track-id {mongoose ObjectId}
     **/
-    checkIfUserLikeTrack: function(user, trackID) {
-        if(!checkMonooseObjectID([trackID])) return 0;
+    checkIfUserLikeTrack: function(user, trackId) {
+        if(!checkMonooseObjectID([trackId])) return 0;
         const tracksUserLiked = user.like;
         
         if (tracksUserLiked) {
-            return tracksUserLiked.find(track => String(track.trackId) == String(trackID) );
+            return tracksUserLiked.find(track => String(track.trackId) == String(trackId) );
         }
         return 0;
     },
@@ -124,22 +124,22 @@ const Track = {
     * @param : user {mongoose object}
     * @param : track-id {mongoose ObjectId}
     **/
-    likeTrack: async function(user, trackID) {
+    likeTrack: async function(user, trackId) {
 
         // check if user already liked the track
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
-        if(!checkMonooseObjectID([trackID])) return 0;
-        const track = await this.getTrack(trackID);
+        if(!checkMonooseObjectID([trackId])) return 0;
+        const track = await this.getTrack(trackId);
         if (!track) return 0;
         if (!track.like) track.like = 0;
 
-        if (this.checkIfUserLikeTrack(user, trackID)) {
+        if (this.checkIfUserLikeTrack(user, trackId)) {
             return 0;
         }
         if (user.like) {
             user.like.push({
-                trackId: trackID
+                trackId: trackId
             });
 
             await user.save();
@@ -151,7 +151,7 @@ const Track = {
         }
         user.like = [];
         user.like.push({
-            trackId: trackID
+            trackId: trackId
         });
         await user.save().catch();
 
@@ -168,21 +168,21 @@ const Track = {
     * @param : user {mongoose object}
     * @param : track-id {mongoose ObjectId}
     **/
-    unlikeTrack: async function(user, trackID) {
+    unlikeTrack: async function(user, trackId) {
         // check if user already liked the track
         // if user.like.contains({track_id:track.track_id})
         // if  found then remove track.track_id from user likes and return the updated user
         // else return 0 as he didn't like the 
-        if(!checkMonooseObjectID([trackID])) return 0;
-        const track = await this.getTrack(trackID);
+        if(!checkMonooseObjectID([trackId])) return 0;
+        const track = await this.getTrack(trackId);
         if (!track) return 0;
         if (!track.like) track.like = 0;
 
-        if (!this.checkIfUserLikeTrack(user, trackID)) {
+        if (!this.checkIfUserLikeTrack(user, trackId)) {
             return 0;
         }
         for (let i = 0; i < user.like.length; i++) {
-            if (String(user.like[i].trackId) == String(trackID)) {
+            if (String(user.like[i].trackId) == String(trackId)) {
                 user.like.splice(i, 1);
                 break;
             }
@@ -201,23 +201,23 @@ const Track = {
     * @param : trackNumber {Number} number of track in album
     * @param : availableMarkets {Array} markets
     * @param : artistId {mongoose object ID}
-    * @param : albumID {mongoose object ID}
+    * @param : albumId {mongoose object ID}
     * @param : duration {Number} 
     **/
-    createTrack: async function(url, Name, TrackNumber, AvailableMarkets, artistId, albumID, duration,key,keyId) {
-        //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(TrackNumber) != "number" || typeof(duration) != "number") return 0;
+    createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration,key,keyId) {
+        //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(trackNumber) != "number" || typeof(duration) != "number") return 0;
        
-        if(!checkMonooseObjectID([artistId,albumID])) return 0;
-        if(!AvailableMarkets) AvailableMarkets = [];
+        if(!checkMonooseObjectID([artistId,albumId])) return 0;
+        if(!availableMarkets) availableMarkets = [];
         let track = new trackDocument({
             url: url,
             images: [],
             duration:duration,
-            availableMarkets: AvailableMarkets,
-            trackNumber: TrackNumber,
+            availableMarkets: availableMarkets,
+            trackNumber: trackNumber,
             name: Name,
             artistId: artistId,
-            albumId: albumID,
+            albumId: albumId,
             discNumber: 1,
             explicit: false,
             type: "Track",

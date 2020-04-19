@@ -4,7 +4,6 @@ const joi = require('joi');
 const User = require('../public-api/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
-
 //GET USER'S PUBLIC PROFILE, PATH PARAMS: id
 router.get('/users/:id', checkAuth, async(req, res) => {
 
@@ -14,6 +13,11 @@ router.get('/users/:id', checkAuth, async(req, res) => {
     } else {
         res.sendStatus(404)
     }
+})
+router.put('/me/promote', checkAuth, async(req, res) => {
+    const isPromote = await User.promoteToPremium(req.user._id, req.query.credit);
+    if (isPromote) res.status(200).send({ success: 'promote to premium ' });
+    else res.status(400).send({ error: 'can not promote' })
 })
 
 //GET USER'S PRIVATE PROFILE WITH PLAYER with player info
@@ -27,7 +31,8 @@ router.get('/me-player', checkAuth, async(req, res) => {
         product: 1,
         gender: 1,
         images: 1,
-        player: 1
+        player: 1,
+        userType: 1
     }).exec().then(user => {
         if (user) {
             return res.status(200).send(user);

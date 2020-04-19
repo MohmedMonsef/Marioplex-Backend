@@ -5,15 +5,19 @@ const mongoose = require('mongoose');
 const Track = require('./track-api');
 const Album = require('./album-api');
 const Artist = require('./artist-api');
-const checkMonooseObjectID = require('../validation/mongoose-objectid')
+const checkMonooseObjectId = require('../validation/mongoose-objectid')
 
 const Playlist = {
 
-
+    /**
+     * get a playlist by id
+     * @param {string} playlistId - playlist id
+     * @returns {Object|0} - playlist object
+     */
     // get playlist by id
     // params : playlistId
     getPlaylist: async function(playlistId) {
-        if(!checkMonooseObjectID([playlistId])) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
         const playlist = await playlistDocument.findById(playlistId, (err, playlist) => {
             if (err) return 0;
             return playlist;
@@ -21,10 +25,14 @@ const Playlist = {
         return playlist;
 
     },
+    /**
+     * get popular playlists
+     * @returns {array<object>} - array of playlists' object
+     */
     //get popular playlists based on popularity
     getPopularPlaylists: async function() {
         // with - is from big to small and without is from small to big
-        var replaylists = []
+        var rePlaylists = []
         const playlists = await playlistDocument.find({}).sort('-popularity')
         if (playlists) {
             var limit; // to limit the num of playlists by frist 20 only but should check if num of albums less than 10  
@@ -32,38 +40,46 @@ const Playlist = {
             else limit = 20;
             for (let i = 0; i < limit; i++) {
                 const user1 = await userDocument.findById(playlists[i].ownerId);
-                replaylists.push({ owner: { id: playlists[i].ownerId, type: "user", name: user1.displayName }, collaborative: playlists[i].collaborative, type: 'playlist', name: playlists[i].name, images: playlists[i].images, id: playlists[i]._id, Description: playlists[i].Description, isPublic: playlists[i].isPublic });
+                rePlaylists.push({ owner: { id: playlists[i].ownerId, type: 'user', name: user1.displayName }, collaborative: playlists[i].collaborative, type: 'playlist', name: playlists[i].name, images: playlists[i].images, id: playlists[i]._id, Description: playlists[i].Description, isPublic: playlists[i].isPublic });
             }
         }
-        const replaylistsJson = { playlists: replaylists };
+        const replaylistsJson = { playlists: rePlaylists };
         return replaylistsJson;
     },
+    /**
+     * get playlist with tracks
+     * @param {string} playlistId - playlist id
+     * @param {string} snapshotId
+     * @param {Object} user -user object
+     * @returns {array<object>|0} - array of objects of a playlist and it's tracks
+     */
     //for routes
     //get playlist with tracks
-    //params: playlistId, snapshotID, user
-    getPlaylistWithTracks: async function(playlistId, snapshotID, user) {
-        if(!checkMonooseObjectID([playlistId,snapshotID])) return 0;
+    //params: playlistId, snapshotId, user
+    getPlaylistWithTracks: async function(playlistId, snapshotId, user) {
+        if (!user) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
         const playlist = await this.getPlaylist(playlistId);
-        let checkfollow=await this.checkFollowPlaylistByUser(user, playlistId);
-        let checkcreate=await this.checkIfUserHasPlaylist(user, playlistId);
-        if(!playlist) return 0;
-        if(!playlist.snapshot) platlist.snapshot = [];
-        if (playlist.isPublic || checkcreate || checkfollow) {
+        if (!playlist) return 0;
+        let checkFollow = await this.checkFollowPlaylistByUser(user, playlistId);
+        let checkCreate = await this.checkIfUserHasPlaylist(user, playlistId);
+        if (!playlist.snapshot) platlist.snapshot = [];
+        if (playlist.isPublic || checkCreate || checkFollow) {
             var playlistJson = [];
             var tracks = [];
             let snapshot;
             let found = false;
             for (let i = 0; i < playlist.snapshot.length; i++) {
-                if (playlist.snapshot[i]._id == snapshotID) {
+                if (playlist.snapshot[i]._id == snapshotId) {
                     snapshot = i;
                     found = true;
                 }
             }
             if (!found) { snapshot = playlist.snapshot.length - 1; }
             if (playlist.snapshot[snapshot] != undefined) {
-                if(!playlist.snapshot[snapshot].hasTracks) playlist.snapshot[snapshot].hasTracks = [];
+                if (!playlist.snapshot[snapshot].hasTracks) playlist.snapshot[snapshot].hasTracks = [];
                 for (let i = 0; i < playlist.snapshot[snapshot].hasTracks.length; i++) {
-                   
+
                     const track1 = await Track.getTrack(playlist.snapshot[snapshot].hasTracks[i]);
                     const artistId = track1.artistId;
                     const albumId = track1.albumId;
@@ -81,137 +97,158 @@ const Playlist = {
         return 0;
     },
 
-
+    /**
+     * check if user has a specific playlist
+     * @param {string} playlistId - playlist id
+     * @param {Object} user - user object
+     * @returns {number|undefined} - the index of playlist id in user's playlists
+     */
     //check if user has a specific playlist
-    //params:user, playlistID
-    checkIfUserHasPlaylist: async function(user, playlistID) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
+    //params:user, playlistId
+    checkIfUserHasPlaylist: async function(user, playlistId) {
+        if (!user) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
         const userPlaylists = user.createPlaylist;
 
         if (userPlaylists) {
-            return await userPlaylists.find(playlist => playlist.playListId + 1 == playlistID + 1);
+            return await userPlaylists.find(playlist => playlist.playListId + 1 == playlistId + 1);
         }
         return 0;
     },
-
+    /**
+     * create playlist
+     * @param {string} [description] - playlist discription
+     * @param {string} name - playlist name
+     * @param {string} userid - user id
+     * @returns {Object} - playlist object
+     */
     // create playlist
     // params : userid, Name, description
-    createPlaylist: async function(userid, Name, description) {
-        if(!checkMonooseObjectID([userid])) return 0;
-        let desc = (description == undefined) ? "" : description;
-        const Playlist = new playlistDocument({
+    createPlaylist: async function(userid, name, description) {
+        if (!checkMonooseObjectId([userid])) return 0;
+        let desc = (description == undefined) ? '' : description;
+        const playlist = new playlistDocument({
             _id: mongoose.Types.ObjectId(),
-            type: "playlist",
+            type: 'playlist',
             Description: desc,
             collaborative: false,
-            name: Name,
+            name: name,
             isPublic: true,
             ownerId: userid,
             images: [],
             snapshot: []
         })
 
-        await Playlist.save();
-        return Playlist;
+        await playlist.save();
+        return playlist;
     },
+    /**
+     * find index of track in playlist
+     * @param {string} trackId - track id 
+     * @param {Object} tplaylist - playlist object
+     * @returns {number} 
+     */
     findIndexOfTrackInPlaylist: async function(trackId, tplaylist) {
-        if(!checkMonooseObjectID([trackId])) return 0;
-        if(!tplaylist.hasTracks) tplaylist.hasTracks = [];
+        if (!checkMonooseObjectId([trackId])) return 0;
+        if (!tplaylist.hasTracks) tplaylist.hasTracks = [];
         for (let i = 0; i < tplaylist.hasTracks.length; i++) {
             if (tplaylist.hasTracks[i].trackId == trackId)
                 return i;
         }
         return -1
     },
-    
+    /**
+     * delete user's created playlist
+     * @param {string} playlistId - playlist id 
+     * @param {Object} user - user object
+     * @returns {boolean} 
+     */
     //delete playlist
     //params :user, playlistId
     deletePlaylist: async function(user, playlistId) {
-        if(!checkMonooseObjectID([playlistId])) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
         const playlist = await Playlist.getPlaylist(playlistId);
-        if (playlist) {
-            const userHasPlaylist = await Playlist.checkIfUserHasPlaylist(user, playlistId);
-            if (userHasPlaylist) {
-                if(!user.createPlaylist) user.createPlaylist = [];
-                for (let i = 0; i < user.createPlaylist.length; i++) {
-
-                    if (user.createPlaylist[i].playListId == playlistId) {
-
-                        user.createPlaylist.splice(i, 1);
-                        await user.save();
-                    }
-                }
-                return await this.unfollowPlaylist(user, playlistId);
-
+        if (!playlist) return 0;
+        const userHasPlaylist = await Playlist.checkIfUserHasPlaylist(user, playlistId);
+        if (!userHasPlaylist) return 0;
+        if (!user.createPlaylist) return 0;
+        for (let i = 0; i < user.createPlaylist.length; i++) {
+            if (user.createPlaylist[i].playListId + 1 == playlistId + 1) {
+                user.createPlaylist.splice(i, 1);
+                await user.save();
             }
-        } else return 0;
+        }
+        return await this.unfollowPlaylist(user, playlistId);
     },
-
+    /**
+     * check if user followz playlist
+     * @param {string} playlistId - playlist id 
+     * @param {Object} user - user object
+     * @returns {boolean} 
+     */
     //check if user followz playlist
-    //params:user, playlistID
-    checkFollowPlaylistByUser: async function(user, playlistID) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        const followedplaylists = user.followPlaylist;
+    //params:user, playlistId
+    checkFollowPlaylistByUser: async function(user, playlistId) {
+        if (!user) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        const followedPlaylists = user.followPlaylist;
 
-        if (followedplaylists) {
-            const followed = await followedplaylists.find(playlist => playlist.playListId + 1 == playlistID + 1);
+        if (followedPlaylists) {
+            const followed = await followedPlaylists.find(playlist => playlist.playListId + 1 == playlistId + 1);
 
             return followed
         }
         return 0;
     },
-
+    /**
+     * user follow playlist
+     * @param {string} playlistId - playlist id 
+     * @param {Object} user - user object
+     * @param {boolean} [isPrivate] - If true the playlist will be included in user’s public playlists, if false it will remain private. 
+     * @returns {boolean} 
+     */
     //user follow playlist
     //params : user , playlist-id ,isPrivate
-    followPlaylits: async function(user, playlistID, isPrivate) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        let check = await this.getPlaylist(playlistID);
+    followPlaylits: async function(user, playlistId, isPrivate) {
+        if (!user) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        let check = await this.getPlaylist(playlistId);
         if (!check) { return 0; }
-        const followedBefore = await this.checkFollowPlaylistByUser(user, playlistID)
+        const followedBefore = await this.checkFollowPlaylistByUser(user, playlistId)
         if (followedBefore) {
             return 0;
         }
-
         if (!isPrivate || isPrivate == 'false') {
             isPrivate = false;
         } else
             isPrivate = true;
-        if (user.followPlaylist) {
-            user.followPlaylist.push({
-                playListId: playlistID,
-                isPrivate: isPrivate
-
-            });
-            await user.save();
-            return 1;
-        }
-        user.followPlaylist = [];
+        if (!user.followPlaylist)
+            user.followPlaylist = [];
         user.followPlaylist.push({
-
-            playListId: playlistID,
+            playListId: playlistId,
             isPrivate: isPrivate
         });
         await user.save().catch();
         return 1;
     },
+    /**
+     * user unfollows a playlist
+     * @param {string} playlistId - playlist id 
+     * @param {Object} user - user object
+     * @returns {boolean} 
+     */
     //user unfollows a playlist
-    //params:user, playlistID
-    unfollowPlaylist: async function(user, playlistID) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        let check = await this.getPlaylist(playlistID);
-        if (!check) { return 0; }
-        const followedBefore = await this.checkFollowPlaylistByUser(user, playlistID)
-
-        if (!followedBefore) {
-
-            return 0;
-        }
+    //params:user, playlistId
+    unfollowPlaylist: async function(user, playlistId) {
+        if (!user) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        let check = await this.getPlaylist(playlistId);
+        if (!check) return 0;
+        const followedBefore = await this.checkFollowPlaylistByUser(user, playlistId)
+        if (!followedBefore) return 0;
         if (user.followPlaylist) {
-
             for (let i = 0; i < user.followPlaylist.length; i++) {
-
-                if (user.followPlaylist[i].playListId == playlistID) {
-
+                if (user.followPlaylist[i].playListId + 1 == playlistId + 1) {
                     user.followPlaylist.splice(i, 1);
                     await user.save();
                     return 1;
@@ -220,20 +257,27 @@ const Playlist = {
         }
         return 0;
     },
+    /**
+     * user adds track(s) to a specific playlist
+     * @param {string} playlistId - playlist id 
+     * @param {array<string>} tracksIds - array of tracks' id
+     * @returns {Object|0} - playlist object
+     */
     //user adds track(s) to a specific playlist
-    //params: playlistID, tracksIds
-    addTrackToPlaylist: async function(playlistID, tracksIds) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        if(!checkMonooseObjectID(trackIds)) return 0;
-        if(!trackIds) trackIds = [];
+    //params: playlistId, tracksIds
+    addTrackToPlaylist: async function(playlistId, tracksIds) {
+        //console.log(tracksIds);
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        if (!checkMonooseObjectId(tracksIds)) return 0;
+        if (!tracksIds) tracksIds = [];
         if (!tracksIds || tracksIds.length == 0) return 0;
-        let playlist = await this.getPlaylist(playlistID);
+        let playlist = await this.getPlaylist(playlistId);
         if (!playlist) return 0;
-        if(!playlist.snapshot) playlist.snapshot = [];
+        if (!playlist.snapshot) playlist.snapshot = [];
         let len = playlist.snapshot.length;
         let tracks = [];
         if (len) {
-            if(!playlist.snapshot[len-1].hasTracks) playlist.snapshot[len-1].hasTracks = [];
+            if (!playlist.snapshot[len - 1].hasTracks) playlist.snapshot[len - 1].hasTracks = [];
             for (let i = 0; i < playlist.snapshot[len - 1].hasTracks.length; i++) {
                 tracks.push(playlist.snapshot[len - 1].hasTracks[i]);
             }
@@ -241,7 +285,9 @@ const Playlist = {
         for (let i = 0; i < tracksIds.length; i++) {
             // check if trackid is valid mongoose object id
             if (!mongoose.Types.ObjectId.isValid(tracksIds[i])) return 0;
-            tracks.push(tracksIds[i]);
+            track = await Track.getTrack(tracksIds[i]);
+            if (track)
+                tracks.push(tracksIds[i]);
         }
         let uniquetracks = await this.removeDups(tracks);
         playlist.snapshot.push({
@@ -251,8 +297,13 @@ const Playlist = {
         await playlist.save();
         return playlist;
     },
+    /**
+     * user adds track(s) to a specific playlist
+     * @param {array<string>} tracksIds - array of tracks' id
+     * @returns {Object|0} - playlist object
+     */
     removeDups: async function(tracks) {
-        if(!tracks) tracks = [];
+        if (!tracks) tracks = [];
         let unique = {};
         tracks.forEach(function(i) {
             if (!unique[i]) {
@@ -261,28 +312,41 @@ const Playlist = {
         });
         return Object.keys(unique);
     },
-
+    /**
+     * user updates playlist details
+     * @param {string} playlistId - playlist id 
+     * @param {Object} details - object of the data to be updated
+     * @returns {Object|0} - playlist object
+     */
     //user updates playlist details
     //params :playlistId, details
     updatePlaylistDetails: async function(playlistId, details) {
-        if(!checkMonooseObjectID([playlistId])) return 0;
+        if (!checkMonooseObjectId([playlistId])) return 0;
         let playlist = await this.getPlaylist(playlistId);
         if (!playlist) return 0;
         await playlistDocument.updateOne({ _id: playlistId }, details);
         playlist = await this.getPlaylist(playlistId);
         return playlist;
     },
+    /**
+     * get playlists of a user
+     * @param {string} userId - user id 
+     * @param {number} [limit] - the maximum number of objects to return
+     * @param {number} [offset] - the index of the first object to return
+     * @param {boolean} isUser - if the user is the owner of the playlist
+     * @returns {array<object>|0} - array of playlists' object
+     */
     //get playlists of a user
     //params:userId, limit, offset, isuser
-    getUserPlaylists: async function(userId, limit, offset, isuser) {
-        if(!checkMonooseObjectID([userId])) return 0;
+    getUserPlaylists: async function(userId, limit, offset, isUser) {
+        if (!checkMonooseObjectId([userId])) return [];
         let user = await userDocument.findById(userId);
-        if (!user) return 0;
+        if (!user) return [];
         let playlistsIds = [];
         let playlists = [];
-        if(!user.followPlaylist) user.followPlaylist = [];
+        if (!user.followPlaylist) return [];
         for (var i = 0; i < user.followPlaylist.length; i++) {
-            if (isuser) {
+            if (isUser) {
                 playlistsIds.push(user.followPlaylist[i].playListId);
             } else {
                 if (!user.followPlaylist[i].isPrivate) {
@@ -292,7 +356,9 @@ const Playlist = {
         }
         for (var i = 0; i < playlistsIds.length; i++) {
             let playlist = await this.getPlaylist(playlistsIds[i]);
+            if (!playlist) continue;
             let owner = await userDocument.findById(playlist.ownerId);
+            if (!owner) continue;
             playlists.push({ id: playlist._id, name: playlist.name, ownerId: playlist.ownerId, owner: owner.displayName, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images });
         }
         let start = 0;
@@ -307,22 +373,28 @@ const Playlist = {
                 end = start + limit;
             }
         }
-        playlists.slice(start, end);
-        return playlists;
+        return playlists.slice(start, end);
     },
+    /**
+     * user toggles collaboration
+     * @param {Object} user - user object
+     * @param {string} playlistId - playlist id
+     * @returns {boolean} 
+     */
 
     //user toggles collaboration
-    //params:user, playlistID
-    changeCollaboration: async function(user, playlistID) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        let playlist = await playlistDocument.findById(playlistID);
+    //params:user, playlistId
+    changeCollaboration: async function(user, playlistId) {
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return false;
-        if(!user.createPlaylist) user.createPlaylist = [];
+        if (!user) return 0;
+        if (!user.createPlaylist) return 0;
         playlist.collaborative = !playlist.collaborative;
         if (playlist.collaborative) {
             playlist.isPublic = false;
             for (var i = 0; i < user.createPlaylist.length; i++) {
-                if (user.createPlaylist[i].playListId == playlistID) {
+                if (user.createPlaylist[i].playListId + 1 == playlistId + 1) {
                     user.createPlaylist[i].isPrivate = true;
                     await user.save();
                     await playlist.save();
@@ -332,29 +404,34 @@ const Playlist = {
         }
         await playlist.save();
         return true;
-
     },
-
+    /**
+     * user toggles public status
+     * @param {Object} user - user object
+     * @param {string} playlistId - playlist id
+     * @returns {boolean} 
+     */
     //user toggles public status
-    //params:user, playlistID
-    changePublic: async function(user, playlistID) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        let playlist = await playlistDocument.findById(playlistID);
+    //params:user, playlistId
+    changePublic: async function(user, playlistId) {
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        if (!user) return 0;
+        let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return false;
         if (playlist.collaborative) { return false; }
         playlist.isPublic = !playlist.isPublic;
-        if(!user.createPlaylist) user.createPlaylist = [];
+        if (!user.createPlaylist) return 0;
         for (var i = 0; i < user.createPlaylist.length; i++) {
-            if (user.createPlaylist[i].playListId == playlistID) {
+            if (user.createPlaylist[i].playListId + 1 == playlistId + 1) {
                 user.createPlaylist[i].isPrivate = !user.createPlaylist[i].isPrivate;
                 await user.save();
                 await playlist.save();
                 return true;
             }
         }
-        if(!user.followPlaylist) user.followPlaylist = [];
+        if (!user.followPlaylist) return 0;
         for (var i = 0; i < user.followPlaylist.length; i++) {
-            if (user.followPlaylist[i].playListId == playlistID) {
+            if (user.followPlaylist[i].playListId == playlistId) {
                 user.followPlaylist[i].isPrivate = !user.followPlaylist[i].isPrivate;
                 await user.save();
                 await playlist.save();
@@ -362,21 +439,24 @@ const Playlist = {
             }
         }
         return false;
-
     },
-
+    /**
+     * get playlist tracks (WITHOUT DETAILS OF THESE TRACKS)
+     * @param {string} playlistId - playlist id
+     * @returns {array<object>|0} -array of tracks' object 
+     */
     //get playlist tracks (WITHOUT DETAILS OF THESE TRACKS)
-    //params:playlistID
-    getPlaylistTracks: async function(playlistID) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        let playlist = await playlistDocument.findById(playlistID);
+    //params:playlistId
+    getPlaylistTracks: async function(playlistId) {
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return 0;
         let tracks = [];
-        if(!playlist.snapshot) playlist.snapshot = [];
-        
+        if (!playlist.snapshot) playlist.snapshot = [];
+
         let len = playlist.snapshot.length;
         if (len == 0) { return 0; }
-        if(!playlist.snapshot[len-1].hasTracks) playlist.snapshot[len-1].hasTracks = [];
+        if (!playlist.snapshot[len - 1].hasTracks) playlist.snapshot[len - 1].hasTracks = [];
         for (var i = 0; i < playlist.snapshot[len - 1].hasTracks.length; i++) {
             let track = await Track.getTrack(playlist.snapshot[len - 1].hasTracks[i]);
             if (track) {
@@ -386,39 +466,45 @@ const Playlist = {
         return tracks;
 
     },
-
+    /**
+     * remove tracks from a given playlist
+     * @param {string} playlistId - playlist id
+     * @param {string} snapshotId - snapshot id
+     * @param {array<string>} tracksIds -array of tracks' id
+     * @returns {array<object>|0} -array of tracks' object 
+     */
     //remove tracks from a given playlist
-    //params:playlistID, tracksids, snapshotid
-    removePlaylistTracks: async function(playlistID, tracksids, snapshotid) {
-        if(!checkMonooseObjectID([playlistID])) return 0;
-        if(!checkMonooseObjectID(trackids)) return 0;
-        let playlist = await playlistDocument.findById(playlistID);
+    //params:playlistId, tracksids, snapshotid
+    removePlaylistTracks: async function(playlistId, tracksIds, snapshotId) {
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        if (!checkMonooseObjectId(tracksIds)) return 0;
+        let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return 0;
         let tracks = [];
-        if(!playlist.snapshot) playlist.snapshot = [];
+        if (!playlist.snapshot) return 0;
         let len = playlist.snapshot.length;
-        if (len == 0) { return 0; }
+        if (len == 0) return 0;
         let found = false;
-        if (snapshotid != undefined) {
+        if (snapshotId != undefined) {
             for (var i = 0; i < playlist.snapshot.length; i++) {
-                if (playlist.snapshot[i]._id == snapshotid) {
+                if (playlist.snapshot[i]._id + 1 == snapshotId + 1) {
                     len = i + 1;
                     found = true;
                     break;
                 }
             }
-            if (!found) { return 0; }
+            if (!found) return 0;
         }
-        if(!playlist.snapshot[len-1].hasTracks) playlist.snapshot[len-1].hasTracks = [];
+        if (!playlist.snapshot[len - 1].hasTracks) return 0;
         for (var i = 0; i < playlist.snapshot[len - 1].hasTracks.length; i++) {
             let track = await Track.getTrack(playlist.snapshot[len - 1].hasTracks[i]);
             if (track) {
                 tracks.push(track);
             }
         }
-        for (var i = 0; i < tracksids.length; i++) {
+        for (var i = 0; i < tracksIds.length; i++) {
             for (var j = 0; j < tracks.length; j++) {
-                if (tracksids[i] == tracks[j]._id) {
+                if (tracksIds[i] == tracks[j]._id) {
                     tracks.splice(j, 1);
                 }
             }
@@ -431,29 +517,37 @@ const Playlist = {
         return playlist;
 
     },
-
+    /**
+     * reorder tracks in a playlist
+     * @param {string} playlistId - playlist id
+     * @param {string} snapshotId - snapshot id
+     * @param {number} start 
+     * @param {number} before 
+     * @param {number} length
+     * @returns {Object|0} -playlist object
+     */
     //reorder tracks in a playlist
-    //params:playlistID, snapshotid, start, length, before
-    reorderPlaylistTracks: async function(playlistID, snapshotid, start, length, before) {
-        if(!checkMonooseObjectID([playlistID,snapshotid])) return 0;
-        let playlist = await playlistDocument.findById(playlistID);
+    //params:playlistId, snapshotid, start, length, before
+    reorderPlaylistTracks: async function(playlistId, snapshotId, start, length, before) {
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return 0;
         let tracks = [];
-        if(!playlist.snapshot) playlist.snapshot = [];
+        if (!playlist.snapshot) return 0;
         let len = playlist.snapshot.length;
-        if (len == 0) { return 0; }
+        if (len == 0) return 0;
         let found = false;
-        if (snapshotid != undefined) {
+        if (snapshotId != undefined) {
             for (var i = 0; i < playlist.snapshot.length; i++) {
-                if (playlist.snapshot[i]._id == snapshotid) {
+                if (playlist.snapshot[i]._id + 1 == snapshotId + 1) {
                     len = i + 1;
                     found = true;
                     break;
                 }
             }
-            if (!found) { return 0; }
+            if (!found) return 0;
         }
-        if(!playlist.snapshot[len-1].hasTracks) playlist.snapshot[len-1].hasTracks = [];
+        if (!playlist.snapshot[len - 1].hasTracks) playlist.snapshot[len - 1].hasTracks = [];
         for (var i = 0; i < playlist.snapshot[len - 1].hasTracks.length; i++) {
             // to check track still exist in DB
             let track = await Track.getTrack(playlist.snapshot[len - 1].hasTracks[i]);
@@ -461,7 +555,7 @@ const Playlist = {
                 tracks.push(track._id);
             }
         }
-        let orderedtracks = [];
+        let orderedTracks = [];
         // check start is in range
         start--;
         let stindex = Number(start) < 1 ? 0 : Number(start) > tracks.length ? tracks.length - 1 : Number(start);
@@ -472,20 +566,19 @@ const Playlist = {
         before = before < 0 ? 0 : before > tracks.length - 1 ? tracks.length - 1 : before;
         // add tracks in range to order tracks
         for (let i = stindex; i <= endindex; i++) {
-            orderedtracks.push(tracks[i]);
+            orderedTracks.push(tracks[i]);
         }
         // remove tracks in this range from tracks in snashot
         tracks.splice(stindex, endindex - stindex + 1);
         // add those tracks before the inserted before index
-        if (before != 0) tracks.splice(before, 0, ...orderedtracks);
-        else tracks.unshift(...orderedtracks);
+        if (before != 0) tracks.splice(before, 0, ...orderedTracks);
+        else tracks.unshift(...orderedTracks);
         playlist.snapshot.push({
             hasTracks: tracks,
             action: 'reorder Tracks'
         });
         await playlist.save();
         return playlist;
-
     },
 }
 

@@ -233,5 +233,13 @@ router.delete('/tracks/delete/:track_id',checkAuth,async (req,res)=>{
     else res.status(200).json({"success":"deleted track"});
 })
 
+// get related track
+router.get('/tracks/related/:track_id',checkAuth,async (req,res)=>{
+    const trackId = req.params.track_id;
+    const tracksRelated = await Track.getRelatedTrack(trackId);
+    if(!tracksRelated) res.status(404).json({"error":"no related tracks found"});
+    else res.status(200).json(tracksRelated);
+
+})
 
 module.exports = router; 

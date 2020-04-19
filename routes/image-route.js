@@ -41,7 +41,7 @@ router.post('/images/upload/:source_id',checkAuth,async (req,res)=>{
     req.imageId = imageId;
     uploadImage.fields([{name:"image"}])(req,res,(err)=>{
         if(err){ 
-            res.status(403).send({"error":err.error});
+            res.status(403).send({"error":"cannot add image to db"});
             return 0;
       }else{
           res.status(200).json({"success":"uploaded succesfully"});
@@ -99,24 +99,17 @@ router.post('/images/update/:source_id',checkAuth,async (req,res)=>{
 })
 // get image 
 router.get('/images/:image_id',async (req,res)=>{
-    // get token as query parameter
-    const token=req.query.token;
-
-    if(!token){return res.status(401).send('No Available token');}
-
-    try{
-    const decoded=jwt.verify(token,jwtSecret);
-    req.user=decoded;
+ 
    
-    }
-    catch(ex){
-    
-    return res.status(400).send('Invalid Token');
-    }
+    const belongsTo = req.query.belongs_to;
+   
+    if(!belongsTo)return res.status(404).send('No belongs to');
+   
     const imageId = req.params.image_id;
     // get file from gridfs
-    gfsImages.files.findOne({"metadata.imageId":mongoose.Types.ObjectId(imageId)},function (err, file) {
+    gfsImages.files.findOne({"metadata.imageId":mongoose.Types.ObjectId(imageId),"metadata.belongsTo":belongsTo},function (err, file) {
         if (err) {res.send(500).send("server error while sending image");return 0;}
+        if(!file) {res.send(500).send("server error while sending image");return 0;}
         // send range response 
         const range = req.headers.range;
         if(range){

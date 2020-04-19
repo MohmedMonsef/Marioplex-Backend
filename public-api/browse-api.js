@@ -4,8 +4,7 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 // initialize db 
 const connection = require('../db-connection/connection');
 const User = require('./user-api');
-const track = require('./track-api');
-const playlist = require('./playlist-api');
+const Playlist = require('./playlist-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Browse = {
 
@@ -19,6 +18,28 @@ const Browse = {
         return category;
 
     },
+    getCategoryPlaylists: async function(categoryID) {
+        let category = await this.getCategoryById(categoryID);
+        if(!category) return 0;
+        let playlists = []
+       for(let i=0; i<category.playlist.length;i++) {
+           let playlist= await Playlist.getPlaylist(category.playlist[i]);
+           if(playlist){
+               let playlistInfo={};
+               playlistInfo['_id']=playlist._id;
+               playlistInfo['name']=playlist.name;
+               playlistInfo['images']=playlist.images;
+               let owner= await User.getUserById(playlist.ownerId);
+               if(owner){
+                playlistInfo['ownerId']=owner._id;
+                playlistInfo['ownerName']=owner.displayName;
+               }
+               playlists.push(playlistInfo);
+           }
+       }
+       return playlists;
+    },
+    
     // get categories
     getCategoryies: async function() {
 

@@ -6,12 +6,50 @@ const { auth: checkAuth } = require('../middlewares/is-me');
 
  //GET USER'S FOLLOWING ARTISTS
  router.get('/me/followingArtist', checkAuth, async(req, res) => {
-
+     
     const userID = req.user._id;
     const checks = await User.getUserFollowingArtist(userID);
     if (!checks) res.sendStatus(404); //not found
-    else res.status(200).json(checks);
+    else res.status(200).json({'Artists':checks});
 
+});
+ //CHECK IF A USER FOLLOW ARTISTS
+ router.get('/me/following/contains', checkAuth, async(req, res) => {
+
+    const userID = req.user._id;
+    const checks = await User.CheckIfUserFollowArtist(userID,req.body.id);
+    if (!checks) res.sendStatus(404); //not found
+    else res.status(200).json({'follow':checks});
+});
+//USER FOLLOW ARTISTS
+router.put('/me/following', checkAuth, async(req, res) => {
+
+    const userID = req.user._id;
+    const artistIds = req.body.id;
+    if(artistIds==undefined){
+        res.sendStatus(404);
+    }
+    else{
+        const checks = await User.UserFollowArtist(userID,artistIds);
+        if (!checks) res.sendStatus(404); //not found
+        else res.sendStatus(200);
+    }
+});
+//USER UNFOLLOW ARTISTS
+router.delete('/me/following', checkAuth, async(req, res) => {
+
+    const userID = req.user._id;
+    const artistIds = req.body.id;
+    if(artistIds==undefined){
+        res.sendStatus(404);
+    }
+    else{
+        const checks = await User.UserUnfollowArtist(userID,artistIds);
+        if (!checks) res.sendStatus(404); //not found
+        else res.sendStatus(200);
+
+    }
+    
 });
 
 //CHECK IF USER SAVES ALBUMS - QUERY PARAMS: albums_ids

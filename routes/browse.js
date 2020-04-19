@@ -12,10 +12,17 @@ router.get('/browse/categories/:category_id', async(req, res) => {
         const category = await browse.getCategoryById(categoryId);
         if (!category) res.sendStatus(404); //not found
         else res.send({ "category": category });
+})
+router.get('/browse/categories/:category_id/playlists', async(req, res) => {
 
-    })
+    const categoryId = req.params.category_id;
+
+    const playlists = await browse.getCategoryPlaylists(categoryId);
+    if (!playlists||playlists.length==0) res.sendStatus(404); //not found
+    else res.send({ "playlists": playlists });
+})
     // get categories
-router.get('/browse/categories/', async(req, res) => {
+router.get('/browse/categories', async(req, res) => {
 
     const category = await browse.getCategoryies();
     if (category.length == 0) res.sendStatus(404); //not found

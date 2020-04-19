@@ -10,6 +10,7 @@ const { auth: checkAuth } = require('../middlewares/is-me');
 const { content: checkContent } = require('../middlewares/content');
 const { isArtist: checkType } = require('../middlewares/check-type');
 const { upload: uploadTrack } = require('../middlewares/upload-tracks');
+const checkID = require('../validation/mongoose-objectid');
 
 // get Artist - Path Params : artist_id
 router.get('/Artists/:artist_id', checkAuth, async(req, res) => {
@@ -73,6 +74,12 @@ router.put('/Artists/me/Albums', [checkAuth, checkType, checkContent], async(req
     if (!artistAlbum) return res.status(404).send(" ");
     else return res.status(200).send(artistAlbum);
 });
+router.delete('/artist/:album_id', [checkAuth, checkType, checkContent], async(req, res) => {
+    if (!checkID([album_id])) return res.status(403).send({ error: 'id not correct ! ' })
+    const deleteAlbums = await Album.deleteAlbum(req.user._id, req.params.album_id);
+    if (deleteAlbums) return res.status(200).send({ success: 'deleted album ' })
+    else return res.status(400).send({ error: 'can not delete ' })
+})
 
 // upload tracks - Path Params : album_id
 router.post('/artists/me/albums/:album_id/tracks', checkAuth, checkType, async(req, res) => {

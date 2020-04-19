@@ -69,7 +69,7 @@ const Artist = {
             const artist = await this.getArtist(artistId);
             if (!artist) return 0;
             if (artist.addAlbums) {
-                return await artist.addAlbums.find(album => album.albumId == albumId);
+                return await artist.addAlbums.find(album => album.albumId + 1 == albumId + 1);
             }
         }
         return 0;

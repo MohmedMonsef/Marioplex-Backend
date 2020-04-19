@@ -236,7 +236,7 @@ const User = {
         if (!user.follow.length) { return 0; }
         let Artist = []
         for (let i = 0; i < user.follow.length; i++) {
-            let User = await this.getUserById(user.follow[i].id);
+            let User = await this.getUserById(String(user.follow[i].id));
             if (User) {
                 let artists = await artistDocument.find({ userId: User._id });
                 if (artists) {
@@ -343,7 +343,7 @@ const User = {
      * @returns {object} -new user object 
      */
     createUser: async function(username, password, email, gender, country, birthday) {
-        console.log('asadfsdfdf');
+       
         const salt = await bcrypt.genSalt(10);
         let hash = await bcrypt.hash(password, salt);
         const user = new userDocument({
@@ -452,7 +452,7 @@ const User = {
         for (let user in users) {
             if (!users[user].createPlaylist) return 0;
             for (var i = 0; i < users[user].createPlaylist.length; i++) {
-                if (users[user].createPlaylist[i].playListId + 1 == playlistId + 1) {
+                if (String(users[user].createPlaylist[i].playListId) == String(playlistId)) {
                     createduser = users[user];
                     playlistindex = i;
                     found = true;
@@ -465,7 +465,7 @@ const User = {
         if (createduser._id + 1 == userId + 1) return true;
         else {
             for (var i = 0; i < createduser.createPlaylist[playlistindex].collaboratorsId.length; i++) {
-                if (createduser.createPlaylist[playlistindex].collaboratorsId[i] + 1 == userId + 1) {
+                if (String(createduser.createPlaylist[playlistindex].collaboratorsId[i]) == String(userId)) {
                     return true;
                 }
             }

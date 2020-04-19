@@ -128,7 +128,7 @@ const User = {
         }
         //await Image.deleteImages(userID,userID,'user');
         // delete user himseld from db
-        await userDocument.findByIdAndDelete(userID);
+        await userDocument.findByIdAndDelete(userId);
         return 1;
 
     },

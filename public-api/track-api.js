@@ -204,7 +204,7 @@ const Track = {
     * @param : albumId {mongoose object ID}
     * @param : duration {Number} 
     **/
-    createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration,key,keyId) {
+    createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration,key,keyId,genre) {
         //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(trackNumber) != "number" || typeof(duration) != "number") return 0;
        
         if(!checkMonooseObjectID([artistId,albumId])) return 0;
@@ -235,7 +235,8 @@ const Track = {
             valence:  Math.floor(Math.random()*100),
             like: 0,
             key:key,
-            keyId:keyId
+            keyId:keyId,
+            genre:genre
 
         });
         await track.save();
@@ -287,12 +288,16 @@ const Track = {
         await playlistDocument.find({},async (err,files)=>{
             if(err) return 0;
             for(let playlist of files){
-                if(!playlist.hasTracks)continue;
-                for(let i=0;i<playlist.hasTracks.length;i++){
-                    if(String(playlist.hasTracks[i]) == trackId){
-                        playlist.hasTracks.splice(i,1);
+                if(!playlist.snapshot)continue;
+                
+                for(let i=0;i<playlist.snapshot.length;i++){
+                    if(!playlist.snapshot[i].hasTracks) continue;
+                    for(let j = 0;j<playlist.snapshot[i].hasTracks.length;j++){
+                    if(String(playlist.snapshot[i].hasTracks[j].trackId) == trackId){
+                        playlist.snapshot[i].hasTracks.splice(j,1);
                         break;
                     }
+                }
                 }
                 await playlist.save();
             }
@@ -322,6 +327,30 @@ const Track = {
 
         return 1;
 
+    },
+    // get related tracks to specific track
+    getRelatedTrack: async function(trackId){
+        const track = await this.getTrack(trackId);
+        if(!track) return 0;
+        if(!track.genre) return 0;
+        let tracksRelated = [];
+        await trackDocument.find({},(err,tracks)=>{
+            if(err) throw err;
+            if(!tracks) return 0;
+            for(let trackFile of tracks){
+                if(tracksRelated.length > 10)return;
+                if(!trackFile.genre) continue;
+                if(String(trackFile._id) == trackId ) continue;
+                for(let i=0;i<trackFile.genre.length;i++){
+                   if(track.genre.includes(trackFile.genre[i])){
+                       tracksRelated.push(trackFile);
+                       break;
+                   }
+                }
+            }
+        });
+        if(tracksRelated.length == 0)return 0;
+        return tracksRelated;
     }
 
 

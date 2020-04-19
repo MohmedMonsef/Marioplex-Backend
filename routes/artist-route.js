@@ -101,8 +101,8 @@ router.post('/artists/me/albums/:album_id/tracks', checkAuth, checkType, async(r
         // set up key and keyId to be base64 string
         let key = Buffer.from(req.query.key, 'hex').toString('base64').replace(/\+/g, "-").replace(/\//g, "_").replace(/=*$/, "");
         let keyId = Buffer.from(req.query.keyId, 'hex').toString('base64').replace(/\+/g, "-").replace(/\//g, "_").replace(/=*$/, "");
-
-        const track = await Track.createTrack(String(filename), req.query.name, Number(req.query.trackNumber), availableMarkets, artist._id, req.params.album_id, Number(req.query.duration), key, keyId);
+        const genres = req.query.genres ? req.query.genres.split(","):[]; 
+        const track = await Track.createTrack(String(filename), req.query.name, Number(req.query.trackNumber), availableMarkets, artist._id, req.params.album_id, Number(req.query.duration), key, keyId,genres);
         if (!track) { res.status(404).send("cannot create track in tracks"); return 0; }
         const addTrack = await Artist.addTrack(artist._id, track._id);
         if (!addTrack) { res.status(404).send("cannot create track in artist"); return 0; }

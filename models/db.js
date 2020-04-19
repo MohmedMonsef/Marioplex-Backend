@@ -38,7 +38,8 @@ const Track = new Schema({
     valence: Number,
     like: Number,
     key: String,
-    keyId: String
+    keyId: String,
+    genre:[String]
 });
 
 const Playlist = new Schema({

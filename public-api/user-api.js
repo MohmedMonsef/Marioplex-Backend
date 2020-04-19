@@ -141,8 +141,14 @@ const User = {
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
         const likeTrack = await Track.likeTrack(user, trackId).catch();
-        return likeTrack;
-
+        if (!likeTrack) return 0;
+        if (!user['likesTracksPlaylist']) {
+            const playlist = await Playlist.createPlaylist(userId, 'liked tracks', 'track which user liked .')
+            if (!playlist) return 0;
+            user['likesTracksPlaylist'] = playlist._id;
+            await user.save();
+        }
+        return await Playlist.addTrackToPlaylist(user['likesTracksPlaylist'], [trackId]);
     },
 
     //user unlike a track
@@ -159,7 +165,9 @@ const User = {
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
         const unlikeTrack = await Track.unlikeTrack(user, trackId);
-        return unlikeTrack;
+        console.log(unlikeTrack)
+        if (!unlikeTrack) return 0;
+        return await Playlist.removePlaylistTracks(user['likesTracksPlaylist'], [trackId]);
     },
     /** 
      * user add track to user's playlist

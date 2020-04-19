@@ -104,6 +104,7 @@ const User = new Schema({
         id: mongoose.Schema.Types.ObjectId,
         //ref: 'User'
     }],
+    likesTracksPlaylist: mongoose.Schema.Types.ObjectId,
     like: [{
         trackId: mongoose.Schema.Types.ObjectId
             //ref: 'Track'

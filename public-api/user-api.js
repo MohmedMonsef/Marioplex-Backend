@@ -126,7 +126,7 @@ const User = {
             let update = { ownerId : spotify._id};
             await playlistDocument.findOneAndUpdate(filter,update);                  
         }
-        //await Image.deleteImages(userID,userID,'user');
+        await Image.deleteImages(userID,userID,'user');
         // delete user himseld from db
         await userDocument.findByIdAndDelete(userId);
         return 1;

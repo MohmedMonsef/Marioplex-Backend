@@ -101,40 +101,40 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
     }
     // get file from gridfs
        gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackId),"metadata.type":type},function (err, file) {
-        if (err) {res.send(500).send("server error while sending track");return 0;}
-        // send range response 
-        const range = req.headers.range;
-        if(range){
-        console.log('range')
-        var parts = req.headers['range'].replace(/bytes=/, "").split("-");
-        var partialstart = parts[0];
-        var partialend = parts[1];
-    
-        var start = parseInt(partialstart, 10);
-        var end = partialend ? parseInt(partialend, 10) : file.length -1;
-        var chunksize = (end-start)+1;      
-        res.writeHead(206, {
-            'Content-Range': 'bytes ' + start + '-' + end + '/' + file.length,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': chunksize,
-            'Content-Type': file.contentType
-        });
-     gfsTracks.createReadStream({
-            _id:file._id,
-            range:{
-                startPos: start,
-                    endPos: end
-            }
-        }).pipe(res);
-        }else{
-            // if doesnt support range then send it sequential using pipe method in nodejs
-            res.header('Content-Length', file.length);
-            res.header('Content-Type', file.contentType);
+            if (err || !file) {res.send(500).send("server error while sending track");return 0;}
+            // send range response 
+            const range = req.headers.range;
+            if(range){
+                console.log('range')
+                var parts = req.headers['range'].replace(/bytes=/, "").split("-");
+                var partialstart = parts[0];
+                var partialend = parts[1];
+            
+                var start = parseInt(partialstart, 10);
+                var end = partialend ? parseInt(partialend, 10) : file.length -1;
+                var chunksize = (end-start)+1;      
+                res.writeHead(206, {
+                    'Content-Range': 'bytes ' + start + '-' + end + '/' + file.length,
+                    'Accept-Ranges': 'bytes',
+                    'Content-Length': chunksize,
+                    'Content-Type': file.contentType
+                });
+                gfsTracks.createReadStream({
+                    _id:file._id,
+                    range:{
+                        startPos: start,
+                            endPos: end
+                    }
+                }).pipe(res);
+            }else{
+                // if doesnt support range then send it sequential using pipe method in nodejs
+                res.header('Content-Length', file.length);
+                res.header('Content-Type', file.contentType);
 
-            gfsTracks.createReadStream({
-                _id: file._id
-            }).pipe(res);
-        }
+                gfsTracks.createReadStream({
+                    _id: file._id
+                }).pipe(res);
+            }
       
        
         });

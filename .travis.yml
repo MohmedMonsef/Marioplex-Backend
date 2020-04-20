@@ -3,3 +3,5 @@ sudo: false
 language: node_js
 install: 
  - git clone https://github.com/MohmedMonsef/Marioplex-Backend
+ script:
+ - true

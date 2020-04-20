@@ -14,4 +14,6 @@ before_deploy:
 - chmod 600 key.pem
 - ssh-add key.pem
 deploy:
- - bash Deploy.sh
+ provider: script
+ skip_cleanup: true
+ script: bash Deploy.sh

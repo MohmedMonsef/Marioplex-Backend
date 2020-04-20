@@ -19,7 +19,7 @@ router.post('/sign_up', async(req, res) => {
         password: Joi.string().required(),
         gender: Joi.string().required(),
         country: Joi.string().required(),
-        birthday: Joi.date().iso().required(),
+        birthday: Joi.date().raw().required(),
         username: Joi.string().required()
     });
 

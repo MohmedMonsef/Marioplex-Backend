@@ -91,7 +91,19 @@ const Playlist = {
                 }
             }
             const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;
-            playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks, isfollowed: followPlaylist });
+            let checkType;
+            let created=await this.checkIfUserHasPlaylist(user,playlistId);
+            if(created==undefined||!created){
+                
+                if(followPlaylist==undefined||!followPlaylist){
+                    checkType="none"
+                }
+                else{
+                checkType="followed"
+                }
+            }
+            else{checkType="created"}
+            playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks, isfollowed: followPlaylist,checkType:checkType });
             return playlistJson;
         }
         return 0;
@@ -359,8 +371,22 @@ const Playlist = {
             if (!playlist) continue;
             let owner = await userDocument.findById(playlist.ownerId);
             if (!owner) continue;
+         
+            if(isUser){
+                let checkType;
+                let created=await this.checkIfUserHasPlaylist(user,playlist._id);
+                if(created==undefined||!created){
+                    checkType="followed"
+                }
+                else{checkType="created"}
+           playlists.push({ id: playlist._id, name: playlist.name, ownerId: playlist.ownerId, owner: owner.displayName, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images,type:checkType });
+           
+        }
+        else{
             playlists.push({ id: playlist._id, name: playlist.name, ownerId: playlist.ownerId, owner: owner.displayName, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images });
         }
+        }
+
         let start = 0;
         let end = playlists.length;
         if (offset != undefined) {
@@ -580,6 +606,33 @@ const Playlist = {
         await playlist.save();
         return playlist;
     },
+    getDeletedPlaylists: async function(userId, limit) {
+        if (!checkMonooseObjectId([userId])) return [];
+        let user = await userDocument.findById(userId);
+        if (!user) return [];
+        let playlistsIds = [];
+        let playlists = [];
+        if (!user.deletedPlaylists||user.deletedPlaylists.length==0) return [];
+ 
+        for (var i = 0; i < user.deletedPlaylists.length; i++) {
+            let playlist = await this.getPlaylist(user.deletedPlaylists[i].id);
+            if (!playlist) continue;
+            let songsNumber=(playlist.snapshot.length==0||!playlist.snapshot)?0:playlist.snapshot[playlist.snapshot.length-1].hasTracks.length;
+            let playlistInfo=user.deletedPlaylists[i];
+            playlists.push({ id: playlistInfo.id, name: playlist.name, songsNumber:songsNumber, deletedAt: playlistInfo.date });
+        
+        }
+
+        let start = 0;
+        let end = playlists.length;
+        if (limit != undefined) {
+            if ((start + limit) > 0 && (start + limit) <= playlists.length) {
+                end = start + limit;
+            }
+        }
+        return playlists.slice(start, end);
+    },
+    
 }
 
 

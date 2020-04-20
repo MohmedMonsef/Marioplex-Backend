@@ -166,6 +166,24 @@ router.put('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
     return res.status(200).send(result);
 })
 
+router.get('/me/deletedplaylists', [checkAuth], async(req, res) => {
 
+    const playlists = await Playlist.getDeletedPlaylists(req.user._id, req.query.limit);
+    if(!playlists||playlists.length==0){
+        return res.status(404).send("NO DELETED PLAYLISTS YET");
+    }
+    return res.status(200).send(playlists);
+
+})
+
+router.put('/me/restoreplaylists', [checkAuth], async(req, res) => {
+    if(!req.query.playlistsIds||req.query.playlistsIds=="")return res.status(403).send("no ids for playlists given");
+    playlists=req.query.playlistsIds.split(',');
+    if (!checkID(playlists)) return res.status(403).send({ error: 'error in Ids' });
+    const restored = await User.restorePlaylists(req.user._id, playlists);
+    if (!restored || restored.length == 0) return res.status(404).send('CANT BE RESTORED');
+    res.status(200).send(restored);
+
+})
 
 module.exports = router;

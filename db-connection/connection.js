@@ -7,14 +7,14 @@ mongoose.Promise = global.Promise;
 // set gfs object ot be global
 global.gfsTracks = undefined;
 global.gfsImages = undefined;
-module.exports = function(app) {
-    const atlasSpotify = 'mongodb+srv://Spotify:spotifyapp@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
+module.exports= function(app){
+    const atlasSpotify ='mongodb+srv://Spotify:spotifyapp@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
+   
+    const atlas ='mongodb+srv://nada:nada@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
 
-    const atlas = 'mongodb+srv://nada:nada@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
-
-    const localhost = 'mongodb://localhost:27017/test';
-    const localhostnada = 'mongodb://localhost/seedsspotify';
-    const bahaa = "mongodb+srv://bahaaEldeen:123@spotifycluster-i2m7n.mongodb.net/test?retryWrites=true&w=majority";
+    const localhost = 'mongodb://localhost:27017/test' ;
+    const localhostnada='mongodb://localhost/spotifynada';
+    const bahaa ="mongodb+srv://bahaaEldeen:123@spotifycluster-i2m7n.mongodb.net/test?retryWrites=true&w=majority";
     const mlab = "mongodb://bahaa:123456b@ds157834.mlab.com:57834/spotify-demo"
     mongoose.connect(mlab, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 

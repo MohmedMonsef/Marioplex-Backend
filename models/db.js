@@ -95,6 +95,11 @@ const User=new Schema({
   displayName:String ,
   product:String ,
   isFacebook:Boolean,
+  deletedPlaylists:[
+    {
+      id:mongoose.Schema.Types.ObjectId,
+      date:Date
+    }],
   follow:[{
     id: mongoose.Schema.Types.ObjectId,
     //ref: 'User'

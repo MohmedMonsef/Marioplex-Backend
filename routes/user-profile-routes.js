@@ -16,7 +16,7 @@ router.get('/users/:id', checkAuth, async(req, res) => {
 })
 router.put('/me/promote', checkAuth, async(req, res) => {
     const prmoteData = Joi.object().keys({
-        expiresDate: Joi.date().min(Date.now()).iso().required(),
+        expiresDate: Joi.date().min(Date.now()).raw().required(),
         cardNumber: Joi.string().creditCard().required(),
         isMonth: Joi.boolean().required()
     });

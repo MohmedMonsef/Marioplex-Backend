@@ -9,5 +9,9 @@ notifications:
   email:
     recipients:
       - belalelhossany12@gmail.com
+before_deploy: 
+- eval "$(ssh-agent -s)"
+- chmod 600 key.pem
+- ssh-add key.pem
 deploy:
  - bash Deploy.sh

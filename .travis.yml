@@ -5,3 +5,7 @@ install:
  - git clone https://github.com/MohmedMonsef/Marioplex-Backend
 script:
   - true
+notifications:
+  email:
+    recipients:
+      - belalelhossany12@gmail.com

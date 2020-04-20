@@ -151,18 +151,16 @@ router.post('/artists/me/albums/:album_id/tracks', checkAuth, checkType, async(r
     } else {
         res.status(403).send({ "error": "artist doesnt own the album" })
     }
-
-
-    // update artist details 
-    router.put('/Artist/update', [checkAuth, checkType, checkContent], async(req, res) => {
-        let genre;
-        if (req.body.genre) genre = req.body.genre.split(',');
-        const artist = await Artist.updateArtist(req.user._id, req.body.name, genre, req.body.info);
-        if (artist) res.status(200).send(artist);
-        else res.status(400).send({ error: "can not update " });
-    });
-
 })
+
+// update artist details 
+router.put('/Artist/update', [checkAuth, checkType, checkContent], async(req, res) => {
+    let genre;
+    if (req.body.genre) genre = req.body.genre.split(',');
+    const artist = await Artist.updateArtist(req.user._id, req.body.name, genre, req.body.info);
+    if (artist) res.status(200).send(artist);
+    else res.status(400).send({ error: "can not update " });
+});
 
 //CLAIM USER TO ARTIST
 router.post('/me/ToArtist', [checkAuth], async(req, res) => {

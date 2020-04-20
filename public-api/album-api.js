@@ -37,7 +37,7 @@ const Album = {
     },
     deleteAlbum: async function(userId, albumId) {
         if (!checkMonooseObjectID([albumId])) return 0;
-        const artistD = await artist.ArtistfindMeAsArtist(userId);
+        const artistD = await artist.findMeAsArtist(userId);
         if (!artist) return 0;
         if (!artist.checkArtisthasAlbum(artistD._id, albumId)) return 0;
         const album = await this.getAlbumById(albumId);
@@ -48,8 +48,11 @@ const Album = {
             }
         }
         for (let i = 0; i < artistD.addAlbums.length; i++) {
-            if (artistD.addAlbums[i].albumId + 1 == albumId + 1) { artistD.addAlbums.splice(i, 0); break; }
+            console.log(artistD.addAlbums[i].albumId);
+            console.log(albumId);
+            if (artistD.addAlbums[i].albumId + 1 == albumId + 1) { artistD.addAlbums.splice(i, 1); break; }
         }
+        await artistD.save();
         if (!await albumDocument.findByIdAndDelete(albumId)) return 0;
 
         await userDocument.find({}, async(err, files) => {
@@ -65,6 +68,7 @@ const Album = {
                 await user.save();
             }
         });
+        return 1;
     },
 
     // new releases for home page 
@@ -221,7 +225,7 @@ const Album = {
         const albumsUserSaved = user.saveAlbum;
         // if user.like.contains({track_id:track.track_id})
         if (albumsUserSaved) {
-            return albumsUserSaved.find(album => album.albumId == albumID);
+            return albumsUserSaved.find(album => String(album.albumId) == String(albumID));
         }
         return 0;
     },
@@ -232,7 +236,7 @@ const Album = {
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
         if (albumID == undefined) return 2;
-        if (!checkMonooseObjectID([albumID])) return 0;
+        if (!checkMonooseObjectID(albumID)) return 0;
         let albums = [];
         for (let j = 0; j < albumID.length; j++) {
             let album = await this.getAlbumById(albumID[j]);

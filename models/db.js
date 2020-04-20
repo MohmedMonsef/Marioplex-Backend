@@ -39,7 +39,7 @@ const Track = new Schema({
     like: Number,
     key: String,
     keyId: String,
-    genre:[String]
+    genre: [String]
 });
 
 const Playlist = new Schema({
@@ -89,28 +89,28 @@ const User = new Schema({
     type: String,
     password: String,
     gender: String,
-    creditCard: String,
     country: String,
     isLogged: Boolean,
     images: [Image],
+    premium: {
+        expiresDate: Date,
+        cardNumber: String,
+        isMonth: Boolean,
+        ParticipateDate: Date
+    },
     userType: String,
     displayName: String,
     product: String,
     isFacebook: Boolean,
-    deletedPlaylists:[
-        {
-          id:mongoose.Schema.Types.ObjectId,
-          date:Date
-        }],
+    deletedPlaylists: [{
+        id: mongoose.Schema.Types.ObjectId,
+        date: Date
+    }],
     follow: [{
         id: mongoose.Schema.Types.ObjectId,
         //ref: 'User'
     }],
     likesTracksPlaylist: mongoose.Schema.Types.ObjectId,
-    like: [{
-        trackId: mongoose.Schema.Types.ObjectId
-            //ref: 'Track'
-    }],
     createPlaylist: [{
         playListId: mongoose.Schema.Types.ObjectId,
         //ref: 'Playlist',

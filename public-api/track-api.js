@@ -110,101 +110,71 @@ const Track = {
      * @param : user {mongoose object}
      * @param : track-id {mongoose ObjectId}
      **/
-    checkIfUserLikeTrack: function(user, trackId) {
+    checkIfUserLikeTrack: async function(user, trackId) {
+        if (!user) return 0;
         if (!checkMonooseObjectID([trackId])) return 0;
-        const tracksUserLiked = user.like;
-
-        if (tracksUserLiked) {
-            return tracksUserLiked.find(track => String(track.trackId) == String(trackId));
-        }
-        return 0;
+        if (!user['likesTracksPlaylist']) return 0;
+        const playlist = await playlistDocument.findById(user['likesTracksPlaylist'], (err, user) => {
+            if (err) return 0;
+            return user;
+        }).catch((err) => 0);
+        if (!playlist.snapshot) return 0;
+        if (playlist.snapshot.length == 0) return 0;
+        if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) return 0;
+        ifFind = false;
+        for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++)
+            if (String(trackId) == String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i])) {
+                ifFind = true;
+                break;
+            }
+        return ifFind;
     },
     /** 
      * user like track
      * @param : user {mongoose object}
      * @param : track-id {mongoose ObjectId}
      **/
-    likeTrack: async function(user, trackId) {
-
-        // check if user already liked the track
+    /** 
+     * user like track
+     * @param : track-id {mongoose ObjectId}
+     **/
+    likeTrack: async function(trackId) {
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
         if (!track) return 0;
         if (!track.like) track.like = 0;
-
-        if (this.checkIfUserLikeTrack(user, trackId)) {
-            return 0;
-        }
-        if (user.like) {
-            user.like.push({
-                trackId: trackId
-            });
-
-            await user.save();
-            track.like += 1;
-            // save track
-            await track.save().catch();
-            return 1;
-
-        }
-        user.like = [];
-        user.like.push({
-            trackId: trackId
-        });
-        await user.save().catch();
-
-        // add count to the like attribute of track
         track.like += 1;
         // save track
         await track.save().catch();
         return 1;
-
     },
 
     /** 
      * user unlike track
-     * @param : user {mongoose object}
      * @param : track-id {mongoose ObjectId}
      **/
-    unlikeTrack: async function(user, trackId) {
-        // check if user already liked the track
-        // if user.like.contains({track_id:track.track_id})
-        // if  found then remove track.track_id from user likes and return the updated user
+    unlikeTrack: async function(trackId) {
         // else return 0 as he didn't like the 
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
         if (!track) return 0;
-        if (!track.like) track.like = 0;
-
-        if (!this.checkIfUserLikeTrack(user, trackId)) {
-            return 0;
-        }
-        for (let i = 0; i < user.like.length; i++) {
-            if (String(user.like[i].trackId) == String(trackId)) {
-                user.like.splice(i, 1);
-                break;
-            }
-        }
-        // decrement track likes by one
+        if (!track.like) return 0;
         track.like -= 1;
-
-        await user.save().catch();
-        // save track
         await track.save().catch();
         return 1;
     },
     /** 
-    * user like track
-    * @param : url {string} url of string
-    * @param : trackNumber {Number} number of track in album
-    * @param : availableMarkets {Array} markets
-    * @param : artistId {mongoose object ID}
-    * @param : albumId {mongoose object ID}
-    * @param : duration {Number} 
-    **/
-    createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration,key,keyId,genre) {
+     * user create track
+     * @param : url {string} url of string
+     * @param : trackNumber {Number} number of track in album
+     * @param : availableMarkets {Array} markets
+     * @param : artistId {mongoose object ID}
+     * @param : albumId {mongoose object ID}
+     * @param : duration {Number} 
+     **/
+    createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration, key, keyId, genre) {
         //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(trackNumber) != "number" || typeof(duration) != "number") return 0;
 
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
@@ -234,9 +204,9 @@ const Track = {
             timeSignature: Date.now(),
             valence: Math.floor(Math.random() * 100),
             like: 0,
-            key:key,
-            keyId:keyId,
-            genre:genre
+            key: key,
+            keyId: keyId,
+            genre: genre
 
         });
         await track.save();
@@ -285,19 +255,19 @@ const Track = {
         }
         await album.save();
         // delete from all playlist in the database
-        await playlistDocument.find({},async (err,files)=>{
-            if(err) return 0;
-            for(let playlist of files){
-                if(!playlist.snapshot)continue;
-                
-                for(let i=0;i<playlist.snapshot.length;i++){
-                    if(!playlist.snapshot[i].hasTracks) continue;
-                    for(let j = 0;j<playlist.snapshot[i].hasTracks.length;j++){
-                    if(String(playlist.snapshot[i].hasTracks[j].trackId) == trackId){
-                        playlist.snapshot[i].hasTracks.splice(j,1);
-                        break;
+        await playlistDocument.find({}, async(err, files) => {
+            if (err) return 0;
+            for (let playlist of files) {
+                if (!playlist.snapshot) continue;
+
+                for (let i = 0; i < playlist.snapshot.length; i++) {
+                    if (!playlist.snapshot[i].hasTracks) continue;
+                    for (let j = 0; j < playlist.snapshot[i].hasTracks.length; j++) {
+                        if (String(playlist.snapshot[i].hasTracks[j].trackId) == trackId) {
+                            playlist.snapshot[i].hasTracks.splice(j, 1);
+                            break;
+                        }
                     }
-                }
                 }
                 await playlist.save();
             }
@@ -329,27 +299,27 @@ const Track = {
 
     },
     // get related tracks to specific track
-    getRelatedTrack: async function(trackId){
+    getRelatedTrack: async function(trackId) {
         const track = await this.getTrack(trackId);
-        if(!track) return 0;
-        if(!track.genre) return 0;
+        if (!track) return 0;
+        if (!track.genre) return 0;
         let tracksRelated = [];
-        await trackDocument.find({},(err,tracks)=>{
-            if(err) throw err;
-            if(!tracks) return 0;
-            for(let trackFile of tracks){
-                if(tracksRelated.length > 10)return;
-                if(!trackFile.genre) continue;
-                if(String(trackFile._id) == trackId ) continue;
-                for(let i=0;i<trackFile.genre.length;i++){
-                   if(track.genre.includes(trackFile.genre[i])){
-                       tracksRelated.push(trackFile);
-                       break;
-                   }
+        await trackDocument.find({}, (err, tracks) => {
+            if (err) throw err;
+            if (!tracks) return 0;
+            for (let trackFile of tracks) {
+                if (tracksRelated.length > 10) return;
+                if (!trackFile.genre) continue;
+                if (String(trackFile._id) == trackId) continue;
+                for (let i = 0; i < trackFile.genre.length; i++) {
+                    if (track.genre.includes(trackFile.genre[i])) {
+                        tracksRelated.push(trackFile);
+                        break;
+                    }
                 }
             }
         });
-        if(tracksRelated.length == 0)return 0;
+        if (tracksRelated.length == 0) return 0;
         return tracksRelated;
     }
 

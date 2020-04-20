@@ -51,7 +51,7 @@ const Player = {
                 // now check type to print 
                 if (playHistory[i].sourceType == 'album') {
                     for (let j = 0; j < recentlyAlbum.length; j++)
-                        if (playHistory[i].sourceId + 1 == recentlyAlbum[j].id + 1)
+                        if (String(playHistory[i].sourceId) == String(recentlyAlbum[j].id))
                             isFind = 1;
                     if (!isFind) {
                         const album = await Album.getAlbumById(playHistory[i].sourceId);
@@ -62,7 +62,7 @@ const Player = {
                     }
                 } else if (playHistory[i].sourceType == 'artist') {
                     for (let j = 0; j < recentlyArtist.length; j++)
-                        if (playHistory[i].sourceId + 1 == recentlyArtist[j].id + 1)
+                        if (String(playHistory[i].sourceId) == String(recentlyArtist[j].id))
                             isFind = 1;
                     if (!isFind) {
                         const artist = await Artist.getArtist(playHistory[i].sourceId);
@@ -73,7 +73,7 @@ const Player = {
                     }
                 } else if (playHistory[i].sourceType == 'playlist') {
                     for (let j = 0; j < recentlyPlaylist.length; j++)
-                        if (playHistory[i].sourceId + 1 == recentlyPlaylist[j].id + 1)
+                        if (String(playHistory[i].sourceId) == String(recentlyPlaylist[j].id))
                             isFind = 1;
                     if (!isFind) {
                         const playlist = await Playlist.getPlaylist(playHistory[i].sourceId);
@@ -173,7 +173,7 @@ const Player = {
                 return 0;
             // if track not in playlist
             for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++) {
-                if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i] + 1 == trackId + 1)
+                if (String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i]) == String(trackId))
                     break;
                 if (i == playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length - 1)
                     return 0
@@ -203,7 +203,7 @@ const Player = {
             if (!album) return 0;
             if (!album.hasTracks) return 0;
             ///should test
-            if (!await album.hasTracks.find(track => track.trackId + 1 == trackId + 1)) return 0;
+            if (!await album.hasTracks.find(track => String(track.trackId) == String(trackId))) return 0;
             user.player.isPlaylist = false;
             user.player.current_source = id;
             user.queue = {}; // when create queue delete last queue
@@ -309,14 +309,14 @@ const Player = {
         if (!user.player.next_track) return 0;
         if (!user.player.prev_track) return 0;
         user.player.current_track = user.player.next_track;
-        if (user.queue.queuIndex != -1 && user.player.next_track.trackId + 1 == user.queue.tracksInQueue[user.queue.queuIndex].trackId + 1) {
+        if (user.queue.queuIndex != -1 && String(user.player.next_track.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex].trackId)) {
             user.queue.tracksInQueue.splice(user.queue.queuIndex, 1);
             user.queue.queuIndex--;
             user.player["last_playlist_track_index"]--;
             this.setNextPrev(user, user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId)
         } else
             this.setNextPrev(user, user.player.current_track.trackId)
-        if (user.player.current_track.trackId + 1 == user.queue.tracksInQueue[user.queue.queuIndex + 1].trackId + 1)
+        if (String(user.player.current_track.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex + 1].trackId))
             return 2;
         return 1;
     },
@@ -522,7 +522,7 @@ const Player = {
         if (!user.player.next_track) user.player.next_track = {};
         if (!user.player.prev_track) user.player.prev_track = {};
         for (let i = user.queue.queuIndex + 1; i < user.queue.tracksInQueue.length; i++) {
-            if (user.queue.tracksInQueue[i].trackId + 1 == lastTrack + 1) {
+            if (String(user.queue.tracksInQueue[i].trackId) == String(lastTrack)) {
                 user.player["last_playlist_track_index"] = i;
                 await user.save();
                 user.player.prev_track['trackId'] = i - 1 > user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].trackId : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].trackId;

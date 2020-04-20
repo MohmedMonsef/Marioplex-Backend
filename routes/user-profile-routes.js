@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const joi = require('joi');
+const Joi = require('joi');
 const User = require('../public-api/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
@@ -15,10 +15,27 @@ router.get('/users/:id', checkAuth, async(req, res) => {
     }
 })
 router.put('/me/promote', checkAuth, async(req, res) => {
-    const isPromote = await User.promoteToPremium(req.user._id, req.query.credit);
-    if (isPromote) res.status(200).send({ success: 'promote to premium ' });
-    else res.status(400).send({ error: 'can not promote' })
-})
+    const prmoteData = Joi.object().keys({
+        expiresDate: Joi.date().min(Date.now()).iso().required(),
+        cardNumber: Joi.string().creditCard().required(),
+        isMonth: Joi.boolean().required()
+    });
+    Joi.validate(req.body, prmoteData, async(err, result) => {
+        if (err) {
+            // if not valid set status to 500
+            res.status(500).json({
+                error: err
+            })
+
+        } else {
+            const isPromote = await User.promoteToPremium(req.user._id, req.body.cardNumber, req.body.isMonth, req.body.expiresDate);
+            if (isPromote) res.status(200).send({ success: 'promote to premium ' });
+            else res.status(400).send({ error: 'can not promote' })
+        }
+    });
+});
+
+
 
 //GET USER'S PRIVATE PROFILE WITH PLAYER with player info
 router.get('/me-player', checkAuth, async(req, res) => {
@@ -44,13 +61,13 @@ router.get('/me-player', checkAuth, async(req, res) => {
 //UPDATE USER PROFILE INFORMATION 
 router.put('/me/update', checkAuth, (req, res) => {
 
-    const shcema = joi.object().keys({
-        Email: joi.string().trim().email(),
-        Password: joi.string(),
-        Country: joi.string(),
-        Display_Name: joi.string()
+    const shcema = Joi.object().keys({
+        Email: Joi.string().trim().email(),
+        Password: Joi.string(),
+        Country: Joi.string(),
+        Display_Name: Joi.string()
     });
-    joi.validate(req.body, shcema, async(err, result) => {
+    Joi.validate(req.body, shcema, async(err, result) => {
         if (err) {
             res.status(500).json({
                 error: err

@@ -70,7 +70,7 @@ const Playlist = {
             let snapshot;
             let found = false;
             for (let i = 0; i < playlist.snapshot.length; i++) {
-                if (playlist.snapshot[i]._id == snapshotId) {
+                if (String(playlist.snapshot[i]._id) == String(snapshotId)) {
                     snapshot = i;
                     found = true;
                 }
@@ -92,18 +92,16 @@ const Playlist = {
             }
             const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;
             let checkType;
-            let created=await this.checkIfUserHasPlaylist(user,playlistId);
-            if(created==undefined||!created){
-                
-                if(followPlaylist==undefined||!followPlaylist){
-                    checkType="none"
+            let created = await this.checkIfUserHasPlaylist(user, playlistId);
+            if (created == undefined || !created) {
+
+                if (followPlaylist == undefined || !followPlaylist) {
+                    checkType = "none"
+                } else {
+                    checkType = "followed"
                 }
-                else{
-                checkType="followed"
-                }
-            }
-            else{checkType="created"}
-            playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks, isfollowed: followPlaylist,checkType:checkType });
+            } else { checkType = "created" }
+            playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks, isfollowed: followPlaylist, checkType: checkType });
             return playlistJson;
         }
         return 0;
@@ -123,7 +121,7 @@ const Playlist = {
         const userPlaylists = user.createPlaylist;
 
         if (userPlaylists) {
-            return await userPlaylists.find(playlist => playlist.playListId + 1 == playlistId + 1);
+            return await userPlaylists.find(playlist => String(playlist.playListId) == String(playlistId));
         }
         return 0;
     },
@@ -164,7 +162,7 @@ const Playlist = {
         if (!checkMonooseObjectId([trackId])) return 0;
         if (!tplaylist.hasTracks) tplaylist.hasTracks = [];
         for (let i = 0; i < tplaylist.hasTracks.length; i++) {
-            if (tplaylist.hasTracks[i].trackId == trackId)
+            if (String(tplaylist.hasTracks[i].trackId) == String(trackId))
                 return i;
         }
         return -1
@@ -185,7 +183,7 @@ const Playlist = {
         if (!userHasPlaylist) return 0;
         if (!user.createPlaylist) return 0;
         for (let i = 0; i < user.createPlaylist.length; i++) {
-            if (user.createPlaylist[i].playListId + 1 == playlistId + 1) {
+            if (String(user.createPlaylist[i].playListId) == String(playlistId)) {
                 user.createPlaylist.splice(i, 1);
                 await user.save();
             }
@@ -206,7 +204,7 @@ const Playlist = {
         const followedPlaylists = user.followPlaylist;
 
         if (followedPlaylists) {
-            const followed = await followedPlaylists.find(playlist => playlist.playListId + 1 == playlistId + 1);
+            const followed = await followedPlaylists.find(playlist => String(playlist.playListId) == String(playlistId));
 
             return followed
         }
@@ -260,7 +258,7 @@ const Playlist = {
         if (!followedBefore) return 0;
         if (user.followPlaylist) {
             for (let i = 0; i < user.followPlaylist.length; i++) {
-                if (user.followPlaylist[i].playListId + 1 == playlistId + 1) {
+                if (String(user.followPlaylist[i].playListId) == String(playlistId)) {
                     user.followPlaylist.splice(i, 1);
                     await user.save();
                     return 1;
@@ -371,20 +369,18 @@ const Playlist = {
             if (!playlist) continue;
             let owner = await userDocument.findById(playlist.ownerId);
             if (!owner) continue;
-         
-            if(isUser){
+
+            if (isUser) {
                 let checkType;
-                let created=await this.checkIfUserHasPlaylist(user,playlist._id);
-                if(created==undefined||!created){
-                    checkType="followed"
-                }
-                else{checkType="created"}
-           playlists.push({ id: playlist._id, name: playlist.name, ownerId: playlist.ownerId, owner: owner.displayName, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images,type:checkType });
-           
-        }
-        else{
-            playlists.push({ id: playlist._id, name: playlist.name, ownerId: playlist.ownerId, owner: owner.displayName, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images });
-        }
+                let created = await this.checkIfUserHasPlaylist(user, playlist._id);
+                if (created == undefined || !created) {
+                    checkType = "followed"
+                } else { checkType = "created" }
+                playlists.push({ id: playlist._id, name: playlist.name, ownerId: playlist.ownerId, owner: owner.displayName, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, type: checkType });
+
+            } else {
+                playlists.push({ id: playlist._id, name: playlist.name, ownerId: playlist.ownerId, owner: owner.displayName, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images });
+            }
         }
 
         let start = 0;
@@ -420,7 +416,7 @@ const Playlist = {
         if (playlist.collaborative) {
             playlist.isPublic = false;
             for (var i = 0; i < user.createPlaylist.length; i++) {
-                if (user.createPlaylist[i].playListId + 1 == playlistId + 1) {
+                if (String(user.createPlaylist[i].playListId) == String(playlistId)) {
                     user.createPlaylist[i].isPrivate = true;
                     await user.save();
                     await playlist.save();
@@ -448,7 +444,7 @@ const Playlist = {
         playlist.isPublic = !playlist.isPublic;
         if (!user.createPlaylist) return 0;
         for (var i = 0; i < user.createPlaylist.length; i++) {
-            if (user.createPlaylist[i].playListId + 1 == playlistId + 1) {
+            if (String(user.createPlaylist[i].playListId) == String(playlistId)) {
                 user.createPlaylist[i].isPrivate = !user.createPlaylist[i].isPrivate;
                 await user.save();
                 await playlist.save();
@@ -457,7 +453,7 @@ const Playlist = {
         }
         if (!user.followPlaylist) return 0;
         for (var i = 0; i < user.followPlaylist.length; i++) {
-            if (user.followPlaylist[i].playListId == playlistId) {
+            if (String(user.followPlaylist[i].playListId) == String(playlistId)) {
                 user.followPlaylist[i].isPrivate = !user.followPlaylist[i].isPrivate;
                 await user.save();
                 await playlist.save();
@@ -513,7 +509,7 @@ const Playlist = {
         let found = false;
         if (snapshotId != undefined) {
             for (var i = 0; i < playlist.snapshot.length; i++) {
-                if (playlist.snapshot[i]._id + 1 == snapshotId + 1) {
+                if (String(playlist.snapshot[i]._id) == String(snapshotId)) {
                     len = i + 1;
                     found = true;
                     break;
@@ -530,7 +526,7 @@ const Playlist = {
         }
         for (var i = 0; i < tracksIds.length; i++) {
             for (var j = 0; j < tracks.length; j++) {
-                if (tracksIds[i] == tracks[j]._id) {
+                if (String(tracksIds[i]) == String(tracks[j]._id)) {
                     tracks.splice(j, 1);
                 }
             }
@@ -565,7 +561,7 @@ const Playlist = {
         let found = false;
         if (snapshotId != undefined) {
             for (var i = 0; i < playlist.snapshot.length; i++) {
-                if (playlist.snapshot[i]._id + 1 == snapshotId + 1) {
+                if (String(playlist.snapshot[i]._id) == String(snapshotId)) {
                     len = i + 1;
                     found = true;
                     break;
@@ -612,15 +608,15 @@ const Playlist = {
         if (!user) return [];
         let playlistsIds = [];
         let playlists = [];
-        if (!user.deletedPlaylists||user.deletedPlaylists.length==0) return [];
- 
+        if (!user.deletedPlaylists || user.deletedPlaylists.length == 0) return [];
+
         for (var i = 0; i < user.deletedPlaylists.length; i++) {
             let playlist = await this.getPlaylist(user.deletedPlaylists[i].id);
             if (!playlist) continue;
-            let songsNumber=(playlist.snapshot.length==0||!playlist.snapshot)?0:playlist.snapshot[playlist.snapshot.length-1].hasTracks.length;
-            let playlistInfo=user.deletedPlaylists[i];
-            playlists.push({ id: playlistInfo.id, name: playlist.name, songsNumber:songsNumber, deletedAt: playlistInfo.date });
-        
+            let songsNumber = (playlist.snapshot.length == 0 || !playlist.snapshot) ? 0 : playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length;
+            let playlistInfo = user.deletedPlaylists[i];
+            playlists.push({ id: playlistInfo.id, name: playlist.name, songsNumber: songsNumber, deletedAt: playlistInfo.date });
+
         }
 
         let start = 0;
@@ -632,7 +628,31 @@ const Playlist = {
         }
         return playlists.slice(start, end);
     },
-    
+    checkPlaylistHasTracks: async function(playlistId, tracksId) {
+        if (!checkMonooseObjectId([playlistId])) return 0;
+        if (!checkMonooseObjectId(tracksId)) return 0;
+        const playlist = await playlistDocument.findById(playlistId, (err, user) => {
+            if (err) return 0;
+            return user;
+        }).catch((err) => 0);
+        if (tracksId.length == 0) return 0;
+        if (!playlist.snapshot) return 0;
+        if (playlist.snapshot.length == 0) return 0;
+        if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) return 0;
+        ifFind = [];
+        for (let j = 0; j < tracksId.length; j++) {
+            for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++) {
+                if (String(tracksId[j]) == String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i])) {
+                    ifFind.push(true);
+                    break;
+                }
+                if (i == playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length - 1)
+                    ifFind.push(false);
+            }
+        }
+        return ifFind;
+    },
+
 }
 
 

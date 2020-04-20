@@ -118,15 +118,15 @@ const User = {
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
-        if(user.userType == 'Artist') return 0;
-        const spotify = await userDocument.find({displayName:'Spotify'});
-        if(!spotify) return 0;
-        for(let i=0;i<user.createPlaylist.length;i++){
-            let filter = { _id : user.createPlaylist[i].playListId};
-            let update = { ownerId : spotify._id};
-            await playlistDocument.findOneAndUpdate(filter,update);                  
+        if (user.userType == 'Artist') return 0;
+        const spotify = await userDocument.find({ displayName: 'Spotify' });
+        if (!spotify) return 0;
+        for (let i = 0; i < user.createPlaylist.length; i++) {
+            let filter = { _id: user.createPlaylist[i].playListId };
+            let update = { ownerId: spotify._id };
+            await playlistDocument.findOneAndUpdate(filter, update);
         }
-        await Image.deleteImages(userID,userID,'user');
+        await Image.deleteImages(userID, userID, 'user');
         // delete user himseld from db
         await userDocument.findByIdAndDelete(userId);
         return 1;
@@ -146,16 +146,23 @@ const User = {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
-        const likeTrack = await Track.likeTrack(user, trackId).catch();
+        const likeTrack = await Track.getTrack(trackId);
+
         if (!likeTrack) return 0;
         if (!user['likesTracksPlaylist']) {
             const playlist = await Playlist.createPlaylist(userId, 'liked tracks', 'track which user liked .')
             if (!playlist) return 0;
             user['likesTracksPlaylist'] = playlist._id;
             await user.save();
+        } else {
+            const ifFind = await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], [trackId]);
+            if (ifFind && ifFind[0] == true) return 0;
         }
-        return await Playlist.addTrackToPlaylist(user['likesTracksPlaylist'], [trackId]);
+        console.log('fkafjdkjfkdj');
+        if (!await Playlist.addTrackToPlaylist(user['likesTracksPlaylist'], [trackId])) return 0;
+        return Track.likeTrack(trackId);
     },
+
 
     //user unlike a track
     //params: userId, trackId
@@ -170,10 +177,13 @@ const User = {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
-        const unlikeTrack = await Track.unlikeTrack(user, trackId);
-        console.log(unlikeTrack)
+        const unlikeTrack = await Track.getTrack(trackId);
         if (!unlikeTrack) return 0;
-        return await Playlist.removePlaylistTracks(user['likesTracksPlaylist'], [trackId]);
+        if (!user['likesTracksPlaylist']) return 0;
+        const ifFind = await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], [trackId]);
+        if (!ifFind || ifFind[0] == false) return 0;
+        if (!await Playlist.removePlaylistTracks(user['likesTracksPlaylist'], [trackId])) return 0;
+        return Track.unlikeTrack(trackId);
     },
     /** 
      * user add track to user's playlist
@@ -244,56 +254,56 @@ const User = {
         for (let i = 0; i < user.follow.length; i++) {
             let artist = await Artist.getArtist(user.follow[i].id);
             if (artist) {
-                let artistInfo={};
-                artistInfo['_id']=artist._id;
-                artistInfo['Name']=artist.Name;
-                artistInfo['images']=artist.images;
-                artistInfo['type']=artist.type;
+                let artistInfo = {};
+                artistInfo['_id'] = artist._id;
+                artistInfo['Name'] = artist.Name;
+                artistInfo['images'] = artist.images;
+                artistInfo['type'] = artist.type;
                 artists.push(artistInfo);
             }
         }
         return artists;
     },
-    UserFollowArtist: async function(userID,ArtistID){
-        if(!checkMonooseObjectID([userID])) return 0;
-        if(!checkMonooseObjectID([ArtistID])) return 0;
+    UserFollowArtist: async function(userID, ArtistID) {
+        if (!checkMonooseObjectID([userID])) return 0;
+        if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
-        if(!user||!artist) return 0;
-        if(!user.follow) user.follow = [];
-        user.follow.push({'id': ArtistID});
+        if (!user || !artist) return 0;
+        if (!user.follow) user.follow = [];
+        user.follow.push({ 'id': ArtistID });
         await user.save();
         return 1;
     },
-    UserUnfollowArtist: async function(userID,ArtistID){
-        if(!checkMonooseObjectID([userID])) return 0;
-        if(!checkMonooseObjectID([ArtistID])) return 0;
+    UserUnfollowArtist: async function(userID, ArtistID) {
+        if (!checkMonooseObjectID([userID])) return 0;
+        if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
-        if(!user||!artist) return 0;
-        if(!user.follow) user.follow = [];
-        if(!user.follow.length) return 0;
-        for (let i=0;i<user.follow.length;i++){
-            if(String(user.follow[i].id) == String(ArtistID)){
-                  user.follow.splice(i, 1);
-                  user.save();
-                  return 1;
+        if (!user || !artist) return 0;
+        if (!user.follow) user.follow = [];
+        if (!user.follow.length) return 0;
+        for (let i = 0; i < user.follow.length; i++) {
+            if (String(user.follow[i].id) == String(ArtistID)) {
+                user.follow.splice(i, 1);
+                user.save();
+                return 1;
             }
         }
         return 0;
-        
+
     },
-    CheckIfUserFollowArtist: async function(userID,ArtistID){
-        if(!checkMonooseObjectID([userID])) return 0;
-        if(!checkMonooseObjectID([ArtistID])) return 0;
+    CheckIfUserFollowArtist: async function(userID, ArtistID) {
+        if (!checkMonooseObjectID([userID])) return 0;
+        if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
-        if(!user||!artist) return 0;
-        if(!user.follow) user.follow = [];
-        if(!user.follow.length) return 0;
-        for (let i=0;i<user.follow.length;i++){
-            if(user.follow[i].id==ArtistID)
-            return true;
+        if (!user || !artist) return 0;
+        if (!user.follow) user.follow = [];
+        if (!user.follow.length) return 0;
+        for (let i = 0; i < user.follow.length; i++) {
+            if (user.follow[i].id == ArtistID)
+                return true;
         }
         return false;
     },
@@ -318,7 +328,7 @@ const User = {
      * @param  {Object} user - the user 
      * @returns {string}
      */
-    updateforgottenpassword: async function(user,pass) {
+    updateforgottenpassword: async function(user, pass) {
 
         let password = pass;
         const salt = await bcrypt.genSalt(10);
@@ -376,17 +386,17 @@ const User = {
         if (!user) return 0;
         const isDelete = await Playlist.deletePlaylist(user, playlistId);
         if (!isDelete) return 0;
-        if(!user.deletedPlaylists)user.deletedPlaylists=[];
-        user.deletedPlaylists.push({id:playlistId,date:Date.now()});
+        if (!user.deletedPlaylists) user.deletedPlaylists = [];
+        user.deletedPlaylists.push({ id: playlistId, date: Date.now() });
         await user.save();
         spotifyUser = await this.checkmail('appspotify646@gmail.com');
         if (!spotifyUser)
             spotifyUser = await this.createUser('Spotify', 'HelloSpotify', 'appspotify646@gmail.com', 'Spotify', 'All', Date.now());
         if (!spotifyUser) return 0;
-       await playlistDocument.updateOne({ _id: playlistId }, {
-          ownerId:spotifyUser._id
-       });
-       return await this.addPlaylistToCreatedToUser(spotifyUser, playlistId);
+        await playlistDocument.updateOne({ _id: playlistId }, {
+            ownerId: spotifyUser._id
+        });
+        return await this.addPlaylistToCreatedToUser(spotifyUser, playlistId);
     },
     /**
      * create new user
@@ -399,7 +409,7 @@ const User = {
      * @returns {object} -new user object 
      */
     createUser: async function(username, password, email, gender, country, birthday) {
-       
+
         const salt = await bcrypt.genSalt(10);
         let hash = await bcrypt.hash(password, salt);
         const user = new userDocument({
@@ -416,7 +426,6 @@ const User = {
             images: [],
             follow: [],
             followedBy: [],
-            like: [],
             createPlaylist: [],
             saveAlbum: [],
             playHistory: [],
@@ -494,36 +503,36 @@ const User = {
         if (!checkMonooseObjectID([userId])) return 0;
         if (!checkMonooseObjectID(playlistsIds)) return 0;
         let user = await userDocument.findById(userId);
-        let restored=[];
+        let restored = [];
         if (!user) return 0;
-        if (!user.deletedPlaylists||user.deletedPlaylists.length==0) return 0;
+        if (!user.deletedPlaylists || user.deletedPlaylists.length == 0) return 0;
         let spotifyUser = await this.checkmail('appspotify646@gmail.com');
         if (!spotifyUser) return 0;
-        let deleted=[];
-        for(let i=0;i<playlistsIds.length;i++){
-        for(let j=0;j<user.deletedPlaylists.length;j++){
-         if(user.deletedPlaylists[j].id==playlistsIds[i])
-         {   let playlist=await Playlist.getPlaylist(playlistsIds[i]);
-            if(!playlist){restored.push(false); break;}
-            await playlistDocument.updateOne({ _id: playlistsIds[i] }, {
-                ownerId:user._id
-             });
-        let changeSpotify=await Playlist.deletePlaylist(spotifyUser,playlistsIds[i]);
-        let result=await this.addPlaylistToCreatedToUser(user,playlistsIds[i]);
-        deleted.push(playlistsIds[i]);
-        restored.push(result);
-        }
-    }
-    }
-    for (var i = 0; i <deleted.length ; i++) {
-        for (var j = 0; j <user.deletedPlaylists.length ; j++) {
-            if (deleted[i] == user.deletedPlaylists[j].id) {
-                user.deletedPlaylists.splice(j, 1);
+        let deleted = [];
+        for (let i = 0; i < playlistsIds.length; i++) {
+            for (let j = 0; j < user.deletedPlaylists.length; j++) {
+                if (user.deletedPlaylists[j].id == playlistsIds[i]) {
+                    let playlist = await Playlist.getPlaylist(playlistsIds[i]);
+                    if (!playlist) { restored.push(false); break; }
+                    await playlistDocument.updateOne({ _id: playlistsIds[i] }, {
+                        ownerId: user._id
+                    });
+                    let changeSpotify = await Playlist.deletePlaylist(spotifyUser, playlistsIds[i]);
+                    let result = await this.addPlaylistToCreatedToUser(user, playlistsIds[i]);
+                    deleted.push(playlistsIds[i]);
+                    restored.push(result);
+                }
             }
         }
-    }
-       await user.save();
-       return restored;
+        for (var i = 0; i < deleted.length; i++) {
+            for (var j = 0; j < user.deletedPlaylists.length; j++) {
+                if (deleted[i] == user.deletedPlaylists[j].id) {
+                    user.deletedPlaylists.splice(j, 1);
+                }
+            }
+        }
+        await user.save();
+        return restored;
     },
     //check if user can access a playlist
     //params: userId, playlistId

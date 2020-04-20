@@ -242,4 +242,14 @@ router.get('/tracks/related/:track_id',checkAuth,async (req,res)=>{
 
 })
 
+
+// get related track
+router.get('/tracks/related/full-track/:track_id',checkAuth,async (req,res)=>{
+    const trackId = req.params.track_id;
+    const userId = req.user._id;
+    const tracksRelated = await Track.getFullRelatedTracks(userId,trackId);
+    if(!tracksRelated) res.status(404).json({"error":"no related tracks found"});
+    else res.status(200).json(tracksRelated);
+
+})
 module.exports = router; 

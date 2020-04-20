@@ -2,4 +2,4 @@ dist: bionic
 sudo: false
 language: node_js
 install: 
- - bash Install.sh
+ - git clone https://github.com/MohmedMonsef/Marioplex-Backend

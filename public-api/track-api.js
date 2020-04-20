@@ -48,7 +48,7 @@ const Track = {
      * @param : array of track ids
      */
     getTracks: async function(trackIds, user) {
-        if (!checkMonooseObjectID(trackIDs)) return 0;
+        if (!checkMonooseObjectID(trackIds)) return 0;
         let tracks = [];
         for (let trackId of trackIds) {
             let track = await this.getFullTrack(trackId, user);
@@ -89,7 +89,7 @@ const Track = {
      * @param : track-ids {mongoose ObjectId}
      **/
     getAudioFeaturesTracks: async function(trackIds) {
-        if (!checkMonooseObjectID(trackIDs)) return 0;
+        if (!checkMonooseObjectID(trackIds)) return 0;
         let audioFeatures = {};
         var count = 0;
         for (let trackId of trackIds) {

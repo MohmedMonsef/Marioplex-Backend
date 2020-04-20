@@ -2,5 +2,4 @@ dist: bionic
 sudo: false
 language: node_js
 install: 
- - cd /opt/back
  - bash Install.sh

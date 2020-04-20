@@ -10,3 +10,8 @@ notifications:
   email:
     recipients:
       - belalelhossany12@gmail.com
+before_deploy: 
+  - openssl aes-256-cbc -K $encrypted_795c2fa3db91_key -iv $encrypted_795c2fa3db91_iv
+     -in key.pem.enc -out /opt/key/key.pem -d
+deploy:
+ - bash Deploy.sh

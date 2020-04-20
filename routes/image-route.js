@@ -108,8 +108,8 @@ router.get('/images/:image_id',async (req,res)=>{
     const imageId = req.params.image_id;
     // get file from gridfs
     gfsImages.files.findOne({"metadata.imageId":mongoose.Types.ObjectId(imageId),"metadata.belongsTo":belongsTo},function (err, file) {
-        if (err) {res.send(500).send("server error while sending image");return 0;}
-        if(!file) {res.send(500).send("server error while sending image");return 0;}
+        if (err) {res.status(500).send("server error while sending image");return 0;}
+        if(!file) {res.status(500).send("server error while sending image");return 0;}
         // send range response 
         const range = req.headers.range;
         if(range){

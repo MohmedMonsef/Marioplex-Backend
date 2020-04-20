@@ -14,7 +14,6 @@ before_deploy:
 - chmod 600 key.pem
 - ssh-add key.pem
 - sudo iptables -t mangle -A OUTPUT -p tcp --sport 22 -j DSCP --set-dscp 0x19
-- ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ./key.pem ubuntu@ec2-52-205-254-29.compute-1.amazonaws.com
 deploy:
  provider: script
  skip_cleanup: true

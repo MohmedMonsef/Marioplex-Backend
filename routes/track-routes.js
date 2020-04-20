@@ -101,7 +101,7 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
     }
     // get file from gridfs
        gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackId),"metadata.type":type},function (err, file) {
-            if (err || !file) {res.send(500).send("server error while sending track");return 0;}
+            if (err || !file) {res.status(500).send("server error while sending track");return 0;}
             // send range response 
             const range = req.headers.range;
             if(range){

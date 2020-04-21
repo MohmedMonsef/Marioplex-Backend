@@ -90,6 +90,7 @@ const User = new Schema({
     password: String,
     gender: String,
     country: String,
+    fcmToken:String,
     isLogged: Boolean,
     images: [Image],
     premium: {
@@ -102,6 +103,12 @@ const User = new Schema({
     displayName: String,
     product: String,
     isFacebook: Boolean,
+    offlineProfileNotification:[{
+
+    }],
+    offlineArtistNotification:[{
+        
+    }],
     deletedPlaylists: [{
         id: mongoose.Schema.Types.ObjectId,
         date: Date

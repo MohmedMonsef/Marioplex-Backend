@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
+const profileNotification = require('../public-api/notification-api');
 const User = require('../public-api/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
@@ -9,6 +10,9 @@ router.get('/users/:id', checkAuth, async(req, res) => {
 
     const user = await User.me(req.params.id, req.user._id);
     if (user) {
+        let curUser=await User.getUserById(req.user._id);
+        let profUser=await User.getUserById(req.params.id);
+        await profileNotification.sendProfileNotification(curUser,profUser);
         res.send(user);
     } else {
         res.sendStatus(404)

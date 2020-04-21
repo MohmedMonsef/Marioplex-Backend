@@ -14,6 +14,7 @@
         "express": "^4.17.1",
         "express-session": "^1.17.0",
         "express-validator": "^6.4.0",
+        "firebase-admin": "^8.10.0",
         "fuzzy-search": "^3.2.1",
         "gridfs": "^1.0.0",
         "gridfs-stream": "^1.1.1",

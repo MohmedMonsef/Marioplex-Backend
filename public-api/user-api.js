@@ -422,6 +422,7 @@ const User = {
             product: "free",
             userType: "user",
             type: "user",
+            fcmToken:"none",
             isFacebook: false,
             images: [],
             follow: [],

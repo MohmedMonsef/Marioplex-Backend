@@ -1,12 +1,16 @@
+const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 const spotifySchema = require('../models/db');
 const jwtSeret = require('../config/jwtconfig');
 const jwt =require('jsonwebtoken');
+const Users = require('../public-api/user-api');
+const Notifications = require('../public-api/notification-api');
 const passport =require('passport');
 var express = require('express');
 const validateLoginInput = require("../validation/login");
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
 const router=express.Router();
+const {auth:checkAuth} = require('../middlewares/is-me');
 require('../config/passport');
 User= spotifySchema.User
 
@@ -48,4 +52,37 @@ router.post("/login", (req, res) => {
       });
     });
   });
+
+  //Notification Token Set
+  router.post("/notification/token",checkAuth,async (req, res) => {
+    
+  if(!req.body.fcmToken||req.body.fcmToken==""){return res.status(404).send({error:"FCM TOKEN IS NOT PROVIDED"})}
+    let userId=req.user._id;
+    let user=await Users.getUserById(userId);
+    if(!user){return res.status(404).send({error:"User IS NOT FOUND"})}
+    if(!user.fcmToken){user.fcmToken="none";
+    await user.save();}
+    user.fcmToken=req.body.fcmToken;
+  await user.save();
+    if(user.offlineProfileNotification&&user.offlineProfileNotification.length>0){
+      console.log(user.fcmToken);
+      await Notifications.sendOfflineProfileNotification(user.offlineProfileNotification,user);
+
+    }
+    return res.status(200).send({Success:"Token is set successfully"})
+
+  });
+
+    //User logs out
+    router.post("/user/logout",checkAuth,async (req, res) => {
+    
+        let userId=req.user._id;
+        let user=await Users.getUserById(userId);
+        if(!user){return res.status(404).send({error:"User IS NOT FOUND"})}
+        await userDocument.updateOne({ _id:user._id }, {
+          fcmToken:"none"
+      });
+        return res.status(202).send({Success:"Token is set successfully"})
+    
+      });
   module.exports = router;

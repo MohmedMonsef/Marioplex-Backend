@@ -69,10 +69,10 @@ router.get('/me/player/prev-playing', checkAuth, async(req, res) => {
         } else res.status(403).send('user is not correct');
     })
     // create queue fo player
-router.post('/createQueue/:playlist_id/:trackId', checkAuth, async(req, res) => {
-    if (checkID([req.params.playlist_id, req.params.trackId])) {
+router.post('/createQueue/:sourceId/:trackId', checkAuth, async(req, res) => {
+    if (checkID([req.params.sourceId, req.params.trackId])) {
         if (stateValidation(req.query.isPlaylist)) {
-            const sourceId = req.params.playlist_id;
+            const sourceId = req.params.sourceId;
             const trackId = req.params.trackId;
             const isPlaylist = req.query.isPlaylist;
             const userID = req.user._id;

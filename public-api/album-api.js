@@ -128,7 +128,7 @@ const Album = {
         }
         if (album) {
             let Artist = await artist.getArtist(album.artistId);
-            let track = await this.getTracksAlbum(albumID);
+            let track = await this.getTracksAlbum(albumID, user);
             albumInfo['_id'] = album._id;
             albumInfo['name'] = album.name;
             albumInfo['images'] = album.images;
@@ -202,11 +202,12 @@ const Album = {
                 if (!album.hasTracks[i].trackId) continue;
                 var Track = await track.getTrack(album.hasTracks[i].trackId);
                 if (Track) {
-                    let track = {}
-                    track['_id'] = Track._id;
-                    track['name'] = Track.name;
-                    track['images'] = Track.images;
-                    Tracks.push(track);
+                    let tracks = {}
+                    tracks['_id'] = Track._id;
+                    tracks['name'] = Track.name;
+                    tracks['images'] = Track.images;
+                    tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
+                    Tracks.push(tracks);
                 }
             }
         }
@@ -214,9 +215,6 @@ const Album = {
             return 0;
         }
         return Tracks;
-
-
-
     },
     //user like album by track-id
     //params : user , track-id

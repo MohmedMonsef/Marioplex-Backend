@@ -25,7 +25,11 @@ const Notifications = {
 },
     //the user profile notification
     sendProfileNotification:async function(currentUser,profileUser) {
-
+        if(!profileUser.fcmToken)
+        {
+            profileUser.fcmToken="none"; 
+            await profileUser.save();
+        }
         //get the fcm token of the profile user
         let token=profileUser.fcmToken;
         //notification body

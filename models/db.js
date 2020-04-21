@@ -103,11 +103,8 @@ const User = new Schema({
     displayName: String,
     product: String,
     isFacebook: Boolean,
-    offlineProfileNotification:[{
+    offlineNotifications:[{
 
-    }],
-    offlineArtistNotification:[{
-        
     }],
     deletedPlaylists: [{
         id: mongoose.Schema.Types.ObjectId,

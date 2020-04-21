@@ -64,9 +64,9 @@ router.post("/login", (req, res) => {
     await user.save();}
     user.fcmToken=req.body.fcmToken;
   await user.save();
-    if(user.offlineProfileNotification&&user.offlineProfileNotification.length>0){
+    if(user.offlineNotifications&&user.offlineNotifications.length>0){
       console.log(user.fcmToken);
-      await Notifications.sendOfflineProfileNotification(user.offlineProfileNotification,user);
+      await Notifications.sendOfflineNotifications(user.offlineNotifications,user);
 
     }
     return res.status(200).send({Success:"Token is set successfully"})

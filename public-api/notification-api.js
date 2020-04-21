@@ -59,17 +59,16 @@ const Notifications = {
 
         }
        if(token=="none"||checkFailed.length>0){
-        if(!profileUser.offlineProfileNotification)profileUser.offlineProfileNotification=[];
-        profileUser.offlineProfileNotification.push(notificationMessage);
+        if(!profileUser.offlineNotifications)profileUser.offlineNotifications=[];
+        profileUser.offlineNotifications.push(notificationMessage);
         await profileUser.save();
         return 0;
        }
        return 1;
 
     },
-
-       //the user profile notification
-    sendOfflineProfileNotification:async function(OfflineMessages,profileUser) {
+    //send the user profile notification
+    sendOfflineNotifications:async function(OfflineMessages,profileUser) {
      let messages=[];
      for(var i=0;i<OfflineMessages.length;i++){
         messages.push({
@@ -81,7 +80,7 @@ const Notifications = {
   
         //send the notification object to the profile user (token)
         await this.sendManyNotifications(messages);      
-        profileUser.offlineProfileNotification=[];
+        profileUser.offlineNotifications=[];
         await profileUser.save();
         return 1;
 
@@ -94,8 +93,59 @@ const Notifications = {
           console.log(response.successCount + ' messages were sent successfully');
         });
   },
+    //the user following Artist notification
+    sendArtistNotification:async function(artist) {
+        let users;
+        let tokens=[];
+        
+        await userDocument.find({}, function(err, allUsers) {
+            users = allUsers;
+        });
+        //create Notification object
+        let notificationMessage={
+            notification: {
+                title: "WOOOOOH NEW SONG",
+                body: artist.Name+" Uploaded a New Song -- CHECK IT OUT !"
+                }
+                ,
+                data: {
+                artistId: String(artist._id)
+            }
+            };
+        for(var i=0;i<users.length;i++){
+            for(var j=0;j<users[i].follow.length;j++){
+                if(String(users[i].follow[j].id)==String(artist._id)){
+                    if(!users[i].fcmToken){users[i].fcmToken="none";
+                      await users[i].save();}
+                    if(users[i].fcmToken!="none"){
+                        tokens.push(users[i].fcmToken);
+                    }
+                    else{
+                        if(!users[i].offlineNotifications)users[i].offlineNotifications=[];
+                        users[i].offlineNotifications.push(notificationMessage);
+                        await users[i].save();
+                    }
+                }
+            }
+        }
+        if(tokens.length!=0){
+            //if online
+            //create the mesaages object
+            var messages = {
+                notification:notificationMessage.notification,
+                data:notificationMessage.data,
+                tokens: tokens
+            };
+            //then send the notification object to the followers
+            checkFailed=await this.sendNotification(tokens,messages); 
+            console.log(checkFailed);
+            console.log(messages);
 
-  
+        }
+    return 1;
+
+    }
+    
 
 }
 module.exports = Notifications;

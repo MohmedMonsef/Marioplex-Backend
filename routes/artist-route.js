@@ -3,6 +3,7 @@ const router = require('express').Router();
 const crypto = require('crypto');
 const path = require('path');
 const Artist = require('../public-api/artist-api');
+const Notifications = require('../public-api/notification-api');
 const Track = require('../public-api/track-api');
 const User = require('../public-api/user-api');
 const Album = require('../public-api/album-api')
@@ -131,6 +132,7 @@ router.post('/artists/me/albums/:album_id/tracks', checkAuth, checkType, async(r
                 isUploaded = -1;
                 return 0;
             } else {
+                Notifications.sendArtistNotification(artist);
                 res.status(200).json({ "success": "uploaded succesfully" });
                 isUploaded = 1;
 

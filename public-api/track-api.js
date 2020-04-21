@@ -300,7 +300,7 @@ const Track = {
     },
     // get related tracks to specific track
     getRelatedTrack: async function(trackId) {
-        if (!checkMonooseObjectID([ trackId])) return 0;
+        if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
         if (!track) return 0;
         if (!track.genre) return 0;
@@ -323,41 +323,41 @@ const Track = {
         if (tracksRelated.length == 0) return 0;
         return tracksRelated;
     },
-    getFullRelatedTracks: async function(userId,trackId){
+    getFullRelatedTracks: async function(userId, trackId) {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
-        
-        const user = await  userDocument.findById(userId);
-        
+
+        const user = await userDocument.findById(userId);
+
         if (!user) return 0;
-        const fullTrack = await this.getFullTrack(trackId,user);
-        if(!fullTrack  ) return 0;
-       
+        const fullTrack = await this.getFullTrack(trackId, user);
+        if (!fullTrack) return 0;
+
         let tracksRelated = [fullTrack];
         const track = fullTrack.track;
-        
+
         if (!track.genre) return tracksRelated;
-       
+
         const tracks = await trackDocument.find({});
         if (!tracks) return tracksRelated;
         for (let trackFile of tracks) {
-                if (tracksRelated.length > 10) return;
-                if (!trackFile.genre) continue;
-                if (String(trackFile._id) == trackId) continue;
-                for (let i = 0; i < trackFile.genre.length; i++) {
-                    if (track.genre.includes(trackFile.genre[i])) {
-                        // get full track
-                        const fullTrackFile = await this.getFullTrack(String(trackFile._id),user);
-                        
-                        if(!fullTrackFile) continue;
-                      
-                        tracksRelated.push(fullTrackFile);
-                        
-                        break;
-                    }
+            if (tracksRelated.length > 10) return;
+            if (!trackFile.genre) continue;
+            if (String(trackFile._id) == trackId) continue;
+            for (let i = 0; i < trackFile.genre.length; i++) {
+                if (track.genre.includes(trackFile.genre[i])) {
+                    // get full track
+                    const fullTrackFile = await this.getFullTrack(String(trackFile._id), user);
+
+                    if (!fullTrackFile) continue;
+
+                    tracksRelated.push(fullTrackFile);
+
+                    break;
                 }
+            }
         }
-        
-        
+
+
         if (tracksRelated.length == 0) return 0;
         return tracksRelated;
     }

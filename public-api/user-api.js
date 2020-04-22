@@ -41,7 +41,7 @@ const User = {
      * @param  {string} Country - the user country
      * @returns {Number}
      */
-    update: async function(userId, Display_Name, Password, Email, Country) {
+    update: async function(userId, Display_Name, Password, Email, Country, expiresDate, cardNumber, isMonth) {
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (user) {
@@ -73,6 +73,9 @@ const User = {
                 }
 
             }
+            if (expiresDate) user.premium['expiresDate'] = expiresDate;
+            if (cardNumber) user.premium['cardNumber'] = cardNumber;
+            if (isMonth) user.premium['isMonth'] = isMonth;
             await user.save();
             return 1;
 
@@ -93,16 +96,12 @@ const User = {
         if (!user) {
             return 0;
         }
-
-
         userPublic = {}
         userPublic["_id"] = user._id;
         userPublic["displayName"] = user.displayName;
         userPublic["images"] = user.images;
         userPublic["type"] = user.type;
         return userPublic;
-
-
 
     },
 
@@ -267,7 +266,7 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({userId:ArtistID});
+        let artist = await artistDocument.findOne({ userId: ArtistID });
         if (!user || !artist) return 0;
         if (!user.follow) user.follow = [];
         user.follow.push({ 'id': artist._id });
@@ -278,7 +277,7 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({userId:ArtistID});
+        let artist = await artistDocument.findOne({ userId: ArtistID });
         if (!user || !artist) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
@@ -296,7 +295,7 @@ const User = {
         if (!checkMonooseObjectID([userID])) return -1;
         if (!checkMonooseObjectID([ArtistID])) return -1;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({userId:ArtistID});
+        let artist = await artistDocument.findOne({ userId: ArtistID });
         if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
@@ -421,7 +420,7 @@ const User = {
             product: "free",
             userType: "user",
             type: "user",
-            fcmToken:"none",
+            fcmToken: "none",
             isFacebook: false,
             images: [],
             follow: [],
@@ -605,7 +604,7 @@ const User = {
      * @param {string} userId  -the id of user
      * @returns {boolean} - if can or not  
      */
-    promoteToPremium: async function(userId, credit) {
+    promoteToPremium: async function(userId, cardNumber, isMonth, expiresDate) {
         if (!checkMonooseObjectID([userId])) return 0;
         user = await this.getUserById(userId);
         if (!user) return false;
@@ -613,7 +612,10 @@ const User = {
             return false;
         }
         user.product = 'premium';
-        user.creditCard = credit;
+        user.premium['expiresDate'] = expiresDate;
+        user.premium['cardNumber'] = cardNumber;
+        user.premium['isMonth'] = isMonth;
+        user.premium['ParticipateDate'] = Date.now();
         await user.save();
         sendmail(user.email, 'Congrats!! ^^) You are Now Promoted to premium so You can Login with your Account as an premium please login again :\n enjoy with premium');
         return true;

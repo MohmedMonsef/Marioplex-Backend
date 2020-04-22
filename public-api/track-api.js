@@ -113,14 +113,14 @@ const Track = {
     checkIfUserLikeTrack: async function(user, trackId) {
         if (!user) return 0;
         if (!checkMonooseObjectID([trackId])) return 0;
-        if (!user['likesTracksPlaylist']) return 0;
+        if (!user['likesTracksPlaylist']) return false;
         const playlist = await playlistDocument.findById(user['likesTracksPlaylist'], (err, user) => {
             if (err) return 0;
             return user;
         }).catch((err) => 0);
-        if (!playlist.snapshot) return 0;
-        if (playlist.snapshot.length == 0) return 0;
-        if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) return 0;
+        if (!playlist.snapshot) return false;
+        if (playlist.snapshot.length == 0) return false;
+        if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) return false;
         ifFind = false;
         for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++)
             if (String(trackId) == String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i])) {

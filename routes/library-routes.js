@@ -23,9 +23,18 @@ const limiter = rateLimit({
  router.get('/me/following/contains', checkAuth,limiter, async(req, res) => {
 
     const userID = req.user._id;
-    const checks = await User.CheckIfUserFollowArtist(userID,req.body.id);
-    if (!checks) res.sendStatus(404); //not found
-    else res.status(200).json({'follow':checks});
+    if(req.body.id==undefined){
+        res.sendStatus(500).json({message:"id is not defined"});
+    }
+    else{
+        const checks = await User.CheckIfUserFollowArtist(userID,req.body.id);
+        if (checks==-1) res.sendStatus(500)
+        else{
+            
+            res.status(200).json({'follow':checks});
+        }
+    }
+    
 });
 //USER FOLLOW ARTISTS
 router.put('/me/following', checkAuth,limiter, async(req, res) => {

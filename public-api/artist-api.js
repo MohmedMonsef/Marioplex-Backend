@@ -95,7 +95,7 @@ const Artist = {
      */
     //GET ARTIST - PARAMS : ArtistID
     getArtist: async function(artistID) {
-        if(!checkMonooseObjectID([artistID])) return 0;
+        if (!checkMonooseObjectID([artistID])) return 0;
         const artist = await artistDocument.findById(artistID, (err, artist) => {
             if (err) return 0;
             return artist;
@@ -116,8 +116,8 @@ const Artist = {
      */
     // CREATE ALBUM FOR AN ARTIST - PARAMS : ArtistID-Name,Label,Avmarkets,Albumtype,ReleaseDate,Genre
     addAlbum: async function(artistId, name, label, avMarkets, albumType, releaseDate, genre) {
-        if(typeof(name) != "string" || typeof(label) != "string" ) return 0;
-        if(!checkMonooseObjectID([artistId])) return 0;
+        if (typeof(name) != "string" || typeof(label) != "string") return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         if (!await this.getArtist(artistId)) return 0;
         let spotifyAlbums = spotify.album;
         let album = await new spotifyAlbums({
@@ -154,9 +154,9 @@ const Artist = {
      */
     // CREATE TRACK FOR AN ARTIST -PARAMS : ArtistID,trackid
     addTrack: async function(artistId, trackId) {
-        if(!checkMonooseObjectID([artistId])) return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         const artist = await artistDocument.findById(artistId);
-        if(!artist.addTracks) artist.addTracks = [];
+        if (!artist.addTracks) artist.addTracks = [];
         artist.addTracks.push({
             trackId: trackId
         });
@@ -172,10 +172,10 @@ const Artist = {
     getArtists: async function(artistsIds) {
         let artists = [];
 
-        if(!artistsIds) artistsIds = [];
-        if(!checkMonooseObjectID(artistsIds)) return 0;
+        if (!artistsIds) artistsIds = [];
+        if (!checkMonooseObjectID(artistsIds)) return 0;
         for (let artistId of artistsIds) {
-            
+
             let artist = await this.getArtist(artistId);
             if (!artist) continue
             artists.push(artist);
@@ -193,8 +193,8 @@ const Artist = {
      */
     // GET SPECIFIC ALBUMS - Params :artistID,groups,country,limit,offset
     getAlbums: async function(artistId, groups, country, limit, offset) {
-       // if(limit && typeof(limit) != "number" ) return 0;
-        if(!checkMonooseObjectID([artistId])) return 0;
+        // if(limit && typeof(limit) != "number" ) return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         let specificAlbums = [];
         let albums = {};
         let artist = await this.getArtist(artistId);
@@ -254,7 +254,7 @@ const Artist = {
      */
     //GET RELATED ARTISTS TO A GIVEN ARTIST - Params: artistID
     getRelatedArtists: async function(artistId) {
-        if(!checkMonooseObjectID([artistId])) return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         let artists;
         artistDocument.find({}, function(err, artistsAll) {
             artists = artistsAll;
@@ -269,7 +269,7 @@ const Artist = {
                 for (var j = 0; j < artist.genre.length; j++) {
                     if (artists[artistIndx].genre[i] == artist.genre[j]) {
                         if (!relatedArtists.find(artist1 => artist1._id == artists[artistIndx]._id))
-                        relatedArtists.push(artists[artistIndx]);
+                            relatedArtists.push(artists[artistIndx]);
                         continue;
                     }
                 }
@@ -302,8 +302,8 @@ const Artist = {
      */
     // GET TOP TRACKS IN A COUNTRY FOR AN ARTIST
     getTopTracks: async function(artistId, country) {
-       // if(typeof(country) != "string") return 0;
-        if(!checkMonooseObjectID([artistId])) return 0;
+        // if(typeof(country) != "string") return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         let topTracks = [];
         let tracks = {};
         let artist = await this.getArtist(artistId);
@@ -315,7 +315,7 @@ const Artist = {
 
         //FILTER TRACKS BASED ON THE COUNTRY
         for (let track in tracks) {
-            if ( tracks[track].availableMarkets && tracks[track].availableMarkets.includes(country)) {
+            if (tracks[track].availableMarkets && tracks[track].availableMarkets.includes(country)) {
                 topTracks.push(tracks[track]);
             }
         }
@@ -331,7 +331,7 @@ const Artist = {
      */
     //GET TRACKS FOR AN ARTIST - Params:artistID
     getTracks: async function(artistId) {
-        if(!checkMonooseObjectID([artistId])) return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         let specificTracks = [];
         let tracks = {};
         let artist = await this.getArtist(artistId);

@@ -299,7 +299,7 @@ const User = {
         let artist = await Artist.getArtist(ArtistID);
         if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
-        if (!user.follow.length) return -1;
+        if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {
             if (user.follow[i].id == ArtistID)
                 return true;

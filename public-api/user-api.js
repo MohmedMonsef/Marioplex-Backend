@@ -267,11 +267,10 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await this.getUserById(ArtistID);
+        let artist = await artistDocument.findOne({userId:ArtistID});
         if (!user || !artist) return 0;
-        if(artist.userType=='user') return 0;
         if (!user.follow) user.follow = [];
-        user.follow.push({ 'id': ArtistID });
+        user.follow.push({ 'id': artist._id });
         await user.save();
         return 1;
     },
@@ -279,13 +278,12 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await this.getUserById(ArtistID);
+        let artist = await artistDocument.findOne({userId:ArtistID});
         if (!user || !artist) return 0;
-        if(artist.userType=='user') return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
         for (let i = 0; i < user.follow.length; i++) {
-            if (String(user.follow[i].id) == String(ArtistID)) {
+            if (String(user.follow[i].id) == String(artist._id)) {
                 user.follow.splice(i, 1);
                 user.save();
                 return 1;
@@ -298,12 +296,12 @@ const User = {
         if (!checkMonooseObjectID([userID])) return -1;
         if (!checkMonooseObjectID([ArtistID])) return -1;
         const user = await this.getUserById(userID);
-        let artist = await this.getUserById(userID)
+        let artist = await artistDocument.findOne({userId:ArtistID});
         if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {
-            if (user.follow[i].id == ArtistID)
+            if (String(user.follow[i].id) == String(artist._id))
                 return true;
         }
         return false;

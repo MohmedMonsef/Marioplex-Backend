@@ -100,7 +100,6 @@ const User = {
         userPublic["displayName"] = user.displayName;
         userPublic["images"] = user.images;
         userPublic["type"] = user.type;
-        userPublic["followedBy"] = user.followedBy;
         return userPublic;
 
 
@@ -126,7 +125,7 @@ const User = {
             let update = { ownerId: spotify._id };
             await playlistDocument.findOneAndUpdate(filter, update);
         }
-        await Image.deleteImages(userID, userID, 'user');
+        await Image.deleteImages(userId, userId, 'user');
         // delete user himseld from db
         await userDocument.findByIdAndDelete(userId);
         return 1;
@@ -294,13 +293,13 @@ const User = {
 
     },
     CheckIfUserFollowArtist: async function(userID, ArtistID) {
-        if (!checkMonooseObjectID([userID])) return 0;
-        if (!checkMonooseObjectID([ArtistID])) return 0;
+        if (!checkMonooseObjectID([userID])) return -1;
+        if (!checkMonooseObjectID([ArtistID])) return -1;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
-        if (!user || !artist) return 0;
+        if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
-        if (!user.follow.length) return 0;
+        if (!user.follow.length) return -1;
         for (let i = 0; i < user.follow.length; i++) {
             if (user.follow[i].id == ArtistID)
                 return true;

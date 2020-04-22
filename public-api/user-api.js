@@ -73,9 +73,11 @@ const User = {
                 }
 
             }
-            if (expiresDate) user.premium['expiresDate'] = expiresDate;
-            if (cardNumber) user.premium['cardNumber'] = cardNumber;
-            if (isMonth) user.premium['isMonth'] = isMonth;
+            if (user.product == 'premium') {
+                if (expiresDate) user.premium['expiresDate'] = expiresDate;
+                if (cardNumber) user.premium['cardNumber'] = cardNumber;
+                if (isMonth) user.premium['isMonth'] = isMonth;
+            }
             await user.save();
             return 1;
 

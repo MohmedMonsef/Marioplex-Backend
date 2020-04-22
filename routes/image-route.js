@@ -48,6 +48,7 @@ router.post('/images/upload/:source_id',checkAuth,limiter,async (req,res)=>{
     req.imageId = imageId;
     uploadImage.fields([{name:"image"}])(req,res,(err)=>{
         if(err){ 
+            await Image.deleteImage(imageId,userId,sourceId,belongsTo);
             res.status(403).send({"error":"cannot add image to db"});
             return 0;
       }else{

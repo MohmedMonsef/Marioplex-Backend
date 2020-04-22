@@ -99,6 +99,7 @@ router.put('/me/update', checkAuth,limiter, (req, res) => {
 
 //GET USER PRIVATE PROFILE INFORMATION
 router.get('/me', checkAuth,limiter, async(req, res) => {
+    console.log(req.rateLimit.current)
     const userID = req.user._id; // get it from desierialize auth 
     await spotifySchema.user.find({ _id: userID }, {
         displayName: 1,

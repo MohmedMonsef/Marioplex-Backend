@@ -26,7 +26,7 @@ router.get('/me/track/:track_id',checkAuth,limiter,async (req,res)=>{
 
 // get track with some user info as like
 router.get('/track/:track_id',checkAuth,limiter,async (req,res)=>{
-   
+   console.log(req.rateLimit.current)
     const trackId = req.params.track_id;
     const user = await User.getUserById(req.user._id);
     if(!user){ res.status(403).json({"error":"user not allowed"}); return ;}

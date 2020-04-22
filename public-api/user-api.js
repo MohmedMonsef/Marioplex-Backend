@@ -267,8 +267,9 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await Artist.getArtist(ArtistID);
+        let artist = await this.getUserById(ArtistID);
         if (!user || !artist) return 0;
+        if(artist.userType=='user') return 0;
         if (!user.follow) user.follow = [];
         user.follow.push({ 'id': ArtistID });
         await user.save();
@@ -278,8 +279,9 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await Artist.getArtist(ArtistID);
+        let artist = await this.getUserById(ArtistID);
         if (!user || !artist) return 0;
+        if(artist.userType=='user') return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
         for (let i = 0; i < user.follow.length; i++) {
@@ -296,7 +298,7 @@ const User = {
         if (!checkMonooseObjectID([userID])) return -1;
         if (!checkMonooseObjectID([ArtistID])) return -1;
         const user = await this.getUserById(userID);
-        let artist = await Artist.getArtist(ArtistID);
+        let artist = await this.getUserById(userID)
         if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;

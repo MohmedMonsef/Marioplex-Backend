@@ -25,13 +25,10 @@ const limiter = rateLimit({
     const userID = req.user._id;
     if(req.body.id==undefined){
         res.sendStatus(500).json({message:"id is not defined"});
-        console.log('blA')
     }
     else{
         const checks = await User.CheckIfUserFollowArtist(userID,req.body.id);
         if (checks==-1) res.sendStatus(500)
-        if(checks==-1){        console.log('3a')
-    }
         else{
             
             res.status(200).json({'follow':checks});

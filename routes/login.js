@@ -13,9 +13,15 @@ const router=express.Router();
 const {auth:checkAuth} = require('../middlewares/is-me');
 require('../config/passport');
 User= spotifySchema.User
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 2
 
+});
 //request to log in the user
-router.post("/login", (req, res) => {
+router.post("/login",limiter, (req, res) => {
     // Form validation
   
     const { errors, isValid } = validateLoginInput(req.body);
@@ -54,7 +60,7 @@ router.post("/login", (req, res) => {
   });
 
   //Notification Token Set
-  router.post("/notification/token",checkAuth,async (req, res) => {
+  router.post("/notification/token",checkAuth,limiter,async (req, res) => {
     
   if(!req.body.fcmToken||req.body.fcmToken==""){return res.status(404).send({error:"FCM TOKEN IS NOT PROVIDED"})}
     let userId=req.user._id;
@@ -74,7 +80,7 @@ router.post("/login", (req, res) => {
   });
 
     //User logs out
-    router.post("/user/logout",checkAuth,async (req, res) => {
+    router.post("/user/logout",limiter,checkAuth,async (req, res) => {
     
         let userId=req.user._id;
         let user=await Users.getUserById(userId);

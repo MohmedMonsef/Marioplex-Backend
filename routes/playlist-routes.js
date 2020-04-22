@@ -5,8 +5,17 @@ const { auth: checkAuth } = require('../middlewares/is-me');
 const validatePlaylistInput = require('../validation/playlist');
 const { content: checkContent } = require('../middlewares/content');
 const checkID = require('../validation/mongoose-objectid');
+
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 30
+
+});
+
 //GET PLAYLIST - PATH PARAMS: playlist_id
-router.get('/playlists/:playlist_id', checkAuth, async(req, res) => {
+router.get('/playlists/:playlist_id', checkAuth,limiter, async(req, res) => {
     if (checkID([req.params.playlist_id])) {
         const playlistId = req.params.playlist_id;
         const playlist = await User.getPlaylist(playlistId, req.query.snapshot, req.user._id);
@@ -16,7 +25,7 @@ router.get('/playlists/:playlist_id', checkAuth, async(req, res) => {
 })
 
 // CURRENT USER CREATE PLAYLIST - BODY PARAMS : name-Description
-router.post('/users/playlists', checkAuth, async(req, res) => {
+router.post('/users/playlists', checkAuth,limiter, async(req, res) => {
         const userId = req.user._id;
         const { errors, isValid } = validatePlaylistInput(req.body);
         // Check validation
@@ -32,7 +41,7 @@ router.post('/users/playlists', checkAuth, async(req, res) => {
 
     })
     // FOLLOW PLAYLIST - PATH PARAMS : playlist_id - BODY PARAMS:isPrivate
-router.put('/playlists/:playlist_id/followers', checkAuth, async(req, res) => {
+router.put('/playlists/:playlist_id/followers', checkAuth,limiter, async(req, res) => {
     if (checkID([req.params.playlist_id])) {
         const userId = req.user._id; // get it from desierialize auth 
         const playlistId = req.params.playlist_id;
@@ -44,7 +53,7 @@ router.put('/playlists/:playlist_id/followers', checkAuth, async(req, res) => {
 })
 
 // USER UNFOLLOW PLAYLIST - PATH PARAMS : playlist_id
-router.delete('/playlists/:playlist_id/followers', checkAuth, async(req, res) => {
+router.delete('/playlists/:playlist_id/followers', checkAuth,limiter, async(req, res) => {
     if (checkID([req.params.playlist_id])) {
         const userId = req.user._id; // get it from desierialize auth
         const playlistId = req.params.playlist_id;
@@ -55,7 +64,7 @@ router.delete('/playlists/:playlist_id/followers', checkAuth, async(req, res) =>
 
 });
 // DELETE PLAYLIST -  PATH PARAMS : playlist_id
-router.delete('/me/delete/playlists/:playlist_id', checkAuth, async(req, res) => {
+router.delete('/me/delete/playlists/:playlist_id', checkAuth,limiter, async(req, res) => {
         if (checkID([req.params.playlist_id])) {
             const userId = req.user._id; // get it from desierialize auth
             const playlistId = req.params.playlist_id;
@@ -67,7 +76,7 @@ router.delete('/me/delete/playlists/:playlist_id', checkAuth, async(req, res) =>
 
     })
     //ADD TRACK TO PLAYLIST - PATH PARAMS:playlist_id -BODY PARAMS:tracks (Array of ids)
-router.post('/playlists/:playlist_id/tracks', checkAuth, async(req, res) => {
+router.post('/playlists/:playlist_id/tracks', checkAuth,limiter, async(req, res) => {
         if (req.body.tracks == undefined) {
             return res.status(401).send('Bad Request');
         }
@@ -81,7 +90,7 @@ router.post('/playlists/:playlist_id/tracks', checkAuth, async(req, res) => {
     })
     //UPDATE CREATE PLAYLIST DETAILS  {name,description => done + {image} not done yet} 
     //PATH PARAMS :playlist_id - BODY PARAMS :name,Description
-router.put('/playlists/:playlist_id', [checkAuth, checkContent], async(req, res) => {
+router.put('/playlists/:playlist_id', [checkAuth,limiter, checkContent], async(req, res) => {
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
         let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
         if (!authorized) { return res.status(403).send('FORBIDDEN'); }
@@ -109,7 +118,7 @@ router.get('/users/:user_id/playlists', [checkAuth], async(req, res) => {
     })
     // TOGGLE COLLABORATIVE 
     //PATH PARAMS :playlist_id
-router.put('/playlists/:playlist_id/collaborative', [checkAuth, checkContent], async(req, res) => {
+router.put('/playlists/:playlist_id/collaborative', [checkAuth,limiter, checkContent], async(req, res) => {
         let user = await User.getUserById(req.user._id);
         if (!user) return res.status(404).send('NOT FOUND');
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
@@ -121,7 +130,7 @@ router.put('/playlists/:playlist_id/collaborative', [checkAuth, checkContent], a
     })
     // TOGGLE isPublic 
     //PATH PARAMS :playlist_id
-router.put('/playlists/:playlist_id/public', [checkAuth, checkContent], async(req, res) => {
+router.put('/playlists/:playlist_id/public', [checkAuth,limiter, checkContent], async(req, res) => {
         let user = await User.getUserById(req.user._id);
         if (!user) return res.status(404).send('NOT FOUND');
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });

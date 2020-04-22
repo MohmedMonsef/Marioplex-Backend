@@ -8,8 +8,15 @@ const {upload:uploadImage} = require('../middlewares/upload-image');
 const mongoose = require('mongoose');
 const jwt=require('jsonwebtoken');
 const jwtSecret = require('../config/jwt-key').secret;
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 50
+
+});
 // upload image for a user for different entities with a source id 
-router.post('/images/upload/:source_id',checkAuth,async (req,res)=>{
+router.post('/images/upload/:source_id',checkAuth,limiter,async (req,res)=>{
     const userId = req.user._id;
     const belongsTo = req.query.belongs_to;
     const sourceId = req.params.source_id;
@@ -54,7 +61,7 @@ router.post('/images/upload/:source_id',checkAuth,async (req,res)=>{
 })
 
 // update image for a user for different entities with a source id 
-router.post('/images/update/:source_id',checkAuth,async (req,res)=>{
+router.post('/images/update/:source_id',checkAuth,limiter,async (req,res)=>{
     const userId = req.user._id;
     const belongsTo = req.query.belongs_to;
     const sourceId = req.params.source_id;
@@ -98,7 +105,7 @@ router.post('/images/update/:source_id',checkAuth,async (req,res)=>{
 
 })
 // get image 
-router.get('/images/:image_id',async (req,res)=>{
+router.get('/images/:image_id',limiter,async (req,res)=>{
  
    
     const belongsTo = req.query.belongs_to;
@@ -147,7 +154,7 @@ router.get('/images/:image_id',async (req,res)=>{
 }) 
 
 // delete image 
-router.delete('/images/delete/:image_id',checkAuth,async (req,res)=>{
+router.delete('/images/delete/:image_id',checkAuth,limiter,async (req,res)=>{
     const imageId = req.params.image_id;
     const userId = req.user._id;
     const belongsTo = req.query.belongs_to;

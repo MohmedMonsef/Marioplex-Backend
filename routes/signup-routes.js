@@ -10,9 +10,16 @@ const auth = require('../middlewares/is-me')
 require('../config/passport');
 const User = require('../public-api/user-api')
 const passport = require('passport');
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 2
+
+});
 
 // route for user sign up
-router.post('/sign_up', async(req, res) => {
+router.post('/sign_up',limiter, async(req, res) => {
     // set Joi validation schema to check correctness of data
     const shcema = Joi.object().keys({
         email: Joi.string().trim().email().required(),

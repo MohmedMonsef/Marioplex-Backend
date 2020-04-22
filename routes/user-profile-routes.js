@@ -5,8 +5,16 @@ const profileNotification = require('../public-api/notification-api');
 const User = require('../public-api/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 30
+
+});
+
 //GET USER'S PUBLIC PROFILE, PATH PARAMS: id
-router.get('/users/:id', checkAuth, async(req, res) => {
+router.get('/users/:id', checkAuth,limiter, async(req, res) => {
 
     const user = await User.me(req.params.id, req.user._id);
     if (user) {
@@ -18,7 +26,7 @@ router.get('/users/:id', checkAuth, async(req, res) => {
         res.sendStatus(404)
     }
 })
-router.put('/me/promote', checkAuth, async(req, res) => {
+router.put('/me/promote', checkAuth,limiter, async(req, res) => {
     const prmoteData = Joi.object().keys({
         expiresDate: Joi.date().min(Date.now()).raw().required(),
         cardNumber: Joi.string().creditCard().required(),
@@ -42,7 +50,7 @@ router.put('/me/promote', checkAuth, async(req, res) => {
 
 
 //GET USER'S PRIVATE PROFILE WITH PLAYER with player info
-router.get('/me-player', checkAuth, async(req, res) => {
+router.get('/me-player', checkAuth,limiter, async(req, res) => {
     const userID = req.user._id; // get it from desierialize auth 
     await spotifySchema.user.find({ _id: userID }, {
         displayName: 1,
@@ -63,7 +71,7 @@ router.get('/me-player', checkAuth, async(req, res) => {
 })
 
 //UPDATE USER PROFILE INFORMATION 
-router.put('/me/update', checkAuth, (req, res) => {
+router.put('/me/update', checkAuth,limiter, (req, res) => {
 
     const shcema = Joi.object().keys({
         Email: Joi.string().trim().email(),
@@ -90,7 +98,7 @@ router.put('/me/update', checkAuth, (req, res) => {
 })
 
 //GET USER PRIVATE PROFILE INFORMATION
-router.get('/me', checkAuth, async(req, res) => {
+router.get('/me', checkAuth,limiter, async(req, res) => {
     const userID = req.user._id; // get it from desierialize auth 
     await spotifySchema.user.find({ _id: userID }, {
         displayName: 1,
@@ -109,7 +117,7 @@ router.get('/me', checkAuth, async(req, res) => {
 })
 
 //REMOVE USER ACCOUNT
-router.delete('/remove', checkAuth, async(req, res, next) => {
+router.delete('/remove', checkAuth,limiter, async(req, res, next) => {
     const userID = req.user._id; // get it from desierialize auth 
     const user = await User.deleteAccount(userID)
     if (user) {

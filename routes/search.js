@@ -3,9 +3,16 @@ const router = require('express').Router();
 const search = require('../public-api/search-api');
 const User = require('../public-api/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 30
+
+});
 
 //SEARCH FOR A WORD OR CHAR, QUERY PARAMS: name, type
-router.get('/search', async(req, res) => {
+router.get('/search',limiter, async(req, res) => {
 
     const name = req.query.name;
     const type = req.query.type.split(',');

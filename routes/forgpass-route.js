@@ -7,9 +7,15 @@ var users=require('../public-api/user-api');
 var sendmail=require('../forget-password/sendmail');
 const { auth: checkAuth } = require('../middlewares/is-me');
 var jsonparser = bodyParser.json();
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 2
 
+});
 
-router.post('/login/forgetpassword',jsonparser,async function(req,res)
+router.post('/login/forgetpassword',jsonparser,limiter,async function(req,res)
 {
     let email=req.body.email;
     let user=await users.checkmail(email);
@@ -29,7 +35,7 @@ router.post('/login/forgetpassword',jsonparser,async function(req,res)
     }
 
 });
-router.post('/login/reset_password',checkAuth,async (req,res)=>
+router.post('/login/reset_password',checkAuth,limiter,async (req,res)=>
 {
     let user=await users.getUserById(req.user._id);
 

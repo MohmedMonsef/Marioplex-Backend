@@ -3,9 +3,15 @@ const router = require('express').Router();
 const Library = require('../public-api/library-api');
 const User = require('../public-api/user-api')
 const { auth: checkAuth } = require('../middlewares/is-me');
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 30
 
+});
  //GET USER'S FOLLOWING ARTISTS
- router.get('/me/followingArtist', checkAuth, async(req, res) => {
+ router.get('/me/followingArtist', checkAuth,limiter, async(req, res) => {
      
     const userID = req.user._id;
     const checks = await User.getUserFollowingArtist(userID);
@@ -14,7 +20,7 @@ const { auth: checkAuth } = require('../middlewares/is-me');
 
 });
  //CHECK IF A USER FOLLOW ARTISTS
- router.get('/me/following/contains', checkAuth, async(req, res) => {
+ router.get('/me/following/contains', checkAuth,limiter, async(req, res) => {
 
     const userID = req.user._id;
     const checks = await User.CheckIfUserFollowArtist(userID,req.body.id);
@@ -22,7 +28,7 @@ const { auth: checkAuth } = require('../middlewares/is-me');
     else res.status(200).json({'follow':checks});
 });
 //USER FOLLOW ARTISTS
-router.put('/me/following', checkAuth, async(req, res) => {
+router.put('/me/following', checkAuth,limiter, async(req, res) => {
 
     const userID = req.user._id;
     const artistIds = req.body.id;
@@ -36,7 +42,7 @@ router.put('/me/following', checkAuth, async(req, res) => {
     }
 });
 //USER UNFOLLOW ARTISTS
-router.delete('/me/following', checkAuth, async(req, res) => {
+router.delete('/me/following', checkAuth,limiter, async(req, res) => {
 
     const userID = req.user._id;
     const artistIds = req.body.id;
@@ -53,7 +59,7 @@ router.delete('/me/following', checkAuth, async(req, res) => {
 });
 
 //CHECK IF USER SAVES ALBUMS - QUERY PARAMS: albums_ids
-router.get('/me/albums/contains', checkAuth, async(req, res) => {
+router.get('/me/albums/contains', checkAuth,limiter, async(req, res) => {
     if(req.query.albums_ids==undefined||req.query.albums_ids==""){return res.status(403).send("No Album ids given");}
     const userID = req.user._id;
     const albumsIDs = req.query.albums_ids.split(',');
@@ -64,7 +70,7 @@ router.get('/me/albums/contains', checkAuth, async(req, res) => {
 });
 
 //CHECK IF USER SAVES TRACKS - QUERY PARAMS: tracks_ids
-router.get('/me/tracks/contains', checkAuth, async(req, res) => {
+router.get('/me/tracks/contains', checkAuth,limiter, async(req, res) => {
     if(req.query.tracks_ids==undefined||req.query.tracks_ids==""){return res.status(403).send("No Tracks ids given");}
     const userID = req.user._id;
     const tracksIDs = req.query.tracks_ids.split(',');
@@ -75,7 +81,7 @@ router.get('/me/tracks/contains', checkAuth, async(req, res) => {
 });
 
 //GET USER'S SAVED ALBUMS - QUERY PARAMS: limit, offset
-router.get('/me/albums', checkAuth, async(req, res) => {
+router.get('/me/albums', checkAuth,limiter, async(req, res) => {
 
     const userID = req.user._id;
     const albums = await Library.getSavedAlbums(userID, req.query.limit, req.query.offset);
@@ -85,7 +91,7 @@ router.get('/me/albums', checkAuth, async(req, res) => {
 });
 
 //GET USER'S SAVED TRACKS - QUERY PARAMS: limit, offset
-router.get('/me/tracks', checkAuth, async(req, res) => {
+router.get('/me/tracks', checkAuth,limiter, async(req, res) => {
 
     const userID = req.user._id;
     const tracks = await Library.getSavedTracks(userID, req.query.limit, req.query.offset);

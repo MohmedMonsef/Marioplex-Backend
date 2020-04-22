@@ -4,10 +4,18 @@ const User = require('../public-api/user-api');
 const jwt=require('jsonwebtoken');
 const jwtSecret = require('../config/jwt-key').secret;
 const {auth:checkAuth} = require('../middlewares/is-me');
-
 const mongoose = require('mongoose')
 
-router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 30
+
+});
+
+router.get('/me/track/:track_id',checkAuth,limiter,async (req,res)=>{
+    
     const trackId = req.params.track_id;
    
     const track = await Track.getTrack(trackId);
@@ -17,8 +25,8 @@ router.get('/me/track/:track_id',checkAuth,async (req,res)=>{
 })
 
 // get track with some user info as like
-router.get('/track/:track_id',checkAuth,async (req,res)=>{
-    
+router.get('/track/:track_id',checkAuth,limiter,async (req,res)=>{
+   
     const trackId = req.params.track_id;
     const user = await User.getUserById(req.user._id);
     if(!user){ res.status(403).json({"error":"user not allowed"}); return ;}
@@ -29,7 +37,7 @@ router.get('/track/:track_id',checkAuth,async (req,res)=>{
 
 })
 // get tracks
-router.get('/tracks/',checkAuth,async (req,res)=>{
+router.get('/tracks/',checkAuth,limiter,async (req,res)=>{
     if (req.body.ids){
         
         const user = await User.getUserById(req.user._id);
@@ -41,14 +49,14 @@ router.get('/tracks/',checkAuth,async (req,res)=>{
 else res.status(404).send({error:"tracks id's are required"});
 })
 // get track audio feature/analysis
-router.get('/track/audio-features/:track_id',checkAuth,async (req,res)=>{
+router.get('/track/audio-features/:track_id',checkAuth,limiter,async (req,res)=>{
     const audioFeature = await Track.getAudioFeaturesTrack(req.params.track_id);
     if(!audioFeature) res.status(404).send({error:"no track with this id"});
     else res.json(audioFeature);
 })
 
 // get tracks audio feature/analysis 
-router.get('/tracks/audio-features/',checkAuth,async (req,res)=>{
+router.get('/tracks/audio-features/',checkAuth,limiter,async (req,res)=>{
     if(req.body.ids){
     const trackIds = req.body.ids? req.body.ids.split(','):[];
     const audioFeatures = await Track.getAudioFeaturesTracks(trackIds);
@@ -59,7 +67,7 @@ router.get('/tracks/audio-features/',checkAuth,async (req,res)=>{
 })
 
 // user like track
-router.put('/me/like/:track_id',checkAuth,async (req,res)=>{
+router.put('/me/like/:track_id',checkAuth,limiter,async (req,res)=>{
     
     const userId = req.user._id; // get it from desierialize auth 
     const trackId = req.params.track_id;
@@ -70,7 +78,7 @@ router.put('/me/like/:track_id',checkAuth,async (req,res)=>{
 });
 
 // user unlike track
-router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
+router.delete('/me/unlike/:track_id',checkAuth,limiter,async (req,res)=>{
     const userId = req.user._id; // get it from desierialize auth
     const trackId = req.params.track_id;
     const updatedUser= await User.unlikeTrack(userId,trackId);
@@ -83,7 +91,7 @@ router.delete('/me/unlike/:track_id',checkAuth,async (req,res)=>{
 // set android route which will just serve webm media file
 
 
-router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
+router.get('/tracks/android/:track_id',checkAuth,limiter,async (req,res)=>{
     let type = req.query.type;// high low medium or review
    
     if(type != "review"){
@@ -143,7 +151,7 @@ router.get('/tracks/android/:track_id',checkAuth,async (req,res)=>{
    
 })
 // set web player route which will just serve encrypted webm media file
-router.get('/tracks/web-player/:track_id',async (req,res)=>{
+router.get('/tracks/web-player/:track_id',limiter,async (req,res)=>{
     let type = req.query.type;// high low medium or review
     // get token as query parameter
     const token=req.query.token;
@@ -214,7 +222,7 @@ router.get('/tracks/web-player/:track_id',async (req,res)=>{
 })
 
 // set the route to get the track encryption key to decrypt the track
-router.get('/tracks/encryption/:track_id/keys',checkAuth,async (req,res)=>{
+router.get('/tracks/encryption/:track_id/keys',checkAuth,limiter,async (req,res)=>{
     const trackId = req.params.track_id;
     const track = await Track.getTrack(trackId);
     if(!track)res.status(404).send({"error":"not found"});
@@ -225,7 +233,7 @@ router.get('/tracks/encryption/:track_id/keys',checkAuth,async (req,res)=>{
 })
 
 // delete track
-router.delete('/tracks/delete/:track_id',checkAuth,async (req,res)=>{
+router.delete('/tracks/delete/:track_id',checkAuth,limiter,async (req,res)=>{
     const userId = req.user._id;
     const trackId = req.params.track_id;
     const deleteTrack = await Track.deleteTrack(userId,trackId);
@@ -234,7 +242,7 @@ router.delete('/tracks/delete/:track_id',checkAuth,async (req,res)=>{
 })
 
 // get related track
-router.get('/tracks/related/:track_id',checkAuth,async (req,res)=>{
+router.get('/tracks/related/:track_id',checkAuth,limiter,async (req,res)=>{
     const trackId = req.params.track_id;
     const tracksRelated = await Track.getRelatedTrack(trackId);
     if(!tracksRelated) res.status(404).json({"error":"no related tracks found"});
@@ -244,7 +252,7 @@ router.get('/tracks/related/:track_id',checkAuth,async (req,res)=>{
 
 
 // get related track
-router.get('/tracks/related/full-track/:track_id',checkAuth,async (req,res)=>{
+router.get('/tracks/related/full-track/:track_id',limiter,checkAuth,async (req,res)=>{
     const trackId = req.params.track_id;
     const userId = req.user._id;
     const tracksRelated = await Track.getFullRelatedTracks(userId,trackId);

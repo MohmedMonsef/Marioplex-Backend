@@ -1,6 +1,7 @@
 const connection=require('./db-connection/connection');
 const express = require('express');
 const app =express();
+const rateLimit = require("express-rate-limit");
 //connect to database
 connection(app);
 
@@ -25,7 +26,10 @@ const facebook = require('./authentication/facebook-routes');
 const forgpass = require('./routes/forgpass-route');
 const images = require('./routes/image-route')
 require('./config/passport');
-
+const limiter = rateLimit({
+    windowMs:  10*60 * 1000, // 15 minutes
+    max: 1 // limit each IP to 100 requests per windowMs
+  });
 app.use(cors());
 app.use(bodyparser.urlencoded({extended:false}));
 app.use(bodyparser.json());
@@ -33,7 +37,7 @@ app.use(logger('dev'));
 app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
-
+//app.use('/api/',limiter);
 //routes
 app.use('/api',homePage);
 app.use('/api',Library);
@@ -50,6 +54,9 @@ app.use('/api/auth',facebook);
 app.use('/api',browse);
 app.use('/api',Artist);
 app.use('/api',images);
+
+  
+  //  apply to all requests
 
 //connect to db before test run
 const API_PORT= process.env.PORT||3000;

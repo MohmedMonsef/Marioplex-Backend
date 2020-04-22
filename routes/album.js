@@ -3,8 +3,14 @@ const router = require('express').Router();
 const Album = require('../public-api/album-api');
 const User = require('../public-api/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
+const rateLimit = require("express-rate-limit");
+// add rate limiting
+const limiter = rateLimit({
+    windowMs:  60 * 1000, 
+    max: 2
 
-router.delete('/me/albums', checkAuth, async(req, res) => {
+});
+router.delete('/me/albums', checkAuth,limiter, async(req, res) => {
     if (req.body.ids == undefined) {
         res.status(403).json({
             message: "These albums can't be Unsaved"
@@ -27,7 +33,7 @@ router.delete('/me/albums', checkAuth, async(req, res) => {
 
 })
 
-router.put('/me/Albums', checkAuth, async(req, res) => {
+router.put('/me/Albums', checkAuth,limiter, async(req, res) => {
     if (req.body.ids == undefined) {
         res.status(403).json({
             message: "These albums can't be saved"
@@ -54,7 +60,7 @@ router.put('/me/Albums', checkAuth, async(req, res) => {
 })
 
 // get album
-router.get('/albums/:album_id', checkAuth, async(req, res) => {
+router.get('/albums/:album_id', checkAuth,limiter, async(req, res) => {
 
     const albumID = req.params.album_id;
     const UserID = req.user._id;
@@ -64,7 +70,7 @@ router.get('/albums/:album_id', checkAuth, async(req, res) => {
 
 })
 
-router.get('/albums', checkAuth, async(req, res) => {
+router.get('/albums', checkAuth,limiter, async(req, res) => {
     if (req.body.ids == undefined) {
         res.status(404).json({
             message: "no albums found"
@@ -80,7 +86,7 @@ router.get('/albums', checkAuth, async(req, res) => {
 
 })
 
-router.get('/albums/:id/tracks', checkAuth, async(req, res) => {
+router.get('/albums/:id/tracks', checkAuth,limiter, async(req, res) => {
 
     const albumID = req.params.id;
     let user = await User.getUserById(req.user._id);

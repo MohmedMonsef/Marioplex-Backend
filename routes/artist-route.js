@@ -184,5 +184,12 @@ router.post('/me/ToArtist', checkAuth,limiter, async(req, res) => {
 
 });
 
+//GET USER AS ARTIST
+router.get('/me/artist', [checkAuth,checkType] ,limiter, async(req, res) => {
+        
+        let artist = await Artist.findMeAsArtist(req.user._id);
+        if (!artist) { return res.status(404).send("NO SUCH ARTIST"); }
+        return res.status(200).send(artist);
 
+});
 module.exports = router;

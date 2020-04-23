@@ -15,13 +15,11 @@ module.exports = function(app) {
     const bahaa = "mongodb+srv://bahaaEldeen:123@spotifycluster-i2m7n.mongodb.net/test?retryWrites=true&w=majority";
     const mlab = "mongodb://bahaa:123456b@ds157834.mlab.com:57834/spotify-demo"
         // if not env variable will tack mlab 
-    mongoose.connect(String(process.env.CONNECTION_STsRING) ? String(process.env.CONNECsTION_STRING) : localhostnada, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (error) => {
-      
+    mongoose.connect(String(process.env.CONNECTION_STRING) ? String(process.env.CONNECTION_STRING) : mlab, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (error) => {
         if (error) {
-            
             console.log('Your connection string is not valid now will connect to connection string ' + mlab);
             // if can not connect to your string connection will connect
-            mongoose.connect(localhostnada, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
+            mongoose.connect(mlab, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
             mongoose.connection.once('open', () => {
                 gfsTracks = new Grid(mongoose.connection.db, mongoose.mongo);
                 gfsImages = new Grid(mongoose.connection.db, mongoose.mongo);

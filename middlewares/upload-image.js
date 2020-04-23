@@ -16,7 +16,8 @@ const storage = new GridFsStorage({
       //console.log(file);
       //console.log(req.user)
       // check extension of the track to be webm audio/video 
-        let acceptedExtensions = ["image/jpeg","image/bmp"]
+      //console.log(file.mimetype)
+        let acceptedExtensions = ["image/jpeg","image/bmp","image/png","image/jpg"]
       if( !acceptedExtensions.includes( file.mimetype)){throw Error("file not supported");}
 
       return new Promise(async (resolve, reject) => {

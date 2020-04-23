@@ -622,6 +622,26 @@ const User = {
         sendmail(user.email, 'Congrats!! ^^) You are Now Promoted to premium so You can Login with your Account as an premium please login again :\n enjoy with premium');
         return true;
     },
+    // to make user be free
+    /**
+     * user return to free
+     * @param {string} userId - id of user
+     * @returns {boolean} - if can be free or not  
+     */
+    promoteToFree: async function(userId) {
+        if (!checkMonooseObjectID([userId])) return 0;
+        user = await this.getUserById(userId);
+        if (!user) return 0;
+        // if not premium return 0
+        if (user.product != 'premium') {
+            return 0;
+        }
+        user.product = 'free';
+        user.premium = {};
+        await user.save();
+        sendmail(user.email, 'Congrats!! ^^) You are Now free not premium return to premium and enjoy with us  please login again :\n enjoy with premium');
+        return true;
+    },
     //create queue for a user
     //params: userId, isPlaylist, sourceId, trackId
     /** 

@@ -48,8 +48,8 @@ const Album = {
             }
         }
         for (let i = 0; i < artistD.addAlbums.length; i++) {
-            console.log(artistD.addAlbums[i].albumId);
-            console.log(albumId);
+            //console.log(artistD.addAlbums[i].albumId);
+            //console.log(albumId);
             if (artistD.addAlbums[i].albumId + 1 == albumId + 1) { artistD.addAlbums.splice(i, 1); break; }
         }
         await artistD.save();

@@ -47,6 +47,11 @@ router.put('/me/promote', checkAuth, limiter, async(req, res) => {
     });
 });
 
+router.put('/me/free', checkAuth, limiter, async(req, res) => {
+    const isPromote = await User.promoteToFree(req.user._id);
+    if (isPromote) res.status(200).send({ success: 'become free ' });
+    else res.status(400).send({ error: 'you are not a premium' })
+});
 
 
 //GET USER'S PRIVATE PROFILE WITH PLAYER with player info

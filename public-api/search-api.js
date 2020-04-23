@@ -150,7 +150,7 @@ const Search = {
 
     //get all tracks with Name
     //params: Name
-    getTrack: async function(Name) {
+    getTrack: async function(Name, limit, offset) {
 
         var Track;
         let allartists = await artistDocument.find({});
@@ -191,7 +191,8 @@ const Search = {
             trackInfo.push(tracks);
 
         }
-        return trackInfo;
+        return limitOffset(limit, offset, trackInfo);
+     
 
     },
 
@@ -224,7 +225,7 @@ const Search = {
 
     //get all artist profile with name
     //params: name
-    getArtistProfile: async function(name) {
+    getArtistProfile: async function(name, limit, offset) {
 
         let artistsInfo = [];
         let artist = await this.getArtistByname(name);
@@ -232,27 +233,26 @@ const Search = {
         if (artist.length == 0) return 0;
         else{
             for(let i = 0; i < artist.length; i++) {
-                        artistInfo = {}
-                        artistInfo["_id"] = artist[i]._id
-                        artistInfo["name"] = artist[i].Name
-                        artistInfo["images"] = artist[i].images
-                        artistInfo["info"] = artist[i].info
-                        artistInfo["type"] = artist[i].type
-                        artistInfo["genre"] = artist[i].genre
-                        artistsInfo.push(artistInfo)
-
+                artistInfo = {}
+                artistInfo["_id"] = artist[i]._id
+                artistInfo["name"] = artist[i].Name
+                artistInfo["images"] = artist[i].images
+                artistInfo["info"] = artist[i].info
+                artistInfo["type"] = artist[i].type
+                artistInfo["genre"] = artist[i].genre
+                artistsInfo.push(artistInfo);
 
             }
         }
         if (artistsInfo.length == 0) return 0;
-        return artistsInfo;
+        return limitOffset(limit, offset, artistsInfo);
 
     },
     
 
     //get all user profiles with name
     //params: name
-    getUserProfile: async function(name) {
+    getUserProfile: async function(name, limit, offset) {
 
         UserInfo = []
         let User = await this.getUserByname(name);
@@ -274,14 +274,14 @@ const Search = {
                 }
             }
 
-            return UserInfo;
+            return limitOffset(limit, offset, UserInfo);
         }
 
     },
 
     //get all playlists with Name
     //params Name
-    getPlaylist: async function(Name) {
+    getPlaylist: async function(Name, limit, offset) {
 
         let playlist = await this.getPlaylists();
         if (playlist && playlist.length == 0) return playlist;
@@ -304,7 +304,7 @@ const Search = {
             playlistInfo.push(Playlist)
 
         }
-        return playlistInfo;
+        return limitOffset(limit, offset, playlistInfo);
     }
 
 }
@@ -356,4 +356,27 @@ const removeDupliactes = (values) => {
         newArray.push(uniqueObject[i]);
     }
     return newArray;
+}
+function limitOffset(limit,offset,search){
+
+    let start = 0;
+    let end = search.length;
+    if (offset != undefined) {
+        if (offset >= 0 && offset <= search.length) {
+            start = offset;
+        }
+    }
+    if (limit != undefined) {
+        if ((start + limit) > 0 && (start + limit) <= search.length) {
+            end = start + limit;
+        }
+    } 
+    else {
+        limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+        if ((start + limit) > 0 && (start + limit) <= search.length) {
+            end = start + limit;
+        }
+    }
+    search.slice(start, end);
+    return search;
 }

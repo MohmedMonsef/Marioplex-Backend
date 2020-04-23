@@ -16,6 +16,8 @@ router.get('/search',limiter, async(req, res) => {
 
     const name = req.query.name;
     const type = req.query.type.split(',');
+    const limit = req.body.limit;
+    const offset = req.body.offset;
     let SearchResult = {};
     for (let i = 0; i < type.length; i++) {
         if (type[i] == "top") {
@@ -23,7 +25,7 @@ router.get('/search',limiter, async(req, res) => {
             if (artist == {}) SearchResult["top"] = []//not found
             else SearchResult["top"] = artist
         } else if (type[i] == "track") {
-            const artist = await search.getTrack(name);
+            const artist = await search.getTrack(name, limit, offset);
             if (artist.length == 0) SearchResult["track"] = [] //not found
             else SearchResult["track"] = artist
         } else if (type[i] == "album") {
@@ -33,16 +35,16 @@ router.get('/search',limiter, async(req, res) => {
             else SearchResult["album"] = albums
 
         } else if (type[i] == "artist") {
-            const artist = await search.getArtistProfile(name);
+            const artist = await search.getArtistProfile(name, limit, offset);
             if (artist == 0) SearchResult["artist"] = [] //not found
             else SearchResult["artist"] = artist
         } else if (type[i] == "playlist") {
-            const playlists = await search.getPlaylist(name);
+            const playlists = await search.getPlaylist(name, limit, offset);
             if (playlists.length == 0) SearchResult["playlist"] = [] //not found
             else SearchResult["playlist"] = playlists
 
         } else if (type[i] == "profile") {
-            const profiles = await search.getUserProfile(name);
+            const profiles = await search.getUserProfile(name ,limit, offset);
             if (profiles.length == 0) SearchResult["profile"] = []; //not found
             else SearchResult["profile"] = profiles
         } else {

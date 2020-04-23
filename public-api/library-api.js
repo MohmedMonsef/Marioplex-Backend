@@ -90,6 +90,11 @@ const Library = {
             if ((start + limit) > 0 && (start + limit) <= Albums.length) {
                 end = start + limit;
             }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+            if ((start + limit) > 0 && (start + limit) <= Albums.length) {
+                end = start + limit;
+            }
         }
         let albumSlice = Albums.slice(start, end);
         albumInfo = []
@@ -132,7 +137,11 @@ const Library = {
             if ((start + limit) > 0 && (start + limit) <= tracksPlaylist.length) {
                 end = start + limit;
             }
-
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+            if ((start + limit) > 0 && (start + limit) <= tracksPlaylist.length) {
+                end = start + limit;
+            }
         }
         let trackSlice = tracksPlaylist.slice(start, end);
         trackInfo = []

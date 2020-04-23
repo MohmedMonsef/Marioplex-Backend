@@ -60,8 +60,8 @@ const Artist = {
         const artists = await artistDocument.find({}).sort('-popularity')
         if (artists) {
             var limit; // to limit the num of artists by frist 20 only but should check if num of albums less than 10  
-            if (artists.length < 20) limit = artists.length;
-            else limit = 20;
+            if (artists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = artists.length;
+            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
 
                 reArtists.push({ genre: artists[i].genre, type: 'artist', name: artists[i].Name, images: artists[i].images, id: artists[i]._id, info: artists[i].info });
@@ -240,6 +240,11 @@ const Artist = {
             }
         }
         if (limit != undefined) {
+            if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
+                end = start + limit;
+            }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
                 end = start + limit;
             }

@@ -389,9 +389,9 @@ const User = {
         if (!user.deletedPlaylists) user.deletedPlaylists = [];
         user.deletedPlaylists.push({ id: playlistId, date: Date.now() });
         await user.save();
-        spotifyUser = await this.checkmail(process.env.SPOTIFY_EMAIL ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com');
+        spotifyUser = await this.checkmail(String(process.env.SPOTIFY_EMAIL) ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com');
         if (!spotifyUser)
-            spotifyUser = await this.createUser('Spotify', process.env.SPOTIFY_PASSWORD_IN_APP ? String(process.env.SPOTIFY_PASSWORD_IN_APP) : 'HelloSpotify', process.env.SPOTIFY_EMAIL ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com', 'Spotify', 'All', Date.now());
+            spotifyUser = await this.createUser('Spotify', String(process.env.SPOTIFY_PASSWORD_IN_APP) ? String(process.env.SPOTIFY_PASSWORD_IN_APP) : 'HelloSpotify', String(process.env.SPOTIFY_EMAIL) ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com', 'Spotify', 'All', Date.now());
         if (!spotifyUser) return 0;
         await playlistDocument.updateOne({ _id: playlistId }, {
             ownerId: spotifyUser._id

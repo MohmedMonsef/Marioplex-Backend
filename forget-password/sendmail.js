@@ -5,8 +5,8 @@ module.exports = async function(email, message, type) {
         port: 587,
         secure: false,
         auth: {
-            user: process.env.SPOTIFY_EMAIL ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com',
-            pass: process.env.SPOTIFY_PASSWORD ? String(process.env.SPOTIFY_EMAIL_PASSWORD) : 'Helloworld55'
+            user: String(process.env.SPOTIFY_EMAIL) ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com',
+            pass: String(process.env.SPOTIFY_EMAIL_PASSWORD) ? String(process.env.SPOTIFY_EMAIL_PASSWORD) : 'Helloworld55'
         },
         tls: {
             rejectUnauthorized: false

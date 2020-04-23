@@ -43,35 +43,53 @@ const User = {
      * @param  {string} Country - the user country
      * @returns {Number}
      */
-    update: async function(userId, Display_Name, Password, Email, Country, expiresDate, cardNumber, isMonth) {
+    update: async function(userId, gender, birthDate, displayName, password, email, country, expiresDate, cardNumber, isMonth, newPassword) {
         if (!checkMonooseObjectID([userId])) return 0;
+        
         const user = await this.getUserById(userId);
         if (user) {
+            let isCorrectPassword = await bcrypt.compare(password, user.password).then(isMatch => {
+                if (isMatch == false) return 0;
+                else return 1;
+            });
+            
+            if(!isCorrectPassword) return 0;
             if (user.isFacebook) {
                 //if from facebok change country only
-                if (Country)
-                    user.country = Country;
+                if (country)
+                    user.country = country;
 
-            } else {
+            } 
+            else{
                 // else update the
-                if (Display_Name != undefined) {
-                    user.displayName = Display_Name;
+                if(gender !=undefined){
+                    user.gender = gender;
                 }
-                if (Password != undefined) {
-                    bcrypt.hash(Password, 10, (err, hash) => {
+
+                if(birthDate !=undefined){
+                    user.birthDate = birthDate;
+                }
+
+                if (displayName != undefined) {
+                    user.displayName = displayName;
+                }
+
+                if (newPassword != undefined) {
+                    bcrypt.hash(newPassword, 10, (err, hash) => {
                         if (!err) {
                             user.password = hash;
                         }
                     })
                 }
-                if (Email != undefined) {
+
+                if (email != undefined) {
                     // check email is not used in the website
-                    const UserByEmail = await userDocument.findOne({ email: Email });
-                    if (!UserByEmail) user.email = Email;
-                    else return 0; //email is found before
+                    const UserByEmail = await userDocument.findOne({ email: email });
+                    if (!UserByEmail) user.email = email;
                 }
-                if (Country != undefined) {
-                    user.country = Country;
+
+                if (country != undefined) {
+                    user.country = country;
                 }
 
             }
@@ -83,7 +101,9 @@ const User = {
             await user.save();
             return 1;
 
-        } else return 0;
+        } 
+        else 
+        return 0;
 
     },
 
@@ -121,12 +141,8 @@ const User = {
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
         if (user.userType == 'Artist') return 0;
-        const spotify = await userDocument.find({ displayName: 'Spotify' });
-        if (!spotify) return 0;
         for (let i = 0; i < user.createPlaylist.length; i++) {
-            let filter = { _id: user.createPlaylist[i].playListId };
-            let update = { ownerId: spotify._id };
-            await playlistDocument.findOneAndUpdate(filter, update);
+            this.deletePlaylist(userId, user.createPlaylist[i].playListId);
         }
         await Image.deleteImages(userId, userId, 'user');
         // delete user himseld from db
@@ -425,7 +441,6 @@ const User = {
             isFacebook: false,
             images: [],
             follow: [],
-            followedBy: [],
             createPlaylist: [],
             saveAlbum: [],
             playHistory: [],

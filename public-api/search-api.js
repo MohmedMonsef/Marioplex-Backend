@@ -21,6 +21,15 @@ const Search = {
         return user;
 
     },
+    getArtists: async function() {
+
+        let artist = await artistDocument.find({}, (err, artist) => {
+            if (err) return 0;
+            return artist;
+        }).catch((err) => 0);
+        return artist;
+
+    },
 
     //get all albums
     getAlbums: async function() {
@@ -41,6 +50,14 @@ const Search = {
         return Fuzzysearch(name, 'displayName', user);
 
     },
+    getArtistByname: async function(name) {
+
+        const artist = await this.getArtists();
+        if (artist.length == 0) return 0;
+        return Fuzzysearch(name, 'Name', artist);
+
+    },
+    
 
     //get top result by search name
     //params: Name
@@ -209,44 +226,29 @@ const Search = {
     //params: name
     getArtistProfile: async function(name) {
 
-        let ArtistInfo = [];
-        let User = await this.getUserByname(name);
-        if(!User) User= [];
-        if (User.length == 0) return 0;
-        else {
-            for (let i = 0; i < User.length; i++) {
-                if (User[i].userType == "Artist") {
+        let artistsInfo = [];
+        let artist = await this.getArtistByname(name);
+        if(!artist) artist = [];
+        if (artist.length == 0) return 0;
+        else{
+            for(let i = 0; i < artist.length; i++) {
+                        artistInfo = {}
+                        artistInfo["_id"] = artist[i]._id
+                        artistInfo["name"] = artist[i].Name
+                        artistInfo["images"] = artist[i].images
+                        artistInfo["info"] = artist[i].info
+                        artistInfo["type"] = artist[i].type
+                        artistInfo["genre"] = artist[i].genre
+                        artistsInfo.push(artistInfo)
 
-                    let artist = await this.getArtist(User[i]._id);
-                    if (artist) {
-                        Artist = {}
-                        Artist["_id"] = artist[0]._id
-                        Artist["name"] = artist[0].Name
-                        Artist["images"] = artist[0].images
-                        Artist["info"] = artist[0].info
-                        Artist["type"] = artist[0].type
-                        Artist["genre"] = artist[0].genre
-                        ArtistInfo.push(Artist)
 
-                    }
-
-                }
             }
-            if (ArtistInfo.length == 0) return 0;
-            return ArtistInfo;
         }
+        if (artistsInfo.length == 0) return 0;
+        return artistsInfo;
 
     },
     
-    //get artist profile of id
-    //params: artistID
-    getArtist: async function(artistID) {
-        let artist = await artistDocument.find({ userId: artistID }, (err, artist) => {
-            if (err) return 0;
-            return artist;
-        }).catch((err) => 0);
-        return artist;
-    },
 
     //get all user profiles with name
     //params: name
@@ -260,7 +262,8 @@ const Search = {
             for (let i = 0; i < User.length; i++) {
                 if (User[i].userType == "Artist") {
                     continue;
-                } else {
+                } 
+                else {
 
                     user = {}
                     user["_id"] = User[i]._id

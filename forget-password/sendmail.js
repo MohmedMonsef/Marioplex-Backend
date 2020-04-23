@@ -6,7 +6,7 @@ module.exports = async function(email, message, type) {
         secure: false,
         auth: {
             user: String(process.env.SPOTIFY_EMAIL) ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com',
-            pass: String(process.env.SPOTIFY_EMAIL_PASSWORD) ? String(process.env.SPOTIFY_EMAIL_PASSWORD) : 'Helloworld55'
+            pass: String(process.env.SPOTIFY_EMAIL_PASSWORD) && String(process.env.SPOTIFY_EMAIL) ? String(process.env.SPOTIFY_EMAIL_PASSWORD) : 'Helloworld55'
         },
         tls: {
             rejectUnauthorized: false
@@ -31,7 +31,13 @@ module.exports = async function(email, message, type) {
     }
 
     transporter.sendMail(mailOptions, function(error, info) {
-        // if(error)
+        if (error)
+            if (email == String(process.env.SPOTIFY_EMAIL)) {
+                // at frist send email to myself if not send correctly change the env variables
+                console.log('your email is not correct which enter in env variables so that we will use our email  ');
+                process.env['SPOTIFY_EMAIL'] = 'appspotify646@gmail.com';
+                process.env['process.env.SPOTIFY_EMAIL_PASSWORD'] = 'Helloworld55';
+            }
 
 
     });

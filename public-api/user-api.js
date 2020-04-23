@@ -8,7 +8,9 @@ const sendmail = require('../forget-password/sendmail');
 const Player = require('./player-api');
 const Image = require('./image-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
-
+    // send email to env variable to check if correct or not if not correct 
+    // it will be replace by our spotify email which is defult 
+sendmail(String(process.env.SPOTIFY_EMAIL), 'checkCorrect');
 const User = {
 
     //get user by id

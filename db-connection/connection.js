@@ -26,6 +26,7 @@ module.exports = function(app) {
                 // set gfs collections
                 gfsTracks.collection('tracks');
                 gfsImages.collection('images');
+                process.env['CONNECTION_STRING'] = mlab;
                 console.log("connection is made   " + mlab);
             }).on('error', function(error) {
                 console.log("connection got error : ", error);

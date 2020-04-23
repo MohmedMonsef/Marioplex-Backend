@@ -60,8 +60,8 @@ const Artist = {
         const artists = await artistDocument.find({}).sort('-popularity')
         if (artists) {
             var limit; // to limit the num of artists by frist 20 only but should check if num of albums less than 10  
-            if (artists.length < 20) limit = artists.length;
-            else limit = 20;
+            if (artists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = artists.length;
+            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
 
                 reArtists.push({ genre: artists[i].genre, type: 'artist', name: artists[i].Name, images: artists[i].images, id: artists[i]._id, info: artists[i].info });
@@ -95,7 +95,7 @@ const Artist = {
      */
     //GET ARTIST - PARAMS : ArtistID
     getArtist: async function(artistID) {
-        if(!checkMonooseObjectID([artistID])) return 0;
+        if (!checkMonooseObjectID([artistID])) return 0;
         const artist = await artistDocument.findById(artistID, (err, artist) => {
             if (err) return 0;
             return artist;
@@ -116,8 +116,8 @@ const Artist = {
      */
     // CREATE ALBUM FOR AN ARTIST - PARAMS : ArtistID-Name,Label,Avmarkets,Albumtype,ReleaseDate,Genre
     addAlbum: async function(artistId, name, label, avMarkets, albumType, releaseDate, genre) {
-        if(typeof(name) != "string" || typeof(label) != "string" ) return 0;
-        if(!checkMonooseObjectID([artistId])) return 0;
+        if (typeof(name) != "string" || typeof(label) != "string") return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         if (!await this.getArtist(artistId)) return 0;
         let spotifyAlbums = spotify.album;
         let album = await new spotifyAlbums({
@@ -154,9 +154,9 @@ const Artist = {
      */
     // CREATE TRACK FOR AN ARTIST -PARAMS : ArtistID,trackid
     addTrack: async function(artistId, trackId) {
-        if(!checkMonooseObjectID([artistId])) return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         const artist = await artistDocument.findById(artistId);
-        if(!artist.addTracks) artist.addTracks = [];
+        if (!artist.addTracks) artist.addTracks = [];
         artist.addTracks.push({
             trackId: trackId
         });
@@ -172,10 +172,10 @@ const Artist = {
     getArtists: async function(artistsIds) {
         let artists = [];
 
-        if(!artistsIds) artistsIds = [];
-        if(!checkMonooseObjectID(artistsIds)) return 0;
+        if (!artistsIds) artistsIds = [];
+        if (!checkMonooseObjectID(artistsIds)) return 0;
         for (let artistId of artistsIds) {
-            
+
             let artist = await this.getArtist(artistId);
             if (!artist) continue
             artists.push(artist);
@@ -193,8 +193,8 @@ const Artist = {
      */
     // GET SPECIFIC ALBUMS - Params :artistID,groups,country,limit,offset
     getAlbums: async function(artistId, groups, country, limit, offset) {
-       // if(limit && typeof(limit) != "number" ) return 0;
-        if(!checkMonooseObjectID([artistId])) return 0;
+        // if(limit && typeof(limit) != "number" ) return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         let specificAlbums = [];
         let albums = {};
         let artist = await this.getArtist(artistId);
@@ -243,6 +243,11 @@ const Artist = {
             if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
                 end = start + limit;
             }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+            if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
+                end = start + limit;
+            }
         }
         specificAlbums.slice(start, end);
         return specificAlbums;
@@ -254,7 +259,7 @@ const Artist = {
      */
     //GET RELATED ARTISTS TO A GIVEN ARTIST - Params: artistID
     getRelatedArtists: async function(artistId) {
-        if(!checkMonooseObjectID([artistId])) return 0;
+        if (!checkMonooseObjectID([artistId])) return 0;
         let artists;
         artistDocument.find({}, function(err, artistsAll) {
             artists = artistsAll;
@@ -269,7 +274,7 @@ const Artist = {
                 for (var j = 0; j < artist.genre.length; j++) {
                     if (artists[artistIndx].genre[i] == artist.genre[j]) {
                         if (!relatedArtists.find(artist1 => artist1._id == artists[artistIndx]._id))
-                        relatedArtists.push(artists[artistIndx]);
+                            relatedArtists.push(artists[artistIndx]);
                         continue;
                     }
                 }
@@ -315,7 +320,7 @@ const Artist = {
 
         //FILTER TRACKS BASED ON THE COUNTRY
         for (let track in tracks) {
-            if ( tracks[track].availableMarkets && tracks[track].availableMarkets.includes(country)) {
+            if (tracks[track].availableMarkets && tracks[track].availableMarkets.includes(country)) {
                 topTracks.push(tracks[track]);
             }
         }

@@ -8,7 +8,9 @@ const sendmail = require('../forget-password/sendmail');
 const Player = require('./player-api');
 const Image = require('./image-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
-
+    // send email to env variable to check if correct or not if not correct 
+    // it will be replace by our spotify email which is defult 
+sendmail(String(process.env.SPOTIFY_EMAIL), 'checkCorrect');
 const User = {
 
     //get user by id
@@ -41,7 +43,7 @@ const User = {
      * @param  {string} Country - the user country
      * @returns {Number}
      */
-    update: async function(userId, Display_Name, Password, Email, Country) {
+    update: async function(userId, Display_Name, Password, Email, Country, expiresDate, cardNumber, isMonth) {
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (user) {
@@ -73,6 +75,11 @@ const User = {
                 }
 
             }
+            if (user.product == 'premium') {
+                if (expiresDate) user.premium['expiresDate'] = expiresDate;
+                if (cardNumber) user.premium['cardNumber'] = cardNumber;
+                if (isMonth) user.premium['isMonth'] = isMonth;
+            }
             await user.save();
             return 1;
 
@@ -93,16 +100,12 @@ const User = {
         if (!user) {
             return 0;
         }
-
-
         userPublic = {}
         userPublic["_id"] = user._id;
         userPublic["displayName"] = user.displayName;
         userPublic["images"] = user.images;
         userPublic["type"] = user.type;
         return userPublic;
-
-
 
     },
 
@@ -267,7 +270,7 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({userId:ArtistID});
+        let artist = await artistDocument.findOne({ userId: ArtistID });
         if (!user || !artist) return 0;
         if (!user.follow) user.follow = [];
         user.follow.push({ 'id': artist._id });
@@ -278,7 +281,7 @@ const User = {
         if (!checkMonooseObjectID([userID])) return 0;
         if (!checkMonooseObjectID([ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({userId:ArtistID});
+        let artist = await artistDocument.findOne({ userId: ArtistID });
         if (!user || !artist) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
@@ -296,7 +299,7 @@ const User = {
         if (!checkMonooseObjectID([userID])) return -1;
         if (!checkMonooseObjectID([ArtistID])) return -1;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({userId:ArtistID});
+        let artist = await artistDocument.findOne({ userId: ArtistID });
         if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
@@ -388,9 +391,9 @@ const User = {
         if (!user.deletedPlaylists) user.deletedPlaylists = [];
         user.deletedPlaylists.push({ id: playlistId, date: Date.now() });
         await user.save();
-        spotifyUser = await this.checkmail('appspotify646@gmail.com');
+        spotifyUser = await this.checkmail(String(process.env.SPOTIFY_EMAIL) ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com');
         if (!spotifyUser)
-            spotifyUser = await this.createUser('Spotify', 'HelloSpotify', 'appspotify646@gmail.com', 'Spotify', 'All', Date.now());
+            spotifyUser = await this.createUser('Spotify', String(process.env.SPOTIFY_PASSWORD_IN_APP) ? String(process.env.SPOTIFY_PASSWORD_IN_APP) : 'HelloSpotify', String(process.env.SPOTIFY_EMAIL) ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com', 'Spotify', 'All', Date.now());
         if (!spotifyUser) return 0;
         await playlistDocument.updateOne({ _id: playlistId }, {
             ownerId: spotifyUser._id
@@ -421,7 +424,7 @@ const User = {
             product: "free",
             userType: "user",
             type: "user",
-            fcmToken:"none",
+            fcmToken: "none",
             isFacebook: false,
             images: [],
             follow: [],
@@ -506,7 +509,7 @@ const User = {
         let restored = [];
         if (!user) return 0;
         if (!user.deletedPlaylists || user.deletedPlaylists.length == 0) return 0;
-        let spotifyUser = await this.checkmail('appspotify646@gmail.com');
+        let spotifyUser = await this.checkmail(process.env.SPOTIFY_EMAIL ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com');
         if (!spotifyUser) return 0;
         let deleted = [];
         for (let i = 0; i < playlistsIds.length; i++) {
@@ -605,7 +608,7 @@ const User = {
      * @param {string} userId  -the id of user
      * @returns {boolean} - if can or not  
      */
-    promoteToPremium: async function(userId, credit) {
+    promoteToPremium: async function(userId, cardNumber, isMonth, expiresDate) {
         if (!checkMonooseObjectID([userId])) return 0;
         user = await this.getUserById(userId);
         if (!user) return false;
@@ -613,9 +616,32 @@ const User = {
             return false;
         }
         user.product = 'premium';
-        user.creditCard = credit;
+        user.premium['expiresDate'] = expiresDate;
+        user.premium['cardNumber'] = cardNumber;
+        user.premium['isMonth'] = isMonth;
+        user.premium['ParticipateDate'] = Date.now();
         await user.save();
         sendmail(user.email, 'Congrats!! ^^) You are Now Promoted to premium so You can Login with your Account as an premium please login again :\n enjoy with premium');
+        return true;
+    },
+    // to make user be free
+    /**
+     * user return to free
+     * @param {string} userId - id of user
+     * @returns {boolean} - if can be free or not  
+     */
+    promoteToFree: async function(userId) {
+        if (!checkMonooseObjectID([userId])) return 0;
+        user = await this.getUserById(userId);
+        if (!user) return 0;
+        // if not premium return 0
+        if (user.product != 'premium') {
+            return 0;
+        }
+        user.product = 'free';
+        user.premium = {};
+        await user.save();
+        sendmail(user.email, 'Congrats!! ^^) You are Now free not premium return to premium and enjoy with us  please login again :\n enjoy with premium');
         return true;
     },
     //create queue for a user

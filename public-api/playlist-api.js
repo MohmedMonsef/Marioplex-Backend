@@ -36,8 +36,8 @@ const Playlist = {
         const playlists = await playlistDocument.find({}).sort('-popularity')
         if (playlists) {
             var limit; // to limit the num of playlists by frist 20 only but should check if num of albums less than 10  
-            if (playlists.length < 20) limit = playlists.length;
-            else limit = 20;
+            if (playlists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playlists.length;
+            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
                 const user1 = await userDocument.findById(playlists[i].ownerId);
                 rePlaylists.push({ owner: { id: playlists[i].ownerId, type: 'user', name: user1.displayName }, collaborative: playlists[i].collaborative, type: 'playlist', name: playlists[i].name, images: playlists[i].images, id: playlists[i]._id, Description: playlists[i].Description, isPublic: playlists[i].isPublic });
@@ -394,6 +394,11 @@ const Playlist = {
             if ((start + limit) > 0 && (start + limit) <= playlists.length) {
                 end = start + limit;
             }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+            if ((start + limit) > 0 && (start + limit) <= playlists.length) {
+                end = start + limit;
+            }
         }
         return playlists.slice(start, end);
     },
@@ -622,6 +627,11 @@ const Playlist = {
         let start = 0;
         let end = playlists.length;
         if (limit != undefined) {
+            if ((start + limit) > 0 && (start + limit) <= playlists.length) {
+                end = start + limit;
+            }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             if ((start + limit) > 0 && (start + limit) <= playlists.length) {
                 end = start + limit;
             }

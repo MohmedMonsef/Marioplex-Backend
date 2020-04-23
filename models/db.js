@@ -91,6 +91,7 @@ const User = new Schema({
     gender: String,
     country: String,
     fcmToken:String,
+    confirm:Boolean,
     isLogged: Boolean,
     images: [Image],
     premium: {

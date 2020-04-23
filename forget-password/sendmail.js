@@ -21,7 +21,17 @@ module.exports = async function(email, message, type) {
             text: 'Please follow this URL http://52.205.254.29/login/reset_password?token=' + message
 
         };
-    } else {
+    } 
+    else if(type=="confirm"){
+        mailOptions = {
+            from: '"Spotify Contact" <' + process.env.SPOTIFY_EMAIL ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com' + '>',
+            to: email,
+            subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
+            text: 'Please follow this URL http://52.205.254.29/login/confirm?id=' + message
+
+        };
+    }
+    else {
         mailOptions = {
             from: '"Spotify Contact" <' + process.env.SPOTIFY_EMAIL ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com' + '>',
             to: email,

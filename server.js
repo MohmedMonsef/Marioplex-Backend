@@ -1,4 +1,3 @@
-  require('dotenv/config'); // to use env variable 
   const connection = require('./db-connection/connection');
   const express = require('express');
   const app = express();

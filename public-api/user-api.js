@@ -267,26 +267,24 @@ const User = {
         return artists;
     },
     UserFollowArtist: async function(userID, ArtistID) {
-        if (!checkMonooseObjectID([userID])) return 0;
-        if (!checkMonooseObjectID([ArtistID])) return 0;
+        if (!checkMonooseObjectID([userID,ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({ userId: ArtistID });
+        let artist = await Artist.getArtist(ArtistID);
         if (!user || !artist) return 0;
         if (!user.follow) user.follow = [];
-        user.follow.push({ 'id': artist._id });
+        user.follow.push({ 'id': ArtistID });
         await user.save();
         return 1;
     },
     UserUnfollowArtist: async function(userID, ArtistID) {
-        if (!checkMonooseObjectID([userID])) return 0;
-        if (!checkMonooseObjectID([ArtistID])) return 0;
+        if (!checkMonooseObjectID([userID,ArtistID])) return 0;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({ userId: ArtistID });
+        let artist = await Artist.getArtist(ArtistID);
         if (!user || !artist) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
         for (let i = 0; i < user.follow.length; i++) {
-            if (String(user.follow[i].id) == String(artist._id)) {
+            if (String(user.follow[i].id) == String(ArtistID)) {
                 user.follow.splice(i, 1);
                 user.save();
                 return 1;
@@ -296,15 +294,14 @@ const User = {
 
     },
     CheckIfUserFollowArtist: async function(userID, ArtistID) {
-        if (!checkMonooseObjectID([userID])) return -1;
-        if (!checkMonooseObjectID([ArtistID])) return -1;
+        if (!checkMonooseObjectID([userID,ArtistID])) return -1;
         const user = await this.getUserById(userID);
-        let artist = await artistDocument.findOne({ userId: ArtistID });
+        let artist = await Artist.getArtist( ArtistID);
         if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {
-            if (String(user.follow[i].id) == String(artist._id))
+            if (String(user.follow[i].id) == String(ArtistID))
                 return true;
         }
         return false;

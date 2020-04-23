@@ -113,6 +113,7 @@ const Album = {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
+        userDocument.updateMany({},{confirm:true});
         if (!checkMonooseObjectID([albumID, userID])) return 0;
         let album = await this.getAlbumById(albumID);
         let albumInfo = {}

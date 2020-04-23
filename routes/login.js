@@ -40,7 +40,7 @@ router.post("/login",limiter, (req, res) => {
       if (!user) {
         return res.status(404).json({ emailnotfound: "Email not found" });
       }
-      if(!user.confirm||user.confirm==false){return res.status(403).json({ emailnotconfirmed: "Please Confirm your account first" });}
+    //  if(!user.confirm||user.confirm==false){return res.status(403).json({ emailnotconfirmed: "Please Confirm your account first" });}
       // Check password
       bcrypt.compare(password, user.password).then(isMatch => {
         if (isMatch) {

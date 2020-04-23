@@ -200,13 +200,14 @@ const Album = {
             if (!album.hasTracks) album.hasTracks = [];
             for (i = 0; i < album.hasTracks.length; i++) {
                 if (!album.hasTracks[i].trackId) continue;
-                var Track = await track.getTrack(album.hasTracks[i].trackId);
+                var Track = await track.getTrack(album.hasTracks[i].trackId,user);
                 if (Track) {
                     let tracks = {}
                     tracks['_id'] = Track._id;
                     tracks['name'] = Track.name;
                     tracks['images'] = Track.images;
                     tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
+                    tracks['playable']=Track.playable;
                     Tracks.push(tracks);
                 }
             }

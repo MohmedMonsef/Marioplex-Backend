@@ -85,9 +85,9 @@ router.post("/login",limiter, (req, res) => {
         let userId=req.user._id;
         let user=await Users.getUserById(userId);
         if(!user){return res.status(404).send({error:"User IS NOT FOUND"})}
-        await userDocument.updateOne({ _id:user._id }, {
-          fcmToken:"none"
-      });
+         if(!user.fcmToken) user.fcmToken="none";
+         user.fcmToken="none";
+         await user.save();
         return res.status(202).send({Success:"Token is set successfully"})
     
       });

@@ -8,7 +8,7 @@ const Track = {
      *  get track by id
      * @param : track-id {mongoose ObjectId}
      **/
-    getTrack: async function(trackId) {
+    getTrack: async function(trackId,user) {
 
         // connect to db and find track with the same id then return it as json file
         // if found return track else return 0
@@ -17,7 +17,41 @@ const Track = {
             if (err) return 0;
             return track;
         }).catch((err) => 0);
-        return track;
+        if(!user||user==undefined)return track;
+        playable=await this.checkPlayable(user,trackId);
+      let reTrack=  {
+            _id:track._id,
+            url: track.url,
+            images: track.images,
+            duration: track.duration,
+            availableMarkets: track.availableMarkets,
+            trackNumber: track.trackNumber,
+            name: track.name,
+            artistId: track.artistId,
+            albumId: track.albumId,
+            discNumber: track.discNumber,
+            explicit: track.explicit,
+            type: track.type,
+            acousticness: track.acousticness,
+            danceability: track.danceability,
+            energy: track.energy,
+            instrumentalness:track.instrumentalness,
+            key: track.key,
+            liveness: track.liveness,
+            loudness: track.loudness,
+            mode: track.mode,
+            speechiness: track.speechiness,
+            tempo: track.tempo,
+            timeSignature: track.timeSignature,
+            valence: track.valence,
+            like: track.like,
+            keyId: track.keyId,
+            genre: track.genre,
+            userPlayable:playable
+
+        }
+
+        return reTrack;
 
 
     },
@@ -28,7 +62,7 @@ const Track = {
      **/
     getFullTrack: async function(trackId, user) {
         if (!checkMonooseObjectID([trackId])) return 0;
-        const track = await this.getTrack(trackId);
+        const track = await this.getTrack(trackId,user);
         if (!track) return 0; //not found
         // get both album and artist of the track
         const album = await albumDocument.findById(track.albumId);
@@ -360,6 +394,18 @@ const Track = {
 
         if (tracksRelated.length == 0) return 0;
         return tracksRelated;
+    },
+
+    checkPlayable:async function(user,trackId){
+        if(!user)return 0;
+        if (!checkMonooseObjectID([trackId])) return 0;
+        if(user.product=="premium")return true;
+        let track=await trackDocument.findById(trackId);
+        if(track.availableMarkets.includes(user.country)){
+            return true;
+        }
+        return false;
+
     }
 
 

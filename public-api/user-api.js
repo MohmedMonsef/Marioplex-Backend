@@ -145,7 +145,7 @@ const User = {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
-        const likeTrack = await Track.getTrack(trackId);
+        const likeTrack = await Track.getTrack(trackId,user);
 
         if (!likeTrack) return 0;
         if (!user['likesTracksPlaylist']) {
@@ -176,7 +176,7 @@ const User = {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
-        const unlikeTrack = await Track.getTrack(trackId);
+        const unlikeTrack = await Track.getTrack(trackId,user);
         if (!unlikeTrack) return 0;
         if (!user['likesTracksPlaylist']) return 0;
         const ifFind = await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], [trackId]);

@@ -17,8 +17,8 @@ const limiter = rateLimit({
 router.get('/me/track/:track_id',checkAuth,limiter,async (req,res)=>{
     
     const trackId = req.params.track_id;
-   
-    const track = await Track.getTrack(trackId);
+    let user=await User.getUserById(req.user._id);
+    const track = await Track.getTrack(trackId,user);
     if(!track) res.sendStatus(404); //not found
     else res.json(track); 
 
@@ -93,7 +93,7 @@ router.delete('/me/unlike/:track_id',checkAuth,limiter,async (req,res)=>{
 
 router.get('/tracks/android/:track_id',checkAuth,limiter,async (req,res)=>{
     let type = req.query.type;// high low medium or review
-   
+    let user=await User.getUserById(req.user._id);
     if(type != "review"){
     // if not premium and user asked for high quality then send it as low
      if(req.user.product == "free" && type == "high" ) type = "medium"
@@ -102,7 +102,7 @@ router.get('/tracks/android/:track_id',checkAuth,limiter,async (req,res)=>{
     if(type != "high" || type != "medium" || type != "low" || type != "review" ) type = "medium";
     }
     const trackId  = req.params.track_id;
-    const track = await Track.getTrack(trackId);
+    const track = await Track.getTrack(trackId,user);
     if(!track){
         res.status(404).json({"error":"no track found with this id"});
         return 0;
@@ -173,9 +173,9 @@ router.get('/tracks/web-player/:track_id',limiter,async (req,res)=>{
 
     // set default quality to medium if not specified
     if(type != "high" || type != "medium" || type != "low" ) type = "medium";
-
+    let user=await User.getUserById(req.user._id);
     const trackId  = req.params.track_id;
-    const track = await Track.getTrack(trackId);
+    const track = await Track.getTrack(trackId,user);
     if(!track){
         res.status(404).json({"error":"no track found with this id"});
         return 0;

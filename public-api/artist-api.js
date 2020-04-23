@@ -301,7 +301,7 @@ const Artist = {
      * @returns {Array<objects>} 
      */
     // GET TOP TRACKS IN A COUNTRY FOR AN ARTIST
-    getTopTracks: async function(artistId, country) {
+    getTopTracks: async function(artistId, country,user) {
        // if(typeof(country) != "string") return 0;
         if(!checkMonooseObjectID([artistId])) return 0;
         let topTracks = [];
@@ -309,7 +309,7 @@ const Artist = {
         let artist = await this.getArtist(artistId);
         if (!artist) return 0;
         for (let i = 0; i < artist.addTracks.length; i++) {
-            let track = await Track.getTrack(artist.addTracks[i].trackId);
+            let track = await Track.getTrack(artist.addTracks[i].trackId,user);
             if (track) { tracks[artist.addTracks[i].trackId] = track; }
         }
 
@@ -330,7 +330,7 @@ const Artist = {
      * @returns {Array} -array has set of tracks   
      */
     //GET TRACKS FOR AN ARTIST - Params:artistID
-    getTracks: async function(artistId) {
+    getTracks: async function(artistId,user) {
         if(!checkMonooseObjectID([artistId])) return 0;
         let specificTracks = [];
         let tracks = {};
@@ -338,7 +338,7 @@ const Artist = {
         if (!artist) return 0;
         if (!artist.addTracks) artist.addTracks = [];
         for (let i = 0; i < artist.addTracks.length; i++) {
-            let track = await Track.getTrack(artist.addTracks[i].trackId);
+            let track = await Track.getTrack(artist.addTracks[i].trackId,user);
             if (track) { tracks[artist.addTracks[i].trackId] = track; }
         }
         for (let Track in tracks) {

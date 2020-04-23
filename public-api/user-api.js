@@ -335,7 +335,12 @@ const User = {
         if (!user) return false;
         return user;
     },
-
+    confirmEmail:async function(user) {
+        if(!user.confirm)user.confirm=true;
+        if(user.confirm==false){user.confirm=true;}
+        await user.save();
+        return true;
+    },
     //user forget password
     //params: user
     /** 
@@ -438,6 +443,7 @@ const User = {
             userType: "user",
             type: "user",
             fcmToken: "none",
+            confirm:false,
             isFacebook: false,
             images: [],
             follow: [],

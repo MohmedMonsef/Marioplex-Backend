@@ -270,6 +270,65 @@ const Image = {
 
 
     },
+    getImage: async function(sourceId,belongsTo){
+        if(!checkMonooseObjectID([sourceId])) return 0;
+        if( !belongsTo) return 0;
+       
+       
+    
+        switch(belongsTo){
+            case 'user':
+                {
+                const user = await userDocument.findById(sourceId);
+                // check if source id equals userId
+                if(!user) return 0;
+                if(!user.images) return 0;
+                
+                // return id of the saved image
+                return user.images[user.images.length-1]._id;
+                break;}
+            case 'playlist':
+               { 
+                const playlist = await playlistDocument.findById(sourceId);
+                // check if laylist exist
+                if(!playlist) return 0;
+                if(!playlist.images) return 0;
+                return playlist.images[playlist.images.length-1]._id;
+                break;}
+            case 'track':{
+                {
+              
+                // get track
+                const track = await trackDocument.findById(sourceId);
+                if(!track) return 0;
+                if(!track.images) return 0;
+                return track.images[track.images.length-1]._id;
+                break;}
+            }
+            case 'album':
+                {
+                // get track
+                const album = await albumDocument.findById(sourceId);
+                if(!album) return 0;
+                if(!album.images) return 0;
+                return album.images[album.images.length-1]._id;
+                break;}
+            case 'artist':
+                {
+                const artist = await artistDocument.findById(sourceId);
+                if(!artist) return 0;
+                if(!artist.images) return 0;
+                return artist.images[artist.images.length-1]._id;
+                break;
+            }
+            case 'category':
+                return 0;
+                break;
+            default:
+                return 0;
+
+        }
+    },
     /**
      * 
      * @param {string} imageId the image id 

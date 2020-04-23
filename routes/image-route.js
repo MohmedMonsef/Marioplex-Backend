@@ -171,5 +171,13 @@ router.delete('/images/delete/:image_id',checkAuth,limiter,async (req,res)=>{
     else res.status(200).json({"success":"image deleted"})
 })
 
+// get image id 
+router.get('/images/get_id/:source_id',limiter,async (req,res)=>{
+    const sourceId = req.params.source_id;
+    const belongsTo = req.query.belongs_to;
+    const imageId = await Image.getImage(sourceId,belongsTo);
+    if(!imageId) res.status(404).json({"error":"cannot get image id"});
+    else res.status(200).json({"imageId":imageId});
+})
 
 module.exports = router;

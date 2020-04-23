@@ -98,12 +98,12 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
         } 
         else {
             const userID = req.user._id;
-            const user = await User.update(userID, req.body.gender, req.body.birthday, req.body.displayName, req.body.password, req.body.email, req.body.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.newpassword);
+            const user = await User.update(userID, req.body.user.gender, req.body.user.birthday, req.body.user.displayName, req.body.user.password, req.body.user.email, req.body.user.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.user.newpassword);
             if (user) {
                 res.status(200).json({
                     "success": "information has been updated successfully"
                 });
-            } else res.status(404).json({ "error": "user not found" });
+            } else res.sendStatus(404);
         }
     })
 

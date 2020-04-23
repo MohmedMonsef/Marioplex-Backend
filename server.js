@@ -1,4 +1,5 @@
-  const connection = require('./db-connection/connection');
+require('dotenv/config'); // to use env variable 
+const connection = require('./db-connection/connection');
   const express = require('express');
   const app = express();
   const rateLimit = require("express-rate-limit");

@@ -79,10 +79,13 @@ router.get('/me-player', checkAuth, limiter, async(req, res) => {
 router.put('/me/update', checkAuth, limiter, (req, res) => {
 
     const shcema = Joi.object().keys({
-        Email: Joi.string().trim().email(),
-        Password: Joi.string(),
-        Country: Joi.string(),
-        Display_Name: Joi.string(),
+        email: Joi.string().trim().email(),
+        gender: Joi.string(),
+        birthday: Joi.date().raw().optional(),
+        password: Joi.string().required(),
+        newpassword: Joi.string(),
+        country: Joi.string(),
+        displayName: Joi.string(),
         expiresDate: Joi.date().min(Date.now()).raw().optional(),
         cardNumber: Joi.string().creditCard().optional(),
         isMonth: Joi.boolean().optional()
@@ -92,14 +95,15 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
             res.status(500).json({
                 error: err
             })
-        } else {
+        } 
+        else {
             const userID = req.user._id;
-            const user = await User.update(userID, req.body.Display_Name, req.body.Password, req.body.Email, req.body.Country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth);
+            const user = await User.update(userID, req.body.user.gender, req.body.user.birthday, req.body.user.displayName, req.body.user.password, req.body.user.email, req.body.user.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.user.newpassword);
             if (user) {
                 res.status(200).json({
                     "success": "information has been updated successfully"
                 });
-            } else res.status(404).json({ "error": "user not found" });
+            } else res.sendStatus(404);
         }
     })
 

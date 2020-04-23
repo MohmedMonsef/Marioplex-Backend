@@ -78,7 +78,7 @@ router.get('/albums', checkAuth, limiter, async(req, res) => {
     }
     var albumIDs = req.body.ids.split(',');
 
-    album = await Album.getAlbums(albumIDs);
+    album = await Album.getAlbums(albumIDs, req.body.limit, req.body.offset);
     if (!album) res.status(404).json({
         message: "no albums found"
     }); //not found

@@ -36,8 +36,8 @@ const Playlist = {
         const playlists = await playlistDocument.find({}).sort('-popularity')
         if (playlists) {
             var limit; // to limit the num of playlists by frist 20 only but should check if num of albums less than 10  
-            if (playlists.length < 20) limit = playlists.length;
-            else limit = 20;
+            if (playlists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playlists.length;
+            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
                 const user1 = await userDocument.findById(playlists[i].ownerId);
                 rePlaylists.push({ owner: { id: playlists[i].ownerId, type: 'user', name: user1.displayName }, collaborative: playlists[i].collaborative, type: 'playlist', name: playlists[i].name, images: playlists[i].images, id: playlists[i]._id, Description: playlists[i].Description, isPublic: playlists[i].isPublic });
@@ -80,14 +80,14 @@ const Playlist = {
                 if (!playlist.snapshot[snapshot].hasTracks) playlist.snapshot[snapshot].hasTracks = [];
                 for (let i = 0; i < playlist.snapshot[snapshot].hasTracks.length; i++) {
 
-                    const track1 = await Track.getTrack(playlist.snapshot[snapshot].hasTracks[i]);
+                    const track1 = await Track.getTrack(playlist.snapshot[snapshot].hasTracks[i],user);
                     const artistId = track1.artistId;
                     const albumId = track1.albumId;
                     const album = await Album.getAlbumById(albumId);
                     const artist = await Artist.getArtist(artistId);
                     if (!album || !artist) { return 0; }
                     const isLiked = await Track.checkIfUserLikeTrack(user, track1._id) ? true : false;
-                    tracks.push({ trackid: track1.id, name: track1.name, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked });
+                    tracks.push({ trackid: track1._id, name: track1.name,playable:track1.playable, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked });
                 }
             }
             const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;
@@ -394,6 +394,11 @@ const Playlist = {
             if ((start + limit) > 0 && (start + limit) <= playlists.length) {
                 end = start + limit;
             }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+            if ((start + limit) > 0 && (start + limit) <= playlists.length) {
+                end = start + limit;
+            }
         }
         return playlists.slice(start, end);
     },
@@ -622,6 +627,11 @@ const Playlist = {
         let start = 0;
         let end = playlists.length;
         if (limit != undefined) {
+            if ((start + limit) > 0 && (start + limit) <= playlists.length) {
+                end = start + limit;
+            }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             if ((start + limit) > 0 && (start + limit) <= playlists.length) {
                 end = start + limit;
             }

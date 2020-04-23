@@ -44,8 +44,8 @@ const Player = {
             let playHistory = user.playHistory;
             let limit;
             let index = 0;
-            if (playHistory.length < 20) limit = playHistory.length;
-            else limit = 20;
+            if (playHistory.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playHistory.length;
+            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
                 let isFind = 0;
                 // now check type to print 
@@ -145,7 +145,7 @@ const Player = {
      * @returns {Array<Object>}
      */
     getRecentTracks: function(user, limit) {
-        limit = limit || 50;
+        limit = limit || Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
         let tracks = [];
         if (!user.playHistory) return tracks;
         for (let i = 0; i < Math.min(user.playHistory.length, limit); i++) tracks.push(user.playHistory[i]); // becouse if playHistory less than limit

@@ -48,8 +48,8 @@ const Album = {
             }
         }
         for (let i = 0; i < artistD.addAlbums.length; i++) {
-            console.log(artistD.addAlbums[i].albumId);
-            console.log(albumId);
+            //console.log(artistD.addAlbums[i].albumId);
+            //console.log(albumId);
             if (artistD.addAlbums[i].albumId + 1 == albumId + 1) { artistD.addAlbums.splice(i, 1); break; }
         }
         await artistD.save();
@@ -78,8 +78,8 @@ const Album = {
         const albums = await albumDocument.find({}).sort('-releaseDate')
         if (albums) {
             var limit; // to limit the num of albums by frist 10 only but should check if num of albums less than 10  
-            if (albums.length < 20) limit = albums.length;
-            else limit = 20;
+            if (albums.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = albums.length;
+            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
 
             for (let i = 0; i < limit; i++) {
                 const artist1 = await artist.getArtist(albums[i].artistId);
@@ -96,8 +96,8 @@ const Album = {
         const albums = await albumDocument.find({}).sort('-popularity')
         if (albums) {
             var limit; // to limit the num of albums by frist 20 only but should check if num of albums less than 10  
-            if (albums.length < 20) limit = albums.length;
-            else limit = 20;
+            if (albums.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = albums.length;
+            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
                 if (albums[i].artistId) {
                     const artist1 = await artist.getArtist(albums[i].artistId);
@@ -200,13 +200,14 @@ const Album = {
             if (!album.hasTracks) album.hasTracks = [];
             for (i = 0; i < album.hasTracks.length; i++) {
                 if (!album.hasTracks[i].trackId) continue;
-                var Track = await track.getTrack(album.hasTracks[i].trackId);
+                var Track = await track.getTrack(album.hasTracks[i].trackId,user);
                 if (Track) {
                     let tracks = {}
                     tracks['_id'] = Track._id;
                     tracks['name'] = Track.name;
                     tracks['images'] = Track.images;
                     tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
+                    tracks['playable']=Track.playable;
                     Tracks.push(tracks);
                 }
             }

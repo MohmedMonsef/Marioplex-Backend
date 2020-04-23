@@ -52,7 +52,7 @@ router.post('/images/upload/:source_id',checkAuth,limiter,async (req,res)=>{
             res.status(403).send({"error":"cannot add image to db"});
             return 0;
       }else{
-          res.status(200).json({"success":"uploaded succesfully"});
+          res.status(200).json({"success":"uploaded succesfully","imageId":imageId});
       }
       });
 
@@ -94,11 +94,12 @@ router.post('/images/update/:source_id',checkAuth,limiter,async (req,res)=>{
     req.imageId = imageId;
     uploadImage.fields([{name:"image"}])(req,res,async (err)=>{
         if(err){
+            
             await Image.deleteImage(imageId,userId,sourceId,belongsTo); 
             res.status(403).send({"error":"cannot update image"});
             return 0;
       }else{
-          res.status(200).json({"success":"updated succesfully"});
+          res.status(200).json({"success":"updated succesfully","imageId":imageId});
       }
       });
 

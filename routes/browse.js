@@ -23,7 +23,7 @@ router.get('/browse/categories/:category_id/playlists',limiter, async(req, res) 
 
     const categoryId = req.params.category_id;
 
-    const playlists = await browse.getCategoryPlaylists(categoryId);
+    const playlists = await browse.getCategoryPlaylists(categoryId, req.body.limit, req.body.offset);
     if (!playlists||playlists.length==0) res.sendStatus(404); //not found
     else res.send({ "playlists": playlists });
 })

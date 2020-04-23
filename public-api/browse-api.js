@@ -18,7 +18,7 @@ const Browse = {
         return category;
 
     },
-    getCategoryPlaylists: async function(categoryID) {
+    getCategoryPlaylists: async function(categoryID, limit, offset) {
         let category = await this.getCategoryById(categoryID);
         if(!category) return 0;
         let playlists = []
@@ -37,7 +37,7 @@ const Browse = {
                playlists.push(playlistInfo);
            }
        }
-       return playlists;
+       return limitOffset(limit, offset, playlists);
     },
     
     // get categories
@@ -52,3 +52,27 @@ const Browse = {
     }
 }
 module.exports = Browse;
+
+function limitOffset(limit,offset,categories){
+
+    let start = 0;
+    let end = categories.length;
+    if (offset != undefined) {
+        if (offset >= 0 && offset <= categories.length) {
+            start = offset;
+        }
+    }
+    if (limit != undefined) {
+        if ((start + limit) > 0 && (start + limit) <= categories.length) {
+            end = start + limit;
+        }
+    } 
+    else {
+        limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+        if ((start + limit) > 0 && (start + limit) <= categories.length) {
+            end = start + limit;
+        }
+    }
+    categories.slice(start, end);
+    return categories;
+}

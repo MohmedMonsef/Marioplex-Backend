@@ -80,14 +80,14 @@ const Playlist = {
                 if (!playlist.snapshot[snapshot].hasTracks) playlist.snapshot[snapshot].hasTracks = [];
                 for (let i = 0; i < playlist.snapshot[snapshot].hasTracks.length; i++) {
 
-                    const track1 = await Track.getTrack(playlist.snapshot[snapshot].hasTracks[i],user);
+                    const track1 = await Track.getTrack(playlist.snapshot[snapshot].hasTracks[i], user);
                     const artistId = track1.artistId;
                     const albumId = track1.albumId;
                     const album = await Album.getAlbumById(albumId);
                     const artist = await Artist.getArtist(artistId);
                     if (!album || !artist) { return 0; }
                     const isLiked = await Track.checkIfUserLikeTrack(user, track1._id) ? true : false;
-                    tracks.push({ trackid: track1._id, name: track1.name,playable:track1.playable, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked });
+                    tracks.push({ trackid: track1._id, name: track1.name, playable: track1.playable, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked });
                 }
             }
             const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;

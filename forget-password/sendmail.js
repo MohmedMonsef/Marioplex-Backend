@@ -31,7 +31,7 @@ module.exports = async function(email, message, type) {
 
         };
     }
-    else {
+     else {
         mailOptions = {
             from: '"Spotify Contact" <' + process.env.SPOTIFY_EMAIL ? String(process.env.SPOTIFY_EMAIL) : 'appspotify646@gmail.com' + '>',
             to: email,

@@ -7,7 +7,7 @@ const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 2
+    max: 80
 
 });
 router.delete('/me/albums', checkAuth, limiter, async(req, res) => {

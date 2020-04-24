@@ -7,7 +7,7 @@ const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
     windowMs:  60 * 1000, 
-    max: 30
+    max: 40
 
 });
 // get  category

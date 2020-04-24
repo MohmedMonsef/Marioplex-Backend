@@ -16,7 +16,7 @@ const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
     windowMs:  60 * 1000, 
-    max: 30
+    max: 40
 
 });
 // get Artist - Path Params : artist_id
@@ -83,7 +83,7 @@ router.get('/Artists/:artist_id/top-tracks', checkAuth,limiter, async(req, res) 
 });
 // create album 
 router.put('/Artists/me/Albums', [checkAuth,limiter, checkType, checkContent], async(req, res) => {
-    if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
+    
     if (req.body.name == undefined || req.body.label == undefined || req.body.availablemarkets == undefined || req.body.albumtype == undefined || req.body.releaseDate == undefined || req.body.genre == undefined) { return res.status(403).send('Missing Data in the Album Data'); }
     if (req.body.name == "" || req.body.label == "" || req.body.availablemarkets == "" || req.body.albumtype == "" || req.body.releaseDate == "" || req.body.genre == "") { return res.status(403).send('Missing Data in the Album Data'); }
     let avMarkets = req.body.availablemarkets.split(',');

@@ -17,7 +17,7 @@ const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
     windowMs:  60 * 1000, 
-    max: 10
+    max: 40
 
 });
 //request to log in the user

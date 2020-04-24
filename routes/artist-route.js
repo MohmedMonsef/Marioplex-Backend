@@ -16,7 +16,7 @@ const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
     windowMs:  60 * 1000, 
-    max: 40
+    max: 100
 
 });
 // get Artist - Path Params : artist_id

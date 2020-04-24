@@ -14,6 +14,7 @@ module.exports = function(app) {
     const localhostnada = 'mongodb://localhost/spotifynada';
     const bahaa = "mongodb+srv://bahaaEldeen:123@spotifycluster-i2m7n.mongodb.net/test?retryWrites=true&w=majority";
     const mlab = "mongodb://bahaa:123456b@ds157834.mlab.com:57834/spotify-demo"
+    const atlasSpotifySeeds = 'mongodb+srv://Spotify:spotify@cluster0-ctnvx.mongodb.net/test' // to generate seeds
         // if not env variable will tack mlab 
     mongoose.connect(String(process.env.CONNECTION_STRING) ? String(process.env.CONNECTION_STRING) : mlab, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (error) => {
         if (error) {

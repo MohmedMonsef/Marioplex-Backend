@@ -36,13 +36,10 @@ const Notifications = {
         let curName=currentUser.displayName;
         //create the notification object
        let notificationMessage={
-        notification: {
+            data: {
+            userId: String(currentUser._id),
             title: "Knock , Knock ! Who's There ?",
             body: "It's "+curName+" who viewed Your Profile"
-            }
-            ,
-            data: {
-            userId: String(currentUser._id)
           }
         };
         //flag to check succes or not
@@ -52,7 +49,6 @@ const Notifications = {
             //if online
             //create the mesaage object
             var message = {
-                notification:notificationMessage.notification,
                 data:notificationMessage.data,
                 tokens: [token]
                };
@@ -76,7 +72,6 @@ const Notifications = {
      let messages=[];
      for(var i=0;i<OfflineMessages.length;i++){
         messages.push({
-            notification:OfflineMessages[i].notification,
             data:OfflineMessages[i].data,
             token:profileUser.fcmToken
          })
@@ -107,13 +102,10 @@ const Notifications = {
         });
         //create Notification object
         let notificationMessage={
-            notification: {
+                data: {
+                artistId: String(artist._id),
                 title: "WOOOOOH NEW SONG",
                 body: artist.Name+" Uploaded a New Song -- CHECK IT OUT !"
-                }
-                ,
-                data: {
-                artistId: String(artist._id)
             }
             };
         for(var i=0;i<users.length;i++){
@@ -136,7 +128,6 @@ const Notifications = {
             //if online
             //create the mesaages object
             var messages = {
-                notification:notificationMessage.notification,
                 data:notificationMessage.data,
                 tokens: tokens
             };

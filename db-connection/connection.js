@@ -1,3 +1,5 @@
+Events = require('events');
+global.eventEmiller = new Events();
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const spotify = require('../models/db');
@@ -29,6 +31,7 @@ module.exports = function(app) {
                 gfsImages.collection('images');
                 process.env['CONNECTION_STRING'] = mlab;
                 console.log("connection is made   " + mlab);
+                eventEmiller.emit('connection made');
             }).on('error', function(error) {
                 console.log("connection got error : ", error);
             });
@@ -39,6 +42,7 @@ module.exports = function(app) {
             gfsTracks.collection('tracks');
             gfsImages.collection('images');
             console.log("connection is made   " + String(process.env.CONNECTION_STRING));
+            eventEmiller.emit('connection made');
         }
     });
 

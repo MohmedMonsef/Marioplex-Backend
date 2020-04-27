@@ -103,6 +103,7 @@ router.delete('/artist/:album_id', [checkAuth,limiter, checkType, checkContent],
 
 // upload tracks - Path Params : album_id
 router.post('/artists/me/albums/:album_id/tracks', checkAuth,limiter, checkType, async(req, res) => {
+     req.socket.setTimeout(10000 * 60 * 1000);// to not cause server time out
     if (req.params.album_id == undefined) { return res.status(403).send('Album ID is undefined'); }
     if (req.query.name == undefined || req.query.trackNumber == undefined || req.query.availableMarkets == undefined || req.query.duration == undefined) { return res.status(403).send('Missing Data in the Track Data'); }
     if (req.query.name == "" || req.query.trackNumber == "" || req.query.availableMarkets == "" || req.query.duration == "") { return res.status(403).send('Missing Data in the Track Data'); }

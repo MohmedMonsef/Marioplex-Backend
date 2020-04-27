@@ -45,28 +45,27 @@ const User = {
      */
     update: async function(userId, gender, birthDate, displayName, password, email, country, expiresDate, cardNumber, isMonth, newPassword) {
         if (!checkMonooseObjectID([userId])) return 0;
-        
+
         const user = await this.getUserById(userId);
         if (user) {
             let isCorrectPassword = await bcrypt.compare(password, user.password).then(isMatch => {
                 if (isMatch == false) return 0;
                 else return 1;
             });
-            
-            if(!isCorrectPassword) return 0;
+
+            if (!isCorrectPassword) return 0;
             if (user.isFacebook) {
                 //if from facebok change country only
                 if (country)
                     user.country = country;
 
-            } 
-            else{
+            } else {
                 // else update the
-                if(gender !=undefined){
+                if (gender != undefined) {
                     user.gender = gender;
                 }
 
-                if(birthDate !=undefined){
+                if (birthDate != undefined) {
                     user.birthDate = birthDate;
                 }
 
@@ -101,9 +100,8 @@ const User = {
             await user.save();
             return 1;
 
-        } 
-        else 
-        return 0;
+        } else
+            return 0;
 
     },
 
@@ -164,13 +162,15 @@ const User = {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
-        const likeTrack = await Track.getTrack(trackId,user);
+        const likeTrack = await Track.getTrack(trackId, user);
 
         if (!likeTrack) return 0;
         if (!user['likesTracksPlaylist']) {
             const playlist = await Playlist.createPlaylist(userId, 'liked tracks', 'track which user liked .')
             if (!playlist) return 0;
             user['likesTracksPlaylist'] = playlist._id;
+            playlist.isPublic = false;
+            await playlist.save();
             await user.save();
         } else {
             const ifFind = await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], [trackId]);
@@ -195,7 +195,7 @@ const User = {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
-        const unlikeTrack = await Track.getTrack(trackId,user);
+        const unlikeTrack = await Track.getTrack(trackId, user);
         if (!unlikeTrack) return 0;
         if (!user['likesTracksPlaylist']) return 0;
         const ifFind = await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], [trackId]);
@@ -283,7 +283,7 @@ const User = {
         return artists;
     },
     UserFollowArtist: async function(userID, ArtistID) {
-        if (!checkMonooseObjectID([userID,ArtistID])) return 0;
+        if (!checkMonooseObjectID([userID, ArtistID])) return 0;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
         if (!user || !artist) return 0;
@@ -293,7 +293,7 @@ const User = {
         return 1;
     },
     UserUnfollowArtist: async function(userID, ArtistID) {
-        if (!checkMonooseObjectID([userID,ArtistID])) return 0;
+        if (!checkMonooseObjectID([userID, ArtistID])) return 0;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
         if (!user || !artist) return 0;
@@ -310,9 +310,9 @@ const User = {
 
     },
     CheckIfUserFollowArtist: async function(userID, ArtistID) {
-        if (!checkMonooseObjectID([userID,ArtistID])) return -1;
+        if (!checkMonooseObjectID([userID, ArtistID])) return -1;
         const user = await this.getUserById(userID);
-        let artist = await Artist.getArtist( ArtistID);
+        let artist = await Artist.getArtist(ArtistID);
         if (!user || !artist) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
@@ -335,9 +335,9 @@ const User = {
         if (!user) return false;
         return user;
     },
-    confirmEmail:async function(user) {
-        if(!user.confirm)user.confirm=true;
-        if(user.confirm==false){user.confirm=true;}
+    confirmEmail: async function(user) {
+        if (!user.confirm) user.confirm = true;
+        if (user.confirm == false) { user.confirm = true; }
         await user.save();
         return true;
     },
@@ -443,7 +443,7 @@ const User = {
             userType: "user",
             type: "user",
             fcmToken: "none",
-            confirm:false,
+            confirm: false,
             isFacebook: false,
             images: [],
             follow: [],

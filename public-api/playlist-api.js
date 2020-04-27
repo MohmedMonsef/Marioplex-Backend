@@ -39,8 +39,25 @@ const Playlist = {
             if (playlists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playlists.length;
             else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
-                const user1 = await userDocument.findById(playlists[i].ownerId);
-                rePlaylists.push({ owner: { id: playlists[i].ownerId, type: 'user', name: user1.displayName }, collaborative: playlists[i].collaborative, type: 'playlist', name: playlists[i].name, images: playlists[i].images, id: playlists[i]._id, Description: playlists[i].Description, isPublic: playlists[i].isPublic });
+                //need to correct in find 
+                if (playlists[i].isPublic) {
+                    const user1 = await userDocument.findById(playlists[i].ownerId);
+                    rePlaylists.push({
+                        owner: {
+                            id: playlists[i].ownerId,
+                            type: 'user',
+                            name: user1.displayName
+                        },
+                        collaborative: playlists[i].collaborative,
+                        type: 'playlist',
+                        name: playlists[i].name,
+                        images: playlists[i].images,
+                        id: playlists[i]._id,
+                        Description: playlists[i].Description,
+                        isPublic: playlists[i].isPublic,
+                        popularity: playlists[i]['popularity']
+                    });
+                }
             }
         }
         const replaylistsJson = { playlists: rePlaylists };

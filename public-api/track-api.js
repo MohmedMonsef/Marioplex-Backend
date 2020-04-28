@@ -297,7 +297,7 @@ const Track = {
                 for (let i = 0; i < playlist.snapshot.length; i++) {
                     if (!playlist.snapshot[i].hasTracks) continue;
                     for (let j = 0; j < playlist.snapshot[i].hasTracks.length; j++) {
-                        if (String(playlist.snapshot[i].hasTracks[j].trackId) == trackId) {
+                        if (String(playlist.snapshot[i].hasTracks[j]) == trackId) {
                             playlist.snapshot[i].hasTracks.splice(j, 1);
                             break;
                         }

@@ -135,8 +135,9 @@ router.post('/artists/me/albums/:album_id/tracks', checkAuth,limiter, checkType,
         req.filename = filename;
         let isUploaded = 0;
         // upload track
-        uploadTrack.fields([{ name: "high" }, { name: "medium" }, { name: "low" }, { name: "review" }, { name: "high_enc" }, { name: "medium_enc" }, { name: "low_enc" }])(req, res, (err) => {
+        uploadTrack.fields([{ name: "high" }, { name: "medium" }, { name: "low" }, { name: "review" }, { name: "high_enc" }, { name: "medium_enc" }, { name: "low_enc" }])(req, res, async (err) => {
             if (err) {
+                await Track.deleteTrack(req.user._id,track._id);
                 res.status(403).send({ "error": err.error });
                 isUploaded = -1;
                 return 0;

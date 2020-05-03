@@ -108,7 +108,7 @@ router.get('/tracks/android/:track_id',checkAuth,limiter,async (req,res)=>{
         return 0;
     }
     // get file from gridfs
-       gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackId),"metadata.type":type},function (err, file) {
+       /*gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackId),"metadata.type":type},function (err, file) {
             if (err || !file) {res.status(500).send("server error while sending track");return 0;}
             // send range response 
             const range = req.headers.range;
@@ -145,7 +145,52 @@ router.get('/tracks/android/:track_id',checkAuth,limiter,async (req,res)=>{
             }
       
        
-        });
+        });*/
+
+        // get track id from google drive list
+        drive.files.list({
+            corpora: 'user',
+            pageSize: 10,
+            fields: 'files(*)',
+            q:`(appProperties  has {   key='trackId' and value='${trackId}' }) and (appProperties  has {   key='type' and value='${type}' }) `
+            
+        },(err,data)=>{
+                if(err){res.status(404).send('no data');return;}
+               if(data.data.files.length==0){res.status(404).send('nno data');return;}
+               const id = data.data.files[0].id;
+               console.log(id)
+               drive.files.get({ fileId: id ,alt:"media"}, { responseType: 'stream' },
+               function(err, file) {
+                   if(err || !file){res.status(404).send('nno data');return;}
+                  const mimType = file.headers["content-type"];
+                  const length = Number(file.headers["content-length"]);
+                  const range = req.headers.range;
+                  if(range){
+                      console.log('range')
+                      var parts = req.headers['range'].replace(/bytes=/, "").split("-");
+                      var partialstart = parts[0];
+                      var partialend = parts[1];
+                  
+                      var start = parseInt(partialstart, 10);
+                      var end = partialend ? parseInt(partialend, 10) : length -1;
+                      var chunksize = (end-start)+1;      
+                      res.writeHead(206, {
+                          'Content-Range': 'bytes ' + start + '-' + end + '/' + length,
+                          'Accept-Ranges': 'bytes',
+                          'Content-Length': chunksize,
+                          'Content-Type': mimType
+                      });
+                      file.data.on('end', () => {console.log('Done');}).on('error', err => { console.log('Error', err);}).pipe(res);
+                  }else{
+                      // if doesnt support range then send it sequential using pipe method in nodejs
+                      res.header('Content-Length', length);
+                      res.header('Content-Type', mimType);
+      
+                      file.data.on('end', () => {console.log('Done');}).on('error', err => { console.log('Error', err);}).pipe(res);
+                  }
+
+               });
+            });
     
     
    
@@ -181,7 +226,7 @@ router.get('/tracks/web-player/:track_id',limiter,async (req,res)=>{
         return 0;
     }
     // get file from gridfs
-       gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackId),"metadata.type":type+"_enc"},function (err, file) {
+     /*  gfsTracks.files.findOne({"metadata.trackId":mongoose.Types.ObjectId(trackId),"metadata.type":type+"_enc"},function (err, file) {
         if (err) {res.send(500).send("server error while sending track");return 0;}
         // send range response 
         const range = req.headers.range;
@@ -218,7 +263,52 @@ router.get('/tracks/web-player/:track_id',limiter,async (req,res)=>{
         }
       
        
-        });
+        });*/
+        // get track id from google drive list
+        drive.files.list({
+            corpora: 'user',
+            pageSize: 10,
+            fields: 'files(*)',
+            q:`(appProperties  has {   key='trackId' and value='${trackId}' }) and (appProperties  has {   key='type' and value='${type}_enc' }) `
+            
+        },(err,data)=>{
+                if(err){res.status(404).send('no data');return;}
+               if(data.data.files.length==0){res.status(404).send('nno data');return;}
+               const id = data.data.files[0].id;
+               console.log(id)
+               drive.files.get({ fileId: id ,alt:"media"}, { responseType: 'stream' },
+               function(err, file) {
+                   if(err || !file){res.status(404).send('nno data');return;}
+                  const mimType = file.headers["content-type"];
+                  const length = Number(file.headers["content-length"]);
+                  const range = req.headers.range;
+                  if(range){
+                      console.log('range')
+                      var parts = req.headers['range'].replace(/bytes=/, "").split("-");
+                      var partialstart = parts[0];
+                      var partialend = parts[1];
+                  
+                      var start = parseInt(partialstart, 10);
+                      var end = partialend ? parseInt(partialend, 10) : length -1;
+                      var chunksize = (end-start)+1;      
+                      res.writeHead(206, {
+                          'Content-Range': 'bytes ' + start + '-' + end + '/' + length,
+                          'Accept-Ranges': 'bytes',
+                          'Content-Length': chunksize,
+                          'Content-Type': mimType
+                      });
+                      file.data.on('end', () => {console.log('Done');}).on('error', err => { console.log('Error', err);}).pipe(res);
+                  }else{
+                      // if doesnt support range then send it sequential using pipe method in nodejs
+                      res.header('Content-Length', length);
+                      res.header('Content-Type', mimType);
+      
+                      file.data.on('end', () => {console.log('Done');}).on('error', err => { console.log('Error', err);}).pipe(res);
+                  }
+
+               });
+            });
+        
 })
 
 // set the route to get the track encryption key to decrypt the track

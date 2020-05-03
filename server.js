@@ -5,7 +5,7 @@ const connection = require('./db-connection/connection');
   const rateLimit = require("express-rate-limit");
   //connect to database
   connection(app);
-
+  require('./config/google-drive-setup')();  // set up google drive
   const cors = require('cors');
   const bodyparser = require('body-parser');
   const logger = require('morgan');
@@ -27,10 +27,7 @@ const connection = require('./db-connection/connection');
   const forgpass = require('./routes/forgpass-route');
   const images = require('./routes/image-route')
   require('./config/passport');
-  const limiter = rateLimit({
-      windowMs: 10 * 60 * 1000, // 15 minutes
-      max: 1 // limit each IP to 100 requests per windowMs
-  });
+
   app.use(cors());
   app.use(bodyparser.urlencoded({ extended: false }));
   app.use(bodyparser.json());
@@ -38,7 +35,7 @@ const connection = require('./db-connection/connection');
   app.use(session({ secret: 'anything' }));
   app.use(passport.initialize());
   app.use(passport.session());
-  //app.use('/api/',limiter);
+    
   //routes
   app.use('/api', homePage);
   app.use('/api', Library);

@@ -17,6 +17,7 @@ const Track = {
             if (err) return 0;
             return track;
         }).catch((err) => 0);
+        if(!track) return 0;
         if(!user||user==undefined)return track;
         playable=await this.checkPlayable(user,trackId);
       let reTrack=  {
@@ -316,19 +317,34 @@ const Track = {
         // await gfsTracks.files.re44({"metadata.trackId":mongoose.Types.ObjectId(trackId)},(err,files)=>{
         //     console.log(files);
         // })
-        await gfsTracks.files.find({ "metadata.trackId": mongoose.Types.ObjectId(trackId) }).toArray(async function(err, files) {
-                if (files) {
-                    //console.log(files);
-                    for (let file of files) {
-                        // console.log(file,file._id)
-                        //await gfsTracks.chunks.deleteMany({files_id:mongoose.Types.ObjectId(file._id)})
-                        await gfsTracks.db.collection('tracks.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                        await gfsTracks.files.deleteMany({ "metadata.trackId": mongoose.Types.ObjectId(trackId) })
-                    }
-                }
-            })
+        // await gfsTracks.files.find({ "metadata.trackId": mongoose.Types.ObjectId(trackId) }).toArray(async function(err, files) {
+        //         if (files) {
+        //             //console.log(files);
+        //             for (let file of files) {
+        //                 // console.log(file,file._id)
+        //                 //await gfsTracks.chunks.deleteMany({files_id:mongoose.Types.ObjectId(file._id)})
+        //                 await gfsTracks.db.collection('tracks.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
+        //                 await gfsTracks.files.deleteMany({ "metadata.trackId": mongoose.Types.ObjectId(trackId) })
+        //             }
+        //         }
+        //     })
             // await gfsTracks.chunks.deleteMany({"files_id":mongoose.Types.ObjectId(trackId)})
-
+            drive.files.list({
+                corpora: 'user',
+                pageSize: 10,
+                fields: 'files(*)',
+                q:`appProperties  has {   key='trackId' and value='${trackId}' } `
+                
+            },async (err,data)=>{
+                    if(err){res.status(404).send('no data');return;}
+                   if(data.data.files.length==0){res.status(404).send('nno data');return;}
+                   for(let file of data.data.files){
+                    await drive.files.delete({
+                        'fileId': file.id
+                        });
+                   }
+                ;});
+        
         return 1;
 
     },
@@ -401,6 +417,8 @@ const Track = {
         if (!checkMonooseObjectID([trackId])) return 0;
         if(user.product=="premium")return true;
         let track=await trackDocument.findById(trackId);
+        if(!track) return 0;
+        if(!track.availableMarkets) return 0;
         if(track.availableMarkets.includes(user.country)){
             return true;
         }

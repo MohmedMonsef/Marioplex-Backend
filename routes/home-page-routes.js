@@ -5,6 +5,7 @@ const Album = require('../public-api/album-api');
 const Player = require('../public-api/player-api');
 const User = require('../public-api/user-api');
 const Playlist = require('../public-api/playlist-api');
+const Browse = require('../public-api/browse-api');
 const Recommendation = require('../public-api/recommendation-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const rateLimit = require("express-rate-limit");

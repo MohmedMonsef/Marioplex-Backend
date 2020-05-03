@@ -152,9 +152,9 @@ const Recommendation = {
        avgLikedTracks=(currentUserLikedTracks.length!=0)?numLikedTracks/currentUserLikedTracks.length*1.0:0;
        avgLikedAlbums=(currentUser.saveAlbum.length!=0)?numLikedAlbums/currentUser.saveAlbum.length*1.0:0;
        avgFollowArtists=(currentUser.follow.length!=0)?numFollowArtists/currentUser.follow.length*1.0:0;
-       avgFollowArtists=(currentUser.playHistory.length!=0)?numFollowArtists/currentUser.playHistory.length*1.0:0;
+       avgPlayhistory=(currentUser.playHistory.length!=0)?numFollowArtists/currentUser.playHistory.length*1.0:0;
         
-        similarity=(avgLikedTracks+avgLikedAlbums+avgFollowArtists+avgFollowArtists)*100.0/4.0;
+        similarity=(avgLikedTracks+avgLikedAlbums+avgFollowArtists+avgPlayhistory)*100.0/4.0;
         return similarity;
     }
     

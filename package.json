@@ -18,6 +18,7 @@
         "express-validator": "^6.4.0",
         "firebase-admin": "^8.10.0",
         "fuzzy-search": "^3.2.1",
+        "googleapis": "^49.0.0",
         "gridfs": "^1.0.0",
         "gridfs-stream": "^1.1.1",
         "is-empty": "^1.2.0",

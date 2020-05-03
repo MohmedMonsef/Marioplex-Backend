@@ -98,6 +98,7 @@ const Notifications = {
         let tokens=[];
         
         await userDocument.find({}, function(err, allUsers) {
+          if(err){ users = [];return;}
             users = allUsers;
         });
         //create Notification object

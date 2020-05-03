@@ -5,6 +5,7 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 const connection = require('../db-connection/connection');
 const User = require('./user-api');
 const Playlist = require('./playlist-api');
+const Track=require('./track-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Browse = {
 

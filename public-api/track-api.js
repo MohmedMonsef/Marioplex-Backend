@@ -343,7 +343,7 @@ const Track = {
             if (err) throw err;
             if (!tracks) return 0;
             for (let trackFile of tracks) {
-                if (tracksRelated.length > 10) return;
+                if (tracksRelated.length > 10) return tracksRelated;
                 if (!trackFile.genre) continue;
                 if (String(trackFile._id) == trackId) continue;
                 for (let i = 0; i < trackFile.genre.length; i++) {

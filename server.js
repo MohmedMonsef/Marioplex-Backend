@@ -11,6 +11,7 @@ const connection = require('./db-connection/connection');
   const logger = require('morgan');
   const passport = require('passport');
   const session = require('express-session');
+  const images = require('./routes/image-route')
   const browse = require('./routes/browse');
   const album = require('./routes/album');
   const Track = require('./routes/track-routes');
@@ -25,7 +26,7 @@ const connection = require('./db-connection/connection');
   const player = require('./routes/player-routes')
   const facebook = require('./authentication/facebook-routes');
   const forgpass = require('./routes/forgpass-route');
-  const images = require('./routes/image-route')
+  
   require('./config/passport');
 
   app.use(cors());

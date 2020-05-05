@@ -5,7 +5,7 @@ mongoose.Promise = global.Promise;
 const spotify = require('../models/db');
 const bcrypt = require('bcrypt');
 const Grid = require('gridfs-stream');
-mongoose.Promise = global.Promise;
+
 // set gfs object ot be global
 global.gfsTracks = undefined;
 global.gfsImages = undefined;
@@ -18,7 +18,7 @@ module.exports = function(app) {
     const mlab = "mongodb://bahaa:123456b@ds157834.mlab.com:57834/spotify-demo"
     const atlasSpotifySeeds = 'mongodb+srv://Spotify:spotify@cluster0-ctnvx.mongodb.net/test' // to generate seeds
         // if not env variable will tack mlab 
-    mongoose.connect(String(process.env.CONNECTION_STRING) ? String(process.env.CONNECTION_STRING) : mlab, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (error) => {
+    mongoose.connect(String(process.env.CONNECTION_STRING) , { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (error) => {
         if (error) {
             console.log('Your connection string is not valid now will connect to connection string ' + mlab);
             // if can not connect to your string connection will connect

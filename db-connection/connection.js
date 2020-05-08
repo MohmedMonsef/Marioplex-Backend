@@ -1,5 +1,5 @@
-Events = require('events');
-global.eventEmiller = new Events();
+//Events = require('events');
+//global.eventEmiller = new Events();
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const spotify = require('../models/db');
@@ -18,32 +18,21 @@ module.exports = function(app) {
     const mlab = "mongodb://bahaa:123456b@ds157834.mlab.com:57834/spotify-demo"
     const atlasSpotifySeeds = 'mongodb+srv://Spotify:spotify@cluster0-ctnvx.mongodb.net/test' // to generate seeds
         // if not env variable will tack mlab 
-    mongoose.connect(String(process.env.CONNECTION_STRING) , { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }, (error) => {
-        if (error) {
-            console.log('Your connection string is not valid now will connect to connection string ' + mlab);
-            // if can not connect to your string connection will connect
-            mongoose.connect(mlab, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
-            mongoose.connection.once('open', () => {
-                gfsTracks = new Grid(mongoose.connection.db, mongoose.mongo);
-                gfsImages = new Grid(mongoose.connection.db, mongoose.mongo);
-                // set gfs collections
-                gfsTracks.collection('tracks');
-                gfsImages.collection('images');
-                process.env['CONNECTION_STRING'] = mlab;
-                console.log("connection is made   " + mlab);
-                eventEmiller.emit('connection made');
-            }).on('error', function(error) {
-                console.log("connection got error : ", error);
-            });
-        } else {
+    if (process.env.CONNECTION_STRING) {
+        mongoose.connect(String(process.env.CONNECTION_STRING), { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
+
+        mongoose.connection.once('open', () => {
             gfsTracks = new Grid(mongoose.connection.db, mongoose.mongo);
             gfsImages = new Grid(mongoose.connection.db, mongoose.mongo);
             // set gfs collections
             gfsTracks.collection('tracks');
             gfsImages.collection('images');
-            console.log("connection is made   " + String(process.env.CONNECTION_STRING));
-            eventEmiller.emit('connection made');
-        }
-    });
+            //process.env['CONNECTION_STRING'] = String(process.env.CONNECTION_STRING);
+            console.log("connection is made   ");
+            //eventEmiller.emit('connection made');
+        }).on('error', function(error) {
+            console.log("connection got error : ", error);
+        });
+    } else console.log("connection string is require in .env file")
 
 };

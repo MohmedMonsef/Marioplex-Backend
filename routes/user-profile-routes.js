@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
-const profileNotification = require('../public-api/notification-api');
-const User = require('../public-api/user-api');
+const profileNotification = require('../source/notification-api');
+const User = require('../source/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const rateLimit = require("express-rate-limit");
@@ -95,8 +95,7 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
             res.status(500).json({
                 error: err
             })
-        } 
-        else {
+        } else {
             const userID = req.user._id;
             const user = await User.update(userID, req.body.user.gender, req.body.user.birthday, req.body.user.displayName, req.body.user.password, req.body.user.email, req.body.user.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.user.newpassword);
             if (user) {

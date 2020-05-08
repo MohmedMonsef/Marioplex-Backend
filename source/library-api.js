@@ -3,7 +3,7 @@ const spotify = require('../models/db');
 const Album = require('./album-api');
 const Track = require('./track-api');
 const artist_api = require('./artist-api');
-const Playlist = require('../public-api/playlist-api');
+const Playlist = require('../source/playlist-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Library = {
     /**

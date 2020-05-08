@@ -6,22 +6,22 @@ const bcrypt = require('bcrypt');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const Joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
-var sendmail=require('../forget-password/sendmail');
+var sendmail = require('../forget-password/sendmail');
 const jwt = require('jsonwebtoken');
 const auth = require('../middlewares/is-me')
 require('../config/passport');
-const User = require('../public-api/user-api')
+const User = require('../source/user-api')
 const passport = require('passport');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
-    windowMs:  60 * 1000, 
+    windowMs: 60 * 1000,
     max: 2
 
 });
 
 // route for user sign up
-router.post('/sign_up',limiter, async(req, res) => {
+router.post('/sign_up', limiter, async(req, res) => {
     // set Joi validation schema to check correctness of data
     const shcema = Joi.object().keys({
         email: Joi.string().trim().email().required(),
@@ -57,7 +57,7 @@ router.post('/sign_up',limiter, async(req, res) => {
                             var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
                                 expiresIn: '9043809348h'
                             });
-                            sendmail(user.email,String(user._id),"confirm");
+                            sendmail(user.email, String(user._id), "confirm");
                             res.status(201).json({
                                 token
                             });
@@ -74,20 +74,18 @@ router.post('/sign_up',limiter, async(req, res) => {
     });
 });
 
-router.post('/login/confirm',limiter,async (req,res)=>
-{
-    if(!req.query.id||req.query.id==""){return res.status(403).send("user id is not given");}
-    let user=await users.getUserById(req.query.id);
+router.post('/login/confirm', limiter, async(req, res) => {
+    if (!req.query.id || req.query.id == "") { return res.status(403).send("user id is not given"); }
+    let user = await users.getUserById(req.query.id);
 
-       let checkConfirm= await users.confirmEmail(user);
-       if(checkConfirm){
+    let checkConfirm = await users.confirmEmail(user);
+    if (checkConfirm) {
         return res.status(200).send("user is confirmed");
-       }
-       else{
+    } else {
         return res.status(403).send("user isnot confirmed");
-       }
+    }
 
-    
+
 
 });
 module.exports = router;

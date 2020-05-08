@@ -1,19 +1,19 @@
 const router = require('express').Router();
-const Player = require('../public-api/player-api');
-const User = require('../public-api/user-api');
-const Track = require('../public-api/track-api')
+const Player = require('../source/player-api');
+const User = require('../source/user-api');
+const Track = require('../source/track-api')
 const { auth: checkAuth } = require('../middlewares/is-me');
 const checkID = require('../validation/mongoose-objectid');
 const stateValidation = require('../validation/validate-boolean');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
-    windowMs:  60 * 1000, 
+    windowMs: 60 * 1000,
     max: 30
 
 });
 const nextLimiter = rateLimit({
-    windowMs:  60*60 * 1000, 
+    windowMs: 60 * 60 * 1000,
     max: 300
 
 });
@@ -29,7 +29,7 @@ router.get('/me/updatePlayer', async(req, res) => {
 })
 
 //get current track playing
-router.get('/me/player/currently-playing', checkAuth,limiter, async(req, res) => {
+router.get('/me/player/currently-playing', checkAuth, limiter, async(req, res) => {
     const user = await User.getUserById(req.user._id);
     if (user) {
         const player = user.player;
@@ -46,7 +46,7 @@ router.get('/me/player/currently-playing', checkAuth,limiter, async(req, res) =>
 })
 
 //get next track playing
-router.get('/me/player/next-playing', checkAuth,limiter, async(req, res) => {
+router.get('/me/player/next-playing', checkAuth, limiter, async(req, res) => {
     const user = await User.getUserById(req.user._id);
     if (user) {
         const player = user.player;
@@ -64,7 +64,7 @@ router.get('/me/player/next-playing', checkAuth,limiter, async(req, res) => {
 })
 
 //get prev track playing
-router.get('/me/player/prev-playing', checkAuth,limiter, async(req, res) => {
+router.get('/me/player/prev-playing', checkAuth, limiter, async(req, res) => {
         const user = await User.getUserById(req.user._id);
         if (user) {
             const player = user.player;
@@ -80,7 +80,7 @@ router.get('/me/player/prev-playing', checkAuth,limiter, async(req, res) => {
         } else res.status(403).send('user is not correct');
     })
     // create queue fo player
-router.post('/createQueue/:sourceId/:trackId', checkAuth,limiter, async(req, res) => {
+router.post('/createQueue/:sourceId/:trackId', checkAuth, limiter, async(req, res) => {
     if (checkID([req.params.sourceId, req.params.trackId])) {
         if (stateValidation(req.query.isPlaylist)) {
             const sourceId = req.params.sourceId;
@@ -93,7 +93,7 @@ router.post('/createQueue/:sourceId/:trackId', checkAuth,limiter, async(req, res
         } else res.status(400).send('isPlaylist is required');
     } else res.status(403).send('Enter correct ids ');
 })
-router.post('/player/add-to-queue/:playlistId/:trackId', checkAuth,limiter, async(req, res) => {
+router.post('/player/add-to-queue/:playlistId/:trackId', checkAuth, limiter, async(req, res) => {
         if (checkID([req.params.playlistId, req.params.trackId])) {
             if (stateValidation(req.query.isPlaylist)) {
                 const trackId = req.params.trackId;
@@ -104,14 +104,14 @@ router.post('/player/add-to-queue/:playlistId/:trackId', checkAuth,limiter, asyn
         } else res.status(403).send('Enter correct ids');
     })
     // skip to next track 
-router.post('/me/player/next-playing', checkAuth,nextLimiter, async(req, res) => {
-    // allow for 6 requests per hour only
-    if(req.user.product == "free"){
-        if(req.rateLimit.current > 6){
-            res.status(429).json({"error":"rate limit reached for free user skip tracks"});
-            return 0;
+router.post('/me/player/next-playing', checkAuth, nextLimiter, async(req, res) => {
+        // allow for 6 requests per hour only
+        if (req.user.product == "free") {
+            if (req.rateLimit.current > 6) {
+                res.status(429).json({ "error": "rate limit reached for free user skip tracks" });
+                return 0;
+            }
         }
-    }
         const user = await User.getUserById(req.user._id);
         if (user) {
             const player = user.player;
@@ -131,13 +131,13 @@ router.post('/me/player/next-playing', checkAuth,nextLimiter, async(req, res) =>
         } else res.status(403).send('user is not correct')
     })
     // skip to prev track
-router.post('/me/player/prev-playing', checkAuth,nextLimiter, async(req, res) => {
-    if(req.user.product == "free"){
-        if(req.rateLimit.current > 6){
-            res.status(429).json({"error":"rate limit reached for free user skip tracks"});
-            return 0;
+router.post('/me/player/prev-playing', checkAuth, nextLimiter, async(req, res) => {
+        if (req.user.product == "free") {
+            if (req.rateLimit.current > 6) {
+                res.status(429).json({ "error": "rate limit reached for free user skip tracks" });
+                return 0;
+            }
         }
-    }
         const user = await User.getUserById(req.user._id);
         if (user) {
             const player = user.player;
@@ -154,14 +154,14 @@ router.post('/me/player/prev-playing', checkAuth,nextLimiter, async(req, res) =>
         } else res.status(403).send('user is not correct')
     })
     // get user queue 
-router.get('/me/queue', checkAuth,limiter, async(req, res) => {
+router.get('/me/queue', checkAuth, limiter, async(req, res) => {
         const userID = req.user._id;
         const tracks = await User.getQueue(userID);
         if (!tracks) res.status(400).json({ error: 'couldnt get queue' });
         else res.status(200).json(tracks);
     })
     //to repeat
-router.put('/player/repeat', checkAuth,limiter, async(req, res) => {
+router.put('/player/repeat', checkAuth, limiter, async(req, res) => {
     const userID = req.user._id;
     if (stateValidation(req.query.state)) {
         const repeat = User.repreatPlaylist(userID, req.query.state);
@@ -171,21 +171,21 @@ router.put('/player/repeat', checkAuth,limiter, async(req, res) => {
 })
 
 // resume player 
-router.put('/me/player/play', checkAuth,limiter, async(req, res) => {
+router.put('/me/player/play', checkAuth, limiter, async(req, res) => {
         const userID = req.user._id;
         const player = User.resumePlaying(userID);
         if (!player) res.status(404).json({ error: 'could not resume playing' });
         else res.status(204).json({ success: 'resumed playing' })
     })
     // pause player 
-router.put('/me/player/pause', checkAuth,limiter, async(req, res) => {
+router.put('/me/player/pause', checkAuth, limiter, async(req, res) => {
         const userID = req.user._id;
         const player = User.pausePlaying(userID);
         if (!player) res.status(404).json({ error: 'could not resume playing' });
         else res.status(204).json({ success: 'paused playing' })
     })
     //toggle shuffle
-router.put('/me/player/shuffle', checkAuth,limiter, async(req, res) => {
+router.put('/me/player/shuffle', checkAuth, limiter, async(req, res) => {
         if (stateValidation(req.query.state)) {
             const userID = req.user._id;
             const state = req.query.state;
@@ -195,7 +195,7 @@ router.put('/me/player/shuffle', checkAuth,limiter, async(req, res) => {
         } else res.status(400).send('state is required');
     })
     // get recent played
-router.get('/me/player/recently-played', checkAuth,limiter, async(req, res) => {
+router.get('/me/player/recently-played', checkAuth, limiter, async(req, res) => {
         const user = await User.getUserById(req.user._id);
         if (user) {
             const playHistory = await Player.getRecentTracks(user, req.query.limit);
@@ -204,7 +204,7 @@ router.get('/me/player/recently-played', checkAuth,limiter, async(req, res) => {
         } else res.status(403).send('this user is deleted');
     })
     // add to recent played
-router.put('/me/player/recently-played/:source_id/:track_id', checkAuth,limiter, async(req, res) => {
+router.put('/me/player/recently-played/:source_id/:track_id', checkAuth, limiter, async(req, res) => {
     if (checkID([req.params.track_id, req.params.source_id])) {
         const user = await User.getUserById(req.user._id);
         if (user) {

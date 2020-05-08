@@ -1,18 +1,18 @@
 const router = require('express').Router();
 
-const search = require('../public-api/search-api');
-const User = require('../public-api/user-api');
+const search = require('../source/search-api');
+const User = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
-    windowMs:  60 * 1000, 
+    windowMs: 60 * 1000,
     max: 30
 
 });
 
 //SEARCH FOR A WORD OR CHAR, QUERY PARAMS: name, type
-router.get('/search',limiter, async(req, res) => {
+router.get('/search', limiter, async(req, res) => {
 
     const name = req.query.name;
     const type = req.query.type.split(',');
@@ -22,7 +22,7 @@ router.get('/search',limiter, async(req, res) => {
     for (let i = 0; i < type.length; i++) {
         if (type[i] == "top") {
             const artist = await search.getTopResults(name);
-            if (artist == {}) SearchResult["top"] = []//not found
+            if (artist == {}) SearchResult["top"] = [] //not found
             else SearchResult["top"] = artist
         } else if (type[i] == "track") {
             const artist = await search.getTrack(name, limit, offset);
@@ -44,7 +44,7 @@ router.get('/search',limiter, async(req, res) => {
             else SearchResult["playlist"] = playlists
 
         } else if (type[i] == "profile") {
-            const profiles = await search.getUserProfile(name ,limit, offset);
+            const profiles = await search.getUserProfile(name, limit, offset);
             if (profiles.length == 0) SearchResult["profile"] = []; //not found
             else SearchResult["profile"] = profiles
         } else {
@@ -57,7 +57,7 @@ router.get('/search',limiter, async(req, res) => {
         }
     }
     return res.status(404).send("No results found");
-    
+
 })
 
 module.exports = router;

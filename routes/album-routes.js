@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
-const Album = require('../public-api/album-api');
-const User = require('../public-api/user-api');
+const Album = require('../source/album-api');
+const User = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const rateLimit = require("express-rate-limit");
 // add rate limiting

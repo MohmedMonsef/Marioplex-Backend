@@ -424,8 +424,27 @@ const Track = {
         }
         return false;
 
-    }
-
+    },
+    updateTrack: async function(userId,trackId,body){
+        if (!checkMonooseObjectID([userId, trackId])) return 0;
+        if(!body)return 0;
+        const user = await userDocument.findById(userId);
+        if (!user) return 0;
+        const track = await this.getTrack(trackId);
+        if (!track) return 0;
+        // check if user is the artist that own the track
+        const artist = await artistDocument.findOne({ userId: userId });
+        if (!artist) return 0;
+        // if artist dont own track then return 0
+        if (String(artist._id) != String(track.artistId)) return 0;
+        // if artist own the track then update the track and save it
+        for(let key in body){
+            if(key == "name" || key == "availableMarkets" || key == "duration" || key == "genre")
+            track[key] = body[key];
+        }
+        await track.save();
+        return track;
+    } 
 
 }
 

@@ -4,10 +4,11 @@ const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Image = require('./image-api')
 const Track = {
 
-    /** 
-     *  get track by id
-     * @param : track-id {mongoose ObjectId}
-     **/
+     /** 
+    *  get track by id
+    * @param  {string} trackID - the track id 
+    * @returns {object}
+    */
     getTrack: async function(trackId,user) {
 
         // connect to db and find track with the same id then return it as json file
@@ -20,7 +21,7 @@ const Track = {
         if(!track) return 0;
         if(!user||user==undefined)return track;
         playable=await this.checkPlayable(user,trackId);
-      let reTrack=  {
+        let reTrack=  {
             _id:track._id,
             url: track.url,
             images: track.images,
@@ -56,11 +57,12 @@ const Track = {
 
 
     },
-    /** 
-     *  get full track object by id
-     * @param : track-id {mongoose ObjectId}
-     * @param : user {user object}
-     **/
+     /** 
+    * get full track object by id
+    * @param {string} trackID - the track id 
+    * @param {Object} user  - the user
+    * @return {object}
+    */
     getFullTrack: async function(trackId, user) {
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId,user);
@@ -79,9 +81,11 @@ const Track = {
         return { track: track, isLiked: isLiked, album: { name: album.name, _id: album._id, artist: { name: artist.Name, _id: artist._id } } }
     },
     /** 
-     *  get several tracks
-     * @param : array of track ids
-     */
+    *  get several tracks
+    * @param {Array<string>} tracksIDs - the track ids
+    * @param {Object} user - the user
+    * @returns {Array<objects>}
+    */
     getTracks: async function(trackIds, user) {
         if (!checkMonooseObjectID(trackIds)) return 0;
         let tracks = [];
@@ -93,10 +97,12 @@ const Track = {
         return tracks;
 
     },
-    /** 
-     *  get audio features for track
-     * @param : track-id {mongoose ObjectId}
-     **/
+   /** 
+    *  get audio features for track
+    * @param  {string}  trackID - the track id 
+    * @returns {object} 
+    * 
+    */
     getAudioFeaturesTrack: async function(trackId) {
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
@@ -120,9 +126,10 @@ const Track = {
         return audioFeatures;
     },
     /** 
-     *  get audio features for tracks
-     * @param : track-ids {mongoose ObjectId}
-     **/
+    *  get audio features for tracks
+    * @param {string}  trackIDs  - the track ids 
+    * @returns {Array<Object>}
+    */
     getAudioFeaturesTracks: async function(trackIds) {
         if (!checkMonooseObjectID(trackIds)) return 0;
         let audioFeatures = {};
@@ -141,10 +148,10 @@ const Track = {
     },
 
     /** 
-     *  check if user like track
-     * @param : user {mongoose object}
-     * @param : track-id {mongoose ObjectId}
-     **/
+    *  check if user like track
+    * @param {Object} user - the user 
+    * @param {string} trackID - the track id 
+    */
     checkIfUserLikeTrack: async function(user, trackId) {
         if (!user) return 0;
         if (!checkMonooseObjectID([trackId])) return 0;
@@ -165,14 +172,11 @@ const Track = {
         return ifFind;
     },
     /** 
-     * user like track
-     * @param : user {mongoose object}
-     * @param : track-id {mongoose ObjectId}
-     **/
-    /** 
-     * user like track
-     * @param : track-id {mongoose ObjectId}
-     **/
+    * user like track
+    * @param  {Object} user  - the user
+    * @param {string} trackID - the track id 
+    * @returns {Number}
+    */
     likeTrack: async function(trackId) {
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
@@ -187,9 +191,11 @@ const Track = {
     },
 
     /** 
-     * user unlike track
-     * @param : track-id {mongoose ObjectId}
-     **/
+    * user unlike track
+    * @param  {Object} user - the user 
+    * @param {string} trackID - the track id 
+    * @returns {Number}
+    */
     unlikeTrack: async function(trackId) {
         // else return 0 as he didn't like the 
         if (!checkMonooseObjectID([trackId])) return 0;
@@ -200,15 +206,19 @@ const Track = {
         await track.save().catch();
         return 1;
     },
-    /** 
-     * user create track
-     * @param : url {string} url of string
-     * @param : trackNumber {Number} number of track in album
-     * @param : availableMarkets {Array} markets
-     * @param : artistId {mongoose object ID}
-     * @param : albumId {mongoose object ID}
-     * @param : duration {Number} 
-     **/
+     /** 
+    * user create track
+    * @param {string}  url - the url of track
+    * @param  {Number}  trackNumber - the number of track
+    * @param {Array<string>}  availableMarkets - the markets
+    * @param {String} artistID - the artist id
+    * @param {String} albumID - the album id
+    *  @param {String} key - track encryption key
+    *  @param {String} keyId - track encryption key id
+    *  @param {Array} genre - trck genres
+    * @param {Number}  duration - the track duration
+    * @returns {object}
+    */
     createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration, key, keyId, genre) {
         //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(trackNumber) != "number" || typeof(duration) != "number") return 0;
 
@@ -349,6 +359,12 @@ const Track = {
 
     },
     // get related tracks to specific track
+    /**
+     * 
+     * get related tracks to a track
+     * @param {String} trackId 
+     * @returns {Object}
+     */
     getRelatedTrack: async function(trackId) {
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
@@ -373,6 +389,12 @@ const Track = {
         if (tracksRelated.length == 0) return 0;
         return tracksRelated;
     },
+    /**
+     * get related full tracks to certain user
+     * @param {String} userId 
+     * @param {String} trackId 
+     * @returns {Object}
+     */
     getFullRelatedTracks: async function(userId, trackId) {
         if (!checkMonooseObjectID([userId, trackId])) return 0;
 
@@ -411,7 +433,12 @@ const Track = {
         if (tracksRelated.length == 0) return 0;
         return tracksRelated;
     },
-
+    /**
+     * check if track is playable to certain user
+     * @param {String} user 
+     * @param {String} trackId 
+     * @returns {Boolean}
+     */
     checkPlayable:async function(user,trackId){
         if(!user)return 0;
         if (!checkMonooseObjectID([trackId])) return 0;
@@ -425,6 +452,12 @@ const Track = {
         return false;
 
     },
+    /**
+     * edit track info
+     * @param {String} userId 
+     * @param {String} trackId 
+     * @param {Object} body 
+     */
     updateTrack: async function(userId,trackId,body){
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         if(!body)return 0;

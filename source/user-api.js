@@ -2,6 +2,7 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 const Track = require('./track-api');
 const Playlist = require('./playlist-api');
 // initialize db 
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Artist = require('./artist-api');
 const sendmail = require('../forget-password/sendmail');
@@ -282,11 +283,31 @@ const User = {
         }
         return artists;
     },
+    getUserFollowingUser: async function(userId) {
+        if (!checkMonooseObjectID([userId])) return 0;
+        const user = await this.getUserById(userId);
+        if (!user.follow) user.follow = [];
+        if (!user.follow.length) { return 0; }
+        let users = []
+        for (let i = 0; i < user.follow.length; i++) {
+            let userFollowed = await this.getUserById(user.follow[i].id);
+            if (userFollowed) {
+                let userInfo = {};
+                userInfo['id'] = userFollowed._id;
+                userInfo['name'] = userFollowed.displayName;
+                userInfo['images'] = userFollowed.images;
+                userInfo['type'] = userFollowed.type;
+                users.push(userInfo);
+            }
+        }
+        return users;
+    },
     UserFollowArtist: async function(userID, ArtistID) {
         if (!checkMonooseObjectID([userID, ArtistID])) return 0;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
-        if (!user || !artist) return 0;
+        let userTofollow = await this.getUserById(ArtistID);
+        if (!user || (!artist && !userTofollow)) return 0;
         if (!user.follow) user.follow = [];
         user.follow.push({ 'id': ArtistID });
         await user.save();
@@ -296,9 +317,11 @@ const User = {
         if (!checkMonooseObjectID([userID, ArtistID])) return 0;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
-        if (!user || !artist) return 0;
+        let userTofollow = await this.getUserById(ArtistID);
+        if (!user || (!artist && !userTofollow)) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
+
         for (let i = 0; i < user.follow.length; i++) {
             if (String(user.follow[i].id) == String(ArtistID)) {
                 user.follow.splice(i, 1);
@@ -313,7 +336,8 @@ const User = {
         if (!checkMonooseObjectID([userID, ArtistID])) return -1;
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
-        if (!user || !artist) return -1;
+        let userTofollow = await this.getUserById(ArtistID);
+        if (!user || (!artist && !userTofollow)) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {
@@ -330,6 +354,64 @@ const User = {
      * @param  {string} email - the user email 
      * @returns {Object}
      */
+    updateDate: async function(artist){
+        if(artist.date!= mongoose.Date.now()){
+            artist.date=new Date();
+            await artist.save();
+        }
+        
+    },
+    getArtistNumberOfFollowersInMonth: async function(artistId){
+        let artist = await Artist.getArtist(artistId);
+        if(!artist) return 0;
+        var today = new Date();
+
+        if(artist.date.getMonth() == today.getMonth() && 
+           artist.date.getFullYear() == today.getFullYear()){
+            artist.numOfFollowersPerMonth += 1;
+        }
+        else{
+            artist.numOfFollowersPerMonth=0;
+        }
+        await artist.save();
+        await this.updateDate(artist);
+        return artist.numOfFollowersPerMonth;
+       
+    },
+    getArtistNumberOfFollowersInDay: async function(artistId){
+        let artist = await Artist.getArtist(artistId);
+        if(!artist) return 0;
+        var today = new Date();
+
+        if(artist.date.getMonth() == today.getMonth() && 
+           artist.date.getFullYear() == today.getFullYear() &&
+           artist.date.getDay() == today.getDay()){
+            artist.numOfFollowersPerDay += 1;
+        }
+        else{
+            artist.numOfFollowersPerDay=0;
+        }
+        await artist.save();
+        await this.updateDate(artist);
+        return artist.numOfFollowersPerDay;
+       
+    },
+    getArtistNumberOfFollowersInYear: async function(artistId){
+        let artist = await Artist.getArtist(artistId);
+        if(!artist) return 0;
+        var today = new Date();
+        
+        if(artist.date.getFullYear() == today.getFullYear()){
+            artist.numOfFollowersPerYear += 1;
+        }
+        else{
+            artist.numOfFollowersPerYear=0;
+        }
+        await artist.save();
+        await this.updateDate(artist);
+        return artist.numOfFollowersPerYear;
+       
+    },
     checkmail: async function(email) {
         let user = await userDocument.findOne({ email: email });
         if (!user) return false;

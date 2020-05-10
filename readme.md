@@ -1,4 +1,4 @@
-# Marioplex Spotify clone back-end
+# :headphones: Marioplex Spotify clone back-end
 
 ## marioplex node js server is a clone to spotify music streaming server, which tries to mimic the spotify server capability in handling different requests, and integrating external APIs, databases and much more features.
 
@@ -12,10 +12,14 @@
 <li> :stop_button: Encrypt media to keep it safe from illegal downloads  </li>
 <li> :e-mail: Mailing service  </li>
 <li> :moneybag: Privileges for our awesome premium users   </li>
-<li> :musical_score: Feel boared just create your own playlist with only the best songs you like    </li>
+<li> :musical_score: Feel bored just create your own playlist with only the best songs you like    </li>
 <li> :crystal_ball: Like randomness then we got your back with our great shuffle feature to feel the thrill of listening to the unknown    </li>
 <li> :arrows_counterclockwise: The song is on fire the let it on repeat till you hate it    </li>
 <li> :art: Dreamed of being an artist then be one and upload your songs and watch as users fall in love with them    </li>
 <li> :earth_africa: Follow your favourite users and artists and be notified whenever the upload something or create albums and playlists    </li>
+<li> :link: Customize every detail about your profile</li>
+<li> :bulb: Recommendations based on what you like and who you follow</li>
+<li> :mag_right: Search for your beloved track/artist/user by using our fuzzy search engine</li>
+<li> :unlock: Forget your password no problem you can reset it by just a click</li>
 
 </ul>

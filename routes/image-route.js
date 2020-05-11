@@ -117,10 +117,21 @@ router.get('/images/:image_id', limiter, async(req, res) => {
 
     const imageId = req.params.image_id;
     // get file from gridfs
-    gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId), "metadata.belongsTo": belongsTo }, function(err, file) {
+    gfsImages.files.findOne({ "metadata.imageId": imageId, "metadata.belongsTo": belongsTo }, function(err, file) {
         //console.log(err,file)
-        if (err) { res.status(500).send("server error while sending image"); return 0; }
-        if (!file) { res.status(500).send("server error while sending image"); return 0; }
+        if (err || !file) { 
+            // return default image 
+            gfsImages.files.findOne({"metadata.belongsTo": "default" }, function(err, file) {
+                if(err || !file){res.status(404).send("no image");return;}
+                res.header('Content-Length', file.length);
+                res.header('Content-Type', file.contentType);
+    
+                gfsImages.createReadStream({
+                    _id: file._id
+                }).pipe(res);
+            });
+        }else{
+        
         // send range response 
         const range = req.headers.range;
         if (range) {
@@ -154,6 +165,7 @@ router.get('/images/:image_id', limiter, async(req, res) => {
                 _id: file._id
             }).pipe(res);
         }
+    }
     })
 })
 

@@ -151,7 +151,7 @@ const Album = {
     },
     // the order of track in album 's tracks
     findIndexOfTrackInAlbum: async function(trackId, album) {
-        if (!checkMonooseObjectID([trackId])) return 0;
+        if (!checkMonooseObjectID([trackId])) return -1;
         if (!album.hasTracks) album.hasTracks = [];
         for (let i = 0; i < album.hasTracks.length; i++) {
             if (album.hasTracks[i].trackId == trackId) return i;

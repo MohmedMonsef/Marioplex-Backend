@@ -347,4 +347,14 @@ router.get('/tracks/related/full-track/:track_id', limiter, checkAuth, async(req
     else res.status(200).json(tracksRelated);
 
 })
+
+// update track 
+router.put('/tracks/update/:track_id',limiter,checkAuth,async (req,res)=>{
+    const trackId = req.params.track_id;
+    const userId = req.user._id;
+    const info = req.body;
+    const updateTrack = await Track.updateTrack(userId,trackId,info);
+    if(!updateTrack) res.status(403).json({"error":"cannot update track"});
+    else res.json(updateTrack);
+})
 module.exports = router;

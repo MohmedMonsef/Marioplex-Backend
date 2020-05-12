@@ -187,6 +187,10 @@ const Artist = new Schema({
     genre: [String],
     type: String,
     Name: String,
+    date: Date,
+    numOfFollowersPerDay: Number,
+    numOfFollowersPerMonth: Number,
+    numOfFollowersPerYear: Number,
     images: [Image],
     userId: mongoose.Schema.Types.ObjectId
         //ref: 'User'

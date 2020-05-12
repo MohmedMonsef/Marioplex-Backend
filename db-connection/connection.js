@@ -5,10 +5,11 @@ mongoose.Promise = global.Promise;
 const spotify = require('../models/db');
 const bcrypt = require('bcrypt');
 const Grid = require('gridfs-stream');
-
+const fs = require('fs');
 // set gfs object ot be global
 global.gfsTracks = undefined;
 global.gfsImages = undefined;
+
 module.exports = function(app) {
     const atlasSpotify = 'mongodb+srv://Spotify:spotifyapp@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
     const atlas = 'mongodb+srv://nada:nada@spotifycluster-i2m7n.mongodb.net/Spotify?retryWrites=true&w=majority';
@@ -24,12 +25,34 @@ module.exports = function(app) {
         mongoose.connection.once('open', () => {
             gfsTracks = new Grid(mongoose.connection.db, mongoose.mongo);
             gfsImages = new Grid(mongoose.connection.db, mongoose.mongo);
+         
             // set gfs collections
             gfsTracks.collection('tracks');
             gfsImages.collection('images');
-            //process.env['CONNECTION_STRING'] = String(process.env.CONNECTION_STRING);
+           
             console.log("connection is made   ");
-            //eventEmiller.emit('connection made');
+          
+            // check to see if there is defUault image
+            gfsImages.files.findOne({ "metadata.belongsTo": "default" }, function(err, file) {
+                if(err || !file){
+                    // upload image
+                    let writestream = gfsImages.createWriteStream({
+                        filename: 'not_found',
+                        metadata: { belongsTo: "default"},
+                        content_type: "image/jpeg",
+                        bucketName: 'images',
+                        root: 'images',
+                    });
+                    fs.createReadStream('static/not_found.jpeg').pipe(writestream);
+                  
+                    writestream.on('close', function (file) {
+                       
+                        console.log(file);
+
+                      });
+                }
+            });
+            
         }).on('error', function(error) {
             console.log("connection got error : ", error);
         });

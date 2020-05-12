@@ -90,8 +90,8 @@ const User = new Schema({
     password: String,
     gender: String,
     country: String,
-    fcmToken:String,
-    confirm:Boolean,
+    fcmToken: String,
+    confirm: Boolean,
     isLogged: Boolean,
     images: [Image],
     premium: {
@@ -104,7 +104,7 @@ const User = new Schema({
     displayName: String,
     product: String,
     isFacebook: Boolean,
-    offlineNotifications:[{
+    offlineNotifications: [{
 
     }],
     deletedPlaylists: [{
@@ -174,7 +174,9 @@ const User = new Schema({
         current_source: mongoose.Schema.Types.ObjectId,
         isPlaylist: Boolean,
         is_repeat: Boolean,
-        volume: Number
+        volume: Number,
+        currentTimeStampe: Number,
+        isRepeatTrack: Boolean
     }
 });
 

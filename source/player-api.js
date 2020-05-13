@@ -490,6 +490,15 @@ const Player = {
         if (!user.queue.tracksInQueue) return 0;
         if (user.queue.tracksInQueue.length == 0) return 0;
         const track_last_playlist = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+        if (user.player['sourceName'] != 'playlist' && !user.player['sourceName'] != 'album') {
+            let queueTracks = user.queue.tracksInQueue;
+            for (let i = user.queue.queuIndex + 1; i < queueTracks.length; i++) {
+                queueTracks[user.queue.tracksInQueue[i].indexInSource + user.queue.queuIndex + 1] = user.queue.tracksInQueue[i];
+                user.queue.tracksInQueue = queueTracks;
+                await user.save();
+            }
+            return 1;
+        }
         if (user.player.isPlaylist) {
             const playlist = await Playlist.getPlaylist(user.player.current_source);
             if (!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{ hasTracks: [] }];

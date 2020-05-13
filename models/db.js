@@ -90,8 +90,8 @@ const User = new Schema({
     password: String,
     gender: String,
     country: String,
-    fcmToken:String,
-    confirm:Boolean,
+    fcmToken: String,
+    confirm: Boolean,
     isLogged: Boolean,
     images: [Image],
     premium: {
@@ -104,7 +104,7 @@ const User = new Schema({
     displayName: String,
     product: String,
     isFacebook: Boolean,
-    offlineNotifications:[{
+    offlineNotifications: [{
 
     }],
     deletedPlaylists: [{
@@ -149,7 +149,8 @@ const User = new Schema({
             //ref: 'Track'
             isQueue: Boolean,
             isPlaylist: Boolean,
-            playlistId: mongoose.Schema.Types.ObjectId
+            playlistId: mongoose.Schema.Types.ObjectId,
+            indexInSource: Number
         }]
     },
     player: {
@@ -169,12 +170,15 @@ const User = new Schema({
             isPlaylist: Boolean,
             playlistId: mongoose.Schema.Types.ObjectId
         },
+        sourceName: String,
         is_playing: Boolean,
         is_shuffled: Boolean,
         current_source: mongoose.Schema.Types.ObjectId,
         isPlaylist: Boolean,
         is_repeat: Boolean,
-        volume: Number
+        volume: Number,
+        currentTimeStampe: Number,
+        isRepeatTrack: Boolean
     }
 });
 

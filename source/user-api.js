@@ -30,17 +30,20 @@ const User = {
         return user;
     },
 
-    //update user profile information
-    //params: userId, Display_Name(optional), Password(optional),
-    //        Email(optional), Country(optional) 
 
-    /** 
+    /**
      *  update user profile information
-     * @param  {string} userId - the user id 
-     * @param  {string} Display_Name - the user name 
-     * @param  {string} Password - the user password 
-     * @param  {string} Email - the user email 
-     * @param  {string} Country - the user country
+     * @param {string} userId  - current user id
+     * @param {string} gender - new user genre 
+     * @param {string} birthDate - new brithday for user
+     * @param {string} displayName  -  new display namefor user
+     * @param {string} password  - current password of user
+     * @param {string} email  - user new email
+     * @param {string} country -user new country
+     * @param {string} expiresDate - card new expire date
+     * @param {string} cardNumber  - new card number
+     * @param {boolean} isMonth - if premium per month or year
+     * @param {string} newPassword  - new password for user
      * @returns {Number}
      */
     update: async function(userId, gender, birthDate, displayName, password, email, country, expiresDate, cardNumber, isMonth, newPassword) {
@@ -148,7 +151,21 @@ const User = {
         return 1;
 
     },
-
+    /**
+     * 
+     * @param {string} user - user id 
+     * @param {Number} currentTimeStampe - current time stampe in current playing track 
+     * @param {Boolean} isRepeatTrack - if user select repeat track   
+     * @param {Number} volume  - current volume in web 
+     */
+    updatePlayerInfoLogOut: async function(user, currentTimeStampe, isRepeatTrack, volume) {
+        if (!user.player['currentTimeStampe']) user.player['currentTimeStampe'] = 0;
+        if (!user.player['isRepeatTrack']) user.player['isRepeatTrack'] = false;
+        if (currentTimeStampe) user.player['currentTimeStampe'] = currentTimeStampe;
+        if (isRepeatTrack) user.player['isRepeatTrack'] = isRepeatTrack;
+        if (volume) user.player['volume'] = volume;
+        await user.save();
+    },
     //user like a track
     //params: userId, trackId
 
@@ -455,6 +472,8 @@ const User = {
         user.player["is_shuffled"] = false;
         user.player["volume"] = 4;
         user.player["is_repeat"] = false;
+        user.player['currentTimeStampe'] = 0;
+        user.player['isRepeatTrack'] = false;
         await user.save();
         return user;
     },
@@ -710,13 +729,16 @@ const User = {
      * @returns {Number}
      */
 
-    updateUserPlayer: async function(userId, isPlaylist, sourceId, trackId) {
-        if (!checkMonooseObjectID([userId, sourceId, trackId])) return 0;
+    updateUserPlayer: async function(userId, isPlaylist, sourceId, trackId, tracksIds, sourceType) {
+        if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
-        const queu = await Player.createQueue(user, isPlaylist, sourceId, trackId);
+        if (!tracksIds) {
+            if (!checkMonooseObjectID([sourceId])) return 0;
+        } else if (!checkMonooseObjectID(tracksIds)) return 0;
+        const queu = await Player.createQueue(user, isPlaylist, sourceId, trackId, tracksIds, sourceType);
         if (!queu) return 0;
-        const player = await Player.setPlayerInstance(user, isPlaylist, sourceId, trackId);
+        const player = await Player.setPlayerInstance(user, isPlaylist, sourceId, trackId, tracksIds, sourceType);
         if (!player) return 0;
         return 1;
     },

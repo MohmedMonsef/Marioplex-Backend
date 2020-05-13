@@ -81,17 +81,25 @@ router.get('/me/player/prev-playing', checkAuth, limiter, async(req, res) => {
     })
     // create queue fo player
 router.post('/createQueue/:sourceId/:trackId', checkAuth, limiter, async(req, res) => {
-    if (checkID([req.params.sourceId, req.params.trackId])) {
-        if (stateValidation(req.query.isPlaylist)) {
-            const sourceId = req.params.sourceId;
-            const trackId = req.params.trackId;
-            const isPlaylist = req.query.isPlaylist;
-            const userID = req.user._id;
-            const createQueue = await User.updateUserPlayer(userID, isPlaylist, sourceId, trackId)
-            if (createQueue) res.send(' Queue is created successfully');
-            else res.status(400).send('can not create queue');
-        } else res.status(400).send('isPlaylist is required');
-    } else res.status(403).send('Enter correct ids ');
+    if (!req.body.tracksIds || !req.body.sourceType) {
+        if (checkID([req.params.sourceId, req.params.trackId])) {
+            if (stateValidation(req.query.isPlaylist)) {
+                const sourceId = req.params.sourceId;
+                const trackId = req.params.trackId;
+                const isPlaylist = req.query.isPlaylist;
+                const userID = req.user._id;
+                const createQueue = await User.updateUserPlayer(userID, isPlaylist, sourceId, trackId, undefined, undefined)
+                if (createQueue) res.send(' Queue is created successfully');
+                else res.status(400).send('can not create queue');
+            } else res.status(400).send('isPlaylist is required');
+        } else res.status(403).send('Enter correct ids ');
+    } else {
+        if (!checkID(req.body.tracksIds) || !checkID([req.params.trackId]) || !req.body.sourceType) return res.status(403).send('Enter correct ids ');
+        const userID = req.user._id;
+        const createQueue = await User.updateUserPlayer(userID, undefined, undefined, req.params.trackId, req.body.tracksIds, req.body.sourceType)
+        if (createQueue) res.send(' Queue is created successfully');
+        else res.status(400).send('can not create queue');
+    }
 })
 router.post('/player/add-to-queue/:playlistId/:trackId', checkAuth, limiter, async(req, res) => {
         if (checkID([req.params.playlistId, req.params.trackId])) {

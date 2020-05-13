@@ -14,7 +14,7 @@ const Player = {
      * @param  {string} trackId - the track id
      * @returns {Number}
      */
-    setPlayerInstance: async function(user, isPlaylist, id, trackId) {
+    setPlayerInstance: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
         if (!user.player) user.player = {};
         user.player.next_track = {};
         user.player.prev_track = {};
@@ -22,10 +22,17 @@ const Player = {
         if (user.queue.tracksInQueue) {
             // get next from the queue directly
             // get next track and prev Track in playlist by checking for id greater than track id
-            user.player.current_track['isPlaylist'] = isPlaylist == true || isPlaylist == 'true' ? true : false;
-            user.player.current_track['trackId'] = trackId;
-            user.player.current_track['playlistId'] = id;
+            if (!tracksIds) {
+                user.player.current_track['isPlaylist'] = isPlaylist == true || isPlaylist == 'true' ? true : false;
+                user.player.current_track['trackId'] = trackId;
+                user.player.current_track['playlistId'] = id;
+            } else {
+                user.player.current_track['isPlaylist'] = false;
+                user.player.current_track['trackId'] = trackId;
+                user.player.current_track['playlistId'] = undefined;
+            }
             await user.save();
+
             return await this.setNextPrev(user, trackId);
         }
         return 0;
@@ -160,65 +167,96 @@ const Player = {
      * @param  {string} trackId - the track id
      * @returns {Number}
      */
-    createQueue: async function(user, isPlaylist, id, trackId) {
+    createQueue: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
 
         if (!await Track.getTrack(trackId)) return 0;
-        if (isPlaylist == 'true' || isPlaylist == true) {
-            const playlist = await Playlist.getPlaylist(id);
-            if (!playlist) return 0; // can not create queue becouse not found this playlist
-            // if this playlist does not have snapshot return 0;
-            if (!playlist.snapshot || playlist.snapshot.length == 0) return 0;
-            // if this playlist does not have tracks  return 0;
-            if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0)
-                return 0;
-            // if track not in playlist
-            for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++) {
-                if (String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i]) == String(trackId))
-                    break;
-                if (i == playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length - 1)
-                    return 0
-            }
 
-            user.player.current_source = id;
-            user.player.isPlaylist = true;
-            user.queue = {}; // create queue
-            user.queue.queuIndex = -1; // it is refer to frist element add to queue by add to queue 
-            user.queue.tracksInQueue = [];
-            let i = 0;
-            for (let j = 0; j < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; j++) {
-                user.queue.tracksInQueue.push({
-                    trackId: playlist.snapshot[playlist.snapshot.length - 1].hasTracks[j],
-                    isQueue: false, // if add by add to queue or add by playlist or album
-                    isPlaylist: true,
-                    playlistId: id
-                });
-                i++;
+        if (!tracksIds) {
+            if (isPlaylist == 'true' || isPlaylist == true) {
+                const playlist = await Playlist.getPlaylist(id);
+                if (!playlist) return 0; // can not create queue becouse not found this playlist
+                // if this playlist does not have snapshot return 0;
+                if (!playlist.snapshot || playlist.snapshot.length == 0) return 0;
+                // if this playlist does not have tracks  return 0;
+                if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0)
+                    return 0;
+                // if track not in playlist
+                for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++) {
+                    if (String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i]) == String(trackId))
+                        break;
+                    if (i == playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length - 1)
+                        return 0
+                }
+
+                user.player.current_source = id;
+                user.player.isPlaylist = true;
+                user.player['sourceName'] = 'playlist';
+                user.queue = {}; // create queue
+                user.queue.queuIndex = -1; // it is refer to frist element add to queue by add to queue 
+                user.queue.tracksInQueue = [];
+                let i = 0;
+                for (let j = 0; j < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; j++) {
+                    user.queue.tracksInQueue.push({
+                        trackId: playlist.snapshot[playlist.snapshot.length - 1].hasTracks[j],
+                        isQueue: false, // if add by add to queue or add by playlist or album
+                        isPlaylist: true,
+                        playlistId: id,
+                        indexInSource: i
+                    });
+                    i++;
+                }
+                await user.save();
+                user.queue.queuIndex = -1;
+                await user.save();
+                return 1;
+            } else { // this track from album not from playlist
+                const album = await Album.getAlbumById(id);
+                if (!album) return 0;
+                if (!album.hasTracks) return 0;
+                ///should test
+                if (!await album.hasTracks.find(track => String(track.trackId) == String(trackId))) return 0;
+                console.log('now  her')
+                user.player.isPlaylist = false;
+                user.player['sourceName'] = 'album';
+                user.player.current_source = id;
+                user.queue = {}; // when create queue delete last queue
+                user.queue.queuIndex = -1;
+                user.queue.tracksInQueue = [];
+                let i = 0;
+                for (let track of album.hasTracks) {
+                    user.queue.tracksInQueue.push({
+                        trackId: track.trackId,
+                        isQueue: false,
+                        isPlaylist: false,
+                        playlistId: id,
+                        indexInSource: i
+                    });
+                    i++;
+                }
+                await user.save();
+                return 1;
             }
-            await user.save();
-            user.queue.queuIndex = -1;
-            await user.save();
-            return 1;
-        } else { // this track from album not from playlist
-            const album = await Album.getAlbumById(id);
-            if (!album) return 0;
-            if (!album.hasTracks) return 0;
-            ///should test
-            if (!await album.hasTracks.find(track => String(track.trackId) == String(trackId))) return 0;
-            user.player.isPlaylist = false;
-            user.player.current_source = id;
-            user.queue = {}; // when create queue delete last queue
-            user.queue.queuIndex = -1;
-            user.queue.tracksInQueue = [];
-            let i = 0;
-            for (let track of album.hasTracks) {
-                user.queue.tracksInQueue.push({
-                    trackId: track.trackId,
-                    isQueue: false,
-                    isPlaylist: false,
-                    playlistId: id
-                });
-                i++;
+        } else {
+            let newQueue = [];
+            for (let i = 0; i < tracksIds.length; i++) {
+                let track = Track.getTrack(tracksIds[i]);
+
+                if (track) {
+                    newQueue.push({
+                        trackId: tracksIds[i],
+                        isQueue: false,
+                        isPlaylist: false,
+                        playlistId: undefined,
+                        indexInSource: i
+                    })
+                }
             }
+            if (newQueue.length == 0) return 0;
+            user.queue.tracksInQueue = newQueue;
+            user.queue.queuIndex = -1;
+            user.player.playlistId = undefined;
+            user.player.isPlaylist = undefined;
+            user.player['sourceName'] = sourceType;
             await user.save();
             return 1;
         }
@@ -454,6 +492,15 @@ const Player = {
         if (!user.queue.tracksInQueue) return 0;
         if (user.queue.tracksInQueue.length == 0) return 0;
         const track_last_playlist = user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;
+        if (user.player['sourceName'] != 'playlist' && !user.player['sourceName'] != 'album') {
+            let queueTracks = user.queue.tracksInQueue;
+            for (let i = user.queue.queuIndex + 1; i < queueTracks.length; i++) {
+                queueTracks[user.queue.tracksInQueue[i].indexInSource + user.queue.queuIndex + 1] = user.queue.tracksInQueue[i];
+                user.queue.tracksInQueue = queueTracks;
+                await user.save();
+            }
+            return 1;
+        }
         if (user.player.isPlaylist) {
             const playlist = await Playlist.getPlaylist(user.player.current_source);
             if (!playlist.snapshot || playlist.snapshot.length == 0) playlist.snapshot = [{ hasTracks: [] }];
@@ -522,6 +569,9 @@ const Player = {
         if (!user.player.next_track) user.player.next_track = {};
         if (!user.player.prev_track) user.player.prev_track = {};
         for (let i = user.queue.queuIndex + 1; i < user.queue.tracksInQueue.length; i++) {
+            //console.log(lastTrack)
+            //console.log(user.queue.tracksInQueue[i].trackId)
+
             if (String(user.queue.tracksInQueue[i].trackId) == String(lastTrack)) {
                 user.player["last_playlist_track_index"] = i;
                 await user.save();

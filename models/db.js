@@ -149,7 +149,8 @@ const User = new Schema({
             //ref: 'Track'
             isQueue: Boolean,
             isPlaylist: Boolean,
-            playlistId: mongoose.Schema.Types.ObjectId
+            playlistId: mongoose.Schema.Types.ObjectId,
+            indexInSource: Number
         }]
     },
     player: {
@@ -169,6 +170,7 @@ const User = new Schema({
             isPlaylist: Boolean,
             playlistId: mongoose.Schema.Types.ObjectId
         },
+        sourceName: String,
         is_playing: Boolean,
         is_shuffled: Boolean,
         current_source: mongoose.Schema.Types.ObjectId,

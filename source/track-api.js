@@ -3,10 +3,15 @@ const mongoose = require('mongoose')
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Image = require('./image-api')
 const Track = {
-
+    getTrackWithoutAuth: async function(trackId){
+        const track = await trackDocument.findById(trackId);
+        if(!track) return 0;
+        return track;
+    },
      /** 
     *  get track by id
     * @param  {string} trackID - the track id 
+    * @param {object} user 
     * @returns {object}
     */
     getTrack: async function(trackId,user) {

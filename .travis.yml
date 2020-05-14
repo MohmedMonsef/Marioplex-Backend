@@ -4,7 +4,7 @@ language: node_js
 before_install:
 - git clone https://github.com/BelalElhossany/devOps
 - cd devOps
-- ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ./key.pem ubuntu@ec2-52-205-254-29.compute-1.amazonaws.com
+- ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i haha.pem ubuntu@ec2-52-205-254-29.compute-1.amazonaws.com
 install: 
  - git clone https://github.com/MohmedMonsef/Marioplex-Backend
 script:

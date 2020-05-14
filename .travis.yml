@@ -8,10 +8,10 @@ before_install:
 - chmod 600 haha.pem
 - ssh-add haha.pem
 - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i haha.pem ubuntu@ec2-52-205-254-29.compute-1.amazonaws.com
+- git clone https://github.com/MohmedMonsef/Marioplex-Backend
 install: 
- - git clone https://github.com/MohmedMonsef/Marioplex-Backend
-script:
-  - true
+  script:
+    - true
 notifications:
   email:
     recipients:

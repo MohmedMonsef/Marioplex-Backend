@@ -1,4 +1,4 @@
-### NODE & NPM ###
+### NODE & NPM ####
 
 # add nodejs 10 ppa (personal package archive) from nodesource
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -

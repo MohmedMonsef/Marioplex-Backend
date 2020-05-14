@@ -1,12 +1,6 @@
 dist: bionic
 sudo: false
 language: node_js
-before_install:
- - cd ..
- - mkdir dev
- - cd dev
- - git clone https://github.com/BelalElhossany/devOps
- - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ./dev/haha.pem ubuntu@ec2-52-205-254-29.compute-1.amazonaws.com
 install: 
  - git clone https://github.com/MohmedMonsef/Marioplex-Backend
 script:
@@ -17,8 +11,8 @@ notifications:
       - belalelhossany12@gmail.com
 before_deploy: 
 - eval "$(ssh-agent -s)"
-- chmod 600 key.pem
-- ssh-add key.pem
+- chmod 600 haha.pem
+- ssh-add haha.pem
 deploy:
  provider: script
  skip_cleanup: true

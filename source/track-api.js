@@ -2,7 +2,13 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Image = require('./image-api')
 const Track = {
+    /**
+     * 
+     * @param {String} trackId
+     * @returns {Object} 
+     */
     getTrackWithoutAuth: async function(trackId) {
+        if (!checkMonooseObjectID([trackId])) return 0;
         const track = await trackDocument.findById(trackId);
         if (!track) return 0;
         return track;
@@ -18,10 +24,7 @@ const Track = {
         // connect to db and find track with the same id then return it as json file
         // if found return track else return 0
         if (!checkMonooseObjectID([trackId])) return 0;
-        const track = await trackDocument.findById(trackId, (err, track) => {
-            if (err) return 0;
-            return track;
-        }).catch((err) => 0);
+        const track = await trackDocument.findById(trackId);
         if (!track) return 0;
         if (!user || user == undefined) return track;
         playable = await this.checkPlayable(user, trackId);
@@ -160,10 +163,7 @@ const Track = {
         if (!user) return 0;
         if (!checkMonooseObjectID([trackId])) return 0;
         if (!user['likesTracksPlaylist']) return false;
-        const playlist = await playlistDocument.findById(user['likesTracksPlaylist'], (err, user) => {
-            if (err) return 0;
-            return user;
-        }).catch((err) => 0);
+        const playlist = await playlistDocument.findById(user['likesTracksPlaylist']);
         if (!playlist.snapshot) return false;
         if (playlist.snapshot.length == 0) return false;
         if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) return false;
@@ -223,7 +223,7 @@ const Track = {
      */
     createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration, key, keyId, genre) {
        
-
+        if(!artistId || !albumId)return 0;
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
         if (!availableMarkets) availableMarkets = [];
         let track = new trackDocument({
@@ -375,7 +375,6 @@ const Track = {
         if (!track.genre) return 0;
         let tracksRelated = [];
         await trackDocument.find({}, (err, tracks) => {
-            if (err) throw err;
             if (!tracks) return 0;
             for (let trackFile of tracks) {
                 if (tracksRelated.length > 10) return tracksRelated;

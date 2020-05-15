@@ -15,14 +15,14 @@ router.post('/images/upload/:source_id', checkAuth, limiter, async(req, res) => 
     const belongsTo = req.query.belongs_to;
     const sourceId = req.params.source_id;
     if (!belongsTo || !sourceId) {
-        res.status(403).send({ "error": "no source or belong_to where supplied" });
+        res.status(400).send({ "error": "no source or belong_to where supplied" });
         return 0;
     }
     // get image height and width in pixels
     const height = Number(req.query.height);
     const width = Number(req.query.width);
     if (!height || !width) {
-        res.status(403).send({ "error": "no height or width where supplied" });
+        res.status(400).send({ "error": "no height or width where supplied" });
         return 0;
     }
     const image = {
@@ -35,7 +35,7 @@ router.post('/images/upload/:source_id', checkAuth, limiter, async(req, res) => 
     // get id of image if saved in db 
     const imageId = await Image.uploadImage(userId, sourceId, belongsTo, image);
     if (!imageId) {
-        res.status(403).json({ "error": "cannot add image to db" });
+        res.status(400).json({ "error": "cannot add image to db" });
         return 0;
     }
     // set request imageId to the imageId to be uploaded to multer
@@ -43,10 +43,10 @@ router.post('/images/upload/:source_id', checkAuth, limiter, async(req, res) => 
     uploadImage.fields([{ name: "image" }])(req, res, async(err) => {
         if (err) {
             await Image.deleteImage(imageId, userId, sourceId, belongsTo);
-            res.status(403).send({ "error": "cannot add image to db" });
+            res.status(400).send({ "error": "cannot add image to db" });
             return 0;
         } else {
-            res.status(200).json({ "success": "uploaded succesfully", "imageId": imageId });
+            res.status(201).json({ "success": "uploaded succesfully", "imageId": imageId });
         }
     });
 
@@ -61,14 +61,14 @@ router.post('/images/update/:source_id', checkAuth, limiter, async(req, res) => 
         const belongsTo = req.query.belongs_to;
         const sourceId = req.params.source_id;
         if (!belongsTo || !sourceId) {
-            res.status(403).send({ "error": "no source or belong_to where supplied" });
+            res.status(400).send({ "error": "no source or belong_to where supplied" });
             return 0;
         }
         // get image height and width in pixels
         const height = Number(req.query.height);
         const width = Number(req.query.width);
         if (!height || !width) {
-            res.status(403).send({ "error": "no height or width where supplied" });
+            res.status(400).send({ "error": "no height or width where supplied" });
             return 0;
         }
         const image = {
@@ -81,7 +81,7 @@ router.post('/images/update/:source_id', checkAuth, limiter, async(req, res) => 
         // get id of image if saved in db 
         const imageId = await Image.updateImage(userId, sourceId, belongsTo, image);
         if (!imageId) {
-            res.status(403).json({ "error": "cannot add image to db" });
+            res.status(400).json({ "error": "cannot add image to db" });
             return 0;
         }
         // set request imageId to the imageId to be uploaded to multer
@@ -90,10 +90,10 @@ router.post('/images/update/:source_id', checkAuth, limiter, async(req, res) => 
             if (err) {
 
                 await Image.deleteImage(imageId, userId, sourceId, belongsTo);
-                res.status(403).send({ "error": "cannot update image" });
+                res.status(400).json({ "error": "cannot update image" });
                 return 0;
             } else {
-                res.status(200).json({ "success": "updated succesfully", "imageId": imageId });
+                res.status(201).json({ "success": "updated succesfully", "imageId": imageId });
             }
         });
 
@@ -170,11 +170,11 @@ router.delete('/images/delete/:image_id', checkAuth, limiter, async(req, res) =>
     const belongsTo = req.query.belongs_to;
     const sourceId = req.query.source_id;
     if (!belongsTo || !sourceId) {
-        res.status(403).send({ "error": "no source or belong_to where supplied" });
+        res.status(400).send({ "error": "no source or belong_to where supplied" });
         return 0;
     }
     const deletedImage = await Image.deleteImage(imageId, userId, sourceId, belongsTo);
-    if (!deletedImage) res.status(404).json({ "error": "image not deleted" });
+    if (!deletedImage) res.status(400).json({ "error": "image not deleted" });
     else res.status(200).json({ "success": "image deleted" })
 })
 

@@ -46,7 +46,7 @@ router.post('/sign_up', limiter, async(req, res) => {
                 } else {
                     // if new email then set user up in database and hash the password
                     const user = await User.createUser(req.body.username, req.body.password, req.body.email, req.body.gender, req.body.country, req.body.birthday);
-                    if (!user) return res.status(500).json({ error: err });
+                    if (!user) return res.status(400).json({ error: err });
                     user.save().then(result => {
                             // set jwt then send it as response
                             var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
@@ -59,7 +59,7 @@ router.post('/sign_up', limiter, async(req, res) => {
                         })
                         .catch(err => {
                             // if error send 500 status code something went wrong
-                            res.status(500).json({
+                            res.status(400).json({
                                 error: err
                             });
                         });
@@ -70,14 +70,14 @@ router.post('/sign_up', limiter, async(req, res) => {
 });
 
 router.post('/login/confirm', limiter, async(req, res) => {
-    if (!req.query.id || req.query.id == "") { return res.status(403).send("user id is not given"); }
+    if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
     let user = await users.getUserById(req.query.id);
 
     let checkConfirm = await users.confirmEmail(user);
     if (checkConfirm) {
         return res.status(200).send("user is confirmed");
     } else {
-        return res.status(403).send("user isnot confirmed");
+        return res.status(403).send("user is not confirmed");
     }
 
 

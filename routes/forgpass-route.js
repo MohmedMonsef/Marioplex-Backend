@@ -20,7 +20,7 @@ router.post('/login/forgetpassword', jsonparser, limiter, async function(req, re
     let user = await users.checkmail(email);
 
     if (!user) {
-        res.status(403).send('THERE IS NO SUCH USER');
+        res.status(404).send('THERE IS NO SUCH USER');
     } else {
         var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
             expiresIn: '874024h'
@@ -38,7 +38,7 @@ router.post('/login/reset_password', checkAuth, limiter, async(req, res) => {
     if (newPass) {
         return res.status(200).send("PASSWORD IS UPDATED");
     } else {
-        return res.status(403).send("PASSWORD CAN'T BE UPDATED");
+        return res.status(400).send("PASSWORD CAN'T BE UPDATED");
     }
 
 

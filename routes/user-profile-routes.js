@@ -35,7 +35,7 @@ router.put('/me/promote', checkAuth, limiter, async(req, res) => {
     Joi.validate(req.body, prmoteData, async(err, result) => {
         if (err) {
             // if not valid set status to 500
-            res.status(500).json({
+            res.status(400).json({
                 error: err
             })
 
@@ -92,7 +92,7 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
     });
     Joi.validate(req.body, shcema, async(err, result) => {
         if (err) {
-            res.status(500).json({
+            res.status(400).json({
                 error: err
             })
         } else {
@@ -134,7 +134,7 @@ router.delete('/remove', checkAuth, limiter, async(req, res, next) => {
     if (user) {
         res.status(200).json({ "success": "user deleted" });
     } else {
-        res.status(500).json({ "error": "delete failed" });
+        res.status(400).json({ "error": "delete failed" });
     }
 })
 

@@ -76,7 +76,7 @@ router.get('/tracks/audio-features/', checkAuth, limiter, async(req, res) => {
         const audioFeatures = await Track.getAudioFeaturesTracks(trackIds);
         if (!audioFeatures) res.status(404).send({ error: "no tracks with this id" });
         else res.json(audioFeatures);
-    } else res.status(404).send({ error: "tracks id's are required" });
+    } else res.status(400).send({ error: "tracks id's are required" });
 })
 
 // user like track
@@ -85,7 +85,7 @@ router.put('/me/like/:track_id', checkAuth, limiter, async(req, res) => {
     const userId = req.user._id; // get it from desierialize auth 
     const trackId = req.params.track_id;
     const updatedUser = await User.likeTrack(userId, trackId);
-    if (!updatedUser) res.status(404).send({ error: "already liked the song" }); // if user already liked the song
+    if (!updatedUser) res.status(405).send({ error: "already liked the song" }); // if user already liked the song
     else res.send({ success: "liked the song successfully" });
 
 });
@@ -96,7 +96,7 @@ router.delete('/me/unlike/:track_id', checkAuth, limiter, async(req, res) => {
     const trackId = req.params.track_id;
     const updatedUser = await User.unlikeTrack(userId, trackId);
 
-    if (!updatedUser) res.status(404).send({ error: "user didnt liked the song before" }); // if user already liked the song
+    if (!updatedUser) res.status(405).send({ error: "user didnt liked the song before" }); // if user already liked the song
     else res.send({ success: "unliked the song successfully" });
 
 });
@@ -131,12 +131,12 @@ router.get('/tracks/android/:track_id', checkAuth, limiter, async(req, res) => {
 
         }, (err, data) => {
             if (err) { res.status(404).send('no data'); return; }
-            if (data.data.files.length == 0) { res.status(404).send('nno data'); return; }
+            if (data.data.files.length == 0) { res.status(404).send('no data'); return; }
             const id = data.data.files[0].id;
             console.log(id)
             drive.files.get({ fileId: id, alt: "media" }, { responseType: 'stream' },
                 function(err, file) {
-                    if (err || !file) { res.status(404).send('nno data'); return; }
+                    if (err || !file) { res.status(404).send('no data'); return; }
                     const mimType = file.headers["content-type"];
                     const length = Number(file.headers["content-length"]);
                     const range = req.headers.range;
@@ -209,12 +209,12 @@ router.get('/tracks/web-player/:track_id', limiter, async(req, res) => {
 
     }, (err, data) => {
         if (err) { res.status(404).send('no data'); return; }
-        if (data.data.files.length == 0) { res.status(404).send('nno data'); return; }
+        if (data.data.files.length == 0) { res.status(404).send('no data'); return; }
         const id = data.data.files[0].id;
         console.log(id)
         drive.files.get({ fileId: id, alt: "media" }, { responseType: 'stream' },
             function(err, file) {
-                if (err || !file) { res.status(404).send('nno data'); return; }
+                if (err || !file) { res.status(404).send('no data'); return; }
                 const mimType = file.headers["content-type"];
                 const length = Number(file.headers["content-length"]);
                 const range = req.headers.range;
@@ -293,7 +293,7 @@ router.put('/tracks/update/:track_id', limiter, checkAuth, async(req, res) => {
     const userId = req.user._id;
     const info = req.body;
     const updateTrack = await Track.updateTrack(userId, trackId, info);
-    if (!updateTrack) res.status(403).json({ "error": "cannot update track" });
+    if (!updateTrack) res.status(400).json({ "error": "cannot update track" });
     else res.json(updateTrack);
 })
 module.exports = router;

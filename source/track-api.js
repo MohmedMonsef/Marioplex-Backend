@@ -349,8 +349,8 @@ const Track = {
             q: `appProperties  has {   key='trackId' and value='${trackId}' } `
 
         }, async(err, data) => {
-            if (err) { res.status(404).send('no data'); return; }
-            if (data.data.files.length == 0) { res.status(404).send('nno data'); return; }
+            if (err) { return 0; }
+            if (data.data.files.length == 0) { return 0; }
             for (let file of data.data.files) {
                 await drive.files.delete({
                     'fileId': file.id

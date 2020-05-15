@@ -93,6 +93,10 @@ const User = new Schema({
     fcmToken: String,
     confirm: Boolean,
     isLogged: Boolean,
+    recentlySearch: [{
+        id: mongoose.Schema.Types.ObjectId,
+        objectType: String
+    }],
     images: [Image],
     premium: {
         expiresDate: Date,

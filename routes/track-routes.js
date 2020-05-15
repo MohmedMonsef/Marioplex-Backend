@@ -4,7 +4,7 @@ const User = require('../source/user-api');
 const jwt = require('jsonwebtoken');
 const jwtSecret = require('../config/jwt-key').secret;
 const { auth: checkAuth } = require('../middlewares/is-me');
-const {auth:checkIfAuth} = require('../middlewares/check-if-auth');
+const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
 
 const rateLimit = require("express-rate-limit");
 // add rate limiting
@@ -15,13 +15,13 @@ const limiter = rateLimit({
 });
 
 router.get('/me/track/:track_id', checkIfAuth, limiter, async(req, res) => {
-    if(req.isAuth){
-    const trackId = req.params.track_id;
-    let user = await User.getUserById(req.user._id);
-    const track = await Track.getTrack(trackId, user);
-    if (!track) res.sendStatus(404); //not found
-    else res.json(track);
-    }else{
+    if (req.isAuth) {
+        const trackId = req.params.track_id;
+        let user = await User.getUserById(req.user._id);
+        const track = await Track.getTrack(trackId, user);
+        if (!track) res.sendStatus(404); //not found
+        else res.json(track);
+    } else {
 
         const trackId = req.params.track_id;
         const track = await Track.getTrackWithoutAuth(trackId);
@@ -33,24 +33,24 @@ router.get('/me/track/:track_id', checkIfAuth, limiter, async(req, res) => {
 
 // get track with some user info as like
 router.get('/track/:track_id', checkIfAuth, limiter, async(req, res) => {
-    if(req.isAuth){
-        
-        const trackId = req.params.track_id;
-        const user = await User.getUserById(req.user._id);
-        if (!user) { res.status(403).json({ "error": "user not allowed" }); return; }
-        const fullTrack = await Track.getFullTrack(trackId, user);
-        if (!fullTrack) { res.status(404).json({ "error": "track not found" }); return; }
-        // if all are found return them in new created json object
-        res.json(fullTrack);
-    }else{
+        if (req.isAuth) {
 
-        const trackId = req.params.track_id;
-        const track = await Track.getTrackWithoutAuth(trackId);
-        if (!track) res.sendStatus(404); //not found
-        else res.json(track);
-    }
+            const trackId = req.params.track_id;
+            const user = await User.getUserById(req.user._id);
+            if (!user) { res.status(403).json({ "error": "user not allowed" }); return; }
+            const fullTrack = await Track.getFullTrack(trackId, user);
+            if (!fullTrack) { res.status(404).json({ "error": "track not found" }); return; }
+            // if all are found return them in new created json object
+            res.json(fullTrack);
+        } else {
 
-})
+            const trackId = req.params.track_id;
+            const track = await Track.getTrackWithoutAuth(trackId);
+            if (!track) res.sendStatus(404); //not found
+            else res.json(track);
+        }
+
+    })
     // get tracks
 router.get('/tracks/', checkAuth, limiter, async(req, res) => {
         if (req.body.ids) {
@@ -364,12 +364,12 @@ router.get('/tracks/related/full-track/:track_id', limiter, checkAuth, async(req
 })
 
 // update track 
-router.put('/tracks/update/:track_id',limiter,checkAuth,async (req,res)=>{
+router.put('/tracks/update/:track_id', limiter, checkAuth, async(req, res) => {
     const trackId = req.params.track_id;
     const userId = req.user._id;
     const info = req.body;
-    const updateTrack = await Track.updateTrack(userId,trackId,info);
-    if(!updateTrack) res.status(403).json({"error":"cannot update track"});
+    const updateTrack = await Track.updateTrack(userId, trackId, info);
+    if (!updateTrack) res.status(403).json({ "error": "cannot update track" });
     else res.json(updateTrack);
 })
 module.exports = router;

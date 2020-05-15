@@ -285,7 +285,7 @@ const User = {
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user.follow) user.follow = [];
-        if (!user.follow.length) { return 0; }
+        if (!user.follow.length) { return []; }
         let artists = []
         for (let i = 0; i < user.follow.length; i++) {
             let artist = await Artist.getArtist(user.follow[i].id);
@@ -355,7 +355,7 @@ const User = {
         const user = await this.getUserById(userID);
         let artist = await Artist.getArtist(ArtistID);
         let userTofollow = await this.getUserById(ArtistID);
-        if (!user || (!artist && !userTofollow)) return 0;
+        if (!user || (!artist && !userTofollow)) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {
@@ -548,7 +548,8 @@ const User = {
             createPlaylist: [],
             saveAlbum: [],
             playHistory: [],
-            player: {}
+            player: {},
+            recentlySearch: []
         });
         user.player["is_shuffled"] = false;
         user.player["volume"] = 4;

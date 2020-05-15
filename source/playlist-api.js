@@ -33,32 +33,32 @@ const Playlist = {
     getPopularPlaylists: async function() {
         // with - is from big to small and without is from small to big
         var rePlaylists = []
-        const playlists = await playlistDocument.find({}).sort('-popularity')
+        const playlists = await playlistDocument.find({ isPublic: true }).sort('-popularity')
         if (playlists) {
             var limit; // to limit the num of playlists by frist 20 only but should check if num of albums less than 10  
             if (playlists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playlists.length;
             else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
                 //need to correct in find 
-                if (playlists[i].isPublic) {
-                    const user1 = await userDocument.findById(playlists[i].ownerId);
-                    rePlaylists.push({
-                        owner: {
-                            id: playlists[i].ownerId,
-                            type: 'user',
-                            name: user1.displayName
-                        },
-                        collaborative: playlists[i].collaborative,
-                        type: 'playlist',
-                        name: playlists[i].name,
-                        images: playlists[i].images,
-                        id: playlists[i]._id,
-                        Description: playlists[i].Description,
-                        isPublic: playlists[i].isPublic,
-                        popularity: playlists[i]['popularity']
-                    });
-                }
+                //  if (playlists[i].isPublic) {
+                const user1 = await userDocument.findById(playlists[i].ownerId);
+                rePlaylists.push({
+                    owner: {
+                        id: playlists[i].ownerId,
+                        type: 'user',
+                        name: user1.displayName
+                    },
+                    collaborative: playlists[i].collaborative,
+                    type: 'playlist',
+                    name: playlists[i].name,
+                    images: playlists[i].images,
+                    id: playlists[i]._id,
+                    Description: playlists[i].Description,
+                    isPublic: playlists[i].isPublic,
+                    popularity: playlists[i]['popularity']
+                });
             }
+
         }
         const replaylistsJson = { playlists: rePlaylists };
         return replaylistsJson;

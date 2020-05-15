@@ -15,7 +15,7 @@ router.get('/me/followingArtist', checkAuth, limiter, async(req, res) => {
 
     const userID = req.user._id;
     const checks = await User.getUserFollowingArtist(userID);
-    if (!checks) res.sendStatus(404); //not found
+    if (!checks) res.sendStatus(403); //not found user
     else res.status(200).json({ 'Artists': checks });
 
 });

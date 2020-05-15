@@ -3,14 +3,151 @@ var FuzzySearch = require('fuzzy-search');
 
 
 // initialize db 
+const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const artistApi = require('./artist-api');
 const user_api = require('./user-api');
-const track = require('./track-api');
+const Track = require('./track-api');
 const artist_api = require('./artist-api');
 const album_api = require('./album-api');
-
+const Playlist = require('./playlist-api');
 const Search = {
+    /** 
+     * add tosearch history
+     * @param {object}  userId - user id
+     * @param  {String} id - the id of object
+     * @param {String} objectType - type of this id is album , track , playlist , artist or user
+     * @returns {Boolean}
+     */
+    addToRecentlySearch: async function(userId, id, objectType) {
+        if (!checkMonooseObjectID([id, userId])) return 0;
+        user = await userDocument.findById(userId);
+        if (!user) return 0;
+        //return user;
+        let object;
 
+        if (objectType == 'artist')
+            object = await artistDocument.findById(id);
+        else if (objectType == 'user')
+            object = await userDocument.findById(id);
+        else if (objectType == 'playlist')
+            object = await playlistDocument.findById(id);
+        else if (objectType == 'album')
+            object = await albumDocument.findById(id);
+        else if (objectType == 'track')
+            object = await trackDocument.findById(id);
+        else return 0;
+        if (!object) return 0;
+        if (!user.recentlySearch) user.recentlySearch = [];
+        await this.removeRecently(userId, objectType, id)
+        if (user.recentlySearch.length == 50) await this.removeRecently(userId, user.recentlySearch[0].objectType, user.recentlySearch[0].id)
+        user.recentlySearch.push({ id: id, objectType: objectType });
+        await user.save();
+
+        return 1;
+    },
+    /** 
+     * remove from search history
+     * @param {object}  userId - user id
+     * @param  {String} id - the id of object
+     * @param {String} type - type of this id is album , track , playlist , artist or user
+     * @returns {Boolean}
+     */
+    removeRecently: async function(userId, type, id) {
+        if (!checkMonooseObjectID([id, userId])) return 0;
+        user = await userDocument.findById(userId);
+        if (!user) return 0;
+        if (!user.recentlySearch || user.recentlySearch.length == 0) return 0;
+        for (let i = 0; i < user.recentlySearch.length; i++) {
+            if (String(user.recentlySearch[i].id) == String(id) && user.recentlySearch[i].objectType == type) {
+                user.recentlySearch.splice(i, 1);
+                await user.save();
+                return 1;
+            }
+        }
+        return 0;
+    },
+    /**
+     * get recently search for user
+     * @param {String} userId - user id
+     * @returns {object}
+     */
+    getRecentlySearch: async function(userId) {
+        if (!checkMonooseObjectID([userId])) return 0;
+        user = await userDocument.findById(userId);
+        if (!user) return 0;
+        // console.log(user.recentlySearch)
+        if (!user.recentlySearch || user.recentlySearch.length == 0) user.recentlySearch = [];
+        let artists = [];
+        let tracks = [];
+        let playlists = [];
+        let albums = [];
+        let users = [];
+        for (let i = 0; i < user.recentlySearch.length; i++) {
+            if (user.recentlySearch[i].objectType == 'artist') {
+                const artist = await artistApi.getArtist(user.recentlySearch[i].id);
+                if (artist)
+                    artists.push({
+                        genre: artist.genre,
+                        type: 'artist',
+                        name: artist.Name,
+                        images: artist.images,
+                        id: artist._id,
+                        info: artist.info,
+                        popularity: artist['popularity'],
+                        isFollow: await user_api.CheckIfUserFollowArtist(userId, user.recentlySearch[i].id)
+                    });
+            } else if (user.recentlySearch[i].objectType == 'playlist') {
+                const playlist = await Playlist.getPlaylist(user.recentlySearch[i].id);
+                if (playlist)
+                    if (playlist.isPublic || String(Playlist.ownerId) == String(userId)) {
+                        const user1 = await userDocument.findById(playlist.ownerId);
+                        playlists.push({
+                            owner: {
+                                id: playlist.ownerId,
+                                type: 'user',
+                                name: user1.displayName
+                            },
+                            collaborative: playlist.collaborative,
+                            type: 'playlist',
+                            name: playlist.name,
+                            images: playlist.images,
+                            id: playlist._id,
+                            Description: playlist.Description,
+                            isPublic: playlist.isPublic,
+                            popularity: playlist['popularity'],
+                            isFollow: await Playlist.checkFollowPlaylistByUser(user)
+                        });
+                    }
+
+
+            } else if (user.recentlySearch[i].objectType == 'album') {
+                const album = await album_api.getAlbumById(user.recentlySearch[i].id);
+                if (album) {
+                    const artist1 = await artist_api.getArtist(album.artistId);
+                    albums.push({
+                        album_type: album.albumType,
+                        artist: { type: 'artist', id: album.artistId, name: artist1.Name },
+                        available_markets: album.availableMarkets,
+                        images: album.images,
+                        id: album._id,
+                        name: album.name,
+                        type: 'album',
+                        isFollow: await album_api.checkIfUserSaveAlbum(user, album._id) ? true : false
+                    });
+
+                }
+            } else if (user.recentlySearch[i].objectType == 'user') {
+                const user2 = await user_api.getUserById(user.recentlySearch[i].id)
+                if (user2)
+                    users.push({ name: user2.displayName, id: user2._id, type: 'user', images: user2.images, country: user2.country, email: user2.email });
+            } else if (user.recentlySearch[i].objectType == 'track') {
+                const track = await Track.getFullTrack(user.recentlySearch[i].id, user);
+                if (track)
+                    tracks.push(track);
+            }
+        }
+        return { 'playlists': playlists, 'tracks': tracks, 'albums': albums, 'users': users, 'artists': artists };
+    },
     //get all users
     getUsers: async function() {
 
@@ -57,7 +194,7 @@ const Search = {
         return Fuzzysearch(name, 'Name', artist);
 
     },
-    
+
 
     //get top result by search name
     //params: Name
@@ -95,7 +232,7 @@ const Search = {
     exactmatch: async function(array, name) {
 
         let firstname;
-        if(!array) array = [];
+        if (!array) array = [];
         for (let i = 0; i < array.length; i++) {
             subname = array[i].Name.split(' ');
             firstname = subname[0];
@@ -118,14 +255,13 @@ const Search = {
 
             allalbum = await artistApi.getAlbums(artist, groups, country, limit, offset);
 
-        } 
-        else {
+        } else {
             allalbum = await this.getAlbums();
             if (allalbum.length == 0) return allalbum;
             allalbum = Fuzzysearch(albumName, 'name', allalbum);
 
         }
-        if(!allalbum) allalbum = [];
+        if (!allalbum) allalbum = [];
         Album = []
         for (let i = 0; i < allalbum.length; i++) {
             let albums = await album_api.getAlbumArtist(allalbum[i]._id);
@@ -145,7 +281,7 @@ const Search = {
             }
         }
         return Album;
-        
+
     },
 
     //get all tracks with Name
@@ -159,15 +295,14 @@ const Search = {
 
             Track = await artistApi.getTracks(artist);
 
-        } 
-        else {
+        } else {
             const track = await this.getTracks();
             if (track == 0) return track;
             Track = Fuzzysearch(Name, 'name', track);
         }
 
         trackInfo = []
-        if(!Track) Track = [];
+        if (!Track) Track = [];
         for (let i = 0; i < Track.length; i++) {
             let artist = await artist_api.getArtist(Track[i].artistId)
             tracks = {}
@@ -192,7 +327,7 @@ const Search = {
 
         }
         return limitOffset(limit, offset, trackInfo);
-     
+
 
     },
 
@@ -229,10 +364,10 @@ const Search = {
 
         let artistsInfo = [];
         let artist = await this.getArtistByname(name);
-        if(!artist) artist = [];
+        if (!artist) artist = [];
         if (artist.length == 0) return 0;
-        else{
-            for(let i = 0; i < artist.length; i++) {
+        else {
+            for (let i = 0; i < artist.length; i++) {
                 artistInfo = {}
                 artistInfo["_id"] = artist[i]._id
                 artistInfo["name"] = artist[i].Name
@@ -248,7 +383,7 @@ const Search = {
         return limitOffset(limit, offset, artistsInfo);
 
     },
-    
+
 
     //get all user profiles with name
     //params: name
@@ -256,14 +391,13 @@ const Search = {
 
         UserInfo = []
         let User = await this.getUserByname(name);
-        if(!User) User=[];
+        if (!User) User = [];
         if (User.length == 0) return User;
         else {
             for (let i = 0; i < User.length; i++) {
                 if (User[i].userType == "Artist") {
                     continue;
-                } 
-                else {
+                } else {
 
                     user = {}
                     user["_id"] = User[i]._id
@@ -288,21 +422,23 @@ const Search = {
         playlist = Fuzzysearch(Name, 'name', playlist);
         playlistInfo = []
         for (let i = 0; i < playlist.length; i++) {
-            let User = await user_api.getUserById(playlist[i].ownerId)
-            Playlist = {}
-            if (User) {
-                Playlist["ownerId"] = User._id
-                Playlist["ownerName"] = User.displayName
-                Playlist["ownerImages"] = User.images
-                Playlist["ownerType"] = User.type
+            if (playlist[i].isPublic) {
+                let User = await user_api.getUserById(playlist[i].ownerId)
+                Playlist = {}
+                if (User) {
+                    Playlist["ownerId"] = User._id
+                    Playlist["ownerName"] = User.displayName
+                    Playlist["ownerImages"] = User.images
+                    Playlist["ownerType"] = User.type
+                }
+
+                Playlist["_id"] = playlist[i]._id
+                Playlist["name"] = playlist[i].name
+                Playlist["type"] = playlist[i].type
+                Playlist["images"] = playlist[i].images
+                playlistInfo.push(Playlist)
+
             }
-
-            Playlist["_id"] = playlist[i]._id
-            Playlist["name"] = playlist[i].name
-            Playlist["type"] = playlist[i].type
-            Playlist["images"] = playlist[i].images
-            playlistInfo.push(Playlist)
-
         }
         return limitOffset(limit, offset, playlistInfo);
     }
@@ -328,7 +464,7 @@ function search(name, field, schema) {
 function Fuzzysearch(name, field, schema) {
 
     Results = []
-    if(!name)name='';
+    if (!name) name = '';
     subName = name.split(' ');
     let results = search(name, field, schema);
     Results = Results.concat(results);
@@ -346,7 +482,7 @@ const removeDupliactes = (values) => {
 
     let newArray = [];
     let uniqueObject = {};
-    if(!values) values=[];
+    if (!values) values = [];
     for (let i in values) {
         objTitle = values[i]['_id'];
         uniqueObject[objTitle] = values[i];
@@ -357,7 +493,8 @@ const removeDupliactes = (values) => {
     }
     return newArray;
 }
-function limitOffset(limit,offset,search){
+
+function limitOffset(limit, offset, search) {
 
     let start = 0;
     let end = search.length;
@@ -370,8 +507,7 @@ function limitOffset(limit,offset,search){
         if ((start + limit) > 0 && (start + limit) <= search.length) {
             end = start + limit;
         }
-    } 
-    else {
+    } else {
         limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
         if ((start + limit) > 0 && (start + limit) <= search.length) {
             end = start + limit;

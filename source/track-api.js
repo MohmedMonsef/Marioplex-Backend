@@ -10,7 +10,7 @@ const Track = {
     },
     /** 
      *  get track by id
-     * @param  {string} trackID - the track id 
+     * @param  {string} trackId - the track id 
      * @param {object} user 
      * @returns {object}
      */
@@ -64,7 +64,7 @@ const Track = {
     },
     /** 
      * get full track object by id
-     * @param {string} trackID - the track id 
+     * @param {string} trackId - the track id 
      * @param {Object} user  - the user
      * @return {object}
      */
@@ -104,7 +104,7 @@ const Track = {
     },
     /** 
      *  get audio features for track
-     * @param  {string}  trackID - the track id 
+     * @param  {string}  trackId - the track id 
      * @returns {object} 
      * 
      */
@@ -132,7 +132,7 @@ const Track = {
     },
     /** 
      *  get audio features for tracks
-     * @param {string}  trackIDs  - the track ids 
+     * @param {string}  trackIds  - the track ids 
      * @returns {Array<Object>}
      */
     getAudioFeaturesTracks: async function(trackIds) {
@@ -155,7 +155,7 @@ const Track = {
     /** 
      *  check if user like track
      * @param {Object} user - the user 
-     * @param {string} trackID - the track id 
+     * @param {string} trackId - the track id 
      */
     checkIfUserLikeTrack: async function(user, trackId) {
         if (!user) return 0;
@@ -178,8 +178,7 @@ const Track = {
     },
     /** 
      * user like track
-     * @param  {Object} user  - the user
-     * @param {string} trackID - the track id 
+     * @param {string} trackId - the track id 
      * @returns {Number}
      */
     likeTrack: async function(trackId) {
@@ -196,9 +195,8 @@ const Track = {
     },
 
     /** 
-     * user unlike track
-     * @param  {Object} user - the user 
-     * @param {string} trackID - the track id 
+     * user unlike track 
+     * @param {string} trackId - the track id 
      * @returns {Number}
      */
     unlikeTrack: async function(trackId) {
@@ -225,7 +223,7 @@ const Track = {
      * @returns {object}
      */
     createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration, key, keyId, genre) {
-        //if(typeof(url) != "string" || typeof(Name) != "string" || typeof(trackNumber) != "number" || typeof(duration) != "number") return 0;
+       
 
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
         if (!availableMarkets) availableMarkets = [];
@@ -344,22 +342,7 @@ const Track = {
         await Image.deleteImages(userId, trackId, 'track');
         // delete from tracks
         await trackDocument.findByIdAndDelete(trackId);
-        // delete from gridfs
-        // await gfsTracks.files.re44({"metadata.trackId":mongoose.Types.ObjectId(trackId)},(err,files)=>{
-        //     console.log(files);
-        // })
-        // await gfsTracks.files.find({ "metadata.trackId": mongoose.Types.ObjectId(trackId) }).toArray(async function(err, files) {
-        //         if (files) {
-        //             //console.log(files);
-        //             for (let file of files) {
-        //                 // console.log(file,file._id)
-        //                 //await gfsTracks.chunks.deleteMany({files_id:mongoose.Types.ObjectId(file._id)})
-        //                 await gfsTracks.db.collection('tracks.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-        //                 await gfsTracks.files.deleteMany({ "metadata.trackId": mongoose.Types.ObjectId(trackId) })
-        //             }
-        //         }
-        //     })
-        // await gfsTracks.chunks.deleteMany({"files_id":mongoose.Types.ObjectId(trackId)})
+        // delete from drive
         drive.files.list({
             corpora: 'user',
             pageSize: 10,
@@ -478,6 +461,7 @@ const Track = {
      * @param {String} userId 
      * @param {String} trackId 
      * @param {Object} body 
+     * @returns {object}
      */
     updateTrack: async function(userId, trackId, body) {
         if (!checkMonooseObjectID([userId, trackId])) return 0;

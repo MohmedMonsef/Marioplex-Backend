@@ -4,6 +4,12 @@ const checkMonooseObjectID = require('../validation/mongoose-objectid');
 const mongoose = require('mongoose');
 const Image = {
     // add some helper function found in other apis
+    /**
+     * 
+     * @param {String} userID 
+     * @param {String} playlistId
+     * @returns {boolean} 
+     */
     checkAuthorizedPlaylist: async function(userID, playlistId) {
         let users = await userDocument.find({});
         if (!users) return 0;
@@ -50,6 +56,11 @@ const Image = {
         const hasAccess = await this.checkArtistHasTrack(artist, trackId);
         return hasAccess;
     },
+    /**
+     * 
+     * @param {String} userId
+     * @returns {object} 
+     */
     findMeAsArtist: async function(userId) {
         if (!checkMonooseObjectID([userId])) return 0;
         const artist = await artistDocument.findOne({ userId: userId }, (err, artist) => {
@@ -58,6 +69,12 @@ const Image = {
         }).catch((err) => 0);
         return artist;
     },
+    /**
+     * 
+     * @param {String} artist 
+     * @param {String} trackId
+     * @returns {boolean} 
+     */
     checkArtistHasTrack: async function(artist, trackId) {
         if (!artist || !trackId) return 0;
         if (!artist.addTracks) return 0;
@@ -82,6 +99,12 @@ const Image = {
         const hasAccess = await this.checkArtisthasAlbum(artist._id, albumId);
         return hasAccess;
     },
+    /**
+     * 
+     * @param {String} artistId 
+     * @param {String} albumId
+     * @returns {Boolean} 
+     */
     checkArtisthasAlbum: async function(artistId, albumId) {
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
         if (await albumDocument.findById(albumId)) {

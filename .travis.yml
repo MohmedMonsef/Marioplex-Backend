@@ -2,6 +2,8 @@ dist: bionic
 sudo: false
 language: node_js
 before_install:
+- openssl aes-256-cbc -K $encrypted_db2095f63ba3_key -iv $encrypted_db2095f63ba3_iv
+  -in deploy_rsa.enc -out deploy_rsa -d
 - git clone https://github.com/BelalElhossany/devOps
 - cd devOps
 - eval "$(ssh-agent -s)"

@@ -1,17 +1,12 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const router = express.Router();
 const spotifySchema = require('../models/db');
-const bcrypt = require('bcrypt');
-const { auth: checkAuth } = require('../middlewares/is-me');
 const Joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
 var sendmail = require('../forget-password/sendmail');
 const jwt = require('jsonwebtoken');
-const auth = require('../middlewares/is-me')
 require('../config/passport');
 const User = require('../source/user-api')
-const passport = require('passport');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({

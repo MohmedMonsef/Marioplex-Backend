@@ -1,13 +1,11 @@
-const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
+
 const spotifySchema = require('../models/db');
 const jwtSeret = require('../config/jwtconfig');
 const jwt = require('jsonwebtoken');
 const Users = require('../source/user-api');
 const Notifications = require('../source/notification-api');
-const passport = require('passport');
 var express = require('express');
 const validateLoginInput = require("../validation/login");
-const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const { auth: checkAuth } = require('../middlewares/is-me');

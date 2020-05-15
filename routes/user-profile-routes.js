@@ -56,8 +56,8 @@ router.put('/me/free', checkAuth, limiter, async(req, res) => {
 
 //GET USER'S PRIVATE PROFILE WITH PLAYER with player info
 router.get('/me-player', checkAuth, limiter, async(req, res) => {
-    const userID = req.user._id; // get it from desierialize auth 
-    await spotifySchema.user.find({ _id: userID }, {
+    const userId = req.user._id; // get it from desierialize auth 
+    await spotifySchema.user.find({ _id: userId }, {
         displayName: 1,
         email: 1,
         birthDate: 1,
@@ -96,8 +96,8 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
                 error: err
             })
         } else {
-            const userID = req.user._id;
-            const user = await User.update(userID, req.body.user.gender, req.body.user.birthday, req.body.user.displayName, req.body.user.password, req.body.user.email, req.body.user.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.user.newpassword);
+            const userId = req.user._id;
+            const user = await User.update(userId, req.body.user.gender, req.body.user.birthday, req.body.user.displayName, req.body.user.password, req.body.user.email, req.body.user.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.user.newpassword);
             if (user) {
                 res.status(200).json({
                     "success": "information has been updated successfully"
@@ -110,8 +110,8 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
 
 //GET USER PRIVATE PROFILE INFORMATION
 router.get('/me', checkAuth, limiter, async(req, res) => {
-    const userID = req.user._id; // get it from desierialize auth 
-    await spotifySchema.user.find({ _id: userID }, {
+    const userId = req.user._id; // get it from desierialize auth 
+    await spotifySchema.user.find({ _id: userId }, {
         displayName: 1,
         email: 1,
         birthDate: 1,
@@ -129,8 +129,8 @@ router.get('/me', checkAuth, limiter, async(req, res) => {
 
 //REMOVE USER ACCOUNT
 router.delete('/remove', checkAuth, limiter, async(req, res, next) => {
-    const userID = req.user._id; // get it from desierialize auth 
-    const user = await User.deleteAccount(userID)
+    const userId = req.user._id; // get it from desierialize auth 
+    const user = await User.deleteAccount(userId)
     if (user) {
         res.status(200).json({ "success": "user deleted" });
     } else {

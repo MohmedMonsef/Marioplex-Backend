@@ -1,13 +1,7 @@
 const router = require('express').Router();
-const crypto = require('crypto');
-const path = require('path');
 const Image = require('../source/image-api')
 const { auth: checkAuth } = require('../middlewares/is-me');
-const { isArtist: checkType } = require('../middlewares/check-type');
 const { upload: uploadImage } = require('../middlewares/upload-image');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const jwtSecret = require('../config/jwt-key').secret;
 const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({

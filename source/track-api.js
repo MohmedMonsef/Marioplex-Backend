@@ -1,5 +1,4 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
-const mongoose = require('mongoose')
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Image = require('./image-api')
 const Track = {

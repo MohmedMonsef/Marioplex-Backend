@@ -70,6 +70,7 @@ router.put('/recently-search', checkAuth, limiter, async(req, res) => {
     else res.send('Done');
 })
 router.delete('/recently-search', checkAuth, limiter, async(req, res) => {
+    if (!checkMonooseObjectID([req.query.id, req.user._id])) return res.status(403).send('error in ids !!');
     const userId = req.user._id;
     const user = User.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
@@ -80,6 +81,7 @@ router.delete('/recently-search', checkAuth, limiter, async(req, res) => {
 })
 
 router.get('/recently-search', checkAuth, limiter, async(req, res) => {
+    if (!checkMonooseObjectID([req.user._id])) return res.status(403).send('error in ids !!');
     const userId = req.user._id;
     const user = User.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');

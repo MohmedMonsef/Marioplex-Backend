@@ -39,7 +39,7 @@ const Search = {
         if (!object) return 0;
         if (!user.recentlySearch) user.recentlySearch = [];
         await this.removeRecently(userId, objectType, id)
-        if (user.recentlySearch.length == 50) await this.removeRecently(userId, user.recentlySearch[0].objectType, user.recentlySearch[0].id)
+        if (user.recentlySearch.length == 50) await user.recentlySearch.splice(0, 1);
         user.recentlySearch.push({ id: id, objectType: objectType });
         await user.save();
 

@@ -35,6 +35,12 @@ const Album = {
 
 
     },
+    /**
+     * Delete album feom all database 
+     * @param {String} userId - user id of the artist upload this track
+     * @param {String} albumId - the id of album want to delete
+     * @returns {Boolean}
+     */
     deleteAlbum: async function(userId, albumId) {
         if (!checkMonooseObjectID([albumId])) return 0;
         const artistD = await artist.findMeAsArtist(userId);
@@ -48,26 +54,36 @@ const Album = {
             }
         }
         for (let i = 0; i < artistD.addAlbums.length; i++) {
-            //console.log(artistD.addAlbums[i].albumId);
-            //console.log(albumId);
-            if (artistD.addAlbums[i].albumId + 1 == albumId + 1) { artistD.addAlbums.splice(i, 1); break; }
+            if (String(artistD.addAlbums[i].albumId) == String(albumId)) { artistD.addAlbums.splice(i, 1); break; }
         }
         await artistD.save();
         if (!await albumDocument.findByIdAndDelete(albumId)) return 0;
-
         await userDocument.find({}, async(err, files) => {
             if (err) return 0;
             for (let user of files) {
-                if (!user.saveAlbum) continue;
-                for (let i = 0; i < user.saveAlbum; i++) {
-                    if (String(user.saveAlbum[i].albumId) == albumId) {
-                        user.saveAlbum.splice(i, 1);
-                        break;
+                if (user.saveAlbum) {
+                    for (let i = 0; i < user.saveAlbum; i++) {
+                        if (String(user.saveAlbum[i].albumId) == String(albumId)) {
+                            user.saveAlbum.splice(i, 1);
+                            break;
+                        }
                     }
+                }
+                if (user.recentlySearch) {
+                    for (let i = 0; i < user.recentlySearch.length; i++)
+                        if (String(user.recentlySearch[i].id) == String(albumId) && user.recentlySearch[i].objectType == 'album')
+                            user1.recentlySearch.splice(i, 1)
+                }
+                if (user.playHistory) {
+                    // not very important becouse track will remove it
+                    for (let i = 0; i < user.playHistory.length; i++)
+                        if (String(user.playHistory[i].sourceId) == String(albumId) && user.playHistory[i].sourceType == 'album')
+                            user1.playHistory.splice(i, 1)
                 }
                 await user.save();
             }
         });
+
         return 1;
     },
 

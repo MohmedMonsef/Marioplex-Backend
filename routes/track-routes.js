@@ -19,13 +19,13 @@ router.get('/me/track/:track_id', checkIfAuth, limiter, async(req, res) => {
         const trackId = req.params.track_id;
         let user = await User.getUserById(req.user._id);
         const track = await Track.getTrack(trackId, user);
-        if (!track) res.sendStatus(404); //not found
+        if (!track) res.status(404).json({ "error": "track not found" }); //not found
         else res.json(track);
     } else {
 
         const trackId = req.params.track_id;
         const track = await Track.getTrackWithoutAuth(trackId);
-        if (!track) res.sendStatus(404); //not found
+        if (!track) res.status(404).json({ "error": "track not found" }); //not found
         else res.json(track);
     }
 

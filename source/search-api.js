@@ -94,7 +94,7 @@ const Search = {
                         id: artist._id,
                         info: artist.info,
                         popularity: artist['popularity'],
-                        isFollow: await user_api.checkIfUserFollowArtist(userId, user.recentlySearch[i].id)
+                        isFollow: await user_api.CheckIfUserFollowArtist(userId, user.recentlySearch[i].id)
                     });
             } else if (user.recentlySearch[i].objectType == 'playlist') {
                 const playlist = await Playlist.getPlaylist(user.recentlySearch[i].id);
@@ -288,42 +288,43 @@ const Search = {
     //params: Name
     getTrack: async function(Name, limit, offset) {
 
-        var Track;
+        var tracks;
         let allartists = await artistDocument.find({});
         let artist = await this.exactmatch(allartists, Name);
         if (artist) {
 
-            Track = await artistApi.getTracks(artist);
+            tracks = await artistApi.getTracks(artist);
 
         } else {
             const track = await this.getTracks();
             if (track == 0) return track;
-            Track = Fuzzysearch(Name, 'name', track);
+            tracks = Fuzzysearch(Name, 'name', track);
         }
 
         trackInfo = []
-        if (!Track) Track = [];
-        for (let i = 0; i < Track.length; i++) {
-            let artist = await artist_api.getArtist(Track[i].artistId)
-            tracks = {}
+        if (!tracks) tracks = [];
+        for (let i = 0; i < tracks.length; i++) {
+            let artist = await artist_api.getArtist(tracks[i].artistId)
+            trackValues = {}
             if (artist) {
-                tracks["artistId"] = artist._id
-                tracks["artistName"] = artist.Name
-                tracks["artistimages"] = artist.images
-                tracks["artistType"] = artist.type
+                trackValues["artistId"] = artist._id
+                trackValues["artistName"] = artist.Name
+                trackValues["artistimages"] = artist.images
+                trackValues["artistType"] = artist.type
             }
-            let album = await album_api.getAlbumById(Track[i].albumId)
+            let album = await album_api.getAlbumById(tracks[i].albumId)
             if (album) {
-                tracks["albumId"] = album._id
-                tracks["albumName"] = album.name
-                tracks["albumImages"] = album.images
-                tracks["albumType"] = album.type
+                trackValues["albumId"] = album._id
+                trackValues["albumName"] = album.name
+                trackValues["albumImages"] = album.images
+                trackValues["albumType"] = album.type
             }
-            tracks["_id"] = Track[i]._id
-            tracks["name"] = Track[i].name
-            tracks["type"] = Track[i].type
-            tracks["images"] = Track[i].images
-            trackInfo.push(tracks);
+            trackValues["_id"] = tracks[i]._id
+            trackValues["name"] = tracks[i].name
+            trackValues["type"] = tracks[i].type
+            trackValues["duration"] = tracks[i].duration
+            trackValues["images"] = tracks[i].images
+            trackInfo.push(trackValues);
 
         }
         return limitOffset(limit, offset, trackInfo);
@@ -417,26 +418,26 @@ const Search = {
     //params Name
     getPlaylist: async function(Name, limit, offset) {
 
-        let playlist = await this.getPlaylists();
-        if (playlist && playlist.length == 0) return playlist;
-        playlist = Fuzzysearch(Name, 'name', playlist);
+        let playlists = await this.getPlaylists();
+        if (playlists && playlists.length == 0) return playlists;
+        playlists = Fuzzysearch(Name, 'name', playlists);
         playlistInfo = []
-        for (let i = 0; i < playlist.length; i++) {
-            if (playlist[i].isPublic) {
-                let User = await user_api.getUserById(playlist[i].ownerId)
-                Playlist = {}
+        for (let i = 0; i < playlists.length; i++) {
+            if (playlists[i].isPublic) {
+                let User = await user_api.getUserById(playlists[i].ownerId)
+                playlist = {}
                 if (User) {
-                    Playlist["ownerId"] = User._id
-                    Playlist["ownerName"] = User.displayName
-                    Playlist["ownerImages"] = User.images
-                    Playlist["ownerType"] = User.type
+                    playlist["ownerId"] = User._id
+                    playlist["ownerName"] = User.displayName
+                    playlist["ownerImages"] = User.images
+                    playlist["ownerType"] = User.type
                 }
 
-                Playlist["_id"] = playlist[i]._id
-                Playlist["name"] = playlist[i].name
-                Playlist["type"] = playlist[i].type
-                Playlist["images"] = playlist[i].images
-                playlistInfo.push(Playlist)
+                playlist["_id"] = playlists[i]._id
+                playlist["name"] = playlists[i].name
+                playlist["type"] = playlists[i].type
+                playlist["images"] = playlists[i].images
+                playlistInfo.push(playlist)
 
             }
         }

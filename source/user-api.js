@@ -30,7 +30,24 @@ const User = {
 
         return user;
     },
-
+    getUnAuthUser: async function(userId){
+        if (!checkMonooseObjectID([userId])) return 0;
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const publicUser = {
+            gender:user.gender,
+            email:user.email,
+            displayName:user.displayName,
+            birthDate: user.birthDate,
+            product: user.product,
+            images: user.images,
+            follow: user.follow,
+            createPlaylist: user.createPlaylist,
+            followPlaylist:user.followPlaylist,
+            saveAlbum: user.saveAlbum
+        }
+        return publicUser;
+    },
 
     /**
      *  update user profile information

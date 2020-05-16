@@ -6,6 +6,7 @@ const profileNotification = require('../source/notification-api');
 const User = require('../source/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
+const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
@@ -15,8 +16,8 @@ const limiter = rateLimit({
 });
 
 //GET USER'S PUBLIC PROFILE, PATH PARAMS: id
-router.get('/users/:id', checkAuth, limiter, async(req, res) => {
-
+router.get('/users/:id', checkIfAuth, limiter, async(req, res) => {
+    if(req.isAuth){
     const user = await User.me(req.params.id, req.user._id);
     if (user) {
         let curUser = await User.getUserById(req.user._id);
@@ -26,6 +27,11 @@ router.get('/users/:id', checkAuth, limiter, async(req, res) => {
     } else {
         res.sendStatus(404)
     }
+}else{
+    const user = await User.getUnAuthUser(req.params.id);
+    if(!user) res.sendStatus(404);
+    else res.status(200).json(user);
+}
 })
 router.put('/me/promote', checkAuth, limiter, async(req, res) => {
     const prmoteData = Joi.object().keys({

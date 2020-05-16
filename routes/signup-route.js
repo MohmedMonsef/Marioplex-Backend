@@ -3,7 +3,7 @@ const router = express.Router();
 const spotifySchema = require('../models/db');
 const Joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
-var sendmail = require('../forget-password/sendmail');
+var sendmail = require('../source/sendmail');
 const jwt = require('jsonwebtoken');
 require('../config/passport');
 const User = require('../source/user-api')

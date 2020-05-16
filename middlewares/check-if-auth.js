@@ -7,7 +7,7 @@ function auth(req,res,next){
 
 const token=req.header('x-auth-token');
 
-if(!token){req.isAuth = false;next();}
+if(!token){req.isAuth = false;next();return;}
 
 try{
 const decoded=jwt.verify(token,jwtSecret);

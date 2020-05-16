@@ -223,6 +223,7 @@ const Album = {
                     tracks['images'] = Track.images;
                     tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
                     tracks['playable'] = Track.playable;
+                    tracks['duration'] = Track.duration;
                     Tracks.push(tracks);
                 }
             }

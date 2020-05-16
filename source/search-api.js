@@ -322,6 +322,7 @@ const Search = {
             trackValues["_id"] = tracks[i]._id
             trackValues["name"] = tracks[i].name
             trackValues["type"] = tracks[i].type
+            trackValues["duration"] = tracks[i].duration
             trackValues["images"] = tracks[i].images
             trackInfo.push(trackValues);
 

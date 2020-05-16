@@ -146,7 +146,7 @@ const Artist = {
 
         });
         await album.save();
-       
+
         artist.addAlbums.push({
             albumId: album._id
         });
@@ -356,8 +356,6 @@ const Artist = {
         for (let Track in tracks) {
             specificTracks.push(tracks[Track]);
         }
-
-
         return specificTracks;
     },
     checkArtistHasTrack: async function(artist, trackId) {

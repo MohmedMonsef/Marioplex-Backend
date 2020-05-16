@@ -3,6 +3,8 @@ const Image = require('../source/image-api')
 const { auth: checkAuth } = require('../middlewares/is-me');
 const { upload: uploadImage } = require('../middlewares/upload-image');
 const rateLimit = require("express-rate-limit");
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 // add rate limiting
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -111,8 +113,8 @@ router.get('/images/:image_id', limiter, async(req, res) => {
 
     const imageId = req.params.image_id;
     // get file from gridfs
-    gfsImages.files.findOne({ "metadata.imageId": imageId, "metadata.belongsTo": belongsTo }, function(err, file) {
-        //console.log(err,file)
+    gfsImages.files.findOne({ "metadata.imageId":  ObjectId(imageId), "metadata.belongsTo": belongsTo }, function(err, file) {
+      //  console.log(err,file,belongsTo)
         if (err || !file) { 
             // return default image 
             gfsImages.files.findOne({"metadata.belongsTo": "default" }, function(err, file) {

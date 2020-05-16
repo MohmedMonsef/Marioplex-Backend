@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Playlist = require('../source/playlist-api');
+const Notifications=require('../source/notification-api');
 const User = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const validatePlaylistInput = require('../validation/playlist');
@@ -47,7 +48,17 @@ router.put('/playlists/:playlist_id/followers', checkAuth, limiter, async(req, r
         const playlistId = req.params.playlist_id;
         const isPrivate = req.body.isPrivate || false;
         const updatedUser = await User.followPlaylist(userId, playlistId, isPrivate);
-        if (updatedUser) res.status(200).send({ success: ' followed this playlist successfully' });
+        if (updatedUser){
+            let playlist=await Playlist.getPlaylist(playlistId);
+            let currentUser=await User.getUserById(userId);
+            if(playlist){
+                let profileUser=await User.getUserById(playlist.ownerId);
+                if(profileUser){
+                 Notifications.sendPlaylistNotification(currentUser,profileUser,playlist);
+                }
+            }
+             res.status(200).send({ success: ' followed this playlist successfully' });
+            }
         else res.status(400).send({ 'error': 'this playlist cant be followed' });
     } else res.status(403).send({ error: 'error in Id' });
 })

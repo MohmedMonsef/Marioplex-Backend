@@ -92,7 +92,10 @@ router.put('/Artists/me/Albums', [checkAuth, limiter, checkType, checkContent], 
     //ADD AN ALBUM TO THIS USER
     const artistAlbum = await Artist.addAlbum(artist._id, req.body.name, req.body.label, avMarkets, req.body.albumtype, req.body.releaseDate, req.body.genre);
     if (!artistAlbum) return res.status(404).send(" ");
-    else return res.status(200).send(artistAlbum);
+    else {
+        Notifications.sendArtistAlbumNotification(artist,artistAlbum);
+        return res.status(200).send(artistAlbum);
+    }
 });
 router.delete('/artist/:album_id', [checkAuth, limiter, checkType, checkContent], async(req, res) => {
     if (!checkID([req.params.album_id])) return res.status(403).send({ error: 'id not correct ! ' })
@@ -142,7 +145,7 @@ router.post('/artists/me/albums/:album_id/tracks', checkAuth, limiter, checkType
                 isUploaded = -1;
                 return 0;
             } else {
-                Notifications.sendArtistNotification(artist);
+                Notifications.sendArtistNotification(artist,track);
                 res.status(200).json({ "success": "uploaded succesfully" });
                 isUploaded = 1;
 

@@ -93,7 +93,7 @@ const Notifications = {
         });
   },
     //the user following Artist notification
-    sendArtistNotification:async function(artist) {
+    sendArtistNotification:async function(artist,track) {
         let users;
         let tokens=[];
         
@@ -105,6 +105,7 @@ const Notifications = {
         let notificationMessage={
                 data: {
                 artistId: String(artist._id),
+                trackId:String(track._id),
                 title: "WOOOOOH NEW SONG",
                 body: artist.Name+" Uploaded a New Song -- CHECK IT OUT !"
             }
@@ -140,8 +141,99 @@ const Notifications = {
         }
     return 1;
 
+    },
+    sendArtistAlbumNotification:async function(artist,album) {
+      let users;
+      let tokens=[];
+      
+      await userDocument.find({}, function(err, allUsers) {
+        if(err){ users = [];return;}
+          users = allUsers;
+      });
+      //create Notification object
+      let notificationMessage={
+              data: {
+              artistId: String(artist._id),
+              albumId:String(album._id),
+              title: "WOOOOOH NEW ALBUM",
+              body: artist.Name+" Uploaded a New Album -- CHECK IT OUT !"
+          }
+          };
+      for(var i=0;i<users.length;i++){
+          for(var j=0;j<users[i].follow.length;j++){
+              if(String(users[i].follow[j].id)==String(artist._id)){
+                  if(!users[i].fcmToken){users[i].fcmToken="none";
+                    await users[i].save();}
+                  if(users[i].fcmToken!="none"){
+                      tokens.push(users[i].fcmToken);
+                  }
+                  else{
+                      if(!users[i].offlineNotifications)users[i].offlineNotifications=[];
+                      users[i].offlineNotifications.push(notificationMessage);
+                      await users[i].save();
+                  }
+              }
+          }
+      }
+      if(tokens.length!=0){
+          //if online
+          //create the mesaages object
+          var messages = {
+              data:notificationMessage.data,
+              tokens: tokens
+          };
+          //then send the notification object to the followers
+          checkFailed=await this.sendNotification(tokens,messages); 
+          console.log(checkFailed);
+          console.log(messages);
+
+      }
+  return 1;
+
+  },
+  sendPlaylistNotification:async function(currentUser,profileUser,playlist) {
+    if(!profileUser.fcmToken)
+    {
+        profileUser.fcmToken="none"; 
+        await profileUser.save();
     }
-    
+    //get the fcm token of the profile user
+    let token=profileUser.fcmToken;
+    //notification body
+    let curName=currentUser.displayName;
+    //create the notification object
+   let notificationMessage={
+        data: {
+        userId: String(currentUser._id),
+        title: " You seem to have a good musical taste ",
+        body: curName+" followed Your "+playlist.name+" Playlist"
+      }
+    };
+    //flag to check succes or not
+    let checkFailed;
+    //check online or offline
+    if(token!="none"){
+        //if online
+        //create the mesaage object
+        var message = {
+            data:notificationMessage.data,
+            tokens: [token]
+           };
+        //then send the notification object to the profile user (token)
+        checkFailed=await this.sendNotification([token],message); 
+        console.log(checkFailed);
+        console.log(message);
+
+    }
+   if(token=="none"||checkFailed.length>0){
+    if(!profileUser.offlineNotifications)profileUser.offlineNotifications=[];
+    profileUser.offlineNotifications.push(notificationMessage);
+    await profileUser.save();
+    return 0;
+   }
+   return 1;
+
+}
 
 }
 module.exports = Notifications;

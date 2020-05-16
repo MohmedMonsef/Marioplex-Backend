@@ -486,6 +486,12 @@ const User = {
         await user.save();
         return true;
     },
+    confirmPremium: async function(user) {
+        if (!user.premiumConfirm) user.premiumConfirm = true;
+        if (user.premiumConfirm == false) { user.premiumConfirm = true; }
+        await user.save();
+        return true;
+    },
     //user forget password
     //params: user
     /** 
@@ -589,6 +595,7 @@ const User = {
             type: "user",
             fcmToken: "none",
             confirm: false,
+            premiumConfirm:false,
             isFacebook: false,
             images: [],
             follow: [],
@@ -787,13 +794,11 @@ const User = {
         if (user.product == 'premium') {
             return false;
         }
-        user.product = 'premium';
         user.premium['expiresDate'] = expiresDate;
         user.premium['cardNumber'] = cardNumber;
         user.premium['isMonth'] = isMonth;
         user.premium['ParticipateDate'] = Date.now();
         await user.save();
-        sendmail(user.email, 'Congrats!! ^^) You are Now Promoted to premium so You can Login with your Account as an premium please login again :\n enjoy with premium');
         return true;
     },
     // to make user be free

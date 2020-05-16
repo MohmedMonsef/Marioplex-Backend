@@ -30,11 +30,12 @@ module.exports = function(app) {
             gfsTracks.collection('tracks');
             gfsImages.collection('images');
            
-            console.log("connection is made   ");
+            console.log("connection is made   ",process.env.CONNECTION_STRING);
           
             // check to see if there is defUault image
             gfsImages.files.findOne({ "metadata.belongsTo": "default" }, function(err, file) {
                 if(err || !file){
+                    console.log("uploading default")
                     // upload image
                     let writestream = gfsImages.createWriteStream({
                         filename: 'not_found',
@@ -52,7 +53,7 @@ module.exports = function(app) {
                       });
                 }
             });
-            
+           
         }).on('error', function(error) {
             console.log("connection got error : ", error);
         });

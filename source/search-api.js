@@ -94,7 +94,7 @@ const Search = {
                         id: artist._id,
                         info: artist.info,
                         popularity: artist['popularity'],
-                        isFollow: await user_api.CheckIfUserFollowArtist(userId, user.recentlySearch[i].id)
+                        isFollow: await user_api.checkIfUserFollowArtist(userId, user.recentlySearch[i].id)
                     });
             } else if (user.recentlySearch[i].objectType == 'playlist') {
                 const playlist = await Playlist.getPlaylist(user.recentlySearch[i].id);

@@ -27,7 +27,7 @@ router.get('/me/following/contains/:id', checkAuth, limiter, async(req, res) => 
     if (req.params.id == undefined) {
         res.sendStatus(500).json({ message: "id is not defined" });
     } else {
-        const checks = await User.CheckIfUserFollowArtist(userID, req.params.id);
+        const checks = await User.checkIfUserFollowArtist(userID, req.params.id);
         if (checks == -1) res.sendStatus(500)
         else {
 
@@ -44,7 +44,7 @@ router.put('/me/following', checkAuth, limiter, async(req, res) => {
     if (artistIds == undefined) {
         res.sendStatus(404);
     } else {
-        const checks = await User.UserFollowArtist(userID, artistIds);
+        const checks = await User.userFollowArtist(userID, artistIds);
         if (!checks) res.sendStatus(404); //not found
         else res.sendStatus(200);
     }
@@ -57,7 +57,7 @@ router.delete('/me/following', checkAuth, limiter, async(req, res) => {
     if (artistIds == undefined) {
         res.sendStatus(404);
     } else {
-        const checks = await User.UserUnfollowArtist(userID, artistIds);
+        const checks = await User.userUnfollowArtist(userID, artistIds);
         if (!checks) res.sendStatus(404); //not found
         else res.sendStatus(200);
 

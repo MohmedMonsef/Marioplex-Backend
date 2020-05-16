@@ -190,6 +190,21 @@ test('user2 like track',async () => {
 
    
 })
+
+test('user2 like non mongoose id track',async () => {
+    const likedTrack = await mockUser.likeTrack(user2._id,"1");
+    expect(likedTrack).toBeFalsy(); 
+})
+test('non existing user like  track',async () => {
+    const likedTrack = await mockUser.likeTrack(ObjectId(),track._id);
+    expect(likedTrack).toBeFalsy(); 
+})
+
+
+
+
+
+
 test(' unlike non mongoose id track',async () => {
     const likedTrack = await mockTrack.unlikeTrack("1");
     expect(likedTrack).toBeFalsy();
@@ -224,6 +239,16 @@ test('user unlike   track with  which he already unliked',async () => {
     expect(await mockUser.unlikeTrack(user._id,track._id)).toBeFalsy();
 })
 
+test('non existing user unlike  track  which he liked before',async () => {
+    expect(await mockUser.unlikeTrack(ObjectId(),track._id)).toBeFalsy();
+})
+
+test('user un like non existing track',async () => {
+    expect(await mockUser.unlikeTrack(user._id,ObjectId())).toBeFalsy();
+})
+test('non mongoose id unlike track',async () => {
+    expect(await mockUser.unlikeTrack("1",track._id)).toBeFalsy();
+})
 
 test("create track with no artist or album",async ()=>{
     expect(await mockTrack.createTrack()).toBeFalsy();

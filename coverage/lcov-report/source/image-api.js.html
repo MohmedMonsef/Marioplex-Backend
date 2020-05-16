@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">1.03% </span>
+                <span class="strong">3.31% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/484</span>
+                <span class='fraction'>16/484</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">2.02% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/297</span>
+                <span class='fraction'>6/297</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">4% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/25</span>
+                <span class='fraction'>1/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">1.32% </span>
+                <span class="strong">4.23% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/378</span>
+                <span class='fraction'>16/378</span>
             </div>
         
             
@@ -1397,6 +1397,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1404,19 +1417,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1425,10 +1425,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2149,21 +2149,21 @@ const Image = {
      * @param {string} belongsTo
      * @returns {boolean} 
      */
-    deleteImages: <span class="fstat-no" title="function not covered" >as</span>ync function(userId, sourceId, belongsTo) {
+    deleteImages: async function(userId, sourceId, belongsTo) {
         // remove images from database and from gridfs
         // check if user has access to delete image then delete the image
-<span class="cstat-no" title="statement not covered" >        if (!checkMonooseObjectID([userId, sourceId])) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        if (!belongsTo) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-        const user = <span class="cstat-no" title="statement not covered" >await userDocument.findById(userId);</span>
-<span class="cstat-no" title="statement not covered" >        if (!user) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!checkMonooseObjectID([userId, sourceId])) <span class="cstat-no" title="statement not covered" >return 0;</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!belongsTo) <span class="cstat-no" title="statement not covered" >return 0;</span>
+        const user = await userDocument.findById(userId);
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!user) <span class="cstat-no" title="statement not covered" >return 0;</span>
         // check if belongs to is user,playlist,track,album,category,artist
-<span class="cstat-no" title="statement not covered" >        switch (belongsTo) {</span>
+        switch (belongsTo) {
             case 'user':
                 { // check if source id equals userId
-<span class="cstat-no" title="statement not covered" >                    if (sourceId != userId) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >                    if (!user.images) <span class="cstat-no" title="statement not covered" >user.images = [];</span></span>
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (sourceId != userId) <span class="cstat-no" title="statement not covered" >return 0;</span>
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (!user.images) <span class="cstat-no" title="statement not covered" >user.images = [];</span>
                     // delete image from gridfs
-<span class="cstat-no" title="statement not covered" >                    for (let image of user.images) {</span>
+                    for (let image of user.images) {
                         const imageFile = <span class="cstat-no" title="statement not covered" >gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });</span>
                         const imageIdGridfs = <span class="cstat-no" title="statement not covered" >imageFile ? imageFile._id : undefined;</span>
 <span class="cstat-no" title="statement not covered" >                        if (!imageIdGridfs) <span class="cstat-no" title="statement not covered" >continue;</span></span>
@@ -2180,13 +2180,13 @@ const Image = {
 &nbsp;
                     }
                     // update images array for user
-<span class="cstat-no" title="statement not covered" >                    user.images = [];</span>
+                    user.images = [];
                     // save user
-<span class="cstat-no" title="statement not covered" >                    await user.save();</span>
-<span class="cstat-no" title="statement not covered" >                    return 1;</span>
+                    await user.save();
+                    return 1;
 <span class="cstat-no" title="statement not covered" >                    break;</span>
                 }
-            case 'playlist':
+<span class="branch-1 cbranch-no" title="branch not covered" >            case 'playlist':</span>
                 { // check if user has access to playlist
                     const isAuthorized = <span class="cstat-no" title="statement not covered" >await this.checkAuthorizedPlaylist(userId, sourceId);</span>
                     // user has no access to playlist
@@ -2218,7 +2218,7 @@ const Image = {
 <span class="cstat-no" title="statement not covered" >                    return 1;</span>
 <span class="cstat-no" title="statement not covered" >                    break;</span>
                 }
-            case 'track':
+<span class="branch-2 cbranch-no" title="branch not covered" >            case 'track':</span>
                 {
                     { // check if user has access to track
                         const hasAccess = <span class="cstat-no" title="statement not covered" >await this.checkAuthorizedTrack(userId, sourceId);</span>
@@ -2251,7 +2251,7 @@ const Image = {
 <span class="cstat-no" title="statement not covered" >                        break;</span>
                     }
                 }
-            case 'album':
+<span class="branch-3 cbranch-no" title="branch not covered" >            case 'album':</span>
                 { // check if user is artist and has access to album
                     const hasAccess = <span class="cstat-no" title="statement not covered" >await this.checkAuthorizedAlbum(userId, sourceId);</span>
 <span class="cstat-no" title="statement not covered" >                    if (!hasAccess) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
@@ -2282,7 +2282,7 @@ const Image = {
 <span class="cstat-no" title="statement not covered" >                    return 1;</span>
 <span class="cstat-no" title="statement not covered" >                    break;</span>
                 }
-            case 'artist':
+<span class="branch-4 cbranch-no" title="branch not covered" >            case 'artist':</span>
                 { // check is user is the artist he claims to be
                     const artist = <span class="cstat-no" title="statement not covered" >await this.findMeAsArtist(userId);</span>
 <span class="cstat-no" title="statement not covered" >                    if (!artist) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
@@ -2311,10 +2311,10 @@ const Image = {
 <span class="cstat-no" title="statement not covered" >                    return 1;</span>
 <span class="cstat-no" title="statement not covered" >                    break;</span>
                 }
-            case 'category':
+<span class="branch-5 cbranch-no" title="branch not covered" >            case 'category':</span>
 <span class="cstat-no" title="statement not covered" >                return 0;</span>
 <span class="cstat-no" title="statement not covered" >                break;</span>
-            default:
+<span class="branch-6 cbranch-no" title="branch not covered" >            default:</span>
 <span class="cstat-no" title="statement not covered" >                return 0;</span>
         }
     }
@@ -2329,7 +2329,7 @@ module.exports = Image;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Fri May 15 2020 22:02:11 GMT+0200 (Eastern European Standard Time)
+                at Sat May 16 2020 16:02:45 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

@@ -41,7 +41,7 @@ try{
     await getPlaylist();
 }
 catch(e){
-    return res.status(500).send("some error occured");
+    return res.status(500).send("some error occurred");
 }
 })
 
@@ -65,7 +65,7 @@ router.post('/users/playlists', checkAuth, limiter, async(req, res) => {
         await createPlaylist();
     }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
     })
     // FOLLOW PLAYLIST - PATH PARAMS : playlist_id - BODY PARAMS:isPrivate
@@ -94,7 +94,7 @@ try{
     await followPlaylist();
 }
 catch(e){
-    return res.status(500).send("some error occured");
+    return res.status(500).send("some error occurred");
 }
 })
 
@@ -113,7 +113,7 @@ router.delete('/playlists/:playlist_id/followers', checkAuth, limiter, async(req
     await unfollowPlaylist();
 }
 catch(e){
-    return res.status(500).send("some error occured");
+    return res.status(500).send("some error occurred");
 }
 });
 // DELETE PLAYLIST -  PATH PARAMS : playlist_id
@@ -131,7 +131,7 @@ router.delete('/me/delete/playlists/:playlist_id', checkAuth, limiter, async(req
         await deletePlaylist();
     }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
 
     })
@@ -154,7 +154,7 @@ router.post('/playlists/:playlist_id/tracks', checkAuth, limiter, async(req, res
         await addTrackToPlaylist();
     }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
 
     })
@@ -174,7 +174,7 @@ router.put('/playlists/:playlist_id', [checkAuth, limiter, checkContent], async(
             await updatePlaylist();
         }
         catch(e){
-            return res.status(500).send("some error occured");
+            return res.status(500).send("some error occurred");
         }
 
     })
@@ -189,7 +189,7 @@ router.get('/me/playlists', [checkAuth], async(req, res) => {
             await getCurrentUserPlaylists();
         }
         catch(e){
-            return res.status(500).send("some error occured");
+            return res.status(500).send("some error occurred");
         }
 
     })
@@ -206,7 +206,7 @@ router.get('/users/:user_id/playlists', async(req, res) => {
         await getUserPlaylists();
     }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
     })
     // TOGGLE COLLABORATIVE 
@@ -226,7 +226,7 @@ router.put('/playlists/:playlist_id/collaborative', [checkAuth, limiter, checkCo
         await toggleCollaborative();
     }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
     })
     // TOGGLE isPublic 
@@ -247,7 +247,7 @@ router.put('/playlists/:playlist_id/public', [checkAuth, limiter, checkContent],
         await togglePublic();
          }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
     })
     // GET TRACKS IN PLAYLIST
@@ -275,7 +275,7 @@ try{
     await getPlaylistTracks();
 }
 catch(e){
-    return res.status(500).send("some error occured");
+    return res.status(500).send("some error occurred");
 }
     })
     // DELETE TRACKS FROM PLAYLIST
@@ -295,7 +295,7 @@ router.delete('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => 
         await deletePlaylistTracks();
     }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
     })
     // REORDER PLAYLIST
@@ -313,7 +313,7 @@ router.put('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
     await reorderPlaylistTracks();
 }
 catch(e){
-    return res.status(500).send("some error occured");
+    return res.status(500).send("some error occurred");
 }
 })
 
@@ -329,7 +329,7 @@ router.get('/me/deletedplaylists', [checkAuth], async(req, res) => {
         await getDeletedPlaylists();
     }
     catch(e){
-        return res.status(500).send("some error occured");
+        return res.status(500).send("some error occurred");
     }
 })
 
@@ -347,7 +347,7 @@ router.put('/me/restoreplaylists', [checkAuth], async(req, res) => {
     await restorePlaylists();
 }
 catch(e){
-    return res.status(500).send("some error occured");
+    return res.status(500).send("some error occurred");
 }
 })
 

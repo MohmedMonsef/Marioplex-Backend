@@ -92,7 +92,7 @@ router.get('/me/albums', checkAuth, limiter, async(req, res) => {
     const userID = req.user._id;
     const albums = await Library.getSavedAlbums(userID, req.query.limit, req.query.offset);
     if (!albums) res.sendStatus(404); //not found
-    else res.status(200).json(albums);
+    else res.status(200).json({ savedAlbums: albums });
 
 });
 

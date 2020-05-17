@@ -8,6 +8,7 @@ const Track = require('../source/track-api');
 const User = require('../source/user-api');
 const Album = require('../source/album-api')
 const { auth: checkAuth } = require('../middlewares/is-me');
+const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
 const { content: checkContent } = require('../middlewares/content');
 const { isArtist: checkType } = require('../middlewares/check-type');
 const { upload: uploadTrack } = require('../middlewares/upload-tracks');
@@ -20,7 +21,7 @@ const limiter = rateLimit({
 
 });
 // get Artist - Path Params : artist_id
-router.get('/Artists/:artist_id', checkAuth, limiter, async(req, res) => {
+router.get('/Artists/:artist_id', limiter, async(req, res) => {
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     const artistID = req.params.artist_id;
     //GET THE ARTIST WITH THE GIVEN ID
@@ -44,7 +45,7 @@ router.get('/Artists/numberOfFollowers/:id', limiter, async(req, res) => {
 
 });
 // get Artists - Query Params : artists_ids
-router.get('/Artists', checkAuth, limiter, limiter, async(req, res) => {
+router.get('/Artists', limiter, async(req, res) => {
     if (req.query.artists_ids == undefined) { return res.status(403).send('Artist IDs is undefined'); }
     //SPLIT THE GIVEN COMMA SEPERATED LIST OF ARTISTS IDS
     const artistsIDs = req.query.artists_ids.split(',');
@@ -56,7 +57,7 @@ router.get('/Artists', checkAuth, limiter, limiter, async(req, res) => {
 });
 
 // get Albums - Path Params : artist_id -Query Params : Album Specifications
-router.get('/Artists/:artist_id/Albums', checkAuth, limiter, async(req, res) => {
+router.get('/Artists/:artist_id/Albums', limiter, async(req, res) => {
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     //GET ARRAY OF ALBUMS FOR AN ARTIST WITH THE SPECIFICATIONS GIVEN
     const albums = await Artist.getAlbums(req.params.artist_id, req.query.groups, req.query.country, req.query.limit, req.query.offset);
@@ -65,16 +66,18 @@ router.get('/Artists/:artist_id/Albums', checkAuth, limiter, async(req, res) => 
     else return res.status(200).json(albums);
 });
 //get Tracks - Path Params : artist_id
-router.get('/Artists/:artist_id/Tracks', checkAuth, limiter, async(req, res) => {
+router.get('/Artists/:artist_id/Tracks', checkIfAuth, limiter, async(req, res) => {
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
-    let user = await User.getUserById(req.user._id);
+
+    let user = undefined;
+    if (req.isAuth) user = await User.getUserById(req.user._id);
     //GET THE GIVEN ARTIST TRACKS
     const tracks = await Artist.getTracks(req.params.artist_id, user);
     if (tracks.length == 0 || tracks == 0) return res.status(404).send({ error: "tracks are not found" });
     else return res.status(200).json(tracks);
 });
 // get RelatedArtists - Path Params : artist_id
-router.get('/Artists/:artist_id/related_artists', checkAuth, limiter, async(req, res) => {
+router.get('/Artists/:artist_id/related_artists', limiter, async(req, res) => {
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     //GET THE RELATED ARTISTS BY GENRE TO THE GIVEN ARTIST
     const artists = await Artist.getRelatedArtists(req.params.artist_id);
@@ -84,10 +87,11 @@ router.get('/Artists/:artist_id/related_artists', checkAuth, limiter, async(req,
 });
 
 // get Top Tracks - Path Params : artist_id
-router.get('/Artists/:artist_id/top-tracks', checkAuth, limiter, async(req, res) => {
+router.get('/Artists/:artist_id/top-tracks', checkIfAuth, limiter, async(req, res) => {
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     if (req.query.country == undefined) { return res.status(403).send('country code is Required'); }
-    let user = await User.getUserById(req.user._id);
+    let user = undefined
+    if (req.isAuth) user = await User.getUserById(req.user._id);
     //GET THE TOP TRACKS OF AN ARTIST IN A SPECIFIC COUNTRY
     const tracks = await Artist.getTopTracks(req.params.artist_id, req.query.country, user);
     if (tracks.length == 0 || tracks == 0) return res.status(404).send({ error: "no top tracks in this country are not found" });
@@ -105,7 +109,7 @@ router.put('/Artists/me/Albums', [checkAuth, limiter, checkType, checkContent], 
     const artistAlbum = await Artist.addAlbum(artist._id, req.body.name, req.body.label, avMarkets, req.body.albumtype, req.body.releaseDate, req.body.genre);
     if (!artistAlbum) return res.status(404).send(" ");
     else {
-        Notifications.sendArtistAlbumNotification(artist,artistAlbum);
+        Notifications.sendArtistAlbumNotification(artist, artistAlbum);
         return res.status(200).send(artistAlbum);
     }
 });
@@ -157,7 +161,7 @@ router.post('/artists/me/albums/:album_id/tracks', checkAuth, limiter, checkType
                 isUploaded = -1;
                 return 0;
             } else {
-                Notifications.sendArtistNotification(artist,track);
+                Notifications.sendArtistNotification(artist, track);
                 res.status(200).json({ "success": "uploaded succesfully" });
                 isUploaded = 1;
 

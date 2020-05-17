@@ -29,7 +29,18 @@ module.exports = async function(email, message, type) {
             text: 'Please follow this URL http://52.205.254.29/login/confirm?id=' + message
 
         };
-    } else {
+    }
+    else if(type == "premium"){
+        mailOptions = {
+            from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
+            to: email,
+            subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
+            text: 'Please follow this URL http://52.205.254.29/premium/confirm?id=' + message
+
+        };
+
+    }
+     else {
         mailOptions = {
             from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
             to: email,

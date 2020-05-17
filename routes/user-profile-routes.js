@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
+var sendmail = require('../source/sendmail');
 const profileNotification = require('../source/notification-api');
 const User = require('../source/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
+const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
 const limiter = rateLimit({
@@ -14,8 +16,8 @@ const limiter = rateLimit({
 });
 
 //GET USER'S PUBLIC PROFILE, PATH PARAMS: id
-router.get('/users/:id', checkAuth, limiter, async(req, res) => {
-
+router.get('/users/:id', checkIfAuth, limiter, async(req, res) => {
+    if(req.isAuth){
     const user = await User.me(req.params.id, req.user._id);
     if (user) {
         let curUser = await User.getUserById(req.user._id);
@@ -25,6 +27,11 @@ router.get('/users/:id', checkAuth, limiter, async(req, res) => {
     } else {
         res.sendStatus(404)
     }
+}else{
+    const user = await User.getUnAuthUser(req.params.id);
+    if(!user) res.sendStatus(404);
+    else res.status(200).json(user);
+}
 })
 router.put('/me/promote', checkAuth, limiter, async(req, res) => {
     const prmoteData = Joi.object().keys({
@@ -41,12 +48,29 @@ router.put('/me/promote', checkAuth, limiter, async(req, res) => {
 
         } else {
             const isPromote = await User.promoteToPremium(req.user._id, req.body.cardNumber, req.body.isMonth, req.body.expiresDate);
-            if (isPromote) res.status(200).send({ success: 'promote to premium ' });
+            if (isPromote){ 
+                let user=await User.getUserById(req.user._id);
+                sendmail(user.email, String(user._id), "premium");
+                res.status(200).send({ success: 'check your mail for confirmation ' });
+            }
             else res.status(400).send({ error: 'can not promote' })
         }
     });
 });
+router.post('/premium/confirm', limiter, async(req, res) => {
+    if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
+    let user = await User.getUserById(req.query.id);
 
+    let checkConfirm = await User.confirmPremium(user);
+    if (checkConfirm) {
+        user.product = 'premium';
+        await user.save();
+        return res.status(200).send("user is confirmed");
+    } else {
+        return res.status(403).send("user is not confirmed");
+    }
+
+});
 router.put('/me/free', checkAuth, limiter, async(req, res) => {
     const isPromote = await User.promoteToFree(req.user._id);
     if (isPromote) res.status(200).send({ success: 'become free ' });

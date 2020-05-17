@@ -462,7 +462,7 @@ const Playlist = {
         if (!user) return 0;
         let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return false;
-        if (playlist.collaborative) { return false; }
+        if (playlist.collaborative) {return false; }
         playlist.isPublic = !playlist.isPublic;
         if (!user.createPlaylist) return 0;
         for (var i = 0; i < user.createPlaylist.length; i++) {
@@ -470,6 +470,7 @@ const Playlist = {
                 user.createPlaylist[i].isPrivate = !user.createPlaylist[i].isPrivate;
                 await user.save();
                 await playlist.save();
+
                 return true;
             }
         }
@@ -495,7 +496,9 @@ const Playlist = {
         if (!checkMonooseObjectId([playlistId])) return 0;
         let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return 0;
+        if(!playlist.isPublic) return 0;
         let tracks = [];
+        let playlistJson=[];
         if (!playlist.snapshot) playlist.snapshot = [];
 
         let len = playlist.snapshot.length;
@@ -507,7 +510,8 @@ const Playlist = {
                 tracks.push(track);
             }
         }
-        return tracks;
+        playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks });
+        return playlistJson;
 
     },
     /**

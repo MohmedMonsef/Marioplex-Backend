@@ -3,7 +3,7 @@ const router = express.Router();
 const spotifySchema = require('../models/db');
 const Joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
-var sendmail = require('../forget-password/sendmail');
+var sendmail = require('../source/sendmail');
 const jwt = require('jsonwebtoken');
 require('../config/passport');
 const User = require('../source/user-api')
@@ -71,9 +71,9 @@ router.post('/sign_up', limiter, async(req, res) => {
 
 router.post('/login/confirm', limiter, async(req, res) => {
     if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
-    let user = await users.getUserById(req.query.id);
+    let user = await User.getUserById(req.query.id);
 
-    let checkConfirm = await users.confirmEmail(user);
+    let checkConfirm = await User.confirmEmail(user);
     if (checkConfirm) {
         return res.status(200).send("user is confirmed");
     } else {

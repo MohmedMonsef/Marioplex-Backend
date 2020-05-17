@@ -6,6 +6,7 @@ const { auth: checkAuth } = require('../middlewares/is-me');
 const validatePlaylistInput = require('../validation/playlist');
 const { content: checkContent } = require('../middlewares/content');
 const checkID = require('../validation/mongoose-objectid');
+const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
 
 const rateLimit = require("express-rate-limit");
 // add rate limiting
@@ -16,13 +17,24 @@ const limiter = rateLimit({
 });
 
 //GET PLAYLIST - PATH PARAMS: playlist_id
-router.get('/playlists/:playlist_id', checkAuth, limiter, async(req, res) => {
-    if (checkID([req.params.playlist_id])) {
-        const playlistId = req.params.playlist_id;
-        const playlist = await User.getPlaylist(playlistId, req.query.snapshot, req.user._id);
-        if (!playlist) res.status(400).send('Not found !');
-        else res.send(playlist);
-    } else res.status(403).send('Id is not correct !')
+router.get('/playlists/:playlist_id', checkIfAuth, limiter, async(req, res) => {
+    if (req.isAuth) {
+        if (checkID([req.params.playlist_id])) {
+            const playlistId = req.params.playlist_id;
+            const playlist = await User.getPlaylist(playlistId, req.query.snapshot, req.user._id);
+            if (!playlist) res.status(400).send('Not found !');
+            else res.send(playlist);
+        } else res.status(403).send('Id is not correct !')
+    }
+    else {
+        if (checkID([req.params.playlist_id])) {
+            const playlistId = req.params.playlist_id;
+            const playlist = await Playlist.getPlaylistTracks(playlistId);
+            if (!playlist) res.status(400).send('Not found !');
+            else res.send(playlist);
+        } else res.status(403).send('Id is not correct !')
+
+    }
 })
 
 // CURRENT USER CREATE PLAYLIST - BODY PARAMS : name-Description
@@ -92,8 +104,9 @@ router.post('/playlists/:playlist_id/tracks', checkAuth, limiter, async(req, res
             return res.status(401).send('Bad Request');
         }
         let tracksIds = req.body.tracks.split(',');
-        // console.log(tracksIds);
         if (checkID([req.params.playlist_id]) && checkID(tracksIds)) {
+            let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
+            if (!authorized) return res.status(403).send('FORBIDDEN');
             const playlist = await Playlist.addTrackToPlaylist(req.params.playlist_id, tracksIds);
             if (!playlist) return res.status(404).send({ 'error': 'can not add tracks' });
             return res.status(201).send(playlist.snapshot[playlist.snapshot.length - 1]);
@@ -120,7 +133,7 @@ router.get('/me/playlists', [checkAuth], async(req, res) => {
     })
     //GET A USER'S PUBLIC PLAYLISTS (Followed&&Created)
     //PATH PARAMS:user_id - QUERY PARAMS : limit,offset
-router.get('/users/:user_id/playlists', [checkAuth], async(req, res) => {
+router.get('/users/:user_id/playlists', async(req, res) => {
         if (!checkID([req.params.user_id])) return res.status(403).send({ error: 'error in Id' });
         const playlists = await Playlist.getUserPlaylists(req.params.user_id, req.query.limit, req.query.offset, false);
         if (!playlists || playlists.length == 0) return res.status(404).send('NOT FOUND');
@@ -154,7 +167,8 @@ router.put('/playlists/:playlist_id/public', [checkAuth, limiter, checkContent],
     })
     // GET TRACKS IN PLAYLIST
     //PATH PARAMS:playlist_id
-router.get('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
+router.get('/playlists/:playlist_id/tracks',checkIfAuth, async(req, res) => {
+    if(req.isAuth){
         let user = await User.getUserById(req.user._id);
         if (!user) return res.status(404).send('NOT FOUND');
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
@@ -162,6 +176,14 @@ router.get('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
         if (!tracks) { return res.status(401).send('no tracks'); }
         if (tracks.length == 0) return res.status(404).send('NO Tracks in this playlist yet');
         return res.status(200).send(tracks);
+    }
+    else{
+        if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
+        let tracks = await Playlist.getPlaylistTracks(req.params.playlist_id);
+        if (!tracks) { return res.status(401).send('no tracks'); }
+        if (tracks.length == 0) return res.status(404).send('NO Tracks in this playlist yet');
+        return res.status(200).send(tracks);
+    }
     })
     // DELETE TRACKS FROM PLAYLIST
     //PATH PARAMS : playlist_id

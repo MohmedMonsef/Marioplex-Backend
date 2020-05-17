@@ -92,6 +92,7 @@ const User = new Schema({
     country: String,
     fcmToken: String,
     confirm: Boolean,
+    premiumConfirm:Boolean,
     isLogged: Boolean,
     recentlySearch: [{
         id: mongoose.Schema.Types.ObjectId,

@@ -5,7 +5,7 @@ const Playlist = require('./playlist-api');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const Artist = require('./artist-api');
-const sendmail = require('../forget-password/sendmail');
+const sendmail = require('./sendmail');
 const Player = require('./player-api');
 const Image = require('./image-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
@@ -30,7 +30,24 @@ const User = {
 
         return user;
     },
-
+    getUnAuthUser: async function(userId){
+        if (!checkMonooseObjectID([userId])) return 0;
+        const user = await this.getUserById(userId);
+        if(!user) return 0;
+        const publicUser = {
+            gender:user.gender,
+            email:user.email,
+            displayName:user.displayName,
+            birthDate: user.birthDate,
+            product: user.product,
+            images: user.images,
+            follow: user.follow,
+            createPlaylist: user.createPlaylist,
+            followPlaylist:user.followPlaylist,
+            saveAlbum: user.saveAlbum
+        }
+        return publicUser;
+    },
 
     /**
      *  update user profile information
@@ -428,6 +445,12 @@ const User = {
         await user.save();
         return true;
     },
+    confirmPremium: async function(user) {
+        if (!user.premiumConfirm) user.premiumConfirm = true;
+        if (user.premiumConfirm == false) { user.premiumConfirm = true; }
+        await user.save();
+        return true;
+    },
     //user forget password
     //params: user
     /** 
@@ -531,6 +554,7 @@ const User = {
             type: "user",
             fcmToken: "none",
             confirm: false,
+            premiumConfirm:false,
             isFacebook: false,
             images: [],
             follow: [],
@@ -587,7 +611,7 @@ const User = {
         const createdPlaylist = await Playlist.createPlaylist(userId, playlistName, description);
         //add to user 
         if (!createdPlaylist) return 0;
-        const addToUser = this.addPlaylistToCreatedToUser(user, createdPlaylist._id);
+        const addToUser = await this.addPlaylistToCreatedToUser(user, createdPlaylist._id);
         if (!addToUser) return 0;
         return createdPlaylist;
     },
@@ -666,21 +690,18 @@ const User = {
         let createdUser;
         let playlistIndex;
         let found = false;
-        for (let user in users) {
-            if (!users[user].createPlaylist) return 0;
-            for (var i = 0; i < users[user].createPlaylist.length; i++) {
-                if (String(users[user].createPlaylist[i].playListId) == String(playlistId)) {
-                    createdUser = users[user];
-                    playlistIndex = i;
-                    found = true;
+        let playlist=await Playlist.getPlaylist(playlistId);
+        createdUser=await this.getUserById(playlist.ownerId);
+        if (!createdUser) { return false; }
+        console.log(createdUser);
+        if (String(createdUser._id) == String(userId)) return true;
+        else {
+            for(var i=0;i<createdUser.createPlaylist.length;i++){
+                if(String(createdUser.createPlaylist[i].playListId)==String(playlistId)){
+                    playlistIndex=i;
                     break;
                 }
             }
-            if (found) break;
-        }
-        if (!createdUser) { return false; }
-        if (createdUser._id + 1 == userId + 1) return true;
-        else {
             for (var i = 0; i < createdUser.createPlaylist[playlistIndex].collaboratorsId.length; i++) {
                 if (String(createdUser.createPlaylist[playlistIndex].collaboratorsId[i]) == String(userId)) {
                     return true;
@@ -729,13 +750,11 @@ const User = {
         if (user.product == 'premium') {
             return false;
         }
-        user.product = 'premium';
         user.premium['expiresDate'] = expiresDate;
         user.premium['cardNumber'] = cardNumber;
         user.premium['isMonth'] = isMonth;
         user.premium['ParticipateDate'] = Date.now();
         await user.save();
-        sendmail(user.email, 'Congrats!! ^^) You are Now Promoted to premium so You can Login with your Account as an premium please login again :\n enjoy with premium');
         return true;
     },
     // to make user be free

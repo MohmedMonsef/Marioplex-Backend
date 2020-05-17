@@ -104,7 +104,7 @@ const Playlist = {
                     const artist = await Artist.getArtist(artistId);
                     if (!album || !artist) { return 0; }
                     const isLiked = await Track.checkIfUserLikeTrack(user, track1._id) ? true : false;
-                    tracks.push({ trackid: track1._id, name: track1.name, playable: track1.playable, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked, duration: track1.duration });
+                    tracks.push({ trackid: track1._id, name: track1.name, playable: track1.playable, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked, duration: track1.duration,images:track1.images });
                 }
             }
             const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;

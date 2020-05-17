@@ -41,7 +41,7 @@ router.get('/Artists/numberOfFollowers/:id', limiter, async(req, res) => {
     const followersPerYear = await Artist.getArtistNumberOfFollowersInYear(artistID);
     //IF NO SUCH ARTIST RETURN 404 NOT FOUND ELSE RETURN STATUS 200 WITH THE ARTIST
     if (followersPerday==-1||followersPerMonth==-1||followersPerYear==-1) return res.status(404).send("");
-    else return res.status(200).send({"day":followersPerday,"month":followersPerMonth,"year":followersPerYear});
+    else return res.status(200).send({'numOfFollowers': [followersPerday,followersPerMonth,followersPerYear] });
 
 });
 // get Artists - Query Params : artists_ids

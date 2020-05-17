@@ -5,6 +5,7 @@ const app = express();
 const methodOverride = require('method-override');
 //connect to database
 connection(app);
+require('./config/firebase-config')(); // set up google drive
 require('./config/google-drive-setup')(); // set up google drive
 const cors = require('cors');
 const bodyparser = require('body-parser');

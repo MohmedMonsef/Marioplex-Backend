@@ -1,8 +1,7 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
-
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 var admin = require('firebase-admin');
-admin.initializeApp()
+admin.initializeApp();
 const Notifications = {
   //send one notification to many users
   sendNotification: async function(registrationTokens,message) {
@@ -97,10 +96,8 @@ const Notifications = {
         let users;
         let tokens=[];
         
-        await userDocument.find({}, function(err, allUsers) {
-          if(err){ users = [];return;}
-            users = allUsers;
-        });
+       users= await userDocument.find({});
+        if(users==undefined)return;
         //create Notification object
         let notificationMessage={
                 data: {
@@ -146,10 +143,8 @@ const Notifications = {
       let users;
       let tokens=[];
       
-      await userDocument.find({}, function(err, allUsers) {
-        if(err){ users = [];return;}
-          users = allUsers;
-      });
+      users=await userDocument.find({});
+      if(users==undefined)return;
       //create Notification object
       let notificationMessage={
               data: {

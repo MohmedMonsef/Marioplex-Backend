@@ -203,7 +203,7 @@ router.put('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
     let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
     if (!authorized) { return res.status(403).send('FORBIDDEN'); }
     if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
-    let result = await Playlist.reorderPlaylistTracks(req.params.playlist_id, req.body.snapshot_id, req.body.range_start, Number(req.body.range_length), req.body.insert_before);
+    let result = await Playlist.reorderPlaylistTracks(req.params.playlist_id, req.body.snapshot_id, Number(req.body.range_start), Number(req.body.range_length), Number(req.body.insert_before));
     if (!result) return res.status(404).send('NO Tracks Reordered');
     return res.status(200).send(result);
 })

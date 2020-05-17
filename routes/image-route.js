@@ -5,6 +5,7 @@ const { upload: uploadImage } = require('../middlewares/upload-image');
 const rateLimit = require("express-rate-limit");
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+const checkMonooseObjectID = require('../validation/mongoose-objectid')
 // add rate limiting
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -112,6 +113,17 @@ router.get('/images/:image_id', limiter, async(req, res) => {
     if (!belongsTo) return res.status(404).send('No belongs to');
 
     const imageId = req.params.image_id;
+    if(!checkMonooseObjectID([imageId])){
+        gfsImages.files.findOne({"metadata.belongsTo": "default" }, function(err, file) {
+            if(err || !file){res.status(404).send("no image");return;}
+            res.header('Content-Length', file.length);
+            res.header('Content-Type', file.contentType);
+
+            gfsImages.createReadStream({
+                _id: file._id
+            }).pipe(res);
+        });
+    }else{
     // get file from gridfs
     gfsImages.files.findOne({ "metadata.imageId":  ObjectId(imageId), "metadata.belongsTo": belongsTo }, function(err, file) {
       //  console.log(err,file,belongsTo)
@@ -163,6 +175,7 @@ router.get('/images/:image_id', limiter, async(req, res) => {
         }
     }
     })
+}
 })
 
 // delete image 

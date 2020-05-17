@@ -495,7 +495,9 @@ const Playlist = {
         if (!checkMonooseObjectId([playlistId])) return 0;
         let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return 0;
+        if(!playlist.isPublic) return 0;
         let tracks = [];
+        let playlistJson=[];
         if (!playlist.snapshot) playlist.snapshot = [];
 
         let len = playlist.snapshot.length;
@@ -507,7 +509,8 @@ const Playlist = {
                 tracks.push(track);
             }
         }
-        return tracks;
+        playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks });
+        return playlistJson;
 
     },
     /**

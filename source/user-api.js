@@ -731,21 +731,18 @@ const User = {
         let createdUser;
         let playlistIndex;
         let found = false;
-        for (let user in users) {
-            if (!users[user].createPlaylist) return 0;
-            for (var i = 0; i < users[user].createPlaylist.length; i++) {
-                if (String(users[user].createPlaylist[i].playListId) == String(playlistId)) {
-                    createdUser = users[user];
-                    playlistIndex = i;
-                    found = true;
+        let playlist=await Playlist.getPlaylist(playlistId);
+        createdUser=await this.getUserById(playlist.ownerId);
+        if (!createdUser) { return false; }
+        console.log(createdUser);
+        if (String(createdUser._id) == String(userId)) return true;
+        else {
+            for(var i=0;i<createdUser.createPlaylist.length;i++){
+                if(String(createdUser.createPlaylist[i].playListId)==String(playlistId)){
+                    playlistIndex=i;
                     break;
                 }
             }
-            if (found) break;
-        }
-        if (!createdUser) { return false; }
-        if (createdUser._id + 1 == userId + 1) return true;
-        else {
             for (var i = 0; i < createdUser.createPlaylist[playlistIndex].collaboratorsId.length; i++) {
                 if (String(createdUser.createPlaylist[playlistIndex].collaboratorsId[i]) == String(userId)) {
                     return true;

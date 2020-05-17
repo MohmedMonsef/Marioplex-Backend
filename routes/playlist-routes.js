@@ -18,7 +18,8 @@ const limiter = rateLimit({
 
 //GET PLAYLIST - PATH PARAMS: playlist_id
 router.get('/playlists/:playlist_id', checkIfAuth, limiter, async(req, res) => {
-    if (req.isAuth) {
+  async function getPlaylist(){  
+      if (req.isAuth) {
         if (checkID([req.params.playlist_id])) {
             const playlistId = req.params.playlist_id;
             const playlist = await User.getPlaylist(playlistId, req.query.snapshot, req.user._id);
@@ -35,11 +36,19 @@ router.get('/playlists/:playlist_id', checkIfAuth, limiter, async(req, res) => {
         } else res.status(403).send('Id is not correct !')
 
     }
+}
+try{
+    await getPlaylist();
+}
+catch(e){
+    return res.status(500).send("some error occured");
+}
 })
 
 // CURRENT USER CREATE PLAYLIST - BODY PARAMS : name-Description
 router.post('/users/playlists', checkAuth, limiter, async(req, res) => {
-        const userId = req.user._id;
+     async function createPlaylist(){ 
+         const userId = req.user._id;
         const { errors, isValid } = validatePlaylistInput(req.body);
         // Check validation
         if (!isValid) {
@@ -51,11 +60,18 @@ router.post('/users/playlists', checkAuth, limiter, async(req, res) => {
         const createPlaylist = await User.createdPlaylist(userId, details.name, details.Description);
         if (createPlaylist) res.send(createPlaylist);
         else res.send({ error: 'can not create' }); // if can not create for unexpected reason
-
+    }
+    try{
+        await createPlaylist();
+    }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
     })
     // FOLLOW PLAYLIST - PATH PARAMS : playlist_id - BODY PARAMS:isPrivate
 router.put('/playlists/:playlist_id/followers', checkAuth, limiter, async(req, res) => {
-    if (checkID([req.params.playlist_id])) {
+   async function followPlaylist(){ 
+       if (checkID([req.params.playlist_id])) {
         const userId = req.user._id; // get it from desierialize auth 
         const playlistId = req.params.playlist_id;
         const isPrivate = req.body.isPrivate || false;
@@ -73,34 +89,56 @@ router.put('/playlists/:playlist_id/followers', checkAuth, limiter, async(req, r
             }
         else res.status(400).send({ 'error': 'this playlist cant be followed' });
     } else res.status(403).send({ error: 'error in Id' });
+}
+try{
+    await followPlaylist();
+}
+catch(e){
+    return res.status(500).send("some error occured");
+}
 })
 
 // USER UNFOLLOW PLAYLIST - PATH PARAMS : playlist_id
 router.delete('/playlists/:playlist_id/followers', checkAuth, limiter, async(req, res) => {
-    if (checkID([req.params.playlist_id])) {
+  async function unfollowPlaylist(){ 
+      if (checkID([req.params.playlist_id])) {
         const userId = req.user._id; // get it from desierialize auth
         const playlistId = req.params.playlist_id;
         const updatedUser = await User.unfollowPlaylist(userId, playlistId);
         if (updatedUser) res.status(200).send({ success: 'unfollowed this playlist successfully' });
         else res.status(400).send({ 'error': 'user did not follow this playlist ' });
     } else res.status(403).send({ error: 'error in Id' });
-
+  }
+  try{
+    await unfollowPlaylist();
+}
+catch(e){
+    return res.status(500).send("some error occured");
+}
 });
 // DELETE PLAYLIST -  PATH PARAMS : playlist_id
 router.delete('/me/delete/playlists/:playlist_id', checkAuth, limiter, async(req, res) => {
-        if (checkID([req.params.playlist_id])) {
+      async function deletePlaylist(){
+          if (checkID([req.params.playlist_id])) {
             const userId = req.user._id; // get it from desierialize auth
             const playlistId = req.params.playlist_id;
             const updatedUser = await User.deletePlaylist(userId, playlistId);
             if (!updatedUser) res.status(400).send({ error: 'can not delete !' });
             else res.status(200).send({ success: 'Delete successfully' });
         } else res.status(403).send({ error: 'error in Id' });
-
+    }
+    try{
+        await deletePlaylist();
+    }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
 
     })
     //ADD TRACK TO PLAYLIST - PATH PARAMS:playlist_id -BODY PARAMS:tracks (Array of ids)
 router.post('/playlists/:playlist_id/tracks', checkAuth, limiter, async(req, res) => {
-        if (req.body.tracks == undefined) {
+     async function addTrackToPlaylist(){ 
+         if (req.body.tracks == undefined) {
             return res.status(401).send('Bad Request');
         }
         let tracksIds = req.body.tracks.split(',');
@@ -111,10 +149,19 @@ router.post('/playlists/:playlist_id/tracks', checkAuth, limiter, async(req, res
             if (!playlist) return res.status(404).send({ 'error': 'can not add tracks' });
             return res.status(201).send(playlist.snapshot[playlist.snapshot.length - 1]);
         } else res.status(403).send({ error: 'error in Id' });
+    }
+    try{
+        await addTrackToPlaylist();
+    }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
+
     })
     //UPDATE CREATE PLAYLIST DETAILS  {name,description => done + {image} not done yet} 
     //PATH PARAMS :playlist_id - BODY PARAMS :name,Description
 router.put('/playlists/:playlist_id', [checkAuth, limiter, checkContent], async(req, res) => {
+      async function updatePlaylist(){  
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
         let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
         if (!authorized) { return res.status(403).send('FORBIDDEN'); }
@@ -122,27 +169,50 @@ router.put('/playlists/:playlist_id', [checkAuth, limiter, checkContent], async(
         const playlist = await Playlist.updatePlaylistDetails(req.params.playlist_id, details);
         if (!playlist) return res.status(404).send({ 'error': 'cannot update playlist' });
         return res.status(200).send(playlist);
+}
+        try{
+            await updatePlaylist();
+        }
+        catch(e){
+            return res.status(500).send("some error occured");
+        }
+
     })
     //GET CURRENT USER PLAYLISTS (Created && Followed)
     //QUERY PARAMS : limit,offset
 router.get('/me/playlists', [checkAuth], async(req, res) => {
-
+        async function getCurrentUserPlaylists(){
         const playlists = await Playlist.getUserPlaylists(req.user._id, req.query.limit, req.query.offset, true);
         return res.status(200).send(playlists);
+        }
+        try{
+            await getCurrentUserPlaylists();
+        }
+        catch(e){
+            return res.status(500).send("some error occured");
+        }
 
     })
     //GET A USER'S PUBLIC PLAYLISTS (Followed&&Created)
     //PATH PARAMS:user_id - QUERY PARAMS : limit,offset
 router.get('/users/:user_id/playlists', async(req, res) => {
-        if (!checkID([req.params.user_id])) return res.status(403).send({ error: 'error in Id' });
+    async function getUserPlaylists(){
+         if (!checkID([req.params.user_id])) return res.status(403).send({ error: 'error in Id' });
         const playlists = await Playlist.getUserPlaylists(req.params.user_id, req.query.limit, req.query.offset, false);
         if (!playlists || playlists.length == 0) return res.status(404).send('NOT FOUND');
         res.status(200).send(playlists);
-
+    }
+    try{
+        await getUserPlaylists();
+    }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
     })
     // TOGGLE COLLABORATIVE 
     //PATH PARAMS :playlist_id
 router.put('/playlists/:playlist_id/collaborative', [checkAuth, limiter, checkContent], async(req, res) => {
+      async function toggleCollaborative(){  
         let user = await User.getUserById(req.user._id);
         if (!user) return res.status(404).send('NOT FOUND');
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
@@ -151,10 +221,18 @@ router.put('/playlists/:playlist_id/collaborative', [checkAuth, limiter, checkCo
         let done = await Playlist.changeCollaboration(user, req.params.playlist_id);
         if (!done) return res.status(404).send('NOT FOUND');
         return res.status(200).send('CHANGED');
+      }
+      try{
+        await toggleCollaborative();
+    }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
     })
     // TOGGLE isPublic 
     //PATH PARAMS :playlist_id
 router.put('/playlists/:playlist_id/public', [checkAuth, limiter, checkContent], async(req, res) => {
+      async function togglePublic(){  
         let user = await User.getUserById(req.user._id);
         if (!user) return res.status(404).send('NOT FOUND');
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
@@ -164,11 +242,19 @@ router.put('/playlists/:playlist_id/public', [checkAuth, limiter, checkContent],
         let done = await Playlist.changePublic(user, req.params.playlist_id);
         if (!done) return res.status(404).send('Cant be PUblic');
         return res.status(200).send('CHANGED');
+      }
+      try{
+        await togglePublic();
+         }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
     })
     // GET TRACKS IN PLAYLIST
     //PATH PARAMS:playlist_id
 router.get('/playlists/:playlist_id/tracks',checkIfAuth, async(req, res) => {
-    if(req.isAuth){
+   async function getPlaylistTracks(){ 
+       if(req.isAuth){
         let user = await User.getUserById(req.user._id);
         if (!user) return res.status(404).send('NOT FOUND');
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
@@ -184,10 +270,18 @@ router.get('/playlists/:playlist_id/tracks',checkIfAuth, async(req, res) => {
         if (tracks.length == 0) return res.status(404).send('NO Tracks in this playlist yet');
         return res.status(200).send(tracks);
     }
+}
+try{
+    await getPlaylistTracks();
+}
+catch(e){
+    return res.status(500).send("some error occured");
+}
     })
     // DELETE TRACKS FROM PLAYLIST
     //PATH PARAMS : playlist_id
 router.delete('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
+       async function deletePlaylistTracks(){
         let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
         if (!authorized) return res.status(403).send('FORBIDDEN');
         if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
@@ -196,36 +290,65 @@ router.delete('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => 
         let result = await Playlist.removePlaylistTracks(req.params.playlist_id, tracksIds, req.body.snapshot);
         if (!result) return res.status(404).send('NO Tracks Delelted');
         return res.status(200).send(result);
+       }
+       try{
+        await deletePlaylistTracks();
+    }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
     })
     // REORDER PLAYLIST
     //PATH PARAMS:playlist_id - BODY PARAMS : start,length,before
 router.put('/playlists/:playlist_id/tracks', [checkAuth], async(req, res) => {
+   async function reorderPlaylistTracks(){
     let authorized = await User.checkAuthorizedPlaylist(req.user._id, req.params.playlist_id);
     if (!authorized) { return res.status(403).send('FORBIDDEN'); }
     if (!checkID([req.params.playlist_id])) return res.status(403).send({ error: 'error in Id' });
     let result = await Playlist.reorderPlaylistTracks(req.params.playlist_id, req.body.snapshot_id, Number(req.body.range_start), Number(req.body.range_length), Number(req.body.insert_before));
     if (!result) return res.status(404).send('NO Tracks Reordered');
     return res.status(200).send(result);
+   }
+   try{
+    await reorderPlaylistTracks();
+}
+catch(e){
+    return res.status(500).send("some error occured");
+}
 })
 
 router.get('/me/deletedplaylists', [checkAuth], async(req, res) => {
-
+    async function getDeletedPlaylists(){
     const playlists = await Playlist.getDeletedPlaylists(req.user._id, req.query.limit);
     if (!playlists || playlists.length == 0) {
         return res.status(404).send("NO DELETED PLAYLISTS YET");
     }
     return res.status(200).send(playlists);
-
+    }
+    try{
+        await getDeletedPlaylists();
+    }
+    catch(e){
+        return res.status(500).send("some error occured");
+    }
 })
 
 router.put('/me/restoreplaylists', [checkAuth], async(req, res) => {
+   async function restorePlaylists()
+   {
     if (!req.query.playlistsIds || req.query.playlistsIds == "") return res.status(403).send("no ids for playlists given");
     playlists = req.query.playlistsIds.split(',');
     if (!checkID(playlists)) return res.status(403).send({ error: 'error in Ids' });
     const restored = await User.restorePlaylists(req.user._id, playlists);
     if (!restored || restored.length == 0) return res.status(404).send('CANT BE RESTORED');
     res.status(200).send(restored);
-
+   }
+   try{
+    await restorePlaylists();
+}
+catch(e){
+    return res.status(500).send("some error occured");
+}
 })
 
 module.exports = router;

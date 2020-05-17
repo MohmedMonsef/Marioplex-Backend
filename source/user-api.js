@@ -45,9 +45,10 @@ const User = {
      * @param {string} cardNumber  - new card number
      * @param {boolean} isMonth - if premium per month or year
      * @param {string} newPassword  - new password for user
+     * @param {string} repeatedPassword  - new password for user
      * @returns {Number}
      */
-    update: async function(userId, gender, birthDate, displayName, password, email, country, expiresDate, cardNumber, isMonth, newPassword) {
+    update: async function(repeatedPassword, userId, gender, birthDate, displayName, password, email, country, expiresDate, cardNumber, isMonth, newPassword) {
         if (!checkMonooseObjectID([userId])) return 0;
 
         const user = await this.getUserById(userId);
@@ -77,7 +78,8 @@ const User = {
                     user.displayName = displayName;
                 }
 
-                if (newPassword != undefined) {
+                if (newPassword != undefined && repeatedPassword == newPassword) {
+
                     bcrypt.hash(newPassword, 10, (err, hash) => {
                         if (!err) {
                             user.password = hash;
@@ -345,8 +347,15 @@ const User = {
         let artist = await Artist.getArtist(artistId);
         if (!user || (!artist)) return 0;
         if (!user.follow) user.follow = [];
-        user.follow.push({ 'id': artistId });
-        await user.save();
+        if (!artist.followed) artist.followed = [];
+        if(!await this.checkIfUserFollowArtist(userId, artistId)){
+            user.follow.push({ 'id': artistId });
+            await user.save();
+            console.log('1');
+            artist.followed.push({'id':userId,'date':new Date()});
+            await artist.save();
+        }
+    
         return 1;
     },
     /**
@@ -362,16 +371,22 @@ const User = {
         if (!user || !artist) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
-
+        if (!artist.followed) artist.followed = [];
+        if(!await this.checkIfUserFollowArtist(userId, artistId)) return 0;
         for (let i = 0; i < user.follow.length; i++) {
             if (String(user.follow[i].id) == String(artistId)) {
                 user.follow.splice(i, 1);
-                user.save();
+                await user.save();
+            }
+        }
+        for (let i = 0; i < artist.followed.length; i++) {
+            if (String(artist.followed[i].id) == String(userId)){
+                artist.followed.splice(i, 1);
+                await artist.save();                
                 return 1;
             }
         }
         return 0;
-
     },
     /**
      * 
@@ -380,96 +395,23 @@ const User = {
      * @returns {boolean} 
      */
     checkIfUserFollowArtist: async function(userId, artistId) {
-        if (!checkMonooseObjectID([userId, artistId])) return 0;
+        if (!checkMonooseObjectID([userId, artistId])) return -1;
         const user = await this.getUserById(userId);
         let artist = await Artist.getArtist(artistId);
-        if (!user || (!artist )) return 0;
+        if (!user || (!artist )) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {
             if (String(user.follow[i].id) == String(artistId))
                 return true;
+                
         }
         return false;
     },
     //check if user email in db
     //params: email
 
-    /**
-     * 
-     * @param {Object} artist
-     * @returns {void} 
-     */
-    updateDate: async function(artist) {
-        if (artist.date != Date.now()) {
-            artist.date = new Date();
-            await artist.save();
-        }
-
-    },
-    /**
-     * 
-     * @param {String} artistId 
-     * @returns {Number}
-     */
-    getArtistNumberOfFollowersInMonth: async function(artistId) {
-        let artist = await Artist.getArtist(artistId);
-        if (!artist) return 0;
-        var today = new Date();
-
-        if (artist.date.getMonth() == today.getMonth() &&
-            artist.date.getFullYear() == today.getFullYear()) {
-            artist.numOfFollowersPerMonth += 1;
-        } else {
-            artist.numOfFollowersPerMonth = 0;
-        }
-        await artist.save();
-        await this.updateDate(artist);
-        return artist.numOfFollowersPerMonth;
-
-    },
-    /**
-     * 
-     * @param {String} artistId
-     * @returns {Number} 
-     */
-    getArtistNumberOfFollowersInDay: async function(artistId) {
-        let artist = await Artist.getArtist(artistId);
-        if (!artist) return 0;
-        var today = new Date();
-
-        if (artist.date.getMonth() == today.getMonth() &&
-            artist.date.getFullYear() == today.getFullYear() &&
-            artist.date.getDay() == today.getDay()) {
-            artist.numOfFollowersPerDay += 1;
-        } else {
-            artist.numOfFollowersPerDay = 0;
-        }
-        await artist.save();
-        await this.updateDate(artist);
-        return artist.numOfFollowersPerDay;
-
-    },
-    /**
-     * 
-     * @param {String} artistId
-     * @returns {Number} 
-     */
-    getArtistNumberOfFollowersInYear: async function(artistId) {
-        let artist = await Artist.getArtist(artistId);
-        if (!artist) return 0;
-        var today = new Date();
-
-        if (artist.date.getFullYear() == today.getFullYear()) {
-            artist.numOfFollowersPerYear += 1;
-        } else {
-            artist.numOfFollowersPerYear = 0;
-        }
-        await artist.save();
-        await this.updateDate(artist);
-        return artist.numOfFollowersPerYear;
-
-    },
+    
     /** 
      * check if user email in db
      * @param  {string} email - the user email 

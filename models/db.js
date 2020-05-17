@@ -194,9 +194,6 @@ const Artist = new Schema({
     type: String,
     Name: String,
     date: Date,
-    numOfFollowersPerDay: Number,
-    numOfFollowersPerMonth: Number,
-    numOfFollowersPerYear: Number,
     images: [Image],
     userId: mongoose.Schema.Types.ObjectId
         //ref: 'User'
@@ -208,6 +205,10 @@ const Artist = new Schema({
     addTracks: [{
         trackId: mongoose.Schema.Types.ObjectId
             //ref: 'Track'
+    }],
+    followed:[{
+        date: Date,
+        id: mongoose.Schema.Types.ObjectId
     }]
 
 });

@@ -5,6 +5,66 @@ const Track = require('./track-api');
 
 
 const Artist = {
+    /**
+     * 
+     * @param {String} artistId
+     * @returns {Number} 
+     */
+    getArtistNumberOfFollowersInMonth: async function(artistId) {
+        let artist = await this.getArtist(artistId);
+        if (!artist) return -1;
+        if (!artist.followed) {artist.followed = []; return 0;}
+        var numberOfFollowers = 0;
+        var today = new Date();
+        for(let i=0;i<artist.followed.length;i++){
+            let date=artist.followed[i].date;
+            if(date.getMonth() == today.getMonth() &&
+            date.getFullYear() == today.getFullYear())
+              numberOfFollowers +=1;
+        }
+        return numberOfFollowers;
+
+    },
+    /**
+     * 
+     * @param {String} artistId
+     * @returns {Number} 
+     */
+    getArtistNumberOfFollowersInDay: async function(artistId) {
+        let artist = await this.getArtist(artistId);
+        if (!artist) return -1;
+        if (!artist.followed) {artist.followed = []; return 0;}
+        var numberOfFollowers = 0;
+        var today = new Date();
+        for(let i=0;i<artist.followed.length;i++){
+            let date=artist.followed[i].date;
+            if(date.getMonth() == today.getMonth() &&
+            date.getFullYear() == today.getFullYear() &&
+            date.getDay() == today.getDay())
+               numberOfFollowers +=1;
+        }
+        return numberOfFollowers;
+    },
+    /**
+     * 
+     * @param {String} artistId
+     * @returns {Number} 
+     */
+    getArtistNumberOfFollowersInYear: async function(artistId) {
+        let artist = await this.getArtist(artistId);
+        if (!artist) return -1;
+        if (!artist.followed) {artist.followed = []; return 0;}
+        var today = new Date();
+        var numberOfFollowers = 0;
+        if(!artist.followed)artist.followed=[];
+        for(let i=0;i<artist.followed.length;i++){
+            let date=artist.followed[i].date;
+            if(date.getFullYear() == today.getFullYear())
+               numberOfFollowers +=1;
+        }
+        return numberOfFollowers;
+
+    },
     /** 
      *  create an artist
      * @param  {object} user - the user who promote to artist 
@@ -29,7 +89,8 @@ const Artist = {
             popularity: 0,
             images: [],
             addAlbums: [],
-            addTracks: []
+            addTracks: [],
+            followed: []
 
         });
         await artist.save();

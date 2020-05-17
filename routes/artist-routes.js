@@ -31,6 +31,18 @@ router.get('/Artists/:artist_id', checkAuth, limiter, async(req, res) => {
 
 });
 
+router.get('/Artists/numberOfFollowers/:id', limiter, async(req, res) => {
+    if (req.params.id == undefined) { return res.status(403).send('Artist ID is undefined'); }
+    const artistID = req.params.id;
+    //GET THE ARTIST WITH THE GIVEN ID
+    const followersPerday = await Artist.getArtistNumberOfFollowersInDay(artistID);
+    const followersPerMonth = await Artist.getArtistNumberOfFollowersInMonth(artistID);
+    const followersPerYear = await Artist.getArtistNumberOfFollowersInYear(artistID);
+    //IF NO SUCH ARTIST RETURN 404 NOT FOUND ELSE RETURN STATUS 200 WITH THE ARTIST
+    if (followersPerday==-1||followersPerMonth==-1||followersPerYear==-1) return res.status(404).send("");
+    else return res.status(200).send({"day":followersPerday,"month":followersPerMonth,"year":followersPerYear});
+
+});
 // get Artists - Query Params : artists_ids
 router.get('/Artists', checkAuth, limiter, limiter, async(req, res) => {
     if (req.query.artists_ids == undefined) { return res.status(403).send('Artist IDs is undefined'); }

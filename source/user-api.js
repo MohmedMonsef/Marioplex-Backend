@@ -669,7 +669,7 @@ const User = {
         const createdPlaylist = await Playlist.createPlaylist(userId, playlistName, description);
         //add to user 
         if (!createdPlaylist) return 0;
-        const addToUser = this.addPlaylistToCreatedToUser(user, createdPlaylist._id);
+        const addToUser = await this.addPlaylistToCreatedToUser(user, createdPlaylist._id);
         if (!addToUser) return 0;
         return createdPlaylist;
     },

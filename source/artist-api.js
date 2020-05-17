@@ -277,6 +277,7 @@ const Artist = {
         let relatedArtists = [];
         //FILTER THE ARTISTS BASED ON THEIR GENRE
         for (let artistIndx in artists) {
+            if(String(artists[artistIndx]._id)==String(artistId))continue;
             for (var i = 0; i < artists[artistIndx].genre.length; i++) {
                 for (var j = 0; j < artist.genre.length; j++) {
                     if (artists[artistIndx].genre[i] == artist.genre[j]) {
@@ -359,6 +360,7 @@ const Artist = {
         return specificTracks;
     },
     checkArtistHasTrack: async function(artist, trackId) {
+        if (!checkMonooseObjectID([trackId])) return 0;
         if (!artist || !trackId) return 0;
         if (!artist.addTracks) return 0;
         for (let track of artist.addTracks) {

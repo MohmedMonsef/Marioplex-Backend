@@ -462,7 +462,7 @@ const Playlist = {
         if (!user) return 0;
         let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return false;
-        if (playlist.collaborative) { return false; }
+        if (playlist.collaborative) {return false; }
         playlist.isPublic = !playlist.isPublic;
         if (!user.createPlaylist) return 0;
         for (var i = 0; i < user.createPlaylist.length; i++) {
@@ -470,6 +470,7 @@ const Playlist = {
                 user.createPlaylist[i].isPrivate = !user.createPlaylist[i].isPrivate;
                 await user.save();
                 await playlist.save();
+
                 return true;
             }
         }

@@ -30,7 +30,6 @@ router.get('/me/following/contains/:id', checkAuth, limiter, async(req, res) => 
         const checks = await User.checkIfUserFollowArtist(userID, req.params.id);
         if (checks == -1) res.sendStatus(500)
         else {
-
             res.status(200).json({ 'follow': checks });
         }
     }

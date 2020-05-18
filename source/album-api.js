@@ -125,22 +125,24 @@ const Album = {
         return reAlbumsJson;
     },
     // get album artist
-    getAlbumArtist: async function(albumID, userID) {
+    getAlbumArtist: async function(albumID, userID, isAuth) {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
         if (!checkMonooseObjectID([albumID, userID])) return 0;
         let album = await this.getAlbumById(albumID);
         let albumInfo = {}
-        let user = await userDocument.findById(userID);
-        if (user) {
-            let isSaved = await this.checkIfUserSaveAlbum(user, albumID);
-            if (isSaved) {
-                albumInfo['isSaved'] = true;
-            } else {
-                albumInfo['isSaved'] = false;
+        if(isAuth){
+            let user = await userDocument.findById(userID);
+            if (user) {
+                let isSaved = await this.checkIfUserSaveAlbum(user, albumID);
+                if (isSaved) {
+                    albumInfo['isSaved'] = true;
+                } else {
+                    albumInfo['isSaved'] = false;
+                }
+    
             }
-
         }
         if (album) {
             let Artist = await artist.getArtist(album.artistId);
@@ -154,11 +156,13 @@ const Album = {
             }
             if (track) {
                 albumInfo['track'] = track;
-            } else {
+            } 
+            else {
                 albumInfo['track'] = []
             }
             return albumInfo;
-        } else {
+        } 
+        else {
             return 0;
         }
 
@@ -202,7 +206,7 @@ const Album = {
         } else return 0;
     },
     //  get tracks of an album
-    getTracksAlbum: async function(albumID, user) {
+    getTracksAlbum: async function(albumID, user, isAuth) {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
@@ -211,7 +215,8 @@ const Album = {
         const album = await this.getAlbumById(albumID);
         if (!album) {
             return 0;
-        } else {
+        } 
+        else {
             if (!album.hasTracks) album.hasTracks = [];
             for (i = 0; i < album.hasTracks.length; i++) {
                 if (!album.hasTracks[i].trackId) continue;
@@ -221,7 +226,9 @@ const Album = {
                     tracks['_id'] = Track._id;
                     tracks['name'] = Track.name;
                     tracks['images'] = Track.images;
-                    tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
+                    if(isAuth){
+                         tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
+                    }
                     tracks['playable'] = Track.playable;
                     tracks['duration'] = Track.duration;
                     Tracks.push(tracks);

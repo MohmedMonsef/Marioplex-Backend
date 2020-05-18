@@ -1,4 +1,3 @@
-
 const spotifySchema = require('../models/db');
 const jwtSeret = require('../config/jwtconfig');
 const jwt = require('jsonwebtoken');
@@ -45,7 +44,7 @@ router.post("/login", limiter, (req, res) => {
                 // User matched
                 // Create JWT Payload
                 var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
-                    expiresIn: '874024h'
+                    expiresIn: '874024687898921h'
                 });
 
                 // return the information including token as JSON

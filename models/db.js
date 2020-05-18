@@ -92,7 +92,7 @@ const User = new Schema({
     country: String,
     fcmToken: String,
     confirm: Boolean,
-    premiumConfirm:Boolean,
+    premiumConfirm: Boolean,
     isLogged: Boolean,
     recentlySearch: [{
         id: mongoose.Schema.Types.ObjectId,
@@ -159,28 +159,28 @@ const User = new Schema({
         }]
     },
     player: {
-        last_playlist_track_index: Number,
-        current_track: {
+        lastPlaylistTrackIndex: Number,
+        currentTrack: {
             trackId: mongoose.Schema.Types.ObjectId,
             isPlaylist: Boolean,
             playlistId: mongoose.Schema.Types.ObjectId
         },
-        next_track: {
+        nextTrack: {
             trackId: mongoose.Schema.Types.ObjectId,
             isPlaylist: Boolean,
             playlistId: mongoose.Schema.Types.ObjectId
         },
-        prev_track: {
+        prevTrack: {
             trackId: mongoose.Schema.Types.ObjectId,
             isPlaylist: Boolean,
             playlistId: mongoose.Schema.Types.ObjectId
         },
         sourceName: String,
-        is_playing: Boolean,
-        is_shuffled: Boolean,
-        current_source: mongoose.Schema.Types.ObjectId,
+        isPlaying: Boolean,
+        isShuffled: Boolean,
+        currentSource: mongoose.Schema.Types.ObjectId,
         isPlaylist: Boolean,
-        is_repeat: Boolean,
+        isRepeat: Boolean,
         volume: Number,
         currentTimeStampe: Number,
         isRepeatTrack: Boolean
@@ -207,7 +207,7 @@ const Artist = new Schema({
         trackId: mongoose.Schema.Types.ObjectId
             //ref: 'Track'
     }],
-    followed:[{
+    followed: [{
         date: Date,
         id: mongoose.Schema.Types.ObjectId
     }]

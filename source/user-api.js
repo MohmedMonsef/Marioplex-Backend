@@ -30,20 +30,20 @@ const User = {
 
         return user;
     },
-    getUnAuthUser: async function(userId){
+    getUnAuthUser: async function(userId) {
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
-        if(!user) return 0;
+        if (!user) return 0;
         const publicUser = {
-            gender:user.gender,
-            email:user.email,
-            displayName:user.displayName,
+            gender: user.gender,
+            email: user.email,
+            displayName: user.displayName,
             birthDate: user.birthDate,
             product: user.product,
             images: user.images,
             follow: user.follow,
             createPlaylist: user.createPlaylist,
-            followPlaylist:user.followPlaylist,
+            followPlaylist: user.followPlaylist,
             saveAlbum: user.saveAlbum
         }
         return publicUser;
@@ -286,15 +286,15 @@ const User = {
     AddTrackToPlaylist: async function(userId, trackId, playlistId) {
         if (!checkMonooseObjectID([userId, trackId, playlistId])) return 0;
         const user = await this.getUserById(userId);
-        if(!user) return 0;
+        if (!user) return 0;
         let userPlaylist = undefined;
-        for(let playlist of user.createPlaylist){
-            if(String(playlist.playListId) == String(playlistId)){
+        for (let playlist of user.createPlaylist) {
+            if (String(playlist.playListId) == String(playlistId)) {
                 userPlaylist = playlist;
                 break;
             }
         }
-        if ( !userPlaylist) { return 0; }
+        if (!userPlaylist) { return 0; }
         const addTrack = await this.addTrack(user, trackId, playlistId);
         return addTrack;
     },
@@ -310,7 +310,7 @@ const User = {
     getUserFollowingArtist: async function(userId) {
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
-        if(!user)return 0;
+        if (!user) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) { return []; }
         let artists = []
@@ -335,7 +335,7 @@ const User = {
     getUserFollowingUser: async function(userId) {
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
-        if(!user)return 0;
+        if (!user) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) { return 0; }
         let users = []
@@ -365,14 +365,14 @@ const User = {
         if (!user || (!artist)) return 0;
         if (!user.follow) user.follow = [];
         if (!artist.followed) artist.followed = [];
-        if(!await this.checkIfUserFollowArtist(userId, artistId)){
+        if (!await this.checkIfUserFollowArtist(userId, artistId)) {
             user.follow.push({ 'id': artistId });
             await user.save();
             console.log('1');
-            artist.followed.push({'id':userId,'date':new Date()});
+            artist.followed.push({ 'id': userId, 'date': new Date() });
             await artist.save();
         }
-    
+
         return 1;
     },
     /**
@@ -389,7 +389,7 @@ const User = {
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return 0;
         if (!artist.followed) artist.followed = [];
-        if(!await this.checkIfUserFollowArtist(userId, artistId)) return 0;
+        if (!await this.checkIfUserFollowArtist(userId, artistId)) return 0;
         for (let i = 0; i < user.follow.length; i++) {
             if (String(user.follow[i].id) == String(artistId)) {
                 user.follow.splice(i, 1);
@@ -397,9 +397,9 @@ const User = {
             }
         }
         for (let i = 0; i < artist.followed.length; i++) {
-            if (String(artist.followed[i].id) == String(userId)){
+            if (String(artist.followed[i].id) == String(userId)) {
                 artist.followed.splice(i, 1);
-                await artist.save();                
+                await artist.save();
                 return 1;
             }
         }
@@ -415,20 +415,20 @@ const User = {
         if (!checkMonooseObjectID([userId, artistId])) return -1;
         const user = await this.getUserById(userId);
         let artist = await Artist.getArtist(artistId);
-        if (!user || (!artist )) return -1;
+        if (!user || (!artist)) return -1;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {
             if (String(user.follow[i].id) == String(artistId))
                 return true;
-                
+
         }
         return false;
     },
     //check if user email in db
     //params: email
 
-    
+
     /** 
      * check if user email in db
      * @param  {string} email - the user email 
@@ -554,7 +554,7 @@ const User = {
             type: "user",
             fcmToken: "none",
             confirm: false,
-            premiumConfirm:false,
+            premiumConfirm: false,
             isFacebook: false,
             images: [],
             follow: [],
@@ -564,9 +564,10 @@ const User = {
             player: {},
             recentlySearch: []
         });
-        user.player["is_shuffled"] = false;
+        user.player["isShuffled"] = false;
+        user.player["isPlaying"] = false;
         user.player["volume"] = 4;
-        user.player["is_repeat"] = false;
+        user.player["isRepeat"] = false;
         user.player['currentTimeStampe'] = 0;
         user.player['isRepeatTrack'] = false;
         await user.save();
@@ -690,15 +691,15 @@ const User = {
         let createdUser;
         let playlistIndex;
         let found = false;
-        let playlist=await Playlist.getPlaylist(playlistId);
-        createdUser=await this.getUserById(playlist.ownerId);
+        let playlist = await Playlist.getPlaylist(playlistId);
+        createdUser = await this.getUserById(playlist.ownerId);
         if (!createdUser) { return false; }
         console.log(createdUser);
         if (String(createdUser._id) == String(userId)) return true;
         else {
-            for(var i=0;i<createdUser.createPlaylist.length;i++){
-                if(String(createdUser.createPlaylist[i].playListId)==String(playlistId)){
-                    playlistIndex=i;
+            for (var i = 0; i < createdUser.createPlaylist.length; i++) {
+                if (String(createdUser.createPlaylist[i].playListId) == String(playlistId)) {
+                    playlistIndex = i;
                     break;
                 }
             }
@@ -826,6 +827,7 @@ const User = {
      */
 
     updateUserPlayer: async function(userId, isPlaylist, sourceId, trackId, tracksIds, sourceType) {
+
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;

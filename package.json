@@ -17,7 +17,7 @@
         "express-session": "^1.17.0",
         "express-validator": "^6.4.0",
         "ffmpeg": "0.0.4",
-        "firebase-admin": "^8.10.0",
+        "firebase-admin": "^8.12.1",
         "fuzzy-search": "^3.2.1",
         "googleapis": "^49.0.0",
         "gridfs": "^1.0.0",

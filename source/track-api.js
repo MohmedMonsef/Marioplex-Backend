@@ -8,10 +8,14 @@ const Track = {
      * @returns {Object} 
      */
     getTrackWithoutAuth: async function(trackId) {
+        try{
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await trackDocument.findById(trackId);
         if (!track) return 0;
         return track;
+    }catch(ex){
+        return 0;
+    }
     },
     /** 
      *  get track by id
@@ -20,7 +24,7 @@ const Track = {
      * @returns {object}
      */
     getTrack: async function(trackId, user) {
-
+        try{
         // connect to db and find track with the same id then return it as json file
         // if found return track else return 0
         if (!checkMonooseObjectID([trackId])) return 0;
@@ -61,6 +65,9 @@ const Track = {
         }
 
         return reTrack;
+    }catch(ex){
+        return 0;
+    }
 
 
     },
@@ -71,6 +78,7 @@ const Track = {
      * @return {object}
      */
     getFullTrack: async function(trackId, user) {
+        try{
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId, user);
         if (!track) return 0; //not found
@@ -86,6 +94,9 @@ const Track = {
         const isLiked = await this.checkIfUserLikeTrack(user, trackId) ? true : false;
 
         return { track: track, isLiked: isLiked, album: { name: album.name, _id: album._id, artist: { name: artist.Name, _id: artist._id } } }
+    }catch(ex){
+        return 0;
+    }
     },
     /** 
      *  get several tracks
@@ -94,6 +105,7 @@ const Track = {
      * @returns {Array<objects>}
      */
     getTracks: async function(trackIds, user) {
+        try{
         if (!checkMonooseObjectID(trackIds)) return 0;
         let tracks = [];
         for (let trackId of trackIds) {
@@ -102,7 +114,9 @@ const Track = {
             tracks.push(track);
         }
         return tracks;
-
+    }catch(ex){
+        return 0;
+    }
     },
     /** 
      *  get audio features for track
@@ -111,6 +125,7 @@ const Track = {
      * 
      */
     getAudioFeaturesTrack: async function(trackId) {
+        try{
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
         if (!track) return 0;
@@ -131,6 +146,9 @@ const Track = {
             valence: track.valence
         }
         return audioFeatures;
+    }catch(ex){
+        return 0;
+    }
     },
     /** 
      *  get audio features for tracks
@@ -138,6 +156,7 @@ const Track = {
      * @returns {Array<Object>}
      */
     getAudioFeaturesTracks: async function(trackIds) {
+        try{
         if (!checkMonooseObjectID(trackIds)) return 0;
         let audioFeatures = {};
         var count = 0;
@@ -152,6 +171,9 @@ const Track = {
         if (count)
             return audioFeatures;
         return 0;
+    }catch(ex){
+        return 0;
+    }
     },
 
     /** 
@@ -160,6 +182,7 @@ const Track = {
      * @param {string} trackId - the track id 
      */
     checkIfUserLikeTrack: async function(user, trackId) {
+        try{
         if (!user) return 0;
         if (!checkMonooseObjectID([trackId])) return 0;
         if (!user['likesTracksPlaylist']) return false;
@@ -174,6 +197,9 @@ const Track = {
                 break;
             }
         return ifFind;
+    }catch(ex){
+        return 0;
+    }
     },
     /** 
      * user like track
@@ -181,6 +207,7 @@ const Track = {
      * @returns {Number}
      */
     likeTrack: async function(trackId) {
+        try{
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
         if (!checkMonooseObjectID([trackId])) return 0;
@@ -191,6 +218,9 @@ const Track = {
         // save track
         await track.save().catch();
         return 1;
+    }catch(ex){
+        return 0;
+    }
     },
 
     /** 
@@ -199,6 +229,7 @@ const Track = {
      * @returns {Number}
      */
     unlikeTrack: async function(trackId) {
+        try{
         // else return 0 as he didn't like the 
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
@@ -207,6 +238,9 @@ const Track = {
         track.like -= 1;
         await track.save().catch();
         return 1;
+    }catch(ex){
+        return 0;
+    }
     },
     /** 
      * user create track
@@ -222,7 +256,7 @@ const Track = {
      * @returns {object}
      */
     createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration, key, keyId, genre) {
-       
+        try{
         if(!artistId || !albumId)return 0;
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
         if (!availableMarkets) availableMarkets = [];
@@ -259,6 +293,9 @@ const Track = {
         await track.save();
 
         return track;
+    }catch(ex){
+        return 0;
+    }
 
     },
     /**
@@ -268,6 +305,7 @@ const Track = {
      * @returns {boolean}
      */
     deleteTrack: async function(userId, trackId) {
+        try{
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -359,6 +397,9 @@ const Track = {
         });
 
         return 1;
+    }catch(ex){
+        return 0;
+    }
 
     },
     // get related tracks to specific track
@@ -369,6 +410,7 @@ const Track = {
      * @returns {Object}
      */
     getRelatedTrack: async function(trackId) {
+        try{
         if (!checkMonooseObjectID([trackId])) return 0;
         const track = await this.getTrack(trackId);
         if (!track) return 0;
@@ -390,6 +432,9 @@ const Track = {
         });
         if (tracksRelated.length == 0) return 0;
         return tracksRelated;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * get related full tracks to certain user
@@ -398,6 +443,7 @@ const Track = {
      * @returns {Object}
      */
     getFullRelatedTracks: async function(userId, trackId) {
+        try{
         if (!checkMonooseObjectID([userId, trackId])) return 0;
 
         const user = await userDocument.findById(userId);
@@ -434,6 +480,9 @@ const Track = {
 
         if (tracksRelated.length == 0) return 0;
         return tracksRelated;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * check if track is playable to certain user
@@ -442,6 +491,7 @@ const Track = {
      * @returns {Boolean}
      */
     checkPlayable: async function(user, trackId) {
+        try{
         if (!user) return 0;
         if (!checkMonooseObjectID([trackId])) return 0;
         if (user.product == "premium") return true;
@@ -452,6 +502,9 @@ const Track = {
             return true;
         }
         return false;
+    }catch(ex){
+        return 0;
+    }
 
     },
     /**
@@ -462,6 +515,7 @@ const Track = {
      * @returns {object}
      */
     updateTrack: async function(userId, trackId, body) {
+        try{
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         if (!body) return 0;
         const user = await userDocument.findById(userId);
@@ -480,6 +534,9 @@ const Track = {
         }
         await track.save();
         return track;
+    }catch(ex){
+        return 0;
+    }
     }
 
 }

@@ -11,6 +11,7 @@ const Image = {
      * @returns {boolean} 
      */
     checkAuthorizedPlaylist: async function(userID, playlistId) {
+        try{
         let users = await userDocument.find({});
         if (!users) return 0;
         let createduser;
@@ -37,6 +38,9 @@ const Image = {
             }
         }
         return false;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -45,6 +49,7 @@ const Image = {
      * @returns {boolean} 
      */
     checkAuthorizedTrack: async function(userId, trackId) {
+        try{
         const user = await userDocument.findById(userId);
         //  console.log('user')
         // console.log(user)
@@ -55,6 +60,9 @@ const Image = {
         if (!artist) return 0;
         const hasAccess = await this.checkArtistHasTrack(artist, trackId);
         return hasAccess;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -62,12 +70,16 @@ const Image = {
      * @returns {object} 
      */
     findMeAsArtist: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const artist = await artistDocument.findOne({ userId: userId }, (err, artist) => {
             if (err) return 0;
             return artist;
         }).catch((err) => 0);
         return artist;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -76,12 +88,16 @@ const Image = {
      * @returns {boolean} 
      */
     checkArtistHasTrack: async function(artist, trackId) {
+        try{
         if (!artist || !trackId) return 0;
         if (!artist.addTracks) return 0;
         for (let track of artist.addTracks) {
             if (String(track.trackId) == String(trackId)) return 1;
         }
         return 0;
+    }catch(ex){
+        return 0;
+    }
     },
 
     /**
@@ -91,6 +107,7 @@ const Image = {
      * @returns {boolean}
      */
     checkAuthorizedAlbum: async function(userId, albumId) {
+        try{
         const user = await userDocument.findById(userId);
         if (!user) return 0;
         // chekc if user is artist
@@ -98,6 +115,9 @@ const Image = {
         if (!artist) return 0;
         const hasAccess = await this.checkArtisthasAlbum(artist._id, albumId);
         return hasAccess;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -106,6 +126,7 @@ const Image = {
      * @returns {Boolean} 
      */
     checkArtisthasAlbum: async function(artistId, albumId) {
+        try{
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
         if (await albumDocument.findById(albumId)) {
             const artist = await artistDocument.findById(artistId);
@@ -115,6 +136,9 @@ const Image = {
             }
         }
         return 0;
+    }catch(ex){
+        return 0;
+    }
     },
     // return the id of the image if it can be added or 0 if cant be added to db
     /**
@@ -126,7 +150,7 @@ const Image = {
      * @returns {boolean} 
      */
     uploadImage: async function(userId, sourceId, belongsTo, image) {
-
+        try{
         if (!checkMonooseObjectID([userId, sourceId])) return 0;
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
@@ -208,6 +232,9 @@ const Image = {
                 return 0;
 
         }
+    }catch(ex){
+        return 0;
+    }
 
     },
     // update images array and vlear previous images
@@ -220,7 +247,7 @@ const Image = {
      * @returns {boolean} 
      */
     updateImage: async function(userId, sourceId, belongsTo, image) {
-
+        try{
         if (!checkMonooseObjectID([userId, sourceId])) return 0;
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
@@ -301,10 +328,13 @@ const Image = {
                 return 0;
 
         }
-
+    }catch(ex){
+        return 0;
+    }
 
     },
     getImage: async function(sourceId, belongsTo) {
+        try{
         if (!checkMonooseObjectID([sourceId])) return 0;
         if (!belongsTo) return 0;
 
@@ -367,6 +397,9 @@ const Image = {
                 return 0;
 
         }
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -377,6 +410,7 @@ const Image = {
      * @returns {boolean}
      */
     deleteImage: async function(imageId, userId, sourceId, belongsTo) {
+        try{
         // remove image from database and from gridfs
         // check if user has access to delete image then delete the image
         if (!checkMonooseObjectID([userId, sourceId])) return 0;
@@ -548,7 +582,9 @@ const Image = {
             default:
                 return 0;
         }
-
+    }catch(ex){
+        return 0;
+    }
 
     },
     // delete single image from the array and return the new array after the deletion 
@@ -559,7 +595,7 @@ const Image = {
      * @returns {boolean} 
      */
     deleteImageFromArray: function(images, imageId) {
-
+        try{
         if (!images) return [];
 
         for (let i = 0; i < images.length; i++) {
@@ -572,6 +608,9 @@ const Image = {
             }
         }
         return 0;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -581,6 +620,7 @@ const Image = {
      * @returns {boolean} 
      */
     deleteImages: async function(userId, sourceId, belongsTo) {
+        try{
         // remove images from database and from gridfs
         // check if user has access to delete image then delete the image
         if (!checkMonooseObjectID([userId, sourceId])) return 0;
@@ -748,6 +788,9 @@ const Image = {
             default:
                 return 0;
         }
+    }catch(ex){
+        return 0;
+    }
     }
 
 

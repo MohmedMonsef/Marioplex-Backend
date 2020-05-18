@@ -58,17 +58,20 @@ router.put('/me/promote', checkAuth, limiter, async(req, res) => {
     });
 });
 router.post('/premium/confirm', limiter, async(req, res) => {
-    if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
-    let user = await User.getUserById(req.query.id);
-
-    let checkConfirm = await User.confirmPremium(user);
-    if (checkConfirm) {
-        user.product = 'premium';
-        await user.save();
-        return res.status(200).send("user is confirmed");
-    } else {
-        return res.status(403).send("user is not confirmed");
-    }
+    
+        if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
+        let user = await User.getUserById(req.query.id);
+    
+        let checkConfirm = await User.confirmPremium(user);
+        if (checkConfirm) {
+            user.product = 'premium';
+            await user.save();
+            return res.status(200).send("user is confirmed");
+        } else {
+            return res.status(403).send("user is not confirmed");
+        }
+     
+  
 
 });
 router.put('/me/free', checkAuth, limiter, async(req, res) => {

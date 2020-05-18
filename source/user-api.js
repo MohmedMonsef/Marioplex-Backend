@@ -22,6 +22,7 @@ const User = {
      * @returns {object}
      */
     getUserById: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await userDocument.findById(userId, (err, user) => {
             if (err) return 0;
@@ -29,8 +30,12 @@ const User = {
         }).catch((err) => 0);
 
         return user;
+    }catch(ex){
+        return 0;
+    }
     },
     getUnAuthUser: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
@@ -47,6 +52,9 @@ const User = {
             saveAlbum: user.saveAlbum
         }
         return publicUser;
+    }catch(ex){
+        return 0;
+    }
     },
 
     /**
@@ -66,6 +74,7 @@ const User = {
      * @returns {Number}
      */
     update: async function(repeatedPassword, userId, gender, birthDate, displayName, password, email, country, expiresDate, cardNumber, isMonth, newPassword) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
 
         const user = await this.getUserById(userId);
@@ -125,6 +134,9 @@ const User = {
 
         } else
             return 0;
+        }catch(ex){
+            return 0;
+        }
 
     },
 
@@ -136,6 +148,7 @@ const User = {
      * @returns {Object}
      */
     me: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) {
@@ -147,6 +160,9 @@ const User = {
         userPublic["images"] = user.images;
         userPublic["type"] = user.type;
         return userPublic;
+    }catch(ex){
+        return 0;
+    }
 
     },
 
@@ -158,6 +174,7 @@ const User = {
      * @returns {Object}
      */
     deleteAccount: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
@@ -169,6 +186,9 @@ const User = {
         // delete user himseld from db
         await userDocument.findByIdAndDelete(userId);
         return 1;
+    }catch(ex){
+        return 0;
+    }
 
     },
     /**
@@ -179,12 +199,16 @@ const User = {
      * @param {Number} volume  - current volume in web 
      */
     updatePlayerInfoLogOut: async function(user, currentTimeStampe, isRepeatTrack, volume) {
+        try{
         if (!user.player['currentTimeStampe']) user.player['currentTimeStampe'] = 0;
         if (!user.player['isRepeatTrack']) user.player['isRepeatTrack'] = false;
         if (currentTimeStampe) user.player['currentTimeStampe'] = currentTimeStampe;
         if (isRepeatTrack) user.player['isRepeatTrack'] = isRepeatTrack;
         if (volume) user.player['volume'] = volume;
         await user.save();
+    }catch(ex){
+        return 0;
+    }
     },
     //user like a track
     //params: userId, trackId
@@ -196,6 +220,7 @@ const User = {
      * @returns {Number}
      */
     likeTrack: async function(userId, trackId) {
+        try{
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
@@ -216,6 +241,9 @@ const User = {
 
         if (!await Playlist.addTrackToPlaylist(user['likesTracksPlaylist'], [trackId])) return 0;
         return Track.likeTrack(trackId);
+    }catch(ex){
+        return 0;
+    }
     },
 
 
@@ -229,6 +257,7 @@ const User = {
      * @returns {Number}
      */
     unlikeTrack: async function(userId, trackId) {
+        try{
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) { return 0; }
@@ -239,6 +268,9 @@ const User = {
         if (!ifFind || ifFind[0] == false) return 0;
         if (!await Playlist.removePlaylistTracks(user['likesTracksPlaylist'], [trackId])) return 0;
         return Track.unlikeTrack(trackId);
+    }catch(ex){
+        return 0;
+    }
     },
     /** 
      * user add track to user's playlist
@@ -250,6 +282,7 @@ const User = {
     //artist add track to user's playlist
     //params: user, trackId, playlistId
     addTrack: async function(user, trackId, playlistId) {
+        try{
         if (!checkMonooseObjectID([playlistId, trackId])) return 0;
         const playlist = await playlistDocument.findById(playlistId);
         const track = await trackDocument.findById(trackId);
@@ -270,6 +303,9 @@ const User = {
         });
         await playlist.save();
         return 1;
+    }catch(ex){
+        return 0;
+    }
 
     },
 
@@ -284,6 +320,7 @@ const User = {
      * @returns {Number}
      */
     AddTrackToPlaylist: async function(userId, trackId, playlistId) {
+        try{
         if (!checkMonooseObjectID([userId, trackId, playlistId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
@@ -297,6 +334,9 @@ const User = {
         if (!userPlaylist) { return 0; }
         const addTrack = await this.addTrack(user, trackId, playlistId);
         return addTrack;
+    }catch(ex){
+        return 0;
+    }
     },
 
     //get user's following artist
@@ -308,6 +348,7 @@ const User = {
      * @returns {Array<Object>}
      */
     getUserFollowingArtist: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
@@ -326,6 +367,9 @@ const User = {
             }
         }
         return artists;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -333,6 +377,7 @@ const User = {
      * @returns {object}
      */
     getUserFollowingUser: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
@@ -351,6 +396,9 @@ const User = {
             }
         }
         return users;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -359,6 +407,7 @@ const User = {
      * @returns {boolean} 
      */
     userFollowArtist: async function(userId, artistId) {
+        try{
         if (!checkMonooseObjectID([userId, artistId])) return 0;
         const user = await this.getUserById(userId);
         let artist = await Artist.getArtist(artistId);
@@ -374,6 +423,9 @@ const User = {
         }
 
         return 1;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -382,6 +434,7 @@ const User = {
      * @returns {boolean} 
      */
     userUnfollowArtist: async function(userId, artistId) {
+        try{
         if (!checkMonooseObjectID([userId, artistId])) return 0;
         const user = await this.getUserById(userId);
         let artist = await Artist.getArtist(artistId);
@@ -404,6 +457,9 @@ const User = {
             }
         }
         return 0;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -412,6 +468,7 @@ const User = {
      * @returns {boolean} 
      */
     checkIfUserFollowArtist: async function(userId, artistId) {
+        try{
         if (!checkMonooseObjectID([userId, artistId])) return -1;
         const user = await this.getUserById(userId);
         let artist = await Artist.getArtist(artistId);
@@ -424,6 +481,9 @@ const User = {
 
         }
         return false;
+    }catch(ex){
+        return 0;
+    }
     },
     //check if user email in db
     //params: email
@@ -435,21 +495,33 @@ const User = {
      * @returns {Object}
      */
     checkmail: async function(email) {
+        try{
         let user = await userDocument.findOne({ email: email });
         if (!user) return false;
         return user;
+    }catch(ex){
+        return 0;
+    }
     },
     confirmEmail: async function(user) {
+        try{
         if (!user.confirm) user.confirm = true;
         if (user.confirm == false) { user.confirm = true; }
         await user.save();
         return true;
+    }catch(ex){
+        return 0;
+    }
     },
     confirmPremium: async function(user) {
+        try{
         if (!user.premiumConfirm) user.premiumConfirm = true;
         if (user.premiumConfirm == false) { user.premiumConfirm = true; }
         await user.save();
         return true;
+    }catch(ex){
+        return 0;
+    }
     },
     //user forget password
     //params: user
@@ -459,13 +531,16 @@ const User = {
      * @returns {string}
      */
     updateforgottenpassword: async function(user, pass) {
-
+        try{
         let password = pass;
         const salt = await bcrypt.genSalt(10);
         let hashed = await bcrypt.hash(password, salt);
         user.password = hashed;
         await user.save();
         return password;
+    }catch(ex){
+        return 0;
+    }
 
     },
 
@@ -480,10 +555,14 @@ const User = {
      * @returns {Number}
      */
     followPlaylist: async function(userId, playlistId, isprivate) {
+        try{
         if (!checkMonooseObjectID([userId, playlistId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
         return await Playlist.followPlaylits(user, playlistId, isprivate);
+    }catch(ex){
+        return 0;
+    }
 
     },
 
@@ -496,10 +575,14 @@ const User = {
      * @returns {Number}
      */
     unfollowPlaylist: async function(userId, playlistId) {
+        try{
         if (!checkMonooseObjectID([userId, playlistId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
         return await Playlist.unfollowPlaylist(user, playlistId);
+    }catch(ex){
+        return 0;
+    }
     },
 
     //user delete playlist
@@ -511,6 +594,7 @@ const User = {
      * @returns {Number}
      */
     deletePlaylist: async function(userId, playlistId) {
+        try{
         if (!checkMonooseObjectID([userId, playlistId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
@@ -527,6 +611,9 @@ const User = {
             ownerId: spotifyUser._id
         });
         return await this.addPlaylistToCreatedToUser(spotifyUser, playlistId);
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * create new user
@@ -539,7 +626,7 @@ const User = {
      * @returns {object} -new user object 
      */
     createUser: async function(username, password, email, gender, country, birthday) {
-
+        try{
         const salt = await bcrypt.genSalt(10);
         let hash = await bcrypt.hash(password, salt);
         const user = new userDocument({
@@ -572,6 +659,9 @@ const User = {
         user.player['isRepeatTrack'] = false;
         await user.save();
         return user;
+    }catch(ex){
+        return 0;
+    }
     },
     //get user's playlist
     //params: playlistId, snapshot, userId
@@ -583,6 +673,7 @@ const User = {
      * @returns {Array<Object>}
      */
     getPlaylist: async function(playlistId, snapshot, userId) {
+        try{
         if (!checkMonooseObjectID([userId, playlistId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
@@ -591,6 +682,9 @@ const User = {
         const owner = await this.getUserById(playlist[0].ownerId);
         playlist.push({ ownerName: owner ? owner.displayName : undefined });
         return playlist;
+    }catch(ex){
+        return 0;
+    }
     },
 
 
@@ -605,6 +699,7 @@ const User = {
      * @returns {Object}
      */
     createdPlaylist: async function(userId, playlistName, description) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         // create new playlist
@@ -615,6 +710,9 @@ const User = {
         const addToUser = await this.addPlaylistToCreatedToUser(user, createdPlaylist._id);
         if (!addToUser) return 0;
         return createdPlaylist;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      *  make this user who create this playlist
@@ -623,6 +721,7 @@ const User = {
      * @returns {boolean}
      */
     addPlaylistToCreatedToUser: async function(user, playlistId) {
+        try{
         if (!user) return 0;
         if (!user.createPlaylist)
             user.createPlaylist = [];
@@ -634,6 +733,9 @@ const User = {
         await user.save().catch();
         await Playlist.followPlaylits(user, playlistId, false);
         return 1;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -642,6 +744,7 @@ const User = {
      * @returns {object} 
      */
     restorePlaylists: async function(userId, playlistsIds) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         if (!checkMonooseObjectID(playlistsIds)) return 0;
         let user = await userDocument.findById(userId);
@@ -675,6 +778,9 @@ const User = {
         }
         await user.save();
         return restored;
+    }catch(ex){
+        return 0;
+    }
     },
     //check if user can access a playlist
     //params: userId, playlistId
@@ -685,6 +791,7 @@ const User = {
      * @returns {Boolean}
      */
     checkAuthorizedPlaylist: async function(userId, playlistId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         let users = await userDocument.find({});
         if (!users) return 0;
@@ -710,6 +817,9 @@ const User = {
             }
         }
         return false;
+    }catch(ex){
+        return 0;
+    }
     },
 
 
@@ -725,6 +835,7 @@ const User = {
      */
 
     promoteToArtist: async function(userId, info, name, genre) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         user = await this.getUserById(userId);
         if (!user) return false;
@@ -737,6 +848,9 @@ const User = {
         await user.save();
         sendmail(user.email, "Congrats!! ^^) You're Now Promoted to Artist so You can Login with your Account as an Artist");
         return true;
+    }catch(ex){
+        return 0;
+    }
 
     },
     /**
@@ -745,6 +859,7 @@ const User = {
      * @returns {boolean} - if can or not  
      */
     promoteToPremium: async function(userId, cardNumber, isMonth, expiresDate) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         user = await this.getUserById(userId);
         if (!user) return false;
@@ -757,6 +872,9 @@ const User = {
         user.premium['ParticipateDate'] = Date.now();
         await user.save();
         return true;
+    }catch(ex){
+        return 0;
+    }
     },
     // to make user be free
     /**
@@ -765,6 +883,7 @@ const User = {
      * @returns {boolean} - if can be free or not  
      */
     promoteToFree: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         user = await this.getUserById(userId);
         if (!user) return 0;
@@ -777,6 +896,9 @@ const User = {
         await user.save();
         sendmail(user.email, 'Congrats!! ^^) You are Now free not premium return to premium and enjoy with us  please login again :\n enjoy with premium');
         return true;
+    }catch(ex){
+        return 0;
+    }
     },
     //create queue for a user
     //params: userId, isPlaylist, sourceId, trackId
@@ -789,10 +911,14 @@ const User = {
      * @returns {Number}
      */
     createQueue: async function(userId, isPlaylist, sourceId, trackId) {
+        try{
         if (!checkMonooseObjectID([userId, sourceId, trackId])) return 0;
         const user = await this.getUserById(userId);
         const isCreateQueue = await Player.createQueue(user, isPlaylist, sourceId, trackId);
         return isCreateQueue;
+    }catch(ex){
+        return 0;
+    }
 
     },
 
@@ -808,11 +934,15 @@ const User = {
      * @returns {Number}
      */
     addToQueue: async function(userId, trackId, isPlaylist, sourceId) {
+        try{
         if (!checkMonooseObjectID([userId, sourceId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
         const isAddQueue = await Player.addToQueue(user, trackId, isPlaylist, sourceId);
         return isAddQueue;
+    }catch(ex){
+        return 0;
+    }
     },
 
     //update user's player
@@ -827,7 +957,7 @@ const User = {
      */
 
     updateUserPlayer: async function(userId, isPlaylist, sourceId, trackId, tracksIds, sourceType) {
-
+        try{
         if (!checkMonooseObjectID([userId, trackId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
@@ -841,6 +971,9 @@ const User = {
         const player = await Player.setPlayerInstance(user, isPlaylist, sourceId, trackId, tracksIds, sourceType);
         if (!player) return 0;
         return 1;
+    }catch(ex){
+        return 0;
+    }
     },
 
     //repeat playlist 
@@ -853,11 +986,15 @@ const User = {
      */
 
     repreatPlaylist: async function(userId, state) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (user)
             return await Player.repreatPlaylist(user, state);
         return 0;
+    }catch(ex){
+        return 0;
+    }
     },
 
     //get user's queue
@@ -869,12 +1006,16 @@ const User = {
      */
 
     getQueue: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
         const tracks = await Player.getQueue(user);
         if (!tracks) return 0;
         return tracks;
+    }catch(ex){
+        return 0;
+    }
 
     },
 
@@ -887,12 +1028,16 @@ const User = {
      */
 
     resumePlaying: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
         const player = await Player.resumePlaying(user);
         if (!player) return 0;
         return 1;
+    }catch(ex){
+        return 0;
+    }
 
     },
 
@@ -905,11 +1050,15 @@ const User = {
      */
 
     pausePlaying: async function(userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
         const player = await Player.pausePlaying(user);
         if (!player) return 0;
+    }catch(ex){
+        return 0;
+    }
     },
 
     //shuffle playlist
@@ -922,12 +1071,16 @@ const User = {
      */
 
     setShuffle: async function(state, userId) {
+        try{
         if (!checkMonooseObjectID([userId])) return 0;
         const user = await this.getUserById(userId);
         if (!user) return 0;
         const isShuffle = await Player.setShuffle(state, user);
         if (!isShuffle) return 0;
         return 1;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -936,6 +1089,7 @@ const User = {
      * @returns {boolean} 
      */
     checkAuthorizedTrack: async function(userId, trackId) {
+        try{
         const user = await this.getUserById(userId);
         if (!user) return 0;
         // chekc if user is artist
@@ -943,6 +1097,9 @@ const User = {
         if (!artist) return 0;
         const hasAccess = await Artist.checkArtistHasTrack(artist, trackId);
         return hasAccess;
+    }catch(ex){
+        return 0;
+    }
     },
     /**
      * 
@@ -951,6 +1108,7 @@ const User = {
      * @returns {boolean}
      */
     checkAuthorizedAlbum: async function(userId, albumId) {
+        try{
         const user = await this.getUserById(userId);
         if (!user) return 0;
         // chekc if user is artist
@@ -958,6 +1116,9 @@ const User = {
         if (!artist) return 0;
         const hasAccess = await Artist.checkArtisthasAlbum(artist._id, albumId);
         return hasAccess;
+    }catch(ex){
+        return 0;
+    }
     }
 
 }

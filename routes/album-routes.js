@@ -70,7 +70,7 @@ router.get('/albums/:album_id', checkAuth, limiter, async(req, res) => {
 
 })
 
-router.get('/albums', checkAuth, limiter, async(req, res) => {
+router.get('/albums', limiter, async(req, res) => {
     if (req.body.ids == undefined) {
         res.status(404).json({
             message: "no albums found"

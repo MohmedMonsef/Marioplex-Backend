@@ -101,6 +101,7 @@ router.get('/me/tracks', checkAuth, limiter, async(req, res) => {
 
     const userID = req.user._id;
     const tracks = await Library.getSavedTracks(userID, req.query.limit, req.query.offset);
+    console.log('sfadf');
     if (!tracks) res.sendStatus(404); //not found
     else res.status(200).json(tracks);
 

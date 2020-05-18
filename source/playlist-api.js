@@ -104,7 +104,7 @@ const Playlist = {
                     const artist = await Artist.getArtist(artistId);
                     if (!album || !artist) { return 0; }
                     const isLiked = await Track.checkIfUserLikeTrack(user, track1._id) ? true : false;
-                    tracks.push({ trackid: track1._id, name: track1.name, playable: track1.playable, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked, duration: track1.duration,images:track1.images });
+                    tracks.push({ trackid: track1._id, name: track1.name, playable: track1.playable, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, isLiked: isLiked, duration: track1.duration, images: track1.images });
                 }
             }
             const followPlaylist = await this.checkFollowPlaylistByUser(user, playlistId) ? true : false;
@@ -462,7 +462,7 @@ const Playlist = {
         if (!user) return 0;
         let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return false;
-        if (playlist.collaborative) {return false; }
+        if (playlist.collaborative) { return false; }
         playlist.isPublic = !playlist.isPublic;
         if (!user.createPlaylist) return 0;
         for (var i = 0; i < user.createPlaylist.length; i++) {
@@ -492,13 +492,13 @@ const Playlist = {
      */
     //get playlist tracks (WITHOUT DETAILS OF THESE TRACKS)
     //params:playlistId
-    getPlaylistTracks: async function(playlistId) {
+    getPlaylistTracks: async function(playlistId, isLike) {
         if (!checkMonooseObjectId([playlistId])) return 0;
         let playlist = await playlistDocument.findById(playlistId);
         if (!playlist) return 0;
-        if(!playlist.isPublic) return 0;
+        if (!playlist.isPublic && !isLike) return 0;
         let tracks = [];
-        let playlistJson=[];
+        let playlistJson = [];
         if (!playlist.snapshot) playlist.snapshot = [];
 
         let len = playlist.snapshot.length;

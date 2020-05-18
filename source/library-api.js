@@ -123,8 +123,10 @@ const Library = {
         let user = await userDocument.findById(UserID);
         if (!user) return 0;
         if (!user['likesTracksPlaylist']) return 0;
-        const tracksPlaylist = await Playlist.getPlaylistTracks(user['likesTracksPlaylist']);
-        if (tracksPlaylist.length == 0) return 0;
+        let tracksPlaylist = await Playlist.getPlaylistTracks(user['likesTracksPlaylist'], true);
+        console.log(tracksPlaylist)
+        if (tracksPlaylist[0].tracks.length == 0 || !tracksPlaylist) return 0;
+        tracksPlaylist = tracksPlaylist[0].tracks;
 
         let start = 0;
         let end = (tracksPlaylist.length > 20) ? 20 : tracksPlaylist.length;

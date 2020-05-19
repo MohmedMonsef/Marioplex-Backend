@@ -149,32 +149,32 @@ afterAll(async () => {
  
 
 test(' update user', async () => {
-    expect(await mockUser.update(usersInDB[0]._id, undefined, undefined, "dai alaa", "1223345677",undefined, undefined,undefined, undefined, undefined, undefined)).toBeTruthy()
+    expect(await mockUser.update(undefined,usersInDB[0]._id, undefined, undefined, "dai alaa", "1223345677",undefined, undefined,undefined, undefined, undefined, undefined)).toBeTruthy()
 })
 test('update user with incorrect password', async () => {
-    expect(await mockUser.update(usersInDB[0]._id, undefined, undefined, "dai alaa", "2",undefined, undefined,undefined, undefined, undefined, undefined)).toBeFalsy()
+    expect(await mockUser.update(undefined,usersInDB[0]._id, undefined, undefined, "dai alaa", "2",undefined, undefined,undefined, undefined, undefined, undefined)).toBeFalsy()
 })
 
 test('update facebook user with country', async () => {
-    expect(await mockUser.update(usersInDB[1]._id, undefined, undefined, "dai alaa", "1223345678",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy()
+    expect(await mockUser.update(undefined,usersInDB[1]._id, undefined, undefined, "dai alaa", "1223345678",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy()
 })
 test('update  user with gender', async () => {
-    expect(await mockUser.update(usersInDB[0]._id, "female", undefined, "dai alaa", "1223345677",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy()
+    expect(await mockUser.update(undefined,usersInDB[0]._id, "female", undefined, "dai alaa", "1223345677",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy()
 })
 test('update  user with birthdate', async () => {
-    expect(await mockUser.update(usersInDB[0]._id, "female", "1/1/2010", "dai alaa", "1223345677",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy()
+    expect(await mockUser.update(undefined,usersInDB[0]._id, "female", "1/1/2010", "dai alaa", "1223345677",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy()
 })
 test('update facebook premium user data', async () => {
-    expect(await mockUser.update(usersInDB[1]._id, "female", "1/1/2010", "dai alaa", "1223345678",undefined, "eg","1/1/2020","123", true, "123")).toBeTruthy()
+    expect(await mockUser.update(undefined,usersInDB[1]._id, "female", "1/1/2010", "dai alaa", "1223345678",undefined, "eg","1/1/2020","123", true, "123")).toBeTruthy()
 })
 test('update  user email', async () => {
-    expect(await mockUser.update(usersInDB[2]._id, "female", "1/1/2010", "dai alaa", "12345678","n@n.com", "eg","1/1/2020","123", true, "123")).toBeTruthy()
+    expect(await mockUser.update(undefined,usersInDB[2]._id, "female", "1/1/2010", "dai alaa", "12345678","n@n.com", "eg","1/1/2020","123", true, "123")).toBeTruthy()
 })
 test('update  user same email', async () => {
-    expect(await mockUser.update(usersInDB[2]._id, "female", "1/1/2010", "dai alaa", "12345678","n@n.com", "eg","1/1/2020","123", true, "123")).toBeTruthy()
+    expect(await mockUser.update(undefined,usersInDB[2]._id, "female", "1/1/2010", "dai alaa", "12345678","n@n.com", "eg","1/1/2020","123", true, "123")).toBeTruthy()
 })
 test('update non mongoose user', async () => {
-    expect(await mockUser.update("1", "female", "1/1/2010", "dai alaa", "1223345678",undefined, "eg","1/1/2020","123", true, "123")).toBeFalsy()
+    expect(await mockUser.update(undefined,"1", "female", "1/1/2010", "dai alaa", "1223345678",undefined, "eg","1/1/2020","123", true, "123")).toBeFalsy()
 })
 
 
@@ -412,9 +412,7 @@ test("get non mongoose user following user", async ()=>{
     expect(following).toBeFalsy();
 })
 
-test("update artist date",async ()=>{
-    expect(await mockUser.updateDate(artists[0])).toEqual(undefined);
-})
+
 
 
 
@@ -449,16 +447,16 @@ test(('promote user to artist'), async () => {;
 
 
 test('updaet facebook user with country',async ()=>{
-    expect(await mockUser.update(usersInDB[1]._id, undefined, undefined, "dai alaa", "123",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
+    expect(await mockUser.update(undefined,usersInDB[1]._id, undefined, undefined, "dai alaa", "123",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
 })
 
 
 test('update facebook user without country',async ()=>{
-    expect(await mockUser.update(usersInDB[1]._id, undefined, undefined, undefined, "123",undefined, undefined,undefined, undefined, undefined, undefined)).toBeTruthy();
+    expect(await mockUser.update(undefined,usersInDB[1]._id, undefined, undefined, undefined, "123",undefined, undefined,undefined, undefined, undefined, undefined)).toBeTruthy();
 })
 
 test('update non existing user',async ()=>{
-    expect(await mockUser.update(ObjectId(), undefined, undefined, "dai alaa", "123",undefined, undefined,undefined, undefined, undefined, undefined)).toBeFalsy();
+    expect(await mockUser.update(undefined,ObjectId(), undefined, undefined, "dai alaa", "123",undefined, undefined,undefined, undefined, undefined, undefined)).toBeFalsy();
 })
 
 
@@ -471,15 +469,15 @@ test('update non existing user',async ()=>{
 
 
 test('updaet facebook user with country',async ()=>{
-    expect(await mockUser.update(usersInDB[1]._id, undefined, undefined, "dai alaa", "123","b@b", "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
+    expect(await mockUser.update(undefined,usersInDB[1]._id, undefined, undefined, "dai alaa", "123","b@b", "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
 })
 
 test('updaet facebook user with country',async ()=>{
-    expect(await mockUser.update(usersInDB[1]._id, undefined, undefined, "dai alaa", "123","b@b", "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
+    expect(await mockUser.update(undefined,usersInDB[1]._id, undefined, undefined, "dai alaa", "123","b@b", "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
 })
 
 test('update user country',async ()=>{
-    expect(await mockUser.update(usersInDB[0]._id, undefined, undefined, undefined, "1223345677",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
+    expect(await mockUser.update(undefined,usersInDB[0]._id, undefined, undefined, undefined, "1223345677",undefined, "eg",undefined, undefined, undefined, undefined)).toBeTruthy();
 })
 
 test('get followers of user with no follow',async ()=>{

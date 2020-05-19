@@ -673,7 +673,13 @@
 <a name='L614'></a><a href='#L614'>614</a>
 <a name='L615'></a><a href='#L615'>615</a>
 <a name='L616'></a><a href='#L616'>616</a>
-<a name='L617'></a><a href='#L617'>617</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L617'></a><a href='#L617'>617</a>
+<a name='L618'></a><a href='#L618'>618</a>
+<a name='L619'></a><a href='#L619'>619</a>
+<a name='L620'></a><a href='#L620'>620</a>
+<a name='L621'></a><a href='#L621'>621</a>
+<a name='L622'></a><a href='#L622'>622</a>
+<a name='L623'></a><a href='#L623'>623</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -690,6 +696,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -832,6 +841,9 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1303,24 +1315,27 @@ const Player = {
      * @param  {Boolean} isPlaylist - the source status of the new track (playlist or not)
      * @param  {string} id - the source (playlist or album) ID
      * @param  {string} trackId - the track id
-     * @returns {Number}
+     * @param {Array&lt;String&gt;} tracksIds  - optional array of tracksids 
+     * @param {Sting} sourceType - optional name describe this tracks 
+     * @returns {Boolean}
      */
+&nbsp;
     setPlayerInstance: <span class="fstat-no" title="function not covered" >as</span>ync function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
 <span class="cstat-no" title="statement not covered" >        if (!user.player) <span class="cstat-no" title="statement not covered" >user.player = {};</span></span>
-<span class="cstat-no" title="statement not covered" >        user.player.next_track = {};</span>
-<span class="cstat-no" title="statement not covered" >        user.player.prev_track = {};</span>
-<span class="cstat-no" title="statement not covered" >        user.player.current_track = {};</span>
+<span class="cstat-no" title="statement not covered" >        user.player.nextTrack = {};</span>
+<span class="cstat-no" title="statement not covered" >        user.player.prevTrack = {};</span>
+<span class="cstat-no" title="statement not covered" >        user.player.currentTrack = {};</span>
 <span class="cstat-no" title="statement not covered" >        if (user.queue.tracksInQueue) {</span>
             // get next from the queue directly
             // get next track and prev Track in playlist by checking for id greater than track id
 <span class="cstat-no" title="statement not covered" >            if (!tracksIds) {</span>
-<span class="cstat-no" title="statement not covered" >                user.player.current_track['isPlaylist'] = isPlaylist == true || isPlaylist == 'true' ? true : false;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.current_track['trackId'] = trackId;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.current_track['playlistId'] = id;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentTrack['isPlaylist'] = isPlaylist == true || isPlaylist == 'true' ? true : false;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentTrack['trackId'] = trackId;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentTrack['playlistId'] = id;</span>
             } else {
-<span class="cstat-no" title="statement not covered" >                user.player.current_track['isPlaylist'] = false;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.current_track['trackId'] = trackId;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.current_track['playlistId'] = undefined;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentTrack['isPlaylist'] = false;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentTrack['trackId'] = trackId;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentTrack['playlistId'] = undefined;</span>
             }
 <span class="cstat-no" title="statement not covered" >            await user.save();</span>
 &nbsp;
@@ -1456,8 +1471,11 @@ const Player = {
      * @param  {Boolean} isPlaylist - the source status of the new track (playlist or not)
      * @param  {string} id - the source (playlist or album) ID
      * @param  {string} trackId - the track id
+     * @param {Array&lt;String&gt;} tracksIds - optional if you create queue for array of tracks not album or playlist
+     * @param {String} sourceType - optional name describe the tracks 
      * @returns {Number}
      */
+&nbsp;
     createQueue: <span class="fstat-no" title="function not covered" >as</span>ync function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if (!await Track.getTrack(trackId)) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
@@ -1479,7 +1497,7 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >                        return 0</span>
                 }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >                user.player.current_source = id;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentSource = id;</span>
 <span class="cstat-no" title="statement not covered" >                user.player.isPlaylist = true;</span>
 <span class="cstat-no" title="statement not covered" >                user.player['sourceName'] = 'playlist';</span>
 <span class="cstat-no" title="statement not covered" >                user.queue = {}; </span>// create queue
@@ -1509,7 +1527,7 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >                console.log('now  her')</span>
 <span class="cstat-no" title="statement not covered" >                user.player.isPlaylist = false;</span>
 <span class="cstat-no" title="statement not covered" >                user.player['sourceName'] = 'album';</span>
-<span class="cstat-no" title="statement not covered" >                user.player.current_source = id;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.currentSource = id;</span>
 <span class="cstat-no" title="statement not covered" >                user.queue = {}; </span>// when create queue delete last queue
 <span class="cstat-no" title="statement not covered" >                user.queue.queuIndex = -1;</span>
 <span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue = [];</span>
@@ -1573,9 +1591,9 @@ const Player = {
             }];
 <span class="cstat-no" title="statement not covered" >            await user.save();</span>
 <span class="cstat-no" title="statement not covered" >            user.queue.queuIndex = 0; </span>// now when add to queue become 1
-<span class="cstat-no" title="statement not covered" >            user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId; </span>//set next by frist element add by add to queue
-<span class="cstat-no" title="statement not covered" >            user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist; </span>//set next by frist element add by add to queue
-<span class="cstat-no" title="statement not covered" >            user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId; </span>//set next by frist element add by add to queue
+<span class="cstat-no" title="statement not covered" >            user.player.nextTrack['trackId'] = user.queue.tracksInQueue[0].trackId; </span>//set next by frist element add by add to queue
+<span class="cstat-no" title="statement not covered" >            user.player.nextTrack['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist; </span>//set next by frist element add by add to queue
+<span class="cstat-no" title="statement not covered" >            user.player.nextTrack['playlistId'] = user.queue.tracksInQueue[0].playlistId; </span>//set next by frist element add by add to queue
 <span class="cstat-no" title="statement not covered" >            await user.save();</span>
 <span class="cstat-no" title="statement not covered" >            return 1;</span>
         } else {
@@ -1588,10 +1606,10 @@ const Player = {
                     playlistId: playlistId
                 }];
 <span class="cstat-no" title="statement not covered" >                user.queue.queuIndex = 0;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId;</span>
-<span class="cstat-no" title="statement not covered" >                user.player["last_playlist_track_index"]++;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.nextTrack['trackId'] = user.queue.tracksInQueue[0].trackId;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.nextTrack['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.nextTrack['playlistId'] = user.queue.tracksInQueue[0].playlistId;</span>
+<span class="cstat-no" title="statement not covered" >                user.player["lastPlaylistTrackIndex"]++;</span>
 <span class="cstat-no" title="statement not covered" >                await user.save();</span>
 <span class="cstat-no" title="statement not covered" >                return 1;</span>
             } else {
@@ -1603,10 +1621,10 @@ const Player = {
                         playlistId: playlistId
                     });
 <span class="cstat-no" title="statement not covered" >                    user.queue.queuIndex = 0;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['trackId'] = user.queue.tracksInQueue[0].trackId;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['playlistId'] = user.queue.tracksInQueue[0].playlistId;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player["last_playlist_track_index"]++;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['trackId'] = user.queue.tracksInQueue[0].trackId;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['playlistId'] = user.queue.tracksInQueue[0].playlistId;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player["lastPlaylistTrackIndex"]++;</span>
 <span class="cstat-no" title="statement not covered" >                    await user.save();</span>
 <span class="cstat-no" title="statement not covered" >                    return 1;</span>
                 } else {
@@ -1620,7 +1638,7 @@ const Player = {
                         playlistId: playlistId
                     });
 <span class="cstat-no" title="statement not covered" >                    user.queue.queuIndex = index + 1;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player["last_playlist_track_index"]++;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player["lastPlaylistTrackIndex"]++;</span>
 <span class="cstat-no" title="statement not covered" >                    await user.save();</span>
 <span class="cstat-no" title="statement not covered" >                    return 1;</span>
                 }
@@ -1635,17 +1653,17 @@ const Player = {
      */
     skipNext: <span class="fstat-no" title="function not covered" >as</span>ync function(user) {
 <span class="cstat-no" title="statement not covered" >        if (!user.player) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        if (!user.player.next_track) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        if (!user.player.prev_track) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        user.player.current_track = user.player.next_track;</span>
-<span class="cstat-no" title="statement not covered" >        if (user.queue.queuIndex != -1 &amp;&amp; String(user.player.next_track.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex].trackId)) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!user.player.nextTrack) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!user.player.prevTrack) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
+<span class="cstat-no" title="statement not covered" >        user.player.currentTrack = user.player.nextTrack;</span>
+<span class="cstat-no" title="statement not covered" >        if (user.queue.queuIndex != -1 &amp;&amp; String(user.player.nextTrack.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex].trackId)) {</span>
 <span class="cstat-no" title="statement not covered" >            user.queue.tracksInQueue.splice(user.queue.queuIndex, 1);</span>
 <span class="cstat-no" title="statement not covered" >            user.queue.queuIndex--;</span>
-<span class="cstat-no" title="statement not covered" >            user.player["last_playlist_track_index"]--;</span>
-<span class="cstat-no" title="statement not covered" >            this.setNextPrev(user, user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId)</span>
+<span class="cstat-no" title="statement not covered" >            user.player["lastPlaylistTrackIndex"]--;</span>
+<span class="cstat-no" title="statement not covered" >            this.setNextPrev(user, user.queue.tracksInQueue[user.player["lastPlaylistTrackIndex"]].trackId)</span>
         } else
-<span class="cstat-no" title="statement not covered" >            this.setNextPrev(user, user.player.current_track.trackId)</span>
-<span class="cstat-no" title="statement not covered" >        if (String(user.player.current_track.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex + 1].trackId))</span>
+<span class="cstat-no" title="statement not covered" >            this.setNextPrev(user, user.player.currentTrack.trackId)</span>
+<span class="cstat-no" title="statement not covered" >        if (String(user.player.currentTrack.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex + 1].trackId))</span>
 <span class="cstat-no" title="statement not covered" >            return 2;</span>
 <span class="cstat-no" title="statement not covered" >        return 1;</span>
     },
@@ -1657,10 +1675,10 @@ const Player = {
      */
     skipPrevious: <span class="fstat-no" title="function not covered" >as</span>ync function(user) {
 <span class="cstat-no" title="statement not covered" >        if (!user.player) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        if (!user.player.next_track) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        if (!user.player.prev_track) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        user.player.current_track = user.player.prev_track</span>
-<span class="cstat-no" title="statement not covered" >        this.setNextPrev(user, user.player.prev_track.trackId)</span>
+<span class="cstat-no" title="statement not covered" >        if (!user.player.nextTrack) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!user.player.prevTrack) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
+<span class="cstat-no" title="statement not covered" >        user.player.currentTrack = user.player.prevTrack</span>
+<span class="cstat-no" title="statement not covered" >        this.setNextPrev(user, user.player.prevTrack.trackId)</span>
 <span class="cstat-no" title="statement not covered" >        return 1;</span>
     },
 &nbsp;
@@ -1683,7 +1701,7 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >            tracks.push({ fulltrack: track, isQueue: queue.tracksInQueue[i].isQueue, playlistId: sourse, isPlaylist: queue.tracksInQueue[i].isPlaylist, index: i, isPlayable: false });</span>
         }
 &nbsp;
-        const lastplaylistIndex = <span class="cstat-no" title="statement not covered" >user.player.last_playlist_track_index &lt; 0 ? 0 : user.player.last_playlist_track_index;</span>
+        const lastplaylistIndex = <span class="cstat-no" title="statement not covered" >user.player.lastPlaylistTrackIndex &lt; 0 ? 0 : user.player.lastPlaylistTrackIndex;</span>
 &nbsp;
         // get tracks that was next in playlist
 <span class="cstat-no" title="statement not covered" >        for (let i = <span class="cstat-no" title="statement not covered" >lastplaylistIndex + 1;</span> i &lt; queue.tracksInQueue.length; i++) {</span>
@@ -1697,7 +1715,7 @@ const Player = {
 &nbsp;
         }
         //if repeat should display all the queue
-<span class="cstat-no" title="statement not covered" >        if (user.player.is_repeat || user.player.is_shuffled) {</span>
+<span class="cstat-no" title="statement not covered" >        if (user.player.isRepeat || user.player.isShuffled) {</span>
 <span class="cstat-no" title="statement not covered" >            for (let i = <span class="cstat-no" title="statement not covered" >queueIndex + 1;</span> i &lt; lastplaylistIndex; i++) {</span>
                 const track = <span class="cstat-no" title="statement not covered" >await Track.getFullTrack(queue.tracksInQueue[i].trackId, user);</span>
 <span class="cstat-no" title="statement not covered" >                if (!track) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
@@ -1720,7 +1738,7 @@ const Player = {
     resumePlaying: <span class="fstat-no" title="function not covered" >as</span>ync function(user) {
         const player = <span class="cstat-no" title="statement not covered" >user.player;</span>
 <span class="cstat-no" title="statement not covered" >        if (!player) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        user.player["is_playing"] = true;</span>
+<span class="cstat-no" title="statement not covered" >        user.player["isPlaying"] = true;</span>
 <span class="cstat-no" title="statement not covered" >        await user.save();</span>
 <span class="cstat-no" title="statement not covered" >        return 1;</span>
     },
@@ -1733,7 +1751,7 @@ const Player = {
     pausePlaying: <span class="fstat-no" title="function not covered" >as</span>ync function(user) {
         const player = <span class="cstat-no" title="statement not covered" >user.player;</span>
 <span class="cstat-no" title="statement not covered" >        if (!player) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        user.player["is_playing"] = false;</span>
+<span class="cstat-no" title="statement not covered" >        user.player["isPlaying"] = false;</span>
 <span class="cstat-no" title="statement not covered" >        await user.save();</span>
 <span class="cstat-no" title="statement not covered" >        return 1;</span>
     },
@@ -1760,7 +1778,7 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >        if (!user.queue) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 <span class="cstat-no" title="statement not covered" >        if (!user.queue.tracksInQueue) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 <span class="cstat-no" title="statement not covered" >        if (user.queue.tracksInQueue.length == 0) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-        const track_last_playlist = <span class="cstat-no" title="statement not covered" >user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;</span>
+        const track_last_playlist = <span class="cstat-no" title="statement not covered" >user.queue.tracksInQueue[user.player["lastPlaylistTrackIndex"]].trackId;</span>
 <span class="cstat-no" title="statement not covered" >        for (let i = <span class="cstat-no" title="statement not covered" >user.queue.queuIndex + 1;</span> i &lt; user.queue.tracksInQueue.length; i++) {</span>
             const randomIndex = <span class="cstat-no" title="statement not covered" >await this.rondom(user.queue.queuIndex + 1, user.queue.tracksInQueue.length - 1);</span>
             const temp = <span class="cstat-no" title="statement not covered" >user.queue.tracksInQueue[i].trackId;</span>
@@ -1782,7 +1800,7 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >        if (!user.queue) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 <span class="cstat-no" title="statement not covered" >        if (!user.queue.tracksInQueue) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 <span class="cstat-no" title="statement not covered" >        if (user.queue.tracksInQueue.length == 0) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-        const track_last_playlist = <span class="cstat-no" title="statement not covered" >user.queue.tracksInQueue[user.player["last_playlist_track_index"]].trackId;</span>
+        const track_last_playlist = <span class="cstat-no" title="statement not covered" >user.queue.tracksInQueue[user.player["lastPlaylistTrackIndex"]].trackId;</span>
 <span class="cstat-no" title="statement not covered" >        if (user.player['sourceName'] != 'playlist' &amp;&amp; !user.player['sourceName'] != 'album') {</span>
             let queueTracks = <span class="cstat-no" title="statement not covered" >user.queue.tracksInQueue;</span>
 <span class="cstat-no" title="statement not covered" >            for (let i = <span class="cstat-no" title="statement not covered" >user.queue.queuIndex + 1;</span> i &lt; queueTracks.length; i++) {</span>
@@ -1793,7 +1811,7 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >            return 1;</span>
         }
 <span class="cstat-no" title="statement not covered" >        if (user.player.isPlaylist) {</span>
-            const playlist = <span class="cstat-no" title="statement not covered" >await Playlist.getPlaylist(user.player.current_source);</span>
+            const playlist = <span class="cstat-no" title="statement not covered" >await Playlist.getPlaylist(user.player.currentSource);</span>
 <span class="cstat-no" title="statement not covered" >            if (!playlist.snapshot || playlist.snapshot.length == 0) <span class="cstat-no" title="statement not covered" >playlist.snapshot = [{ hasTracks: [] }];</span></span>
 <span class="cstat-no" title="statement not covered" >            if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) {</span>
 <span class="cstat-no" title="statement not covered" >                await user.save();</span>
@@ -1803,13 +1821,13 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >            for (let j = <span class="cstat-no" title="statement not covered" >0;</span> j &lt; playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; j++) {</span>
 <span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].trackId = playlist.snapshot[playlist.snapshot.length - 1].hasTracks[j];</span>
 <span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].isPlaylist = user.player.isPlaylist;</span>
-<span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].playlistId = user.player.current_source;</span>
+<span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].playlistId = user.player.currentSource;</span>
 <span class="cstat-no" title="statement not covered" >                i++;</span>
             }
 <span class="cstat-no" title="statement not covered" >            await user.save();</span>
 <span class="cstat-no" title="statement not covered" >            return await this.setNextPrev(user, track_last_playlist);</span>
         } else {
-            const album = <span class="cstat-no" title="statement not covered" >await Album.getAlbumById(user.player.current_source);</span>
+            const album = <span class="cstat-no" title="statement not covered" >await Album.getAlbumById(user.player.currentSource);</span>
 <span class="cstat-no" title="statement not covered" >            if (!album) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 <span class="cstat-no" title="statement not covered" >            if (!album.hasTracks) {</span>
 <span class="cstat-no" title="statement not covered" >                await user.save();</span>
@@ -1819,7 +1837,7 @@ const Player = {
 <span class="cstat-no" title="statement not covered" >            for (let track of album.hasTracks) {</span>
 <span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].trackId = track.trackId;</span>
 <span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].isPlaylist = user.player.isPlaylist;</span>
-<span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].playlistId = user.player.current_source;</span>
+<span class="cstat-no" title="statement not covered" >                user.queue.tracksInQueue[i].playlistId = user.player.currentSource;</span>
 <span class="cstat-no" title="statement not covered" >                i++;</span>
             }
 <span class="cstat-no" title="statement not covered" >            await user.save();</span>
@@ -1836,11 +1854,11 @@ const Player = {
     setShuffle: <span class="fstat-no" title="function not covered" >as</span>ync function(state, user) {
 <span class="cstat-no" title="statement not covered" >        if (user.queue.tracksInQueue) {</span>
 <span class="cstat-no" title="statement not covered" >            if (state == 'true') {</span>
-<span class="cstat-no" title="statement not covered" >                user.player['is_shuffled'] = true;</span>
+<span class="cstat-no" title="statement not covered" >                user.player['isShuffled'] = true;</span>
 <span class="cstat-no" title="statement not covered" >                await user.save();</span>
 <span class="cstat-no" title="statement not covered" >                return await this.shuffleQueue(user);</span>
             } else {
-<span class="cstat-no" title="statement not covered" >                user.player['is_shuffled'] = false;</span>
+<span class="cstat-no" title="statement not covered" >                user.player['isShuffled'] = false;</span>
 <span class="cstat-no" title="statement not covered" >                await user.save();</span>
                 const ret = <span class="cstat-no" title="statement not covered" >await this.fillByplaylist(user);</span>
 <span class="cstat-no" title="statement not covered" >                return ret;</span>
@@ -1857,26 +1875,26 @@ const Player = {
      */
     setNextPrev: <span class="fstat-no" title="function not covered" >as</span>ync function(user, lastTrack) {
 <span class="cstat-no" title="statement not covered" >        if (!user.player) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
-<span class="cstat-no" title="statement not covered" >        if (!user.player.next_track) <span class="cstat-no" title="statement not covered" >user.player.next_track = {};</span></span>
-<span class="cstat-no" title="statement not covered" >        if (!user.player.prev_track) <span class="cstat-no" title="statement not covered" >user.player.prev_track = {};</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!user.player.nextTrack) <span class="cstat-no" title="statement not covered" >user.player.nextTrack = {};</span></span>
+<span class="cstat-no" title="statement not covered" >        if (!user.player.prevTrack) <span class="cstat-no" title="statement not covered" >user.player.prevTrack = {};</span></span>
 <span class="cstat-no" title="statement not covered" >        for (let i = <span class="cstat-no" title="statement not covered" >user.queue.queuIndex + 1;</span> i &lt; user.queue.tracksInQueue.length; i++) {</span>
             //console.log(lastTrack)
             //console.log(user.queue.tracksInQueue[i].trackId)
 &nbsp;
 <span class="cstat-no" title="statement not covered" >            if (String(user.queue.tracksInQueue[i].trackId) == String(lastTrack)) {</span>
-<span class="cstat-no" title="statement not covered" >                user.player["last_playlist_track_index"] = i;</span>
+<span class="cstat-no" title="statement not covered" >                user.player["lastPlaylistTrackIndex"] = i;</span>
 <span class="cstat-no" title="statement not covered" >                await user.save();</span>
-<span class="cstat-no" title="statement not covered" >                user.player.prev_track['trackId'] = i - 1 &gt; user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].trackId : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].trackId;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.prev_track['isPlaylist'] = i - 1 &gt; user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].isPlaylist : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].isPlaylist;</span>
-<span class="cstat-no" title="statement not covered" >                user.player.prev_track['playlistId'] = i - 1 &gt; user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].playlistId : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].playlistId;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.prevTrack['trackId'] = i - 1 &gt; user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].trackId : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].trackId;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.prevTrack['isPlaylist'] = i - 1 &gt; user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].isPlaylist : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].isPlaylist;</span>
+<span class="cstat-no" title="statement not covered" >                user.player.prevTrack['playlistId'] = i - 1 &gt; user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].playlistId : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].playlistId;</span>
 <span class="cstat-no" title="statement not covered" >                if (user.queue.queuIndex &gt; -1) {</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['trackId'] = user.queue.tracksInQueue[user.queue.queuIndex].trackId;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['isPlaylist'] = user.queue.tracksInQueue[user.queue.queuIndex].isPlaylist;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['playlistId'] = user.queue.tracksInQueue[user.queue.queuIndex].playlistId;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['trackId'] = user.queue.tracksInQueue[user.queue.queuIndex].trackId;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['isPlaylist'] = user.queue.tracksInQueue[user.queue.queuIndex].isPlaylist;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['playlistId'] = user.queue.tracksInQueue[user.queue.queuIndex].playlistId;</span>
                 } else {
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['trackId'] = i + 1 &gt; user.queue.tracksInQueue.length - 1 ? user.queue.tracksInQueue[0].trackId : user.queue.tracksInQueue[i + 1].trackId;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['isPlaylist'] = i + 1 &gt; user.queue.tracksInQueue.length - 1 ? user.queue.tracksInQueue[0].isPlaylist : user.queue.tracksInQueue[i + 1].isPlaylist;</span>
-<span class="cstat-no" title="statement not covered" >                    user.player.next_track['playlistId'] = i + 1 &gt; user.queue.tracksInQueue.length - 1 ? user.queue.tracksInQueue[0].playlistId : user.queue.tracksInQueue[i + 1].playlistId;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['trackId'] = i + 1 &gt; user.queue.tracksInQueue.length - 1 ? user.queue.tracksInQueue[0].trackId : user.queue.tracksInQueue[i + 1].trackId;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['isPlaylist'] = i + 1 &gt; user.queue.tracksInQueue.length - 1 ? user.queue.tracksInQueue[0].isPlaylist : user.queue.tracksInQueue[i + 1].isPlaylist;</span>
+<span class="cstat-no" title="statement not covered" >                    user.player.nextTrack['playlistId'] = i + 1 &gt; user.queue.tracksInQueue.length - 1 ? user.queue.tracksInQueue[0].playlistId : user.queue.tracksInQueue[i + 1].playlistId;</span>
                 }
 <span class="cstat-no" title="statement not covered" >                await user.save();</span>
 <span class="cstat-no" title="statement not covered" >                return 1;</span>
@@ -1894,9 +1912,9 @@ const Player = {
     repreatPlaylist: <span class="fstat-no" title="function not covered" >as</span>ync function(user, state) {
 <span class="cstat-no" title="statement not covered" >        if (!user.player) <span class="cstat-no" title="statement not covered" >return 0;</span></span>
 <span class="cstat-no" title="statement not covered" >        if (state == 'true' || state == true)</span>
-<span class="cstat-no" title="statement not covered" >            user.player["is_repeat"] = true;</span>
+<span class="cstat-no" title="statement not covered" >            user.player["isRepeat"] = true;</span>
         else <span class="cstat-no" title="statement not covered" >if (state == 'false' || state == false)</span>
-<span class="cstat-no" title="statement not covered" >            user.player["is_repeat"] = false;</span>
+<span class="cstat-no" title="statement not covered" >            user.player["isRepeat"] = false;</span>
         else
 <span class="cstat-no" title="statement not covered" >            return 0;</span>
 <span class="cstat-no" title="statement not covered" >        await user.save();</span>
@@ -1912,7 +1930,7 @@ module.exports = Player;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sat May 16 2020 16:02:45 GMT+0200 (Eastern European Standard Time)
+                at Tue May 19 2020 05:54:41 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

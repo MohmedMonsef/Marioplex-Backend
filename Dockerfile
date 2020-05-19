@@ -1,4 +1,5 @@
-FROM node:latest
+FROM ubuntu:bionic
+
 WORKDIR "/app"
 
 COPY ./Install.sh /app/Install.sh

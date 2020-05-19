@@ -53,7 +53,7 @@ const Album = {
     deleteAlbum: async function(userId, albumId) {
         if (!checkMonooseObjectId([albumId])) return 0;
         const artistD = await artist.findMeAsArtist(userId);
-        if (!artist) return 0;
+        if (!artistD) return 0;
         if (!artist.checkArtisthasAlbum(artistD._id, albumId)) return 0;
         const album = await this.getAlbumById(albumId);
         if (!album) return 0;
@@ -62,10 +62,9 @@ const Album = {
                 await track.deleteTrack(userId, album.hasTracks[i].trackId);
             }
         }
-        for (let i = 0; i < artistD.addAlbums.length; i++) {
-            if (String(artistD.addAlbums[i].albumId) == String(albumId)) { artistD.addAlbums.splice(i, 1); break; }
-        }
-        await artistD.save();
+        await artistDocument.update({'_id':artistD._id},{$pull:{'addAlbums':{albumId}}}); 
+    
+        
         if (!await albumDocument.findByIdAndDelete(albumId)) return 0;
         await userDocument.find({}, async(err, files) => {
             if (err) return 0;

@@ -132,8 +132,8 @@ const Album = {
         if (!checkMonooseObjectID([albumID, userID])) return 0;
         let album = await this.getAlbumById(albumID);
         let albumInfo = {}
+        let user = await userDocument.findById(userID);
         if(isAuth){
-            let user = await userDocument.findById(userID);
             if (user) {
                 let isSaved = await this.checkIfUserSaveAlbum(user, albumID);
                 if (isSaved) {

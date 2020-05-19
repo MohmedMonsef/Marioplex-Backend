@@ -2,11 +2,6 @@ sudo: required
 language: node_js
 services:
   - docker
-
-before_install:
-  - sudo echo "HI"
-  - docker build -t backtest .
-
 script:
   - true
 

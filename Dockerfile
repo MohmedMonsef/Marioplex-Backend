@@ -1,7 +1,4 @@
-FROM ubuntu
-
-RUN apt-get update && \
-      apt-get -y install sudo
+FROM ubuntu:bionic
 
 WORKDIR "/app"
 

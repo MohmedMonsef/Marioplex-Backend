@@ -4,7 +4,9 @@ WORKDIR "/app"
 
 COPY ./Install.sh /app/Install.sh
 WORKDIR /app
-RUN  /Install.sh
+RUN apt-get update
+RUN apt-get install -y curl
+RUN  bash Install.sh
 
 COPY ./package.json ./
 RUN npm install

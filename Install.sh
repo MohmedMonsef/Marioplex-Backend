@@ -1,3 +1,4 @@
+#!/bin/sh
 ### NODE & NPM ###
 
 # add nodejs 10 ppa (personal package archive) from nodesource

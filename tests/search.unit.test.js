@@ -25,8 +25,8 @@ beforeAll(async () => {
    user2 = await mockUser.createUser("nawal","123","b2@b.com","male","eg","1/1/2020");
    await mockUser.promoteToArtist(user._id,"artist info","DINA",["pop"]);
    artist =  await mockArtist.findMeAsArtist(user._id);
-   album = await mockArtist.addAlbum(artist._id,"album gamed","label1",["eg"],"Album","1/1/2020","pop");
-   album2 = await mockArtist.addAlbum(artist._id,"swswswsw","label1",["eg"],"Album","1/1/2020","pop");
+   album = await mockArtist.addAlbum(artist._id,"album gamed","label1",["eg"],"SINGLE","1/1/2020","pop");
+   album2 = await mockArtist.addAlbum(artist._id,"swswswsw","label1",["eg"],"SINGLE","1/1/2020","pop");
 
    track =  await mockTrack.createTrack("","alby etmnah",12,["eg"],artist._id,album._id,100,"12","13",["pop"]);
    track2 =  await mockTrack.createTrack("","track2",12,["eg"],artist._id,album._id,100,"12","13",["pop"]);
@@ -37,6 +37,7 @@ beforeAll(async () => {
    await mockArtist.addTrack(artist._id, track2._id);
    await mockAlbum.addTrack(album._id, track2);
    playlist1=await mockUser.createdPlaylist(user._id,"hello kids","lili");
+   
    user = await mockUser.getUserById(user._id);
    user2 = await mockUser.getUserById(user2._id);
    await mockPlaylist.addTrackToPlaylist(playlist1._id,[track._id,track2._id]);
@@ -64,74 +65,7 @@ afterAll(async () => {
    await dbHandler.clearDatabase();
     await dbHandler.closeDatabase();
 });
-searchTest.Users = [{
-        '_id': '1',
-        'displayName': 'dina',
-        'userType': 'Artist',
-        'type': 'User',
-        'images': []
-    }, {
-        '_id': '2',
-        'displayName': 'nawal',
-        'userType': 'User',
-        'type': 'User',
-        'images': [],
-        'saveAlbum':[
-            {
-                'albumId':'1'
-            }
-        ]
-    }
 
-]
-searchTest.Artist = [{
-    '_id': '1',
-    "Name": "DINA",
-    "images": [],
-    "info": "greattt",
-    "type": "Artist",
-    "genre": "pop",
-    'addTracks': [{
-        'trackId': '1'
-    },{
-        'trackId': '10'
-    }
-],
-    'addAlbums': [{
-        'albumId': '1'
-    }]
-}
-]
-searchTest.Playlists = [{
-    '_id': '1',
-    'name': 'hello kids',
-    'images': [],
-    'type': 'Playlist',
-    'ownerId': '1'
-}]
-searchTest.Tracks = [{
-    '_id': '1',
-    'name': 'alby etmnah',
-    'type': 'Track',
-    'images': [],
-    'artistId': '1',
-    'albumId': '1'
-}]
-searchTest.Albums = [{
-    '_id': '1',
-    'artistId': '1',
-    'hasTracks': [{ 'trackId': '1' }],
-    'name': 'album gamed',
-    'images': [],
-    'type': 'Album',
-    availableMarkets:['EG'],
-    albumType:['Single']
-
-},{
-  '_id':'2',
-  'name':'swswswsw'
-},
-]
 
 test('get user by name',async () => {
     expect(await searchTest.getUserByname('nawal')).toHaveLength(1)
@@ -156,7 +90,9 @@ test('get playlist', async() => {
 test('get playlist of name doesnot exists', async() => {
     expect(await searchTest.getPlaylist('WEWE')).toEqual([])
 })
-
+test('get playlist of name doesnot exists', async() => {
+    expect(await searchTest.getPlaylist('tot')).toHaveLength(0)
+})
 test('get artist',async () => {
     expect(await searchTest.getArtistProfile('dina')).toHaveLength(1)
 })
@@ -183,15 +119,15 @@ test('get tracks of artist',async () => {
 test('get albums of artist',async () => {
     expect(await searchTest.getAlbum('DINA')).toHaveLength(2)
 })
-/* test('get album',async () => {
-    expect(await searchTest.getAlbum('DINA','Single',['EG'],0,1)).toHaveLength(1)
-}) */
+test('get album',async () => {
+    expect(await searchTest.getAlbum('DINA','SINGLE','eg',1,0)).toHaveLength(2)
+}) 
 test('get album of name doesnot exist',async () => {
-    expect(await searchTest.getAlbum('DINA',undefined,'EG',0,1)).toHaveLength(0)
+    expect(await searchTest.getAlbum('nnn',undefined,'eg',0,1)).toHaveLength(0)
 })
-// test('get album', async() => {
-//     expect(await searchTest.getAlbum('DINA','Single',undefined,0,1)).toHaveLength(1)
-// })
+ test('get album', async() => {
+     expect(await searchTest.getAlbum('DINA','SINGLE',undefined,1,0)).toHaveLength(2)
+ })
 
 test('get album of name doesnot exist',async () => {
     expect(await searchTest.getAlbum('lele')).toEqual([])
@@ -225,22 +161,72 @@ test('get top results of track',async () => {
 })
 
 test('get user by name with empty array',async () => {
-    searchTest.Users=[]
     expect(await searchTest.getUserByname('salwa')).toEqual([])
 })
 test('get artist by name with empty array',async () => {
-    searchTest.Artist=[]
     expect(await searchTest.getArtistProfile('salwa')).toBeFalsy()
 })
 test('get track by name with empty array',async () => {
-    searchTest.Tracks=[]
     expect(await searchTest.getTrack('salwa')).toEqual([])
 })
 test('get album by name with empty array',async () => {
-    searchTest.Albums=[]
     expect(await searchTest.getAlbum('salwa')).toEqual([])
 })
 test('get playlist by name with empty array',async () => {
-    searchTest.Playlists=[]
     expect(await searchTest.getPlaylist('salwa')).toEqual([])
+})
+test('get artist by name',async () => {
+    expect(await searchTest.getArtistByname('DINA')).toHaveLength(1)
+})
+test('get artist by name that does not exists',async () => {
+    expect(await searchTest.getArtistByname('bla')).toHaveLength(0)
+})
+test('get artist by name that does not exists',async () => {
+    expect(await searchTest.exactmatch(0,'dina')).toBeFalsy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(user2._id,artist._id,'artist')).toBeTruthy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(user2._id,album._id,'album')).toBeTruthy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(user2._id,playlist1._id,'playlist')).toBeTruthy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(user2._id,user2._id,'user')).toBeTruthy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(user2._id,track._id,'track')).toBeTruthy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(user2._id,track._id,'blabla')).toBeFalsy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(track._id,track,'track')).toBeFalsy()
+})
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch("1",track,'track')).toBeFalsy()
+})
+
+test('add to getRecentlySearch',async () => {
+    expect(await searchTest.getRecentlySearch(user2._id)).toHaveProperty('playlists')
+})
+test('add to removeRecently',async () => {
+    expect(await searchTest.removeRecently(user2._id,'artist',artist._id)).toBeTruthy()
+})
+test('add to removeRecently',async () => {
+    expect(await searchTest.removeRecently(user2._id,'album',album._id)).toBeTruthy()
+})
+test('add to removeRecently',async () => {
+    expect(await searchTest.removeRecently(user2._id,'playlist',playlist1._id)).toBeTruthy()
+})
+test('add to removeRecently',async () => {
+    expect(await searchTest.removeRecently(user2._id,'user',user2._id)).toBeTruthy()
+})
+test('add to removeRecently',async () => {
+    expect(await searchTest.removeRecently(user2._id,'track',track._id)).toBeTruthy()
+})
+test('getRecentlySearch',async () => {
+    expect(await searchTest.getRecentlySearch(user2._id)).toHaveProperty('playlists',[])
 })

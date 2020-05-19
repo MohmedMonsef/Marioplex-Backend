@@ -7,7 +7,6 @@ const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const artistApi = require('./artist-api');
 const user_api = require('./user-api');
 const Track = require('./track-api');
-const artist_api = require('./artist-api');
 const album_api = require('./album-api');
 const Playlist = require('./playlist-api');
 const Search = {
@@ -94,7 +93,7 @@ const Search = {
                         id: artist._id,
                         info: artist.info,
                         popularity: artist['popularity'],
-                        isFollow: await user_api.CheckIfUserFollowArtist(userId, user.recentlySearch[i].id)
+                        isFollow: await user_api.checkIfUserFollowArtist(userId, user.recentlySearch[i].id)
                     });
             } else if (user.recentlySearch[i].objectType == 'playlist') {
                 const playlist = await Playlist.getPlaylist(user.recentlySearch[i].id);
@@ -123,7 +122,7 @@ const Search = {
             } else if (user.recentlySearch[i].objectType == 'album') {
                 const album = await album_api.getAlbumById(user.recentlySearch[i].id);
                 if (album) {
-                    const artist1 = await artist_api.getArtist(album.artistId);
+                    const artist1 = await artistApi.getArtist(album.artistId);
                     albums.push({
                         album_type: album.albumType,
                         artist: { type: 'artist', id: album.artistId, name: artist1.Name },
@@ -146,6 +145,7 @@ const Search = {
                     tracks.push(track);
             }
         }
+        console.log(playlists)
         return { 'playlists': playlists, 'tracks': tracks, 'albums': albums, 'users': users, 'artists': artists };
     },
     //get all users
@@ -271,12 +271,9 @@ const Search = {
                 album["name"] = albums.name
                 album["images"] = albums.images
                 album["type"] = "Album";
-                if (albums) {
-                    album["artistId"] = albums.artistId;
-                    album["artistName"] = albums.artistName;
-                    album["artistType"] = "Artist";
-
-                }
+                album["artistId"] = albums.artistId;
+                album["artistName"] = albums.artistName;
+                album["artistType"] = "Artist";
                 Album.push(album);
             }
         }
@@ -304,7 +301,7 @@ const Search = {
         trackInfo = []
         if (!tracks) tracks = [];
         for (let i = 0; i < tracks.length; i++) {
-            let artist = await artist_api.getArtist(tracks[i].artistId)
+            let artist = await artistApi.getArtist(tracks[i].artistId)
             trackValues = {}
             if (artist) {
                 trackValues["artistId"] = artist._id
@@ -432,7 +429,6 @@ const Search = {
                     playlist["ownerImages"] = User.images
                     playlist["ownerType"] = User.type
                 }
-
                 playlist["_id"] = playlists[i]._id
                 playlist["name"] = playlists[i].name
                 playlist["type"] = playlists[i].type

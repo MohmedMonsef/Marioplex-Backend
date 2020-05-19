@@ -255,7 +255,7 @@ const Album = {
             for (i = 0; i < album.hasTracks.length; i++) {
                 if (!album.hasTracks[i].trackId) continue;
                 var trackInfo = await track.getTrack(album.hasTracks[i].trackId, user);
-                if (Track) {
+                if (trackInfo) {
                     let tracks = {}
                     tracks['_id'] = trackInfo._id;
                     tracks['name'] = trackInfo.name;

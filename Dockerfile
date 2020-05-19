@@ -1,7 +1,6 @@
-FROM node:latest
+FROM node:alpine
 WORKDIR "/app"
 
-RUN sudo echo "HI There"
 COPY ./Install.sh /app/Install.sh
 WORKDIR /app
 RUN bash Install.sh

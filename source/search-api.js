@@ -146,7 +146,7 @@ const Search = {
                     tracks.push(track);
             }
         }
-        console.log(playlists)
+        
         return { 'playlists': playlists, 'tracks': tracks, 'albums': albums, 'users': users, 'artists': artists };
     },
     /**
@@ -265,7 +265,7 @@ const Search = {
         if (!array) array = [];
         for (let i = 0; i < array.length; i++) {
             subName = array[i].Name.split(' ');
-            firstName = subname[0];
+            firstName = subName[0];
             if (firstName == name) {
                 return array[i]._id;
             }
@@ -335,7 +335,7 @@ const Search = {
         } else {
             const track = await this.getTracks();
             if (track == 0) return track;
-            tracks = Fuzzysearch(Name, 'name', track);
+            tracks = Fuzzysearch(name, 'name', track);
         }
 
         trackInfo = []
@@ -439,9 +439,9 @@ const Search = {
         usersInfo = []
         let user = await this.getUserByname(name);
         if (!user) user = [];
-        if (user.length == 0) return User;
+        if (user.length == 0) return user;
         else {
-            for (let i = 0; i < User.length; i++) {
+            for (let i = 0; i < user.length; i++) {
                 if (user[i].userType == "Artist") {
                     continue;
                 } else {
@@ -526,10 +526,10 @@ function Fuzzysearch(name, field, schema) {
     if (!name) name = '';
     subName = name.split(' ');
     let results = search(name, field, schema);
-    searchResults = Results.concat(results);
+    searchResults = searchResults.concat(results);
     for (let i = 0; i < subName.length; i++) {
         results = search(subName[i], field, schema);
-        searchResults = Results.concat(results);
+        searchResults = searchResults.concat(results);
     }
     return removeDupliactes(searchResults);
 

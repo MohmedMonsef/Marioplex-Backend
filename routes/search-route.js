@@ -65,7 +65,7 @@ router.put('/recently-search', checkAuth, limiter, async(req, res, next) => {
     const userId = req.user._id;
     const user = userApi.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const addToSearch = await search.addToRecentlySearch(userId, req.query.id, req.query.type).catch(next);
+    const addToSearch = await searchApi.addToRecentlySearch(userId, req.query.id, req.query.type).catch(next);
     if (!addToSearch) return res.status(400).send('not correct data !');
     else res.send('Done');
 })
@@ -74,9 +74,9 @@ router.delete('/recently-search', checkAuth, limiter, async(req, res, next) => {
     const userId = req.user._id;
     const user = userApi.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const remove = await search.removeRecently(userId, req.query.type, req.query.id).catch(next);
+    const remove = await searchApi.removeRecently(userId, req.query.type, req.query.id).catch(next);
     if (!remove) return res.status(400).send('not exist !!');
-    else res.send('Done ')
+    else res.send('Done')
 
 })
 
@@ -85,7 +85,7 @@ router.get('/recently-search', checkAuth, limiter, async(req, res, next) => {
     const userId = req.user._id;
     const user = userApi.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const recentlySearch = await search.getRecentlySearch(userId).catch(next);
+    const recentlySearch = await searchApi.getRecentlySearch(userId).catch(next);
     if (!recentlySearch) return res.status(400).send('not exist !!');
     return res.send(recentlySearch)
 

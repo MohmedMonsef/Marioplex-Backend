@@ -4,7 +4,7 @@ WORKDIR "/app"
 
 COPY ./Install.sh /app/Install.sh
 WORKDIR /app
-RUN bash Install.sh
+RUN  /Install.sh
 
 COPY ./package.json ./
 RUN npm install

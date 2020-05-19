@@ -9,6 +9,7 @@ const user_api = require('./user-api');
 const Track = require('./track-api');
 const album_api = require('./album-api');
 const Playlist = require('./playlist-api');
+/** @namespace */
 const Search = {
     /** 
      * add tosearch history
@@ -148,7 +149,10 @@ const Search = {
         console.log(playlists)
         return { 'playlists': playlists, 'tracks': tracks, 'albums': albums, 'users': users, 'artists': artists };
     },
-    //get all users
+    /**
+     * get all users
+     * @returns {Array<object>}
+     */
     getUsers: async function() {
 
         let user = await userDocument.find({}, (err, user) => {
@@ -158,6 +162,10 @@ const Search = {
         return user;
 
     },
+    /**
+     * get all artists
+     * @returns {Array<object>}
+     */
     getArtists: async function() {
 
         let artist = await artistDocument.find({}, (err, artist) => {
@@ -167,8 +175,10 @@ const Search = {
         return artist;
 
     },
-
-    //get all albums
+    /**
+     * get all albums
+     * @returns {Array<object>}
+     */
     getAlbums: async function() {
         let album = await albumDocument.find({}, (err, album) => {
             if (err) return 0;
@@ -178,8 +188,11 @@ const Search = {
 
     },
 
-    //get user by name
-    //params: name
+     /**
+     * get user by name
+     * @param {string} name - user name
+     * @returns {Array<object>}
+     */
     getUserByname: async function(name) {
 
         const user = await this.getUsers();
@@ -187,6 +200,11 @@ const Search = {
         return Fuzzysearch(name, 'displayName', user);
 
     },
+     /**
+     * get artist by name
+     * @param {string} name - artist name
+     * @returns {Array<object>}
+     */
     getArtistByname: async function(name) {
 
         const artist = await this.getArtists();
@@ -196,8 +214,11 @@ const Search = {
     },
 
 
-    //get top result by search name
-    //params: Name
+    /**
+     * get top result by search name
+    * @param {string} Name - artist name
+    * @returns {object | Number}
+    */
     getTop: async function(Name) {
 
         const artist = await this.getArtistProfile(Name);
@@ -209,7 +230,10 @@ const Search = {
 
     },
 
-    //get all playlists
+    /**
+     * get all playlists
+     * @return {Array<object>}
+    */
     getPlaylists: async function() {
         let playlist = await playlistDocument.find({ isPublic: true }, (err, playlist) => {
             if (err) return 0;
@@ -218,7 +242,10 @@ const Search = {
         return playlist;
     },
 
-    //get all tracks
+    /**
+     * get all tracks
+     * @return {Array<object>}
+    */
     getTracks: async function() {
         let track = await trackDocument.find({}, (err, track) => {
             if (err) return 0;
@@ -227,8 +254,11 @@ const Search = {
         return track;
     },
 
-    //search for an exact match of the name sent
-    //params: array, name
+    /**
+     * search for an exact match of the name sent ( helper method )
+     * @param {Array<object>} - array of anything
+     * @return {string | Number} 
+    */
     exactmatch: async function(array, name) {
 
         let firstname;
@@ -244,8 +274,15 @@ const Search = {
 
     },
 
-    //get all albums with the name albumName
-    //params: albumName, groups, country, limit, offset
+    /**
+     * get all albums with the name albumName
+     * @param {strin} albumName - album name 
+     * @param {Array<string>} groups -groups
+     * @param {string} country -country filter
+     * @param {Number} limit -limit
+     * @param {Number} offset - offset 
+     * @returns {object}
+     */
     getAlbum: async function(albumName, groups, country, limit, offset) {
 
         var allalbum;
@@ -281,8 +318,11 @@ const Search = {
 
     },
 
-    //get all tracks with Name
-    //params: Name
+    /**
+     * get all tracks with Name
+     * @param {string} Name - track name
+     * @returns {Array<object>}
+     */
     getTrack: async function(Name, limit, offset) {
 
         var tracks;
@@ -329,8 +369,11 @@ const Search = {
 
     },
 
-    //get top results with Name
-    //params: Name
+    /**
+     * get top results with Name with priority to artis -> track -> album -> playlist -> profile
+     * @param {string} Name - name of thing to search
+     * @returns {object}
+     */
     getTopResults: async function(Name) {
         const artist = await this.getTop(Name);
         if (artist) {
@@ -356,8 +399,11 @@ const Search = {
 
     },
 
-    //get all artist profile with name
-    //params: name
+    /**
+    * get all artist profile with name
+    * @param {string} name - artist name
+    * @returns  {Array<object>}
+    */
     getArtistProfile: async function(name, limit, offset) {
 
         let artistsInfo = [];
@@ -383,8 +429,11 @@ const Search = {
     },
 
 
-    //get all user profiles with name
-    //params: name
+    /**
+     * get all user profiles with name
+     * @param {string} name - user name
+     * @returns {Array<object>}
+     */
     getUserProfile: async function(name, limit, offset) {
 
         UserInfo = []
@@ -411,8 +460,11 @@ const Search = {
 
     },
 
-    //get all playlists with Name
-    //params Name
+    /**
+     * get all playlists with Name
+     * @param {string} Name - playlist name
+     * @returns {Array<object>}
+     */
     getPlaylist: async function(Name, limit, offset) {
 
         let playlists = await this.getPlaylists();
@@ -443,8 +495,13 @@ const Search = {
 }
 module.exports = Search;
 
-//search for name in schema
-//params: field, name, schema  
+/**
+ * search for name in schema
+ * @param {string} name 
+ * @param {string} field 
+ * @param {Array<object>} schema
+ * @returns {Array<object>} 
+ */
 function search(name, field, schema) {
 
     const searcher = new FuzzySearch(schema, [field], {
@@ -456,8 +513,13 @@ function search(name, field, schema) {
 
 }
 
-//use fuzzy search to search for field in schema with name
-//params: name, field, schema
+/**
+ * use fuzzy search to search for field in schema with name
+ * @param {string} name 
+ * @param {string} field 
+ * @param {Array<object>} schema
+ * @returns {Array<object>}  
+ */
 function Fuzzysearch(name, field, schema) {
 
     Results = []
@@ -473,8 +535,11 @@ function Fuzzysearch(name, field, schema) {
 
 }
 
-//remove duplicates from array
-//params: values
+/**
+ * remove duplicates from array
+ * @param {Array<object>} values - array of value to make duplicates removed from
+ * @returns {Array<object>}
+ */
 const removeDupliactes = (values) => {
 
     let newArray = [];

@@ -7,8 +7,14 @@ const User = require('./user-api');
 const track = require('./track-api');
 const artist = require('./artist-api');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
+/** @namespace */
 const Album = {
-    // add tack to album 
+     /**
+     * add track to album
+     * @param {string} AlbumId - album id
+     * @param {object} Track
+     *   
+     */
     addTrack: async function(AlbumId, Track) {
         if (!checkMonooseObjectID([AlbumId])) return 0;
         const album = await albumDocument.findById(AlbumId);
@@ -21,7 +27,12 @@ const Album = {
             return 1;
         }
     },
-    // get album by id
+    /**
+     * get album by id
+     * @param {string} albumID  -the id of album
+     * 
+     * @returns {object} -album object  
+     */
     getAlbumById: async function(albumID) {
 
         // connect to db and find album with the same id then return it as json file
@@ -86,8 +97,10 @@ const Album = {
 
         return 1;
     },
-
-    // new releases for home page 
+     /**
+     * get new releases
+     * @returns {JSON} -contain array of albums object
+     */
     getNewReleases: async function() {
         // with - is from big to small and without is from small to big
         var reAlbums = []
@@ -105,7 +118,10 @@ const Album = {
         const reAlbumsJson = { albums: reAlbums };
         return reAlbumsJson;
     },
-
+     /**
+     * get popular albums
+     * @returns {JSON} -contain array of albums object
+     */
     getPopularAlbums: async function() {
         // with - is from big to small and without is from small to big
         var reAlbums = []
@@ -124,7 +140,12 @@ const Album = {
         const reAlbumsJson = { albums: reAlbums };
         return reAlbumsJson;
     },
-    // get album artist
+    /**
+     * get album with artist info &if user saved this album or not 
+     * @param {string} albumID - the id of album
+     * @param {string} userID  -the id of user
+     * @returns {object} -album object contain its artist info 
+     */
     getAlbumArtist: async function(albumID, userID, isAuth) {
 
         // connect to db and find album with the same id then return it as json file
@@ -167,6 +188,13 @@ const Album = {
 
 
     },
+     /**
+     * find the order of track in album
+     * @param {string} trackId -the id of track
+     * @param {object} album -album object
+     * @returns {Number} -the index of track in album
+     *  
+     */
     // the order of track in album 's tracks
     findIndexOfTrackInAlbum: async function(trackId, album) {
         if (!checkMonooseObjectID([trackId])) return -1;
@@ -176,6 +204,11 @@ const Album = {
         }
         return -1
     },
+    /**
+     * get several albums
+     * @param {Array<string>} albumIds -array of albums ids 
+     * @returns {Array} -contain set has albums object 
+     */
     // get several albums by ids
     getAlbums: async function(albumIds, limit, offset) {
 
@@ -203,6 +236,12 @@ const Album = {
 
         } else return 0;
     },
+    /**
+     * get album's tracks 
+     * @param {string} albumID  - the id of album
+     * @param {object} user -user object 
+     * @returns {Array} -contain set has tracks
+     */
     //  get tracks of an album
     getTracksAlbum: async function(albumID, user, isAuth) {
 
@@ -237,6 +276,12 @@ const Album = {
         }
         return Tracks;
     },
+    /**
+     * check if user followed this album 
+     * @param {object} user 
+     * @param {string} albumID 
+     * @returns {object}
+     */
     //user like album by track-id
     //params : user , track-id
     checkIfUserSaveAlbum: function(user, albumID) {
@@ -248,6 +293,11 @@ const Album = {
         }
         return 0;
     },
+     /**
+     * save album (make user follow an album)
+     * @param {object} user 
+     * @param {string} albumID 
+     */
     //user save track by album-id
     //params : user , album-id
     saveAlbum: async function(user, albumID) {
@@ -288,6 +338,11 @@ const Album = {
         }
         return 1;
     },
+    /**
+     * unsave album (make user unfollow an album)
+     * @param {object} user 
+     * @param {string} albumID 
+     */
     unsaveAlbum: async function(user, albumID) {
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user

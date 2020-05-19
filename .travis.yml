@@ -1,10 +1,9 @@
 sudo: required
-language: node_js
 services:
   - docker
 script:
   - true
-
+  - echo " SCRIPT FINISHED " 
 after_success:
   - docker build -t belalelhossany/back .
   # Log in to the docker CLI

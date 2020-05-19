@@ -5,6 +5,7 @@ const userApi = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
 const rateLimit = require("express-rate-limit");
+const limitOffset = require('../middlewares/limitOffset');
 // add rate limiting
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -78,11 +79,14 @@ router.get('/albums', limiter, async(req, res, next) => {
     }
     var albumIds = req.body.ids.split(',');
 
-    album = await albumApi.getAlbums(albumIds, req.body.limit, req.body.offset).catch(next);
+    album = await albumApi.getAlbums(albumIds).catch(next);
     if (!album) res.status(404).json({
         message: "no albums found"
     }); //not found
-    else res.status(200).send(album);
+    else {
+        specifiedAlbums = limitOffset(req.limit, req.offset, album);
+        res.status(200).send(specifiedAlbums);
+    }
 
 })
 

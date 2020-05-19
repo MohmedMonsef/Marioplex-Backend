@@ -2,25 +2,39 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 
 
 // initialize db 
-const connection = require('../db-connection/connection');
 const User = require('./user-api');
 const Playlist = require('./playlist-api');
-const Track=require('./track-api');
-const checkMonooseObjectID = require('../validation/mongoose-objectid')
+const checkMonooseObjectId = require('../validation/mongoose-objectid');
+/** @namespace */
 const Browse = {
 
     //get category by id
-    getCategoryById: async function(categoryID) {
-        if (!checkMonooseObjectID([categoryID])) return 0;
-        let category = await categoryDocument.findById(categoryID, (err, category) => {
+    /**
+     * get category by id .
+     * @param {String} categoryId -the id of category
+     * @returns {object} - category object
+     */
+    getCategoryById: async function(categoryId) {
+        if (!checkMonooseObjectId([categoryId])) return 0;
+
+        let category = await categoryDocument.findById(categoryId, (err, category) => {
             if (err) return 0;
             return category;
         }).catch((err) => 0);
+        let playlist = await Playlist.getPlaylist(category.playlist[0]);
+        category.images = playlist.images;
         return category;
-
     },
-    getCategoryPlaylists: async function(categoryID, limit, offset) {
-        let category = await this.getCategoryById(categoryID);
+    /**
+     * Get list of playlists of one category
+     * @param {String} categoryId -the id of category
+     * @param {Number} limit
+     * @param {Number} offset
+     * @returns {Array<object>} -array of playlist object
+     */
+    getCategoryPlaylists: async function(categoryId, limit, offset) {
+        if (!checkMonooseObjectId([categoryId])) return 0;
+        let category = await this.getCategoryById(categoryId);
         if (!category) return 0;
         let playlists = []
         for (let i = 0; i < category.playlist.length; i++) {
@@ -42,16 +56,28 @@ const Browse = {
     },
 
     // get categories
+    /**
+     * get all categories
+     * @returns {Array<object>} -array of categories object
+     * 
+     */
     getCategoryies: async function() {
-
         let category = await categoryDocument.find({}, (err, category) => {
             if (err) return 0;
             return category;
         }).catch((err) => 0);
+        for (let i = 0; i < category.length; i++) {
+            let playlist = await Playlist.getPlaylist(category[i].playlist[0]);
+            category[i].images = playlist.images;
+        }
         return category;
-
     },
     // to get genre list
+    /**
+     * get list of genre from artist object
+     * @returns {Array<String>} -array of genres
+     * 
+     */
     getGenreList: async function() {
         let artists = await artistDocument.find({}, (err, artists) => {
             if (err) return 0;
@@ -77,6 +103,11 @@ const Browse = {
         }
         return this.getPlaylistGenre(genre);
     },
+    /**
+     * get playlists of genre
+     * @param {Array<string>} genre -array of genre  
+     * @returns {Array<object>}
+     */
     getPlaylistGenre: async function(genre) {
         let playlists = await playlistDocument.find({}, (err, playlists) => {
             if (err) return 0;
@@ -110,7 +141,12 @@ const Browse = {
 
 }
 module.exports = Browse;
-
+/**
+ * set array by limit and offset
+ * @param {Number} limit 
+ * @param {Number} offset 
+ * @param {Array} categories 
+ */
 function limitOffset(limit, offset, categories) {
 
     let start = 0;
@@ -130,6 +166,5 @@ function limitOffset(limit, offset, categories) {
             end = start + limit;
         }
     }
-    categories.slice(start, end);
-    return categories;
+    return categories.slice(start, end);
 }

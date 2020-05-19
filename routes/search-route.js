@@ -12,7 +12,7 @@ const limiter = rateLimit({
 });
 
 //SEARCH FOR A WORD OR CHAR, QUERY PARAMS: name, type
-router.get('/search', limiter, async(req, res) => {
+router.get('/search', limiter, async(req, res, next) => {
 
     const name = req.query.name;
     const type = req.query.type.split(',');
@@ -21,30 +21,30 @@ router.get('/search', limiter, async(req, res) => {
     let SearchResult = {};
     for (let i = 0; i < type.length; i++) {
         if (type[i] == "top") {
-            const artist = await Search.getTopResults(name);
+            const artist = await Search.getTopResults(name).catch(next);
             if (artist == {}) SearchResult["top"] = [] //not found
             else SearchResult["top"] = artist
         } else if (type[i] == "track") {
-            const artist = await Search.getTrack(name, limit, offset);
+            const artist = await Search.getTrack(name, limit, offset).catch(next);
             if (artist.length == 0) SearchResult["track"] = [] //not found
             else SearchResult["track"] = artist
         } else if (type[i] == "album") {
 
-            const albums = await Search.getAlbum(name, req.query.groups, req.query.country, req.query.limit, req.query.offset);
+            const albums = await Search.getAlbum(name, req.query.groups, req.query.country, req.query.limit, req.query.offset).catch(next);
             if (albums.length == 0) SearchResult["album"] = [] //not found
             else SearchResult["album"] = albums
 
         } else if (type[i] == "artist") {
-            const artist = await Search.getArtistProfile(name, limit, offset);
+            const artist = await Search.getArtistProfile(name, limit, offset).catch(next);
             if (artist == 0) SearchResult["artist"] = [] //not found
             else SearchResult["artist"] = artist
         } else if (type[i] == "playlist") {
-            const playlists = await Search.getPlaylist(name, limit, offset);
+            const playlists = await Search.getPlaylist(name, limit, offset).catch(next);
             if (playlists.length == 0) SearchResult["playlist"] = [] //not found
             else SearchResult["playlist"] = playlists
 
         } else if (type[i] == "profile") {
-            const profiles = await Search.getUserProfile(name, limit, offset);
+            const profiles = await Search.getUserProfile(name, limit, offset).catch(next);
             if (profiles.length == 0) SearchResult["profile"] = []; //not found
             else SearchResult["profile"] = profiles
         } else {
@@ -60,32 +60,32 @@ router.get('/search', limiter, async(req, res) => {
 
 })
 
-router.put('/recently-search', checkAuth, limiter, async(req, res) => {
+router.put('/recently-search', checkAuth, limiter, async(req, res, next) => {
     if (!checkMonooseObjectID([req.query.id, req.user._id])) return res.status(403).send('error in ids !!');
     const userID = req.user._id;
     const user = User.getUserById(userID)
     if (!user) return req.status(403).send('user not found !');
-    const addTosearch = await Search.addToRecentlySearch(userID, req.query.id, req.query.type);
+    const addTosearch = await Search.addToRecentlySearch(userID, req.query.id, req.query.type).catch(next);
     if (!addTosearch) return res.status(400).send('not correct data !');
     else res.send('Done');
 })
-router.delete('/recently-search', checkAuth, limiter, async(req, res) => {
+router.delete('/recently-search', checkAuth, limiter, async(req, res, next) => {
     if (!checkMonooseObjectID([req.query.id, req.user._id])) return res.status(403).send('error in ids !!');
     const userId = req.user._id;
     const user = User.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const remove = await Search.removeRecently(userId, req.query.type, req.query.id);
+    const remove = await Search.removeRecently(userId, req.query.type, req.query.id).catch(next);
     if (!remove) return res.status(400).send('not exist !!');
     else res.send('Done ')
 
 })
 
-router.get('/recently-search', checkAuth, limiter, async(req, res) => {
+router.get('/recently-search', checkAuth, limiter, async(req, res, next) => {
     if (!checkMonooseObjectID([req.user._id])) return res.status(403).send('error in ids !!');
     const userId = req.user._id;
     const user = User.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const recentlySearch = await Search.getRecentlySearch(userId);
+    const recentlySearch = await Search.getRecentlySearch(userId).catch(next);
     if (!recentlySearch) return res.status(400).send('not exist !!');
     return res.send(recentlySearch)
 

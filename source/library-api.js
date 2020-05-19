@@ -1,10 +1,9 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
-const spotify = require('../models/db');
+
 const Album = require('./album-api');
-const Track = require('./track-api');
-const artist_api = require('./artist-api');
+const ArtistApi = require('./artist-api');
 const Playlist = require('../source/playlist-api');
-const checkMonooseObjectID = require('../validation/mongoose-objectid')
+const CheckMonooseObjectId = require('../validation/mongoose-objectid')
 const Library = {
     /**
      * check if user saves albums
@@ -12,11 +11,9 @@ const Library = {
      * @param {string} userId - user id
      * @returns {Array<boolean>} 
      */
-    //check if user saves albums
-    //params: array of AlbumsIDs, UserID
     checkSavedAlbums: async function(albumsIds, userId) {
-        if (!checkMonooseObjectID(albumsIds)) return 0;
-        if (!checkMonooseObjectID([userId])) return 0;
+        if (!CheckMonooseObjectId(albumsIds)) return 0;
+        if (!CheckMonooseObjectId([userId])) return 0;
         let checks = [];
         let found = false;
         const user = await userDocument.findById(userId, (err, user) => {
@@ -27,8 +24,8 @@ const Library = {
         for (var i = 0; i < albumsIds.length; i++) {
             found = false;
 
-            for (let Album in user.saveAlbum) {
-                if (user.saveAlbum[Album].albumId == albumsIds[i]) {
+            for (let album in user.saveAlbum) {
+                if (user.saveAlbum[album].albumId == albumsIds[i]) {
                     checks.push(true);
                     found = true;
                 }
@@ -38,7 +35,6 @@ const Library = {
             }
         }
         return checks;
-
     },
     /**
      * check if user saves tracks
@@ -46,60 +42,61 @@ const Library = {
      * @param {string} userId - user id
      * @returns {Array<boolean>} 
      */
-    //check if user saves tracks
-    //params: array of TracksIDs, UserID
-    checkSavedTracks: async function(TracksIDs, UserID) {
-        if (!checkMonooseObjectID([UserID])) return 0;
-        if (!checkMonooseObjectID(TracksIDs)) return 0;
-        const user = await userDocument.findById(UserID, (err, user) => {
+    checkSavedTracks: async function(tracksIds, userId) {
+        if (!CheckMonooseObjectId([userId])) return 0;
+        if (!CheckMonooseObjectId(tracksIds)) return 0;
+        const user = await userDocument.findById(userId, (err, user) => {
             if (err) return 0;
             return user;
         }).catch((err) => 0);
-        if (!user['likesTracksPlaylist']) return 0;
-        return await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], TracksIDs);
+        let checks = [];
+        for (let i = 0; i < tracksIds.length; i++)
+            checks.push(false);
+        if (!user['likestracksPlaylist']) return checks;
+        return await Playlist.checkPlaylistHastracks(user['likestracksPlaylist'], tracksIds);
     },
     /**
      * get  saved albums for a specific user
+     * @param {string} userId - user id
      * @param {number} [limit] - the maximum number of objects to return
      * @param {number} [offset] - the index of the first object to return
-     * @param {string} userId - user id
      * @returns {Array<object>} - array of albums' object
      */
     //get  saved albums for a user
-    //params: UserID, limit, offset
-    getSavedAlbums: async function(UserID, limit, offset) {
-        if (!checkMonooseObjectID([UserID])) return 0;
-        let Albums = [];
-        let user = await userDocument.findById(UserID);
+    //params: userId, limit, offset
+    getSavedAlbums: async function(userId, limit, offset) {
+        if (!CheckMonooseObjectId([userId])) return 0;
+        let albumsArray = [];
+        let user = await userDocument.findById(userId);
         if (!user) return 0;
         if (!user.saveAlbum) user.saveAlbum = [];
         if (user.saveAlbum.length == 0) return 0;
         for (let i = 0; i < user.saveAlbum.length; i++) {
             let album = await Album.getAlbumById(user.saveAlbum[i].albumId);
-            if (album) Albums.push(album);
+            if (album) albumsArray.push(album);
         }
 
         let start = 0;
-        let end = (Albums.length > 20) ? 20 : Albums.length;
+        let end = (albumsArray.length > 20) ? 20 : albumsArray.length;
         if (offset != undefined) {
-            if (offset >= 0 && offset <= Albums.length) {
+            if (offset >= 0 && offset <= albumsArray.length) {
                 start = offset;
             }
         }
         if (limit != undefined) {
-            if ((start + limit) > 0 && (start + limit) <= Albums.length) {
+            if ((start + limit) > 0 && (start + limit) <= albumsArray.length) {
                 end = start + limit;
             }
         } else {
             limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-            if ((start + limit) > 0 && (start + limit) <= Albums.length) {
+            if ((start + limit) > 0 && (start + limit) <= albumsArray.length) {
                 end = start + limit;
             }
         }
-        let albumSlice = Albums.slice(start, end);
+        let albumSlice = albumsArray.slice(start, end);
         albumInfo = []
         for (let i = 0; i < albumSlice.length; i++) {
-            let albums = await Album.getAlbumArtist(albumSlice[i]._id, UserID);
+            let albums = await Album.getAlbumArtist(albumSlice[i]._id, userId);
             if (albums) {
                 albumInfo.push(albums);
             }
@@ -111,23 +108,20 @@ const Library = {
 
     /**
      * get saved tracks for certain user
-     * @param {string} UserID  - user id 
+     * @param {string} userId  - user id 
      * @param {Numbrt} limit  
      * @param {Number} offset 
      * @returns{object} - contain users saved tracks
      */
-    //get  saved traks for a user
-    //params: UserID, limit, offset
-    getSavedTracks: async function(UserID, limit, offset) {
-        if (!checkMonooseObjectID([UserID])) return 0;
-        let user = await userDocument.findById(UserID);
+    getSavedTracks: async function(userId, limit, offset) {
+        if (!CheckMonooseObjectId([userId])) return 0;
+        let user = await userDocument.findById(userId);
         if (!user) return 0;
         if (!user['likesTracksPlaylist']) return 0;
         let tracksPlaylist = await Playlist.getPlaylistTracks(user['likesTracksPlaylist'], true);
-
+        //console.log(tracksPlaylist);
         if (tracksPlaylist[0].tracks.length == 0 || !tracksPlaylist) return 0;
         tracksPlaylist = tracksPlaylist[0].tracks;
-
         let start = 0;
         let end = (tracksPlaylist.length > 20) ? 20 : tracksPlaylist.length;
         if (offset != undefined) {
@@ -148,7 +142,7 @@ const Library = {
         let trackSlice = tracksPlaylist.slice(start, end);
         trackInfo = []
         for (let i = 0; i < trackSlice.length; i++) {
-            let artist = await artist_api.getArtist(trackSlice[i].artistId)
+            let artist = await ArtistApi.getArtist(trackSlice[i].artistId)
             tracks = {}
             if (artist) {
                 tracks["artistId"] = artist._id
@@ -169,12 +163,9 @@ const Library = {
             tracks["images"] = trackSlice[i].images
             trackInfo.push(tracks);
         }
-        return { "tracks": trackInfo, "ownerName": user.displayName, playlistId: user['likesTracksPlaylist'] };
+        return { "tracks": trackInfo, "ownerName": user.displayName, playlistId: user['likestracksPlaylist'] };
 
     }
-
-
-
 }
 
 module.exports = Library;

@@ -133,7 +133,7 @@ const Album = {
         let album = await this.getAlbumById(albumID);
         let albumInfo = {}
         let user = await userDocument.findById(userID);
-        if(isAuth){
+        if (isAuth) {
             if (user) {
                 let isSaved = await this.checkIfUserSaveAlbum(user, albumID);
                 if (isSaved) {
@@ -141,7 +141,7 @@ const Album = {
                 } else {
                     albumInfo['isSaved'] = false;
                 }
-    
+
             }
         }
         if (album) {
@@ -156,13 +156,11 @@ const Album = {
             }
             if (track) {
                 albumInfo['track'] = track;
-            } 
-            else {
+            } else {
                 albumInfo['track'] = []
             }
             return albumInfo;
-        } 
-        else {
+        } else {
             return 0;
         }
 
@@ -215,8 +213,7 @@ const Album = {
         const album = await this.getAlbumById(albumID);
         if (!album) {
             return 0;
-        } 
-        else {
+        } else {
             if (!album.hasTracks) album.hasTracks = [];
             for (i = 0; i < album.hasTracks.length; i++) {
                 if (!album.hasTracks[i].trackId) continue;
@@ -226,8 +223,8 @@ const Album = {
                     tracks['_id'] = Track._id;
                     tracks['name'] = Track.name;
                     tracks['images'] = Track.images;
-                    if(isAuth){
-                         tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
+                    if (isAuth) {
+                        tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
                     }
                     tracks['playable'] = Track.playable;
                     tracks['duration'] = Track.duration;

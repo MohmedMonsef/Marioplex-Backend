@@ -5,6 +5,7 @@ services:
 
 before_install:
   - docker build -t backtest .
+  - sudo echo "HI"
 
 script:
   - true

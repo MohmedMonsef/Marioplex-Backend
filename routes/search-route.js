@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
-const Search = require('../source/search-api');
-const User = require('../source/user-api');
+const searchApi = require('../source/search-api');
+const userApi = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
@@ -18,42 +18,42 @@ router.get('/search', limiter, async(req, res, next) => {
     const type = req.query.type.split(',');
     const limit = req.body.limit;
     const offset = req.body.offset;
-    let SearchResult = {};
+    let searchResult = {};
     for (let i = 0; i < type.length; i++) {
         if (type[i] == "top") {
-            const artist = await Search.getTopResults(name).catch(next);
-            if (artist == {}) SearchResult["top"] = [] //not found
-            else SearchResult["top"] = artist
+            const artist = await searchApi.getTopResults(name).catch(next);
+            if (artist == {}) searchResult["top"] = [] //not found
+            else searchResult["top"] = artist
         } else if (type[i] == "track") {
-            const artist = await Search.getTrack(name, limit, offset).catch(next);
-            if (artist.length == 0) SearchResult["track"] = [] //not found
-            else SearchResult["track"] = artist
+            const artist = await searchApi.getTrack(name, limit, offset).catch(next);
+            if (artist.length == 0) searchResult["track"] = [] //not found
+            else searchResult["track"] = artist
         } else if (type[i] == "album") {
 
-            const albums = await Search.getAlbum(name, req.query.groups, req.query.country, req.query.limit, req.query.offset).catch(next);
-            if (albums.length == 0) SearchResult["album"] = [] //not found
-            else SearchResult["album"] = albums
+            const albums = await searchApi.getAlbum(name, req.query.groups, req.query.country, req.query.limit, req.query.offset).catch(next);
+            if (albums.length == 0) searchResult["album"] = [] //not found
+            else searchResult["album"] = albums
 
         } else if (type[i] == "artist") {
-            const artist = await Search.getArtistProfile(name, limit, offset).catch(next);
-            if (artist == 0) SearchResult["artist"] = [] //not found
-            else SearchResult["artist"] = artist
+            const artist = await searchApi.getArtistProfile(name, limit, offset).catch(next);
+            if (artist == 0) searchResult["artist"] = [] //not found
+            else searchResult["artist"] = artist
         } else if (type[i] == "playlist") {
-            const playlists = await Search.getPlaylist(name, limit, offset).catch(next);
-            if (playlists.length == 0) SearchResult["playlist"] = [] //not found
-            else SearchResult["playlist"] = playlists
+            const playlists = await searchApi.getPlaylist(name, limit, offset).catch(next);
+            if (playlists.length == 0) searchResult["playlist"] = [] //not found
+            else searchResult["playlist"] = playlists
 
         } else if (type[i] == "profile") {
-            const profiles = await Search.getUserProfile(name, limit, offset).catch(next);
-            if (profiles.length == 0) SearchResult["profile"] = []; //not found
-            else SearchResult["profile"] = profiles
+            const profiles = await searchApi.getUserProfile(name, limit, offset).catch(next);
+            if (profiles.length == 0) searchResult["profile"] = []; //not found
+            else searchResult["profile"] = profiles
         } else {
             continue;
         }
     }
-    for (let search in SearchResult) {
-        if (SearchResult[search] != {}) {
-            return res.status(200).send(SearchResult);
+    for (let search in searchResult) {
+        if (searchResult[search] != {}) {
+            return res.status(200).send(searchResult);
         }
     }
     return res.status(404).send("No results found");
@@ -62,19 +62,19 @@ router.get('/search', limiter, async(req, res, next) => {
 
 router.put('/recently-search', checkAuth, limiter, async(req, res, next) => {
     if (!checkMonooseObjectID([req.query.id, req.user._id])) return res.status(403).send('error in ids !!');
-    const userID = req.user._id;
-    const user = User.getUserById(userID)
+    const userId = req.user._id;
+    const user = userApi.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const addTosearch = await Search.addToRecentlySearch(userID, req.query.id, req.query.type).catch(next);
-    if (!addTosearch) return res.status(400).send('not correct data !');
+    const addToSearch = await search.addToRecentlySearch(userId, req.query.id, req.query.type).catch(next);
+    if (!addToSearch) return res.status(400).send('not correct data !');
     else res.send('Done');
 })
 router.delete('/recently-search', checkAuth, limiter, async(req, res, next) => {
     if (!checkMonooseObjectID([req.query.id, req.user._id])) return res.status(403).send('error in ids !!');
     const userId = req.user._id;
-    const user = User.getUserById(userId)
+    const user = userApi.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const remove = await Search.removeRecently(userId, req.query.type, req.query.id).catch(next);
+    const remove = await search.removeRecently(userId, req.query.type, req.query.id).catch(next);
     if (!remove) return res.status(400).send('not exist !!');
     else res.send('Done ')
 
@@ -83,9 +83,9 @@ router.delete('/recently-search', checkAuth, limiter, async(req, res, next) => {
 router.get('/recently-search', checkAuth, limiter, async(req, res, next) => {
     if (!checkMonooseObjectID([req.user._id])) return res.status(403).send('error in ids !!');
     const userId = req.user._id;
-    const user = User.getUserById(userId)
+    const user = userApi.getUserById(userId)
     if (!user) return req.status(403).send('user not found !');
-    const recentlySearch = await Search.getRecentlySearch(userId).catch(next);
+    const recentlySearch = await search.getRecentlySearch(userId).catch(next);
     if (!recentlySearch) return res.status(400).send('not exist !!');
     return res.send(recentlySearch)
 

@@ -216,12 +216,12 @@ const Search = {
 
     /**
      * get top result by search name
-    * @param {string} Name - artist name
+    * @param {string} name - artist name
     * @returns {object | Number}
     */
-    getTop: async function(Name) {
+    getTop: async function(name) {
 
-        const artist = await this.getArtistProfile(Name);
+        const artist = await this.getArtistProfile(name);
         //console.log(artist)
         if (artist) {
             return artist[0]._id
@@ -261,12 +261,12 @@ const Search = {
     */
     exactmatch: async function(array, name) {
 
-        let firstname;
+        let firstName;
         if (!array) array = [];
         for (let i = 0; i < array.length; i++) {
-            subname = array[i].Name.split(' ');
-            firstname = subname[0];
-            if (firstname == name) {
+            subName = array[i].Name.split(' ');
+            firstName = subname[0];
+            if (firstName == name) {
                 return array[i]._id;
             }
         }
@@ -299,7 +299,7 @@ const Search = {
 
         }
         if (!allalbum) allalbum = [];
-        Album = []
+        albumsInfo = []
         for (let i = 0; i < allalbum.length; i++) {
             let albums = await album_api.getAlbumArtist(allalbum[i]._id);
             if (albums) {
@@ -311,23 +311,23 @@ const Search = {
                 album["artistId"] = albums.artistId;
                 album["artistName"] = albums.artistName;
                 album["artistType"] = "Artist";
-                Album.push(album);
+                albumsInfo.push(album);
             }
         }
-        return Album;
+        return albumsInfo;
 
     },
 
     /**
      * get all tracks with Name
-     * @param {string} Name - track name
+     * @param {string} name - track name
      * @returns {Array<object>}
      */
-    getTrack: async function(Name, limit, offset) {
+    getTrack: async function(name, limit, offset) {
 
         var tracks;
-        let allartists = await artistDocument.find({});
-        let artist = await this.exactmatch(allartists, Name);
+        let allArtists = await artistDocument.find({});
+        let artist = await this.exactmatch(allArtists, name);
         if (artist) {
 
             tracks = await artistApi.getTracks(artist);
@@ -371,28 +371,28 @@ const Search = {
 
     /**
      * get top results with Name with priority to artis -> track -> album -> playlist -> profile
-     * @param {string} Name - name of thing to search
+     * @param {string} name - name of thing to search
      * @returns {object}
      */
-    getTopResults: async function(Name) {
-        const artist = await this.getTop(Name);
+    getTopResults: async function(name) {
+        const artist = await this.getTop(name);
         if (artist) {
-            let artist = await this.getArtistProfile(Name)
+            let artist = await this.getArtistProfile(name)
             return artist[0]
         }
-        let track = await this.getTrack(Name);
+        let track = await this.getTrack(name);
         if (track && track.length != 0) {
             return track[0];
         }
-        let album = await this.getAlbum(Name);
+        let album = await this.getAlbum(name);
         if (album && album.length != 0) {
             return album[0];
         }
-        let playlist = await this.getPlaylist(Name);
+        let playlist = await this.getPlaylist(name);
         if (playlist && playlist.length != 0) {
             return playlist[0];
         }
-        let profile = await this.getUserProfile(Name);
+        let profile = await this.getUserProfile(name);
         if (profile && profile.length != 0) {
             return profile[0];
         }
@@ -436,26 +436,26 @@ const Search = {
      */
     getUserProfile: async function(name, limit, offset) {
 
-        UserInfo = []
-        let User = await this.getUserByname(name);
-        if (!User) User = [];
-        if (User.length == 0) return User;
+        usersInfo = []
+        let user = await this.getUserByname(name);
+        if (!user) user = [];
+        if (user.length == 0) return User;
         else {
             for (let i = 0; i < User.length; i++) {
-                if (User[i].userType == "Artist") {
+                if (user[i].userType == "Artist") {
                     continue;
                 } else {
 
-                    user = {}
-                    user["_id"] = User[i]._id
-                    user["displayName"] = User[i].displayName
-                    user["images"] = User[i].images
-                    user["type"] = User[i].type
-                    UserInfo.push(user)
+                    userInfo = {}
+                    userInfo["_id"] = user[i]._id
+                    userInfo["displayName"] = user[i].displayName
+                    userInfo["images"] = user[i].images
+                    userInfo["type"] = user[i].type
+                    usersInfo.push(userInfo)
                 }
             }
 
-            return limitOffset(limit, offset, UserInfo);
+            return limitOffset(limit, offset, usersInfo);
         }
 
     },
@@ -522,16 +522,16 @@ function search(name, field, schema) {
  */
 function Fuzzysearch(name, field, schema) {
 
-    Results = []
+    searchResults = []
     if (!name) name = '';
     subName = name.split(' ');
     let results = search(name, field, schema);
-    Results = Results.concat(results);
+    searchResults = Results.concat(results);
     for (let i = 0; i < subName.length; i++) {
         results = search(subName[i], field, schema);
-        Results = Results.concat(results);
+        searchResults = Results.concat(results);
     }
-    return removeDupliactes(Results);
+    return removeDupliactes(searchResults);
 
 }
 

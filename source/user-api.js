@@ -469,10 +469,10 @@ const User = {
      */
     checkIfUserFollowArtist: async function(userId, artistId) {
         try{
-        if (!checkMonooseObjectID([userId, artistId])) return -1;
+        if (!checkMonooseObjectID([userId, artistId])) return 0;
         const user = await this.getUserById(userId);
         let artist = await Artist.getArtist(artistId);
-        if (!user || (!artist)) return -1;
+        if (!user || (!artist)) return 0;
         if (!user.follow) user.follow = [];
         if (!user.follow.length) return false;
         for (let i = 0; i < user.follow.length; i++) {

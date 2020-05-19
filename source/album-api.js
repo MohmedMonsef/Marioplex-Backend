@@ -3,31 +3,40 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 
 // initialize db 
 const connection = require('../db-connection/connection');
-const User = require('./user-api');
 const track = require('./track-api');
 const artist = require('./artist-api');
-const checkMonooseObjectID = require('../validation/mongoose-objectid')
+const checkMonooseObjectId = require('../validation/mongoose-objectid')
+/** @namespace */
 const Album = {
-    // add tack to album 
-    addTrack: async function(AlbumId, Track) {
-        if (!checkMonooseObjectID([AlbumId])) return 0;
-        const album = await albumDocument.findById(AlbumId);
+     /**
+     * add track to album
+     * @param {string} albumId - album id
+     * @param {object} track
+     *   
+     */
+    addTrack: async function(albumId, track) {
+        if (!checkMonooseObjectId([albumId])) return 0;
+        const album = await albumDocument.findById(albumId);
         if (album) {
             if (!album.hasTracks) album.hasTracks = [];
             album.hasTracks.push({
-                trackId: Track._id
+                trackId: track._id
             });
             await album.save();
             return 1;
         }
     },
-    // get album by id
-    getAlbumById: async function(albumID) {
+    /**
+     * get album by id
+     * @param {string} albumId  -the id of album
+     * @returns {object} -album object  
+     */
+    getAlbumById: async function(albumId) {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        if (!checkMonooseObjectID([albumID])) return 0;
-        let album = await albumDocument.findById(albumID, (err, album) => {
+        if (!checkMonooseObjectId([albumId])) return 0;
+        let album = await albumDocument.findById(albumId, (err, album) => {
             if (err) return 0;
             return album;
         }).catch((err) => 0);
@@ -42,9 +51,9 @@ const Album = {
      * @returns {Boolean}
      */
     deleteAlbum: async function(userId, albumId) {
-        if (!checkMonooseObjectID([albumId])) return 0;
+        if (!checkMonooseObjectId([albumId])) return 0;
         const artistD = await artist.findMeAsArtist(userId);
-        if (!artist) return 0;
+        if (!artistD) return 0;
         if (!artist.checkArtisthasAlbum(artistD._id, albumId)) return 0;
         const album = await this.getAlbumById(albumId);
         if (!album) return 0;
@@ -53,10 +62,9 @@ const Album = {
                 await track.deleteTrack(userId, album.hasTracks[i].trackId);
             }
         }
-        for (let i = 0; i < artistD.addAlbums.length; i++) {
-            if (String(artistD.addAlbums[i].albumId) == String(albumId)) { artistD.addAlbums.splice(i, 1); break; }
-        }
-        await artistD.save();
+        await artistDocument.update({'_id':artistD._id},{$pull:{'addAlbums':{albumId}}}); 
+    
+        
         if (!await albumDocument.findByIdAndDelete(albumId)) return 0;
         await userDocument.find({}, async(err, files) => {
             if (err) return 0;
@@ -86,8 +94,10 @@ const Album = {
 
         return 1;
     },
-
-    // new releases for home page 
+     /**
+     * get new releases
+     * @returns {JSON} -contain array of albums object
+     */
     getNewReleases: async function() {
         // with - is from big to small and without is from small to big
         var reAlbums = []
@@ -105,7 +115,10 @@ const Album = {
         const reAlbumsJson = { albums: reAlbums };
         return reAlbumsJson;
     },
-
+     /**
+     * get popular albums
+     * @returns {JSON} -contain array of albums object
+     */
     getPopularAlbums: async function() {
         // with - is from big to small and without is from small to big
         var reAlbums = []
@@ -124,18 +137,23 @@ const Album = {
         const reAlbumsJson = { albums: reAlbums };
         return reAlbumsJson;
     },
-    // get album artist
-    getAlbumArtist: async function(albumID, userID, isAuth) {
+    /**
+     * get album with artist info &if user saved this album or not 
+     * @param {string} albumId - the id of album
+     * @param {string} userId  -the id of user
+     * @returns {object} -album object contain its artist info 
+     */
+    getAlbumArtist: async function(albumId, userId, isAuth) {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        if (!checkMonooseObjectID([albumID, userID])) return 0;
-        let album = await this.getAlbumById(albumID);
+        if (!checkMonooseObjectId([albumId, userId])) return 0;
+        let album = await this.getAlbumById(albumId);
         let albumInfo = {}
-        let user = await userDocument.findById(userID);
+        let user = await userDocument.findById(userId);
         if (isAuth) {
             if (user) {
-                let isSaved = await this.checkIfUserSaveAlbum(user, albumID);
+                let isSaved = await this.checkIfUserSaveAlbum(user, albumId);
                 if (isSaved) {
                     albumInfo['isSaved'] = true;
                 } else {
@@ -145,14 +163,14 @@ const Album = {
             }
         }
         if (album) {
-            let Artist = await artist.getArtist(album.artistId);
-            let track = await this.getTracksAlbum(albumID, user, isAuth);
+            let artistInfo = await artist.getArtist(album.artistId);
+            let track = await this.getTracksAlbum(albumId, user, isAuth);
             albumInfo['_id'] = album._id;
             albumInfo['name'] = album.name;
             albumInfo['images'] = album.images;
-            if (Artist) {
-                albumInfo['artistId'] = Artist._id;
-                albumInfo['artistName'] = Artist.Name;
+            if (artistInfo) {
+                albumInfo['artistId'] = artistInfo._id;
+                albumInfo['artistName'] = artistInfo.Name;
             }
             if (track) {
                 albumInfo['track'] = track;
@@ -167,100 +185,129 @@ const Album = {
 
 
     },
+     /**
+     * find the order of track in album
+     * @param {string} trackId -the id of track
+     * @param {object} album -album object
+     * @returns {Number} -the index of track in album
+     *  
+     */
     // the order of track in album 's tracks
     findIndexOfTrackInAlbum: async function(trackId, album) {
-        if (!checkMonooseObjectID([trackId])) return -1;
+        if (!checkMonooseObjectId([trackId])) return -1;
         if (!album.hasTracks) album.hasTracks = [];
         for (let i = 0; i < album.hasTracks.length; i++) {
             if (album.hasTracks[i].trackId == trackId) return i;
         }
         return -1
     },
+    /**
+     * get several albums
+     * @param {Array<string>} albumIds -array of albums ids 
+     * @returns {Array} -contain set has albums object 
+     */
     // get several albums by ids
-    getAlbums: async function(albumIds, limit, offset) {
+    getAlbums: async function(albumIds) {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
 
-        var Album = []
+        var albums = []
         if (albumIds == undefined) return 0;
-        if (!checkMonooseObjectID(albumIds)) return 0;
+        if (!checkMonooseObjectId(albumIds)) return 0;
         for (var i = 0; i < albumIds.length; i++) {
             var album = await this.getAlbumById(albumIds[i]);
             if (album) {
-                Album.push(album)
+                albums.push(album)
             }
         }
-        if (Album.length > 0) {
-            AlbumWithArtist = []
-            for (let i = 0; i < Album.length; i++) {
-                let Artist = await artist.getArtist(Album[i].artistId);
+        if (albums.length > 0) {
+            albumWithArtist = []
+            for (let i = 0; i < albums.length; i++) {
+                let Artist = await artist.getArtist(albums[i].artistId);
                 if (Artist) {
-                    AlbumWithArtist.push({ Album: Album[i], Artist: Artist });
+                    albumWithArtist.push({ Album: albums[i], Artist: Artist });
                 }
             }
-            return limitOffset(limit, offset, AlbumWithArtist)
+            return albumWithArtist;
 
         } else return 0;
     },
+    /**
+     * get album's tracks 
+     * @param {string} albumId  - the id of album
+     * @param {object} user -user object 
+     * @returns {Array} -contain set has tracks
+     */
     //  get tracks of an album
-    getTracksAlbum: async function(albumID, user, isAuth) {
+    getTracksAlbum: async function(albumId, user, isAuth) {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        if (!checkMonooseObjectID([albumID])) return 0;
-        const Tracks = [];
-        const album = await this.getAlbumById(albumID);
+        if (!checkMonooseObjectId([albumId])) return 0;
+        const tracksInfo = [];
+        const album = await this.getAlbumById(albumId);
         if (!album) {
             return 0;
         } else {
             if (!album.hasTracks) album.hasTracks = [];
             for (i = 0; i < album.hasTracks.length; i++) {
                 if (!album.hasTracks[i].trackId) continue;
-                var Track = await track.getTrack(album.hasTracks[i].trackId, user);
-                if (Track) {
+                var trackInfo = await track.getTrack(album.hasTracks[i].trackId, user);
+                if (trackInfo) {
                     let tracks = {}
-                    tracks['_id'] = Track._id;
-                    tracks['name'] = Track.name;
-                    tracks['images'] = Track.images;
+                    tracks['_id'] = trackInfo._id;
+                    tracks['name'] = trackInfo.name;
+                    tracks['images'] = trackInfo.images;
                     if (isAuth) {
-                        tracks['isLiked'] = await track.checkIfUserLikeTrack(user, Track._id);
+                        tracks['isLiked'] = await track.checkIfUserLikeTrack(user, trackInfo._id);
                     }
-                    tracks['playable'] = Track.playable;
-                    tracks['duration'] = Track.duration;
-                    Tracks.push(tracks);
+                    tracks['playable'] = trackInfo.playable;
+                    tracks['duration'] = trackInfo.duration;
+                    tracksInfo.push(tracks);
                 }
             }
         }
-        if (Tracks.length == 0) {
+        if (tracksInfo.length == 0) {
             return 0;
         }
-        return Tracks;
+        return tracksInfo;
     },
+    /**
+     * check if user followed this album 
+     * @param {object} user 
+     * @param {string} albumId 
+     * @returns {object}
+     */
     //user like album by track-id
     //params : user , track-id
-    checkIfUserSaveAlbum: function(user, albumID) {
-        if (!checkMonooseObjectID([albumID])) return 0;
+    checkIfUserSaveAlbum: function(user, albumId) {
+        if (!checkMonooseObjectId([albumId])) return 0;
         const albumsUserSaved = user.saveAlbum;
         // if user.like.contains({track_id:track.track_id})
         if (albumsUserSaved) {
-            return albumsUserSaved.find(album => String(album.albumId) == String(albumID));
+            return albumsUserSaved.find(album => String(album.albumId) == String(albumId));
         }
         return 0;
     },
+     /**
+     * save album (make user follow an album)
+     * @param {object} user 
+     * @param {string} albumId
+     */
     //user save track by album-id
     //params : user , album-id
-    saveAlbum: async function(user, albumID) {
+    saveAlbum: async function(user, albumId) {
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
-        if (albumID == undefined) return 2;
-        if (!checkMonooseObjectID(albumID)) return 0;
+        if (albumId == undefined) return 2;
+        if (!checkMonooseObjectId(albumId)) return 0;
         let albums = [];
-        for (let j = 0; j < albumID.length; j++) {
-            let album = await this.getAlbumById(albumID[j]);
+        for (let j = 0; j < albumId.length; j++) {
+            let album = await this.getAlbumById(albumId[j]);
             if (album) {
-                albums.push(albumID[j]);
+                albums.push(albumId[j]);
             }
         }
         if (albums.length == 0) { return 2; }
@@ -288,24 +335,29 @@ const Album = {
         }
         return 1;
     },
-    unsaveAlbum: async function(user, albumID) {
+    /**
+     * unsave album (make user unfollow an album)
+     * @param {object} user 
+     * @param {string} albumId 
+     */
+    unsaveAlbum: async function(user, albumId) {
         // check if user already saved the album
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
         let found = false;
-        if (albumID == undefined) return 0;
-        if (!checkMonooseObjectID(albumID)) return 0;
-        for (let j = 0; j < albumID.length; j++) {
-            if (this.checkIfUserSaveAlbum(user, albumID[j])) {
+        if (albumId == undefined) return 0;
+        if (!checkMonooseObjectId(albumId)) return 0;
+        for (let j = 0; j < albumId.length; j++) {
+            if (this.checkIfUserSaveAlbum(user, albumId[j])) {
                 found = true;
                 for (let i = 0; i < user.saveAlbum.length; i++) {
-                    if (String(user.saveAlbum[i].albumId) == String(albumID[j])) {
+                    if (String(user.saveAlbum[i].albumId) == String(albumId[j])) {
                         user.saveAlbum.splice(i, 1);
                     }
                 }
                 await user.save().catch();
             } else {
-                if ((!found && (j == (albumID.length - 1))) || (albumID.length == 1)) {
+                if ((!found && (j == (albumId.length - 1))) || (albumId.length == 1)) {
                     return 0;
                 }
             }
@@ -315,25 +367,3 @@ const Album = {
 }
 module.exports = Album;
 
-function limitOffset(limit, offset, specificAlbums) {
-
-    let start = 0;
-    let end = specificAlbums.length;
-    if (offset != undefined) {
-        if (offset >= 0 && offset <= specificAlbums.length) {
-            start = offset;
-        }
-    }
-    if (limit != undefined) {
-        if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
-            end = start + limit;
-        }
-    } else {
-        limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-        if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
-            end = start + limit;
-        }
-    }
-    specificAlbums.slice(start, end);
-    return specificAlbums;
-}

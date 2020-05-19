@@ -1,15 +1,9 @@
 sudo: required
-language: node_js
 services:
   - docker
-
-before_install:
-  - sudo echo "HI"
-  - docker build -t backtest .
-
 script:
   - true
-
+  - echo " SCRIPT FINISHED " 
 after_success:
   - docker build -t belalelhossany/back .
   # Log in to the docker CLI
@@ -28,6 +22,3 @@ deploy:
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key:
     secure: $AWS_SECRET_KEY
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key:
-    secure: "$AWS_SECRET_KEY"

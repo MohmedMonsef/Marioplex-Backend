@@ -1,24 +1,31 @@
-dist: bionic
-sudo: false
-language: node_js
+sudo: required
+services:
+  - docker
+
 before_install:
-- openssl aes-256-cbc -K $encrypted_db2095f63ba3_key -iv $encrypted_db2095f63ba3_iv
-  -in deploy_rsa.enc -out deploy_rsa -d
-- git clone https://github.com/BelalElhossany/devOps
-- cd devOps
-- eval "$(ssh-agent -s)"
-- chmod 600 haha.pem
-- ssh-add haha.pem
-- ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i haha.pem ubuntu@ec2-52-205-254-29.compute-1.amazonaws.com
-- git clone https://github.com/MohmedMonsef/Marioplex-Backend
-install: 
-  script:
-    - true
-notifications:
-  email:
-    recipients:
-      - belalelhossany12@gmail.com
+  - docker build -t belalelhossany/backTest -f .Dockerfile .
+
+script:
+  - true
+
+after_success:
+  - docker build -t belalelhossany/back .
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push belalelhossany/back
 deploy:
- provider: script
- skip_cleanup: true
- script: bash Deploy.sh 
+  provider: elasticbeanstalk
+  region: us-east-1
+  app: MarioPlexBack
+  env: Marioplexback-env
+  bucket_name: elasticbeanstalk-us-east-1-340227665405
+  bucket_path: MarioPlexBack
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"

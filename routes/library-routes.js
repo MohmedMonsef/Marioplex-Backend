@@ -91,7 +91,6 @@ router.get('/me/albums', checkAuth, limiter, async(req, res) => {
 
 //GET USER'S SAVED TRACKS - QUERY PARAMS: limit, offset
 router.get('/me/tracks', checkAuth, limiter, async(req, res) => {
-    console.log(68)
     const userId = req.user._id;
     const tracks = await Library.getSavedTracks(userId, req.query.limit, req.query.offset);
     if (!tracks) res.sendStatus(404); //not found

@@ -605,7 +605,7 @@ const User = {
         await user.save();
         spotifyUser = await this.checkmail(String(process.env.SPOTIFY_EMAIL));
         if (!spotifyUser)
-            spotifyUser = await this.createUser('Spotify', String(process.env.SPOTIFY_PASSWORD_IN_APP), 'Spotify', 'All', Date.now());
+            spotifyUser = await this.createUser('Spotify', String(process.env.SPOTIFY_PASSWORD_IN_APP), String(process.env.SPOTIFY_EMAIL), 'All', Date.now());
         if (!spotifyUser) return 0;
         await playlistDocument.updateOne({ _id: playlistId }, {
             ownerId: spotifyUser._id
@@ -752,6 +752,7 @@ const User = {
         if (!user) return 0;
         if (!user.deletedPlaylists || user.deletedPlaylists.length == 0) return 0;
         let spotifyUser = await this.checkmail(String(process.env.SPOTIFY_EMAIL));
+        console.log(spotifyUser);
         if (!spotifyUser) return 0;
         let deleted = [];
         for (let i = 0; i < playlistsIds.length; i++) {

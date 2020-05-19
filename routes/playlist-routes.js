@@ -340,6 +340,7 @@ router.put('/me/restoreplaylists', [checkAuth], async(req, res) => {
     playlists = req.query.playlistsIds.split(',');
     if (!checkID(playlists)) return res.status(403).send({ error: 'error in Ids' });
     const restored = await User.restorePlaylists(req.user._id, playlists);
+    console.log(restored);
     if (!restored || restored.length == 0) return res.status(404).send('CANT BE RESTORED');
     res.status(200).send(restored);
    }

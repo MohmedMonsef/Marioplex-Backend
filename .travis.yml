@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  - docker build -t belalelhossany/backTest -f .Dockerfile .
+  - docker build -t belalelhossany/backTest .
 
 script:
   - true

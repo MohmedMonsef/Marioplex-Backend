@@ -20,7 +20,7 @@ const Image = {
         for (let user in users) {
             if (!users[user].createPlaylist) users[user].createPlaylist = [];
             for (var i = 0; i < users[user].createPlaylist.length; i++) {
-                if (users[user].createPlaylist[i].playListId == playlistId) {
+                if (String(users[user].createPlaylist[i].playListId) == String(playlistId)) {
                     createduser = users[user];
                     playlistindex = i;
                     found = true;
@@ -30,9 +30,9 @@ const Image = {
             if (found) break;
         }
         if (!createduser) { return false; }
-        if (createduser._id == userID) { return true; } else {
+        if (String(createduser._id) == String(userID)) { return true; } else {
             for (var i = 0; i < createduser.createPlaylist[playlistindex].collaboratorsId.length; i++) {
-                if (createduser.createPlaylist[playlistindex].collaboratorsId[i] == userID) {
+                if (String(createduser.createPlaylist[playlistindex].collaboratorsId[i]) == String(userID)) {
                     return true;
                 }
             }
@@ -167,52 +167,58 @@ const Image = {
                     await user.save();
                     // return id of the saved image
                     return user.images[user.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'playlist':
-                { // check if user has access to playlist
+                { 
+                    const playlist = await playlistDocument.findById(sourceId);
+                    // check if laylist exist
+                    if (!playlist) return 0;
+                    // check if user has access to playlist
                     const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
                     //  console.log('authorized '+isAuthorized)
                     // user has no access to playlist
                     if (!isAuthorized) return 0;
-                    const playlist = await playlistDocument.findById(sourceId);
-                    // check if laylist exist
-                    if (!playlist) return 0;
+                    
                     if (!playlist.images) playlist.images = [];
                     playlist.images.push(image);
                     await playlist.save();
                     return playlist.images[playlist.images.length - 1]._id;
-                    break;
+                   
                 }
             case 'track':
                 {
-                    { // check if user has access to track
+                    { 
+                        const track = await trackDocument.findById(sourceId);
+                        // console.log('track ' + track)
+                         if (!track) return 0;
+                        // check if user has access to track
                         const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
                         //   console.log('authorized '+hasAccess)
                         if (!hasAccess) return 0;
                         // get track
-                        const track = await trackDocument.findById(sourceId);
-                        console.log('track ' + track)
-                        if (!track) return 0;
+                       
                         if (!track.images) track.images = [];
                         track.images.push(image);
                         await track.save();
                         return track.images[track.images.length - 1]._id;
-                        break;
+                       
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
+                { 
+                     // get album
+                     const album = await albumDocument.findById(sourceId);
+                     if (!album) return 0;
+                    // check if user is artist and has access to album
                     const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
                     if (!hasAccess) return 0;
-                    // get track
-                    const album = await albumDocument.findById(sourceId);
-                    if (!album) return 0;
+                   
                     if (!album.images) album.images = [];
                     album.images.push(image);
                     await album.save();
                     return album.images[album.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
@@ -223,11 +229,11 @@ const Image = {
                     artist.images.push(image);
                     await artist.save();
                     return artist.images[artist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'category':
                 return 0;
-                break;
+              
             default:
                 return 0;
 
@@ -266,49 +272,55 @@ const Image = {
                     await user.save();
                     // return id of the saved image
                     return user.images[user.images.length - 1]._id;
-                    break;
+                  
                 }
             case 'playlist':
-                { // check if user has access to playlist
-                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
-                    // user has no access to playlist
-                    if (!isAuthorized) return 0;
+                {   
                     const playlist = await playlistDocument.findById(sourceId);
                     // check if laylist exist
                     if (!playlist) return 0;
+                    // check if user has access to playlist
+                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
+                    // user has no access to playlist
+                    if (!isAuthorized) return 0;
+                    
                     playlist.images = [];
                     playlist.images.push(image);
                     await playlist.save();
                     return playlist.images[playlist.images.length - 1]._id;
-                    break;
+                   
                 }
             case 'track':
                 {
-                    { // check if user has access to track
-                        const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
-                        if (!hasAccess) return 0;
+                    {   
                         // get track
                         const track = await trackDocument.findById(sourceId);
                         if (!track) return 0;
+                        // check if user has access to track
+                        const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
+                        if (!hasAccess) return 0;
+                        
                         track.images = [];
                         track.images.push(image);
                         await track.save();
                         return track.images[track.images.length - 1]._id;
-                        break;
+                        
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
-                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
-                    if (!hasAccess) return 0;
-                    // get track
+                {   
+                    // get album
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
+                    // check if user is artist and has access to album
+                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
+                    if (!hasAccess) return 0;
+                    
                     album.images = [];
                     album.images.push(image);
                     await album.save();
                     return album.images[album.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
@@ -319,11 +331,11 @@ const Image = {
                     artist.images.push(image);
                     await artist.save();
                     return artist.images[artist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'category':
                 return 0;
-                break;
+                
             default:
                 return 0;
 
@@ -347,10 +359,10 @@ const Image = {
                     // check if source id equals userId
                     if (!user) return 0;
                     if (!user.images) return 0;
-
+                    if(!user.images.length) return 0;
                     // return id of the saved image
                     return user.images[user.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'playlist':
                 {
@@ -358,8 +370,9 @@ const Image = {
                     // check if laylist exist
                     if (!playlist) return 0;
                     if (!playlist.images) return 0;
+                    if(!playlist.images.length) return 0;
                     return playlist.images[playlist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'track':
                 {
@@ -369,8 +382,9 @@ const Image = {
                         const track = await trackDocument.findById(sourceId);
                         if (!track) return 0;
                         if (!track.images) return 0;
+                        if(!track.images.length) return 0;
                         return track.images[track.images.length - 1]._id;
-                        break;
+                        
                     }
                 }
             case 'album':
@@ -379,20 +393,22 @@ const Image = {
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
                     if (!album.images) return 0;
+                    if(!album.images.length) return 0;
                     return album.images[album.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'artist':
                 {
                     const artist = await artistDocument.findById(sourceId);
                     if (!artist) return 0;
                     if (!artist.images) return 0;
+                    if(!artist.images.length) return 0;
                     return artist.images[artist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'category':
                 return 0;
-                break;
+               
             default:
                 return 0;
 
@@ -449,16 +465,18 @@ const Image = {
 
 
                     return 1;
-                    break;
+                   
                 }
             case 'playlist':
-                { // check if user has access to playlist
-                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
-                    // user has no access to playlist
-                    if (!isAuthorized) return 0;
+                {   
                     const playlist = await playlistDocument.findById(sourceId);
                     // check if playlist exist
                     if (!playlist) return 0;
+                    // check if user has access to playlist
+                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
+                    // user has no access to playlist
+                    if (!isAuthorized) return 0;
+                    
                     // delete image from playlist array
                     const newImages = this.deleteImageFromArray(playlist.images, imageId);
                     if (!newImages) return 0;
@@ -481,16 +499,18 @@ const Image = {
                         }
                     })
                     return 1;
-                    break;
+                    
                 }
             case 'track':
                 {
-                    { // check if user has access to track
+                    { 
+                         // get track
+                         const track = await trackDocument.findById(sourceId);
+                         if (!track) return 0;
+                        // check if user has access to track
                         const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
                         if (!hasAccess) return 0;
-                        // get track
-                        const track = await trackDocument.findById(sourceId);
-                        if (!track) return 0;
+                       
                         // delete image from track array
                         const newImages = this.deleteImageFromArray(track.images, imageId);
                         if (!newImages) return 0;
@@ -513,16 +533,18 @@ const Image = {
                             }
                         })
                         return 1;
-                        break;
+                        
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
-                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
-                    if (!hasAccess) return 0;
+                { 
                     // get album
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
+                    // check if user is artist and has access to album
+                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
+                    if (!hasAccess) return 0;
+                    
                     // delete image from album array
                     const newImages = this.deleteImageFromArray(album.images, imageId);
                     if (!newImages) return 0;
@@ -545,7 +567,7 @@ const Image = {
                         }
                     })
                     return 1;
-                    break;
+                   
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
@@ -574,11 +596,11 @@ const Image = {
                         }
                     })
                     return 1;
-                    break;
+                   
                 }
             case 'category':
                 return 0;
-                break;
+               
             default:
                 return 0;
         }
@@ -655,16 +677,18 @@ const Image = {
                     // save user
                     await user.save();
                     return 1;
-                    break;
+                    
                 }
             case 'playlist':
-                { // check if user has access to playlist
-                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
-                    // user has no access to playlist
-                    if (!isAuthorized) return 0;
+                { 
                     const playlist = await playlistDocument.findById(sourceId);
                     // check if playlist exist
                     if (!playlist) return 0;
+                    // check if user has access to playlist
+                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
+                    // user has no access to playlist
+                    if (!isAuthorized) return 0;
+                   
                     if (!playlist.images) playlist.images = [];
                     // delete image from gridfs
                     for (let image of playlist.images) {
@@ -687,16 +711,18 @@ const Image = {
                     // save 
                     await playlist.save();
                     return 1;
-                    break;
+                   
                 }
             case 'track':
                 {
-                    { // check if user has access to track
+                    { 
+                         // get track
+                         const track = await trackDocument.findById(sourceId);
+                         if (!track) return 0;
+                        // check if user has access to track
                         const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
                         if (!hasAccess) return 0;
-                        // get track
-                        const track = await trackDocument.findById(sourceId);
-                        if (!track) return 0;
+                       
                         if (!track.images) track.images = [];
                         // delete image from gridfs
                         for (let image of track.images) {
@@ -719,16 +745,19 @@ const Image = {
                         // save 
                         await track.save();
                         return 1;
-                        break;
+                       
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
-                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
-                    if (!hasAccess) return 0;
+                { 
+                    
                     // get album
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
+                    // check if user is artist and has access to album
+                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
+                    if (!hasAccess) return 0;
+                    
                     if (!album.images) album.images = [];
                     // delete image from gridfs
                     for (let image of album.images) {
@@ -751,7 +780,7 @@ const Image = {
                     // save 
                     await album.save();
                     return 1;
-                    break;
+                    
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
@@ -780,11 +809,11 @@ const Image = {
                     // save 
                     await artist.save();
                     return 1;
-                    break;
+                   
                 }
             case 'category':
                 return 0;
-                break;
+                
             default:
                 return 0;
         }

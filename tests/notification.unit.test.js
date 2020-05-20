@@ -1,5 +1,6 @@
 require("../config/firebase-config")(); // set up google drive
 const mockTrack = require('../source/track-api');
+const mockPlaylist = require('../source/playlist-api');
 const mockUser = require('../source/user-api');
 const mockArtist = require('../source/artist-api');
 const mockAlbum = require('../source/album-api');
@@ -9,7 +10,7 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const dbHandler = require('./db-handler');
 const ObjectId = mongoose.Types.ObjectId;
-
+let playlist1;
 let artist;
 let artist2;
 let artist3;
@@ -38,6 +39,7 @@ beforeAll(async () => {
    artist2 =  await mockArtist.findMeAsArtist(user2._id);
    artist3 =  await mockArtist.findMeAsArtist(user3._id);
    await mockUser.userFollowArtist(user2._id,artist._id);
+   playlist1=await mockUser.createdPlaylist(user2._id,"lili","hello kids");
 
    user = await mockUser.getUserById(user._id);
    user2 = await mockUser.getUserById(user2._id);
@@ -57,6 +59,7 @@ beforeAll(async () => {
 
 afterEach(async () => {
    // console.log(user);
+   playlist1=await mockPlaylist.getPlaylist(playlist1._id);
     user = await mockUser.getUserById(user._id);
     user2 = await mockUser.getUserById(user2._id);
     user3 = await mockUser.getUserById(user3._id);
@@ -78,16 +81,59 @@ afterAll(async () => {
 });
 
 
-test('Artist upload track notification',async ()=>{
+test('Artist upload track online notification',async ()=>{
     
     expect(await mockNotification.sendArtistNotification(artist,track)).toEqual(  
         1
       );
  })
- test('Artist upload album notification',async ()=>{
+ test('Artist upload album online notification',async ()=>{
     
     expect(await mockNotification.sendArtistAlbumNotification(artist,album)).toEqual(  
         1
       );
  })
- 
+
+
+ test('User viewed user profile online notification',async ()=>{
+    
+    expect(await mockNotification.sendProfileNotification(user,user2)).toEqual(  
+        1
+      );
+ })
+
+ test('User followed user playlist online notification',async ()=>{
+
+    expect(await mockNotification.sendPlaylistNotification(user,user2,playlist1)).toEqual(  
+        1
+      );
+ })
+ test('Artist upload track offline notification',async ()=>{
+    user2.fcmToken="none";
+    await user2.save();
+    expect(await mockNotification.sendArtistNotification(artist,track)).toEqual(  
+        1
+      );
+ })
+ test('Artist upload album offline notification',async ()=>{
+    user2.fcmToken="none";
+    await user2.save();
+    expect(await mockNotification.sendArtistAlbumNotification(artist,album)).toEqual(  
+        1
+      );
+ })
+
+ test('User viewed user profile offline notification',async ()=>{
+    user2.fcmToken="none";
+    await user2.save();
+    expect(await mockNotification.sendProfileNotification(user,user2)).toEqual(  
+        0
+      );
+ })
+ test('User followed user playlist offline notification',async ()=>{
+    user2.fcmToken="none";
+    await user2.save();
+    expect(await mockNotification.sendPlaylistNotification(user,user2,playlist1)).toEqual(  
+        0
+      );
+ })

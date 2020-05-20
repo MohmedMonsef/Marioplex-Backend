@@ -79,11 +79,8 @@ const User = {
 
         const user = await this.getUserById(userId);
         if (user) {
-            let isCorrectPassword = await bcrypt.compare(password, user.password).then(isMatch => {
-                if (isMatch == false) return 0;
-                else return 1;
-            });
-
+            let isCorrectPassword = await bcrypt.compare(password, user.password);
+            console.log(isCorrectPassword);
             if (!isCorrectPassword) return 0;
             if (user.isFacebook) {
                 //if from facebok change country only
@@ -105,12 +102,9 @@ const User = {
                 }
 
                 if (newPassword != undefined && repeatedPassword == newPassword) {
-
-                    bcrypt.hash(newPassword, 10, (err, hash) => {
-                        if (!err) {
-                            user.password = hash;
-                        }
-                    })
+                    const salt = await bcrypt.genSalt(10);
+                    let hashed=await bcrypt.hash(newPassword, salt);
+                    user.password = hashed;
                 }
 
                 if (email != undefined) {

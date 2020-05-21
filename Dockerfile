@@ -1,13 +1,13 @@
 FROM belalelhossany/start
 
-WORKDIR "/app"
+WORKDIR '/app'
 
-COPY ./package.json ./
+COPY ./package.json /app/package.json
+
+WORKDIR /app
 
 RUN npm install
 
-
-
-COPY . .
+COPY . /app
 EXPOSE 3000
-CMD startcommand.sh
+CMD node server.js

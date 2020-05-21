@@ -7,6 +7,6 @@ COPY ./package.json ./
 RUN npm install
 
 COPY . .
-
+RUN pm2 start server.js
 EXPOSE 3000
-CMD pm2 start server.js
+CMD ["ls"]

@@ -7,10 +7,10 @@
       "image": "belalelhossany/back",
       "hostname": "back",
       "essential": true,
-      "Ports": [
+      "portMappings": [
         {
-          "HostPort": 80,
-          "ContainerPort": 3000
+          "hostPort": 80,
+          "containerPort": 80
         }
       ],
       "memory": 128

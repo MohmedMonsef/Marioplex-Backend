@@ -1,18 +1,14 @@
 {
-  "AWSEBDockerrunVersion": 2,
-  "containerDefinitions": [
-    {
-      "name": "back",
-      "image": "belalelhossany/back",
-      "hostname": "back",
-      "essential": true,
-      "portMappings": [
-        {
-          "hostPort": 3000,
-          "containerPort": 3000
-        }
-      ],
-      "memory": 128
-    }
-  ]
+    "AWSEBDockerrunVersion": 1,
+   
+  
+    "image":{
+        "Name":"belalelhossany/back"
+        },
+    "Ports":[
+                {
+                    "HostPort": 80,
+                    "ContainerPort": 3000
+                }
+            ]
 }

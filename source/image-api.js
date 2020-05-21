@@ -261,16 +261,19 @@ const Image = {
         // check if belongs to is user,playlist,track,album,category,artist
         // delete old images of entity
         await this.deleteImages(userId, sourceId, belongsTo);
+        //console.log("dekete",user);
         switch (belongsTo) {
             case 'user':
                 { // check if source id equals userId
                     if (sourceId != userId) return 0;
-
+                   
+                    console.log(user)
                     user.images = [];
                     user.images.push(image);
                     // save user
                     await user.save();
                     // return id of the saved image
+                    //onsole.log("up",user)
                     return user.images[user.images.length - 1]._id;
                   
                 }
@@ -302,6 +305,7 @@ const Image = {
                         
                         track.images = [];
                         track.images.push(image);
+                        
                         await track.save();
                         return track.images[track.images.length - 1]._id;
                         
@@ -676,6 +680,7 @@ const Image = {
                     user.images = [];
                     // save user
                     await user.save();
+                    //console.log("ussser",user)
                     return 1;
                     
                 }

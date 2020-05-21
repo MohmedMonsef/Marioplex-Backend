@@ -6,6 +6,8 @@ COPY ./package.json ./
 
 RUN npm install
 
+ENTRYPOINT ["/bin/bash", "-c"]
+
 COPY . .
 EXPOSE 3000
-CMD /usr/bin/pm2 start server.js
+CMD pm2 start server.js

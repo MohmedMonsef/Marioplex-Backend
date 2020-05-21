@@ -9,7 +9,7 @@ after_success:
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub
-  - docker push belalelhossany/back
+  - docker push belalelhossany/backend
 deploy:
   provider: elasticbeanstalk
   region: us-east-1

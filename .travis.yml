@@ -5,7 +5,7 @@ script:
   - true
   - echo " SCRIPT FINISHED " 
 after_success:
-  - docker build -t belalelhossany/back .
+  - docker build -t belalelhossany/backend .
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Take those images and push them to docker hub

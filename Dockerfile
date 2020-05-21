@@ -7,6 +7,5 @@ COPY ./package.json ./
 RUN npm install
 
 COPY . .
-
-
-CMD ["pm2", "start", "server.js"]
+EXPOSE 3000
+CMD CMD ["/bin/bash","pm2", "run" ,"server.js"]

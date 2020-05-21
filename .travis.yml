@@ -14,8 +14,8 @@ deploy:
   provider: elasticbeanstalk
   region: us-east-1
   app: MarioPlexBack
-  env: Marioplexback-env
-  bucket_name: elasticbeanstalk-us-east-1-340227665405
+  env: Marioplexback-env-1
+  bucket_name: elasticbeanstalk-us-east-1-658647886370
   bucket_path: MarioPlexBack
   on:
     branch: master

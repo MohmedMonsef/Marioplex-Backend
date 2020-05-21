@@ -9,8 +9,8 @@
       "essential": true,
       "Ports": [
         {
-          "hostPort": 80,
-          "containerPort": 3000
+          "HostPort": 80,
+          "ContainerPort": 3000
         }
       ],
       "memory": 128

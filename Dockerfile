@@ -10,4 +10,4 @@ RUN npm install
 
 COPY . /app
 EXPOSE 3000
-CMD echo "HI"
+CMD ["startcommand.sh"]

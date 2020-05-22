@@ -5,7 +5,7 @@ WORKDIR '/app'
 COPY ./package.json /app/package.json
 
 WORKDIR /app
-ENTRYPOINT ["/bin/bash", "-c"]
+ENTRYPOINT ["/bin/bash"]
 RUN npm install
 
 COPY . /app

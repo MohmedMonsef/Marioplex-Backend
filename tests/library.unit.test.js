@@ -30,8 +30,8 @@ let users = [{
         'country': 'egypt',
         'isFacebook': true,
         'userType': 'user',
-        "product": "premium",
-        "premium": {}
+        'product': 'premium',
+        'premium': {}
 
     },
     {
@@ -69,14 +69,14 @@ let albumsObjs = [{
         '_id': '3',
         'artistId': '2',
         'hasTracks': [],
-        'name': "ay haga1"
+        'name': 'ay haga1'
 
     },
     {
         '_id': '4',
         'artistId': '20',
         'hasTracks': [],
-        'name': "ay haga"
+        'name': 'ay haga'
 
 
     },
@@ -95,7 +95,7 @@ beforeAll(async() => {
         let u = await mockUser.createUser(user.displayName, user.password, user.email, user.gender, user.country, user.birthDate);
 
         if (i == 1) {
-            u.product = "premium"
+            u.product = 'premium'
             u.isFacebook = true;
             await u.save()
         }
@@ -105,25 +105,25 @@ beforeAll(async() => {
     i = 0;
     for (let user of usersInDB) {
         if (i == 1) break;
-        await mockUser.promoteToArtist(user._id, "artist info", "artist" + i, ["pop"]);
+        await mockUser.promoteToArtist(user._id, 'artist info', 'artist' + i, ['pop']);
         let artist = await mockArtist.findMeAsArtist(user._id);
         artists.push(artist);
         i++;
         if (i == 1) {
             let j = 0;
             for (let album of albumsObjs) {
-                let album1 = await mockArtist.addAlbum(artist._id, album.name, "label1", ["eg"], "Single", "1/1/2020", "pop");
+                let album1 = await mockArtist.addAlbum(artist._id, album.name, 'label1', ['eg'], 'Single', '1/1/2020', 'pop');
                 albums.push(album1);
                 if (j == 0) {
-                    let track = await mockTrack.createTrack("", "track1", 12, ["eg"], artist._id, album1._id, 100, "12", "13", ["pop"]);
+                    let track = await mockTrack.createTrack('', 'track1', 12, ['eg'], artist._id, album1._id, 100, '12', '13', ['pop']);
                     tracks.push(track);
                     await mockArtist.addTrack(artist._id, track._id);
                     await mockAlbum.addTrack(album1._id, track);
-                    track = await mockTrack.createTrack("", "track1", 12, ["eg"], artist._id, album1._id, 100, "12", "13", ["pop"]);
+                    track = await mockTrack.createTrack('', 'track1', 12, ['eg'], artist._id, album1._id, 100, '12', '13', ['pop']);
                     tracks.push(track);
                     await mockArtist.addTrack(artist._id, track._id);
                     await mockAlbum.addTrack(album1._id, track);
-                    track = await mockTrack.createTrack("", "track1", 12, ["eg"], artist._id, album1._id, 100, "12", "13", ["pop"]);
+                    track = await mockTrack.createTrack('', 'track1', 12, ['eg'], artist._id, album1._id, 100, '12', '13', ['pop']);
                     tracks.push(track);
                     await mockArtist.addTrack(artist._id, track._id);
                     await mockAlbum.addTrack(album1._id, track);

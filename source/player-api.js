@@ -3,6 +3,7 @@ const Playlist = require('./playlist-api');
 const Album = require('./album-api');
 const Track = require('./track-api');
 const Artist = require('./artist-api')
+const CheckMonooseObjectId = require('../validation/mongoose-objectid')
     /** @namespace */
 const Player = {
 
@@ -18,7 +19,10 @@ const Player = {
      */
 
     setPlayerInstance: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
+        if (!user) return 0;
+        if ((!CheckMonooseObjectId([id]) && !CheckMonooseObjectId(tracksIds)) || !CheckMonooseObjectId([trackId])) return 0;
         if (!user.player) user.player = {};
+
         user.player.nextTrack = {};
         user.player.prevTrack = {};
         user.player.currentTrack = {};
@@ -47,63 +51,64 @@ const Player = {
      * @returns {JSON}
      */
     getRecentlyHomePage: async function(user) {
-        if (user.playHistory) {
-            let recentlyArtist = [];
-            let recentlyPlaylist = [];
-            let recentlyAlbum = [];
-            let playHistory = user.playHistory;
-            let limit;
-            let index = 0;
-            if (playHistory.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playHistory.length;
-            else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-            for (let i = 0; i < limit; i++) {
-                let isFind = 0;
-                // now check type to print 
-                if (playHistory[i].sourceType == 'album') {
-                    for (let j = 0; j < recentlyAlbum.length; j++)
-                        if (String(playHistory[i].sourceId) == String(recentlyAlbum[j].id))
-                            isFind = 1;
-                    if (!isFind) {
-                        const album = await Album.getAlbumById(playHistory[i].sourceId);
-                        if (!album) continue;
-                        const artist = await Artist.getArtist(album.artistId);
-                        recentlyAlbum.push({ id: album._id, name: album.name, type: "album", album_type: album.albumType, images: album.images, availableMarkets: album.availableMarkets, artist: { type: 'artist', id: album.artistId, name: artist.Name }, index: index })
-                        index++;
-                    }
-                } else if (playHistory[i].sourceType == 'artist') {
-                    for (let j = 0; j < recentlyArtist.length; j++)
-                        if (String(playHistory[i].sourceId) == String(recentlyArtist[j].id))
-                            isFind = 1;
-                    if (!isFind) {
-                        const artist = await Artist.getArtist(playHistory[i].sourceId);
-                        if (!artist) continue;
-                        recentlyArtist.push({ genre: artist.genre, type: 'artist', name: artist.Name, images: artist.images, id: artist._id, info: artist.info, index: index });
-                        index++;
-
-                    }
-                } else if (playHistory[i].sourceType == 'playlist') {
-                    for (let j = 0; j < recentlyPlaylist.length; j++)
-                        if (String(playHistory[i].sourceId) == String(recentlyPlaylist[j].id))
-                            isFind = 1;
-                    if (!isFind) {
-                        const playlist = await Playlist.getPlaylist(playHistory[i].sourceId);
-                        if (!playlist) continue;
-                        const user1 = await userDocument.findById(playlist.ownerId);
-                        recentlyPlaylist.push({ owner: { id: playlist.ownerId, type: "user", name: user1.displayName }, collaborative: playlist.collaborative, type: 'playlist', name: playlist.name, images: playlist.images, id: playlist._id, Description: playlist.Description, isPublic: playlist.isPublic, index: index });
-                        index++;
-                    }
+        if (!user) return 0;
+        if (!user.playHistory) return 0;
+        let recentlyArtist = [];
+        let recentlyPlaylist = [];
+        let recentlyAlbum = [];
+        let playHistory = user.playHistory;
+        let limit;
+        let index = 0;
+        if (playHistory.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playHistory.length;
+        else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+        for (let i = 0; i < limit; i++) {
+            let isFind = 0;
+            // now check type to print 
+            if (playHistory[i].sourceType == 'album') {
+                for (let j = 0; j < recentlyAlbum.length; j++)
+                    if (String(playHistory[i].sourceId) == String(recentlyAlbum[j].id))
+                        isFind = 1;
+                if (!isFind) {
+                    const album = await Album.getAlbumById(playHistory[i].sourceId);
+                    if (!album) continue;
+                    const artist = await Artist.getArtist(album.artistId);
+                    recentlyAlbum.push({ id: album._id, name: album.name, type: "album", album_type: album.albumType, images: album.images, availableMarkets: album.availableMarkets, artist: { type: 'artist', id: album.artistId, name: artist.Name }, index: index })
+                    index++;
                 }
+            } else if (playHistory[i].sourceType == 'artist') {
+                for (let j = 0; j < recentlyArtist.length; j++)
+                    if (String(playHistory[i].sourceId) == String(recentlyArtist[j].id))
+                        isFind = 1;
+                if (!isFind) {
+                    const artist = await Artist.getArtist(playHistory[i].sourceId);
+                    if (!artist) continue;
+                    recentlyArtist.push({ genre: artist.genre, type: 'artist', name: artist.Name, images: artist.images, id: artist._id, info: artist.info, index: index });
+                    index++;
 
+                }
+            } else if (playHistory[i].sourceType == 'playlist') {
+                for (let j = 0; j < recentlyPlaylist.length; j++)
+                    if (String(playHistory[i].sourceId) == String(recentlyPlaylist[j].id))
+                        isFind = 1;
+                if (!isFind) {
+                    const playlist = await Playlist.getPlaylist(playHistory[i].sourceId);
+                    if (!playlist) continue;
+                    const user1 = await userDocument.findById(playlist.ownerId);
+                    recentlyPlaylist.push({ owner: { id: playlist.ownerId, type: "user", name: user1.displayName }, collaborative: playlist.collaborative, type: 'playlist', name: playlist.name, images: playlist.images, id: playlist._id, Description: playlist.Description, isPublic: playlist.isPublic, index: index });
+                    index++;
+                }
             }
-            // const recently = { "recentlyPlaying": recentPlaying };
-            if (recentlyArtist.length == 0 && recentlyPlaylist.length == 0 && recentlyAlbum.length == 0)
-                return 0;
-            return {
-                'recentlyArtist': recentlyArtist,
-                'recentlyPlaylist': recentlyPlaylist,
-                'recentlyAlbum': recentlyAlbum
-            }
+
         }
+        // const recently = { "recentlyPlaying": recentPlaying };
+        if (recentlyArtist.length == 0 && recentlyPlaylist.length == 0 && recentlyAlbum.length == 0)
+            return 0;
+        return {
+            'recentlyArtist': recentlyArtist,
+            'recentlyPlaylist': recentlyPlaylist,
+            'recentlyAlbum': recentlyAlbum
+        }
+
         return recentPlaying;
     },
 
@@ -127,6 +132,8 @@ const Player = {
      * @returns {Number}
      */
     addRecentTrack: async function(user, trackId, sourceType, sourceId) {
+        if (!user) return 0;
+        if (!CheckMonooseObjectId([sourceId, trackId])) return 0;
         if (user.playHistory) {
             if (user.playHistory.length > 50) user.playHistory.pop();
             user.playHistory.unshift({
@@ -155,6 +162,7 @@ const Player = {
      * @returns {Array<Object>}
      */
     getRecentTracks: function(user, limit) {
+        if (!user) return 0;
         limit = limit || Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
         let tracks = [];
         if (!user.playHistory) return tracks;
@@ -174,10 +182,13 @@ const Player = {
      */
 
     createQueue: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
-
+        if (!user) return 0;
+        console.log(id);
+        if (!CheckMonooseObjectId([trackId])) return 0;
         if (!await Track.getTrack(trackId)) return 0;
 
         if (!tracksIds) {
+            if (!CheckMonooseObjectId([id])) return 0;
             if (isPlaylist == 'true' || isPlaylist == true) {
                 const playlist = await Playlist.getPlaylist(id);
                 if (!playlist) return 0; // can not create queue becouse not found this playlist
@@ -221,7 +232,7 @@ const Player = {
                 if (!album.hasTracks) return 0;
                 ///should test
                 if (!await album.hasTracks.find(track => String(track.trackId) == String(trackId))) return 0;
-                console.log('now  her')
+                //console.log('now  her')
                 user.player.isPlaylist = false;
                 user.player['sourceName'] = 'album';
                 user.player.currentSource = id;
@@ -243,10 +254,12 @@ const Player = {
                 return 1;
             }
         } else {
+            if (!CheckMonooseObjectId(tracksIds)) return 0;
             let newQueue = [];
+            let found = false;
             for (let i = 0; i < tracksIds.length; i++) {
                 let track = Track.getTrack(tracksIds[i]);
-
+                if (tracksIds[i] == trackId) found = true;
                 if (track) {
                     newQueue.push({
                         trackId: tracksIds[i],
@@ -257,7 +270,7 @@ const Player = {
                     })
                 }
             }
-            if (newQueue.length == 0) return 0;
+            if (newQueue.length == 0 || !found) return 0;
             user.queue.tracksInQueue = newQueue;
             user.queue.queuIndex = -1;
             user.player.playlistId = undefined;
@@ -277,7 +290,8 @@ const Player = {
      * @returns {Number}
      */
     addToQueue: async function(user, trackId, isPlaylist, playlistId) {
-
+        if (!user) return 0;
+        if (!CheckMonooseObjectId([trackId, playlistId])) return 0;
         if (!user.queue) {
             user.queue = {};
             user.queue.tracksInQueue = [{
@@ -349,6 +363,7 @@ const Player = {
      * @returns {Number}
      */
     skipNext: async function(user) {
+        if (!user) return 0;
         if (!user.player) return 0;
         if (!user.player.nextTrack) return 0;
         if (!user.player.prevTrack) return 0;
@@ -371,6 +386,7 @@ const Player = {
      * @returns {Number}
      */
     skipPrevious: async function(user) {
+        if (!user) return 0;
         if (!user.player) return 0;
         if (!user.player.nextTrack) return 0;
         if (!user.player.prevTrack) return 0;
@@ -385,6 +401,7 @@ const Player = {
      * @returns {Array<Object>}
      */
     getQueue: async function(user) {
+        if (!user) return 0;
         const queue = user.queue;
         let tracks = [];
         if (!queue) return 0;
@@ -433,6 +450,7 @@ const Player = {
      * @returns {Number}
      */
     resumePlaying: async function(user) {
+        if (!user) return 0;
         const player = user.player;
         if (!player) return 0;
         user.player["isPlaying"] = true;
@@ -549,6 +567,7 @@ const Player = {
      * @returns {Number}
      */
     setShuffle: async function(state, user) {
+        if (!user || !user.player) return 0;
         if (user.queue.tracksInQueue) {
             if (state == 'true') {
                 user.player['isShuffled'] = true;
@@ -571,6 +590,7 @@ const Player = {
      * @returns {Number}
      */
     setNextPrev: async function(user, lastTrack) {
+        if (!user) return 0;
         if (!user.player) return 0;
         if (!user.player.nextTrack) user.player.nextTrack = {};
         if (!user.player.prevTrack) user.player.prevTrack = {};
@@ -607,6 +627,7 @@ const Player = {
      * @returns {Number}
      */
     repreatPlaylist: async function(user, state) {
+        if (!user) return 0;
         if (!user.player) return 0;
         if (state == 'true' || state == true)
             user.player["isRepeat"] = true;

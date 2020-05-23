@@ -20,20 +20,20 @@ let playlistId1;
 beforeAll(async() => {
     await dbHandler.connect();
 
-    user = await mockUser.createUser("user88", "123", "b77@b.com", "male", "eg", "1/1/2020");
-    user1 = await mockUser.createUser("user1", "123", "b3@b.com", "male", "eg", "1/1/2020");
-    await mockUser.promoteToArtist(user._id, "artist info", "artist1", ["pop", "rock", "genre1"]);
-    await mockUser.promoteToArtist(user1._id, "artist info", "artist1", ["pop", "rock", "genre1"]);
+    user = await mockUser.createUser('user88', '123', 'b77@b.com', 'male', 'eg', '1/1/2020');
+    user1 = await mockUser.createUser('user1', '123', 'b3@b.com', 'male', 'eg', '1/1/2020');
+    await mockUser.promoteToArtist(user._id, 'artist info', 'artist1', ['pop', 'rock', 'genre1']);
+    await mockUser.promoteToArtist(user1._id, 'artist info', 'artist1', ['pop', 'rock', 'genre1']);
 
     artist = await mockArtist.findMeAsArtist(user._id);
     artist2 = await mockArtist.findMeAsArtist(user1._id);
-    album = await mockArtist.addAlbum(artist._id, "album1", "label1", ["eg"], "Album", "1/1/2020", "pop");
+    album = await mockArtist.addAlbum(artist._id, 'album1', 'label1', ['eg'], 'Album', '1/1/2020', 'pop');
 
-    track = await mockTrack.createTrack("", "track1", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["pop"]);
-    track2 = await mockTrack.createTrack("", "track2", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["pop"]);
-    track3 = await mockTrack.createTrack("", "track3", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["genre1", "pop"]);
-    track4 = await mockTrack.createTrack("", "track4", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["rock"]);
-    track5 = await mockTrack.createTrack("", "track5", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["rock"]);
+    track = await mockTrack.createTrack('', 'track1', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['pop']);
+    track2 = await mockTrack.createTrack('', 'track2', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['pop']);
+    track3 = await mockTrack.createTrack('', 'track3', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['genre1', 'pop']);
+    track4 = await mockTrack.createTrack('', 'track4', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['rock']);
+    track5 = await mockTrack.createTrack('', 'track5', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['rock']);
 
     await mockArtist.addTrack(artist._id, track._id);
     await mockAlbum.addTrack(album._id, track);
@@ -45,14 +45,14 @@ beforeAll(async() => {
     await mockAlbum.addTrack(album._id, track4);
     await mockArtist.addTrack(artist._id, track5._id);
     await mockAlbum.addTrack(album._id, track5);
-    playlist1 = await mockUser.createdPlaylist(user._id, "playlist1", "playlist");
+    playlist1 = await mockUser.createdPlaylist(user._id, 'playlist1', 'playlist');
     playlistId1 = playlist1._id;
-    playlist2 = await mockUser.createdPlaylist(user._id, "playlist2", "playlist");
-    playlist3 = await mockUser.createdPlaylist(user._id, "playlist3", "playlist");
-    playlist4 = await mockUser.createdPlaylist(user._id, "playlist4", "playlist");
-    playlist5 = await mockUser.createdPlaylist(user1._id, "playlist5", "playlist");
-    playlist6 = await mockUser.createdPlaylist(user1._id, "playlist6", "playlist");
-    await mockUser.createdPlaylist(user1._id, "playlist7", "playlist");
+    playlist2 = await mockUser.createdPlaylist(user._id, 'playlist2', 'playlist');
+    playlist3 = await mockUser.createdPlaylist(user._id, 'playlist3', 'playlist');
+    playlist4 = await mockUser.createdPlaylist(user._id, 'playlist4', 'playlist');
+    playlist5 = await mockUser.createdPlaylist(user1._id, 'playlist5', 'playlist');
+    playlist6 = await mockUser.createdPlaylist(user1._id, 'playlist6', 'playlist');
+    await mockUser.createdPlaylist(user1._id, 'playlist7', 'playlist');
 
     user = await mockUser.getUserById(user._id);
     await mockPlaylist.addTrackToPlaylist(playlist1._id, [track._id, track2._id, track3._id, track4._id]);
@@ -62,17 +62,17 @@ beforeAll(async() => {
     await mockPlaylist.addTrackToPlaylist(playlist5._id, [track._id, track2._id, track3._id, track4._id]);
     await mockPlaylist.addTrackToPlaylist(playlist6._id, []);
     category1 = await new categoryDocument({
-        name: "category1",
+        name: 'category1',
         playlist: [playlist1._id, playlist2._id, playlist4._id, playlist6._id]
     })
     await category1.save();
     category2 = await new categoryDocument({
-        name: "category2",
+        name: 'category2',
         playlist: [playlist1._id, playlist3._id, playlist2._id, playlist6._id]
     })
     await category2.save();
     category3 = await new categoryDocument({
-        name: "category3",
+        name: 'category3',
         playlist: []
     })
     await category3.save();
@@ -120,12 +120,12 @@ afterAll(async() => {
 });
 //get category
 test('get category without mongoose id ', async() => {
-    //console.log(await mockBrowse.getCategoryById("556766"));
-    expect(await mockBrowse.getCategoryById("556766")).toEqual(0);
+    //console.log(await mockBrowse.getCategoryById('556766'));
+    expect(await mockBrowse.getCategoryById('556766')).toEqual(0);
 });
 
 test('get category with id  no belongs to category', async() => {
-    //console.log(await mockBrowse.getCategoryById("556766"));
+    //console.log(await mockBrowse.getCategoryById('556766'));
     expect(await mockBrowse.getCategoryById(user._id)).toEqual(0);
 });
 

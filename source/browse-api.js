@@ -21,8 +21,11 @@ const Browse = {
             if (err) return 0;
             return category;
         }).catch((err) => 0);
-        let playlist = await Playlist.getPlaylist(category.playlist[0]);
-        category.images = playlist.images;
+        if (!category) return 0;
+        if (category.playlist[0]) {
+            let playlist = await Playlist.getPlaylist(category.playlist[0]);
+            category.images = playlist.images;
+        }
         return category;
     },
     /**
@@ -67,8 +70,10 @@ const Browse = {
             return category;
         }).catch((err) => 0);
         for (let i = 0; i < category.length; i++) {
-            let playlist = await Playlist.getPlaylist(category[i].playlist[0]);
-            category[i].images = playlist.images;
+            if (category[i].playlist[0]) {
+                let playlist = await Playlist.getPlaylist(category[i].playlist[0]);
+                category[i].images = playlist.images;
+            }
         }
         return category;
     },
@@ -84,7 +89,7 @@ const Browse = {
             return artists;
         }).catch((err) => 0);
 
-        if (!artists) return 0;
+        if (artists.length == 0) return 0;
         var genre = [];
         genre.push(artists[0].genre[0])
         for (let i = 0; i < artists.length; i++) {
@@ -105,10 +110,11 @@ const Browse = {
     },
     /**
      * get playlists of genre
-     * @param {Array<string>} genre -array of genre  
+     * @param {Array<string>} genres -array of genre  
      * @returns {Array<object>}
      */
-    getPlaylistGenre: async function(genre) {
+    getPlaylistGenre: async function(genres) {
+        if (!genres) return 0;
         let playlists = await playlistDocument.find({}, (err, playlists) => {
             if (err) return 0;
             return playlists;
@@ -116,7 +122,7 @@ const Browse = {
         if (!playlists) return 0;
         var allGenre = [];
         var playlistsGenre = [];
-        for (let k = 0; k < genre.length; k++) {
+        for (let k = 0; k < genres.length; k++) {
             for (let i = 0; i < playlists.length; i++) {
                 if (!playlists[i].snapshot) continue;
                 if (!playlists[i].snapshot[playlists[i].snapshot.length - 1]) continue;
@@ -125,13 +131,13 @@ const Browse = {
                     if (err) return 0;
                     return track;
                 }).catch((err) => 0);
-                if (track && track.genre && (track.genre[0] == genre[k] || track.genre[1] == genre[k])) {
+                if (track && track.genre && (track.genre[0] == genres[k] || track.genre[1] == genres[k])) {
                     const user1 = await userDocument.findById(playlists[i].ownerId);
                     playlistsGenre.push({ playlist: playlists[i], owner: { id: playlists[i].ownerId, name: user1 ? user1.name : '' } });
                 }
             }
             if (playlistsGenre.length != 0)
-                allGenre.push({ genre: genre[k], "playlists": playlistsGenre });
+                allGenre.push({ genre: genres[k], "playlists": playlistsGenre });
             playlistsGenre = [];
         }
         return allGenre;

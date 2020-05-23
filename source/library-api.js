@@ -12,6 +12,7 @@ const Library = {
      * @returns {Array<boolean>} 
      */
     checkSavedAlbums: async function(albumsIds, userId) {
+        //  console.log(albumsIds)
         if (!CheckMonooseObjectId(albumsIds)) return 0;
         if (!CheckMonooseObjectId([userId])) return 0;
         let checks = [];
@@ -20,20 +21,27 @@ const Library = {
             if (err) return 0;
             return user;
         }).catch((err) => 0);
+        if (!user) return 0;
+        //  console.log(user);
         if (!user.saveAlbum) user.saveAlbum = [];
         for (var i = 0; i < albumsIds.length; i++) {
             found = false;
 
             for (let album in user.saveAlbum) {
-                if (user.saveAlbum[album].albumId == albumsIds[i]) {
+                //console.log(albumsIds[i]);
+                //console.log(user.saveAlbum[album].albumId);
+                if (String(user.saveAlbum[album].albumId) == String(albumsIds[i])) {
+                    // console.log('i am in here : ');
                     checks.push(true);
                     found = true;
+                    //  console.log(checks);
                 }
             }
             if (!found) {
                 checks.push(false);
             }
         }
+        //console.log(checks);
         return checks;
     },
     /**
@@ -49,11 +57,15 @@ const Library = {
             if (err) return 0;
             return user;
         }).catch((err) => 0);
+        if (!user) return 0;
         let checks = [];
         for (let i = 0; i < tracksIds.length; i++)
             checks.push(false);
-        if (!user['likestracksPlaylist']) return checks;
-        return await Playlist.checkPlaylistHastracks(user['likestracksPlaylist'], tracksIds);
+        //console.log(user);
+        // console.log(user['likesTracksPlaylist']);
+        if (!user['likesTracksPlaylist']) return checks;
+        //console.log('this is me :')
+        return await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], tracksIds);
     },
     /**
      * get  saved albums for a specific user

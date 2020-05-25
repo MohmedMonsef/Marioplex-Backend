@@ -6,9 +6,7 @@ const mockImage = require('../source/image-api');
 const mockPlaylist = require('../source/playlist-api')
 const mongoose = require('mongoose');
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const dbHandler = require('./db-handler');
-const mongod = new MongoMemoryServer();
 const ObjectId = mongoose.Types.ObjectId;
 const fs = require('fs')
 
@@ -164,26 +162,90 @@ let image = {
  test('upload image for user',async ()=>{
      const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,usersInDB[0]._id,'user',image) 
     // console.log(usersInDB[0].images)
-     expect(uploadedImageId).toBeTruthy();
+    let writestream = gfsImages.createWriteStream({
+        filename: 'not_found',
+        metadata: {userId: usersInDB[0]._id, belongsTo: 'user', imageId: uploadedImageId },
+        content_type: 'image/jpeg',
+        bucketName: 'images',
+        root: 'images',
+    });
+    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    
+    //await new Promise(fulfill => writestream.on('close', fulfill));
+   
+    let h = 0;
+    // while(!h){
+         writestream.on('close',async (file)=>{
+             console.log(file)
+             console.log(uploadedImageId)
+          await gfsImages.files.find({},(err,file)=>{
+              console.log(err,file)
+          })
+            expect(uploadedImageId).toBeTruthy();
+         })
+    // }
+   // writestream.on('pipe',(file)=>{console.log("sime");h=1;})
+    //console.log(await gfsImages.files.findOne({"metadata.imageId":uploadedImageId}))
+     
  })
  
  test('upload image for artist',async ()=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,artists[0]._id,'artist',image) 
+    let writestream = gfsImages.createWriteStream({
+        filename: 'not_found',
+        metadata: {userId: usersInDB[0]._id, belongsTo: 'artist', imageId: uploadedImageId },
+        content_type: 'image/jpeg',
+        bucketName: 'images',
+        root: 'images',
+    });
+    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    
+    await new Promise(fulfill => writestream.on('close', fulfill));
     expect(uploadedImageId).toBeTruthy();
 })
 test('upload image for playlist',async ()=>{
    // console.log(usersInDB[0],playlist)
-    const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,playlist._id,'playlist',image) 
+    const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,playlist._id,'playlist',image)
+    let writestream = gfsImages.createWriteStream({
+        filename: 'not_found',
+        metadata: {userId: usersInDB[0]._id, belongsTo: 'playlist', imageId: uploadedImageId },
+        content_type: 'image/jpeg',
+        bucketName: 'images',
+        root: 'images',
+    });
+    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    
+    await new Promise(fulfill => writestream.on('close', fulfill)); 
     expect(uploadedImageId).toBeTruthy();
 })
 
 test('upload image for track',async ()=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,tracks[0]._id,'track',image) 
+    let writestream = gfsImages.createWriteStream({
+        filename: 'not_found',
+        metadata: {userId: usersInDB[0]._id, belongsTo: 'track', imageId: uploadedImageId },
+        content_type: 'image/jpeg',
+        bucketName: 'images',
+        root: 'images',
+    });
+    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    
+    await new Promise(fulfill => writestream.on('close', fulfill));
     expect(uploadedImageId).toBeTruthy();
 })
 
 test('upload image for album',async ()=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,albums[0]._id,'album',image) 
+    let writestream = gfsImages.createWriteStream({
+        filename: 'not_found',
+        metadata: {userId: usersInDB[0]._id, belongsTo: 'album', imageId: uploadedImageId },
+        content_type: 'image/jpeg',
+        bucketName: 'images',
+        root: 'images',
+    });
+    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    
+    await new Promise(fulfill => writestream.on('close', fulfill));
     expect(uploadedImageId).toBeTruthy();
 })
 
@@ -266,13 +328,14 @@ test('update image for user',async ()=>{
         root: 'images',
     });
     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
-    writestream.on('close', function (file) { });
+    
     await new Promise(fulfill => writestream.on('close', fulfill));
     //await delay(5000)
-    
+   // console.log(await userDocument.findById(usersInDB[0]._id))
     expect(uploadedImageId).toBeTruthy();
 })
 test('update image for artist',async ()=>{
+    
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,artists[0]._id,'artist',image) 
    let writestream = gfsImages.createWriteStream({
     filename: 'not_found',
@@ -282,7 +345,7 @@ test('update image for artist',async ()=>{
     root: 'images',
 });
 fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
-writestream.on('close', function (file) { });
+
 //await delay(5000)
    expect(uploadedImageId).toBeTruthy();
 })
@@ -297,7 +360,7 @@ test('update image for playlist',async ()=>{
     root: 'images',
 });
 fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
-writestream.on('close', function (file) { });
+
 await new Promise(fulfill => writestream.on('close', fulfill));
 //await delay(5000)
    expect(uploadedImageId).toBeTruthy();
@@ -313,7 +376,7 @@ test('update image for track',async ()=>{
     root: 'images',
 });
 fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
-writestream.on('close', function (file) { });
+
 await new Promise(fulfill => writestream.on('close', fulfill));
 //await delay(5000)
    expect(uploadedImageId).toBeTruthy();
@@ -329,7 +392,7 @@ test('update image for album',async ()=>{
     root: 'images',
 });
 fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
-writestream.on('close', function (file) { });//await delay(5000)
+//await delay(5000)
 await new Promise(fulfill => writestream.on('close', fulfill));
    expect(uploadedImageId).toBeTruthy();
 })
@@ -400,6 +463,7 @@ test('update image for not entity',async ()=>{
 
 
 test('get image for user',async ()=>{
+    
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     expect(imageId).toBeTruthy();
 })
@@ -470,9 +534,11 @@ test('get image for non existing entity',async ()=>{
 // the image is deleted but returned 0 as it is not in grid fs but it does cover the seleted branch that's how i know it was deleted successfully
 test('delete image for user',async ()=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
+    console.log(imageId)
     const isDeleted = await mockImage.deleteImage(imageId,usersInDB[0]._id,usersInDB[0]._id,'user');
     expect(isDeleted).toBeTruthy();
 })
+/*
 test('delete image for album',async ()=>{
     const imageId = await mockImage.getImage(albums[0]._id,'album');
     const isDeleted = await mockImage.deleteImage(imageId,usersInDB[0]._id,albums[0]._id,'album');
@@ -590,29 +656,89 @@ test('delete image for non entity',async ()=>{
 })
 
 // add back images to database
-test('upload image for user',async ()=>{
-    const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,usersInDB[0]._id,'user',image) 
+
+
+
+test('update image for user 1',async ()=>{
+    // console.log(usersInDB[0])
+     const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,usersInDB[0]._id,'user',image);
+     let writestream = gfsImages.createWriteStream({
+         filename: 'not_found',
+         metadata: {userId: usersInDB[0]._id, belongsTo: 'user', imageId: uploadedImageId },
+         content_type: 'image/jpeg',
+         bucketName: 'images',
+         root: 'images',
+     });
+     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+     
+     await new Promise(fulfill => writestream.on('close', fulfill));
+     //await delay(5000)
+    // console.log(await userDocument.findById(usersInDB[0]._id))
+     expect(uploadedImageId).toBeTruthy();
+ })
+ test('update image for artist 1',async ()=>{
+     
+    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,artists[0]._id,'artist',image) 
+    let writestream = gfsImages.createWriteStream({
+     filename: 'not_found',
+     metadata: {userId: usersInDB[0]._id, belongsTo: 'artist', imageId: uploadedImageId },
+     content_type: 'image/jpeg',
+     bucketName: 'images',
+     root: 'images',
+ });
+ fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ 
+ //await delay(5000)
     expect(uploadedImageId).toBeTruthy();
-})
-test('upload image for artist',async ()=>{
-   const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,artists[0]._id,'artist',image) 
-   expect(uploadedImageId).toBeTruthy();
-})
-test('upload image for playlist',async ()=>{
-  // console.log(usersInDB[0],playlist)
-   const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,playlist._id,'playlist',image) 
-   expect(uploadedImageId).toBeTruthy();
-})
-
-test('upload image for track',async ()=>{
-   const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,tracks[0]._id,'track',image) 
-   expect(uploadedImageId).toBeTruthy();
-})
-
-test('upload image for album',async ()=>{
-   const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,albums[0]._id,'album',image) 
-   expect(uploadedImageId).toBeTruthy();
-})
+ })
+ test('update image for playlist 1',async ()=>{
+   // console.log(usersInDB[0],playlist)
+    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,playlist._id,'playlist',image) 
+    let writestream = gfsImages.createWriteStream({
+     filename: 'not_found',
+     metadata: {userId: usersInDB[0]._id, belongsTo: 'playlist', imageId: uploadedImageId },
+     content_type: 'image/jpeg',
+     bucketName: 'images',
+     root: 'images',
+ });
+ fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ 
+ await new Promise(fulfill => writestream.on('close', fulfill));
+ //await delay(5000)
+    expect(uploadedImageId).toBeTruthy();
+ })
+ 
+ test('update image for track 1',async ()=>{
+    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,tracks[0]._id,'track',image) 
+    let writestream = gfsImages.createWriteStream({
+     filename: 'not_found',
+     metadata: {userId: usersInDB[0]._id, belongsTo: 'track', imageId: uploadedImageId },
+     content_type: 'image/jpeg',
+     bucketName: 'images',
+     root: 'images',
+ });
+ fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ 
+ await new Promise(fulfill => writestream.on('close', fulfill));
+ //await delay(5000)
+    expect(uploadedImageId).toBeTruthy();
+ })
+ 
+ test('update image for album 1',async ()=>{
+    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,albums[0]._id,'album',image) 
+    let writestream = gfsImages.createWriteStream({
+     filename: 'not_found',
+     metadata: {userId: usersInDB[0]._id, belongsTo: 'album', imageId: uploadedImageId },
+     content_type: 'image/jpeg',
+     bucketName: 'images',
+     root: 'images',
+ });
+ fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ //await delay(5000)
+ await new Promise(fulfill => writestream.on('close', fulfill));
+    expect(uploadedImageId).toBeTruthy();
+ })
+ 
 
 
 
@@ -744,3 +870,4 @@ test('delete images for non entity',async ()=>{
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,artists[0]._id,'none');
     expect(isDeleted).toBeFalsy();
 })
+*/

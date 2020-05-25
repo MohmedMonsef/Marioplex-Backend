@@ -80,7 +80,7 @@ const User = {
         const user = await this.getUserById(userId);
         if (user) {
             let isCorrectPassword = await bcrypt.compare(password, user.password);
-            console.log(isCorrectPassword);
+           // console.log(isCorrectPassword);
             if (!isCorrectPassword) return 0;
             if (user.isFacebook) {
                 //if from facebok change country only
@@ -500,7 +500,7 @@ const User = {
     confirmEmail: async function(user) {
         try{
         if (!user.confirm) user.confirm = true;
-        if (user.confirm == false) { user.confirm = true; }
+       
         await user.save();
         return true;
     }catch(ex){
@@ -510,7 +510,7 @@ const User = {
     confirmPremium: async function(user) {
         try{
         if (!user.premiumConfirm) user.premiumConfirm = true;
-        if (user.premiumConfirm == false) { user.premiumConfirm = true; }
+      
         await user.save();
         return true;
     }catch(ex){
@@ -796,7 +796,7 @@ const User = {
         let playlist = await Playlist.getPlaylist(playlistId);
         createdUser = await this.getUserById(playlist.ownerId);
         if (!createdUser) { return false; }
-        console.log(createdUser);
+        //console.log(createdUser);
         if (String(createdUser._id) == String(userId)) return true;
         else {
             for (var i = 0; i < createdUser.createPlaylist.length; i++) {
@@ -861,6 +861,7 @@ const User = {
         if (user.product == 'premium') {
             return false;
         }
+        user.product = 'premium';
         user.premium['expiresDate'] = expiresDate;
         user.premium['cardNumber'] = cardNumber;
         user.premium['isMonth'] = isMonth;
@@ -1051,6 +1052,7 @@ const User = {
         if (!user) return 0;
         const player = await Player.pausePlaying(user);
         if (!player) return 0;
+        return 1;
     }catch(ex){
         return 0;
     }

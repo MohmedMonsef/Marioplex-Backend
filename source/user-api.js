@@ -861,6 +861,7 @@ const User = {
         if (user.product == 'premium') {
             return false;
         }
+        user.product = 'premium';
         user.premium['expiresDate'] = expiresDate;
         user.premium['cardNumber'] = cardNumber;
         user.premium['isMonth'] = isMonth;

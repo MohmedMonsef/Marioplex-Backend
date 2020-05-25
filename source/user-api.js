@@ -1052,6 +1052,7 @@ const User = {
         if (!user) return 0;
         const player = await Player.pausePlaying(user);
         if (!player) return 0;
+        return 1;
     }catch(ex){
         return 0;
     }

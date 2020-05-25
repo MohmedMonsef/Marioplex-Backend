@@ -475,6 +475,133 @@ test("non existing user unfollow playlist" , async ()=>{
 
 
 
+test("create queu for user",async ()=>{
+    const q = await mockUser.createQueue(usersInDB[0]._id,false,albums[0]._id ,tracks[0]._id);
+    expect(q).toBeTruthy()
+})
+test("create queu for non mogoose user",async ()=>{
+    const q = await mockUser.createQueue("1",true,playlists[0]._id ,tracks[0]._id);
+    expect(q).toBeFalsy()
+})
+test("create queu for non existing user",async ()=>{
+    const q = await mockUser.createQueue(ObjectId(),true,playlists[0]._id ,tracks[0]._id);
+    expect(q).toBeFalsy()
+})
+test("not create queu for user",async ()=>{
+    const q = await mockUser.createQueue(usersInDB[0]._id,true,ObjectId() ,tracks[0]._id);
+    expect(q).toBeFalsy()
+})
+test("add to queu",async ()=>{
+    const q = await mockUser.addToQueue(usersInDB[0]._id,tracks[0]._id,false,albums[0]._id);
+    expect(q).toBeTruthy()
+})
+test("add queu for non mogoose user",async ()=>{
+    const q = await mockUser.addToQueue("1",tracks[0]._id,false,albums[0]._id);
+    expect(q).toBeFalsy()
+})
+test("add queu for non existing user",async ()=>{
+    const q = await mockUser.addToQueue(ObjectId(),tracks[0]._id,false,albums[0]._id);
+    expect(q).toBeFalsy()
+})
+test("not add  queu for user",async ()=>{
+    const q = await mockUser.addToQueue(usersInDB[0]._id,tracks[0]._id,false,ObjectId());
+    expect(q).toBeFalsy()
+})
+
+test("update player",async ()=>{
+    const p = await mockUser.updateUserPlayer(usersInDB[0]._id,false,albums[0]._id,tracks[0]._id);
+    expect(p).toBeTruthy()
+})
+test("update player for non user",async ()=>{
+    const p = await mockUser.updateUserPlayer(ObjectId(),false,albums[0]._id,tracks[0]._id);
+    expect(p).toBeFalsy()
+})
+test("update player for non mongoose user",async ()=>{
+    const p = await mockUser.updateUserPlayer("1",false,albums[0]._id,tracks[0]._id);
+    expect(p).toBeFalsy()
+})
+test("repeat playlist ",async ()=>{
+    const x = await mockUser.repreatPlaylist(usersInDB[0]._id,0);
+    expect(x).toBeTruthy();
+})
+test("repeat playlist non mongoose user ",async ()=>{
+    const x = await mockUser.repreatPlaylist("1",0);
+    expect(x).toBeFalsy();
+})
+test("repeat playlist non user",async ()=>{
+    const x = await mockUser.repreatPlaylist(ObjectId(),0);
+    expect(x).toBeFalsy();
+})
+test("shuffle playlist ",async ()=>{
+    const x = await mockUser.setShuffle(0,usersInDB[0]._id);
+    expect(x).toBeTruthy();
+})
+test("shuffle playlist non mongoose user ",async ()=>{
+    const x = await mockUser.setShuffle(0,"1");
+    expect(x).toBeFalsy();
+})
+test("shuffle playlist non user",async ()=>{
+    const x = await mockUser.setShuffle(0,ObjectId());
+    expect(x).toBeFalsy();
+})
+test("get user queue",async ()=>{
+    const x = await mockUser.getQueue(usersInDB[0]._id);
+    expect(x).toBeTruthy()
+})
+test("get non  user queue",async ()=>{
+    const x = await mockUser.getQueue(ObjectId());
+    expect(x).toBeFalsy()
+})
+test("get non mongoose user queue",async ()=>{
+    const x = await mockUser.getQueue("1");
+    expect(x).toBeFalsy()
+})
+test("resume playing for user",async ()=>{
+    const x = await mockUser.resumePlaying(usersInDB[0]._id);
+    expect(x).toBeTruthy()
+})
+test("resume playing for non  user",async ()=>{
+    const x = await mockUser.resumePlaying(ObjectId());
+    expect(x).toBeFalsy()
+})
+test("resume playing for non mongoose user",async ()=>{
+    const x = await mockUser.resumePlaying("!");
+    expect(x).toBeFalsy()
+})
+test("pause playing for user",async ()=>{
+    const x = await mockUser.pausePlaying(usersInDB[0]._id);
+    expect(x).toBeTruthy()
+})
+test("pause playing for non  user",async ()=>{
+    const x = await mockUser.pausePlaying(ObjectId());
+    expect(x).toBeFalsy()
+})
+test("pause playing for non mongoose user",async ()=>{
+    const x = await mockUser.pausePlaying("!");
+    expect(x).toBeFalsy()
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 test("delete playlist of user",async ()=>{
     console.log(usersInDB[0],playlists[0])
     const deleted = await mockUser.deletePlaylist(usersInDB[0]._id,playlists[0]._id);
@@ -595,6 +722,24 @@ test("check authorized album for non artist user",async ()=>{
     const t = await mockUser.checkAuthorizedAlbum(usersInDB[2]._id,albums[0]._id);
     expect(t).toBeFalsy();
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

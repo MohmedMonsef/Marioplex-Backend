@@ -357,6 +357,14 @@ test("user follow artist",async ()=>{
     const follow = await mockUser.userFollowArtist(usersInDB[1]._id,artists[0]._id);
     expect(follow).toBeTruthy();
 })
+test("user follow artist again",async ()=>{
+    const follow = await mockUser.userFollowArtist(usersInDB[1]._id,artists[0]._id);
+    expect(follow).toBeTruthy();
+})
+test("gwt user followings",async ()=>{
+    const follow = await mockUser.getUserFollowingUser(usersInDB[1]._id);
+    expect(follow).toBeTruthy();
+})
 test("check if user follow artist when he does ",async ()=>{
     const following = await mockUser.checkIfUserFollowArtist(usersInDB[1]._id,artists[0]._id);
     expect(following).toBeTruthy();
@@ -414,18 +422,96 @@ test("get non mongoose user following user", async ()=>{
 
 
 
+test("confirm email of user",async ()=>{
+    let confirm = await mockUser.confirmEmail(usersInDB[0]);
+    expect(confirm).toBeTruthy();
+})
+test("confirm email of user again",async ()=>{
+    usersInDB[0].confirm = false;
+    let confirm = await mockUser.confirmEmail(usersInDB[0]);
+    expect(confirm).toBeTruthy();
+})
+test("confirm premium of user",async ()=>{
+    let confirm = await mockUser.confirmPremium(usersInDB[0]);
+    expect(confirm).toBeTruthy();
+})
+test("confirm premium of user again",async ()=>{
+    usersInDB[0].premiumConfirm = false;
+    let confirm = await mockUser.confirmPremium(usersInDB[0]);
+    expect(confirm).toBeTruthy();
+})
+
+
+
+test("user follow playlist" , async ()=>{
+    let followedPlaylist = await mockUser.followPlaylist(usersInDB[0]._id,playlists[0]._id,false);
+    expect(followedPlaylist).toBeFalsy();
+})
+
+test("non mongose user follow playlist" , async ()=>{
+    let followedPlaylist = await mockUser.followPlaylist("1",playlists[0]._id,false);
+    expect(followedPlaylist).toBeFalsy();
+})
+test("non existing user follow playlist" , async ()=>{
+    let followedPlaylist = await mockUser.followPlaylist(ObjectId(),playlists[0]._id,false);
+    expect(followedPlaylist).toBeFalsy();
+})
+
+test("user unfollow playlist" , async ()=>{
+    let followedPlaylist = await mockUser.unfollowPlaylist(usersInDB[0]._id,playlists[0]._id);
+    expect(followedPlaylist).toBeTruthy();
+})
+
+test("non mongose user unfollow playlist" , async ()=>{
+    let followedPlaylist = await mockUser.unfollowPlaylist("1",playlists[0]._id);
+    expect(followedPlaylist).toBeFalsy();
+})
+test("non existing user unfollow playlist" , async ()=>{
+    let followedPlaylist = await mockUser.unfollowPlaylist(ObjectId(),playlists[0]._id);
+    expect(followedPlaylist).toBeFalsy();
+})
 
 
 
 
 
+test("delete playlist of user",async ()=>{
+    console.log(usersInDB[0],playlists[0])
+    const deleted = await mockUser.deletePlaylist(usersInDB[0]._id,playlists[0]._id);
+    expect(deleted).toBeFalsy();
+})
+test("delete playlist of non mongoose user user",async ()=>{
+    const deleted = await mockUser.deletePlaylist("1",playlists[0]._id);
+    expect(deleted).toBeFalsy();
+})
+test("delete playlist of non existing  user",async ()=>{
+    const deleted = await mockUser.deletePlaylist(ObjectId(),playlists[0]._id);
+    expect(deleted).toBeFalsy();
+})
+test("delete non existing  playlist of user",async ()=>{
+    const deleted = await mockUser.deletePlaylist(usersInDB[0]._id,playlists[0]._id);
+    expect(deleted).toBeFalsy();
+})
 
-
-
-
-
-
-
+test("restore playlist",async ()=>{
+    const restore = await mockUser.restorePlaylists(usersInDB[0]._id,[playlists[0]._id]);
+    expect(restore).toBeFalsy();
+})
+test("restore non mongoose playlist",async ()=>{
+    const restore = await mockUser.restorePlaylists(usersInDB[0]._id,["!"]);
+    expect(restore).toBeFalsy();
+})
+test("restore non  user playlist",async ()=>{
+    const restore = await mockUser.restorePlaylists("0",[playlists[0]._id]);
+    expect(restore).toBeFalsy();
+})
+test("restore non existing user playlist",async ()=>{
+    const restore = await mockUser.restorePlaylists(ObjectId(),[playlists[0]._id]);
+    expect(restore).toBeFalsy();
+})
+test("check aauth playlist non mongoose user",async ()=>{
+    expect(await mockUser.checkAuthorizedPlaylist(ObjectId(),ObjectId())).toBeFalsy();
+})
 
 
 

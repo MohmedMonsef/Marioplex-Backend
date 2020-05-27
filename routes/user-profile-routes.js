@@ -186,5 +186,16 @@ router.post("/user/logout", limiter, checkAuth, async(req, res) => {
     return res.status(202).send({ Success: "Token is set successfully" })
 
 });
+//GET USER PRIVATE PROFILE INFORMATION
+router.get('/me/notifications', checkAuth, limiter, async(req, res) => {
+  
+    const userId = req.user._id; // get it from desierialize auth 
+    let user =await User.getUserById(userId);
+    let notifications=user.notifications;
+    if(!notifications||notifications.length==0){
+        return res.status(404).send("No notifications");
+    }
+    return res.status(200).send(notifications);
 
+})
 module.exports = router;

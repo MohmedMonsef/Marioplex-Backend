@@ -18,7 +18,7 @@ module.exports = async function(email, message, type) {
             from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
             to: email,
             subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
-            text: 'Please follow this URL http://52.205.254.29/login/reset_password?token=' + message
+            text: 'Please follow this URL http://52.87.106.56/login/reset_password?token=' + message
 
         };
     } else if (type == "confirm") {
@@ -26,7 +26,7 @@ module.exports = async function(email, message, type) {
             from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
             to: email,
             subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
-            text: 'Please follow this URL http://52.205.254.29/login/confirm?id=' + message
+            text: 'Please follow this URL http://52.87.106.56/confirm?id=' + message
 
         };
     }
@@ -35,7 +35,7 @@ module.exports = async function(email, message, type) {
             from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
             to: email,
             subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
-            text: 'Please follow this URL http://52.205.254.29/premium/confirm?id=' + message
+            text: 'Please follow this URL http://52.87.106.56/premium/confirm?id=' + message
 
         };
 

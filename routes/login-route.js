@@ -18,7 +18,7 @@ const limiter = rateLimit({
 
 });
 //request to log in the user
-router.post("/login", (req, res) => {
+router.post("/login",limiter, (req, res) => {
     // Form validation
     
     const { errors, isValid } = validateLoginInput(req.body);

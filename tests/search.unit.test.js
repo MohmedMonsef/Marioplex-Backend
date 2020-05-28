@@ -18,6 +18,7 @@ let track2;
 /**
  * Connect to a new in-memory database before running any tests.
  */
+
 beforeAll(async () => {
    await dbHandler.connect();
 
@@ -208,12 +209,21 @@ test('add to recentlySearch',async () => {
 test('add to recentlySearch',async () => {
     expect(await searchTest.addToRecentlySearch("1",track,'track')).toBeFalsy()
 })
+test('add to recentlySearch',async () => {
+    expect(await searchTest.addToRecentlySearch(mongoose.Types.ObjectId(),track._id,'track')).toBeFalsy()
+})
 
 test('add to getRecentlySearch',async () => {
     expect(await searchTest.getRecentlySearch(user2._id)).toHaveProperty('playlists')
 })
 test('add to removeRecently',async () => {
     expect(await searchTest.removeRecently(user2._id,'artist',artist._id)).toBeTruthy()
+})
+test('add to removeRecently',async () => {
+    expect(await searchTest.removeRecently(user2,'artist',artist._id)).toBeFalsy()
+})
+test('add to removeRecently',async () => {
+    expect(await searchTest.removeRecently(mongoose.Types.ObjectId(),'artist',artist._id)).toBeFalsy()
 })
 test('add to removeRecently',async () => {
     expect(await searchTest.removeRecently(user2._id,'album',album._id)).toBeTruthy()
@@ -230,3 +240,11 @@ test('add to removeRecently',async () => {
 test('getRecentlySearch',async () => {
     expect(await searchTest.getRecentlySearch(user2._id)).toHaveProperty('playlists',[])
 })
+test('getRecentlySearch',async () => {
+    expect(await searchTest.getRecentlySearch(mongoose.Types.ObjectId())).toBeFalsy()
+})
+test('getRecentlySearch',async () => {
+    expect(await searchTest.getRecentlySearch("1")).toBeFalsy()
+})
+
+ 

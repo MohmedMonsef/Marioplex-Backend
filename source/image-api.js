@@ -20,7 +20,7 @@ const Image = {
         for (let user in users) {
             if (!users[user].createPlaylist) users[user].createPlaylist = [];
             for (var i = 0; i < users[user].createPlaylist.length; i++) {
-                if (users[user].createPlaylist[i].playListId == playlistId) {
+                if (String(users[user].createPlaylist[i].playListId) == String(playlistId)) {
                     createduser = users[user];
                     playlistindex = i;
                     found = true;
@@ -30,9 +30,9 @@ const Image = {
             if (found) break;
         }
         if (!createduser) { return false; }
-        if (createduser._id == userID) { return true; } else {
+        if (String(createduser._id) == String(userID)) { return true; } else {
             for (var i = 0; i < createduser.createPlaylist[playlistindex].collaboratorsId.length; i++) {
-                if (createduser.createPlaylist[playlistindex].collaboratorsId[i] == userID) {
+                if (String(createduser.createPlaylist[playlistindex].collaboratorsId[i]) == String(userID)) {
                     return true;
                 }
             }
@@ -58,7 +58,7 @@ const Image = {
         const artist = await this.findMeAsArtist(userId);
         //console.log(artist)
         if (!artist) return 0;
-        const hasAccess = await this.checkArtistHasTrack(artist, trackId);
+        const hasAccess =  this.checkArtistHasTrack(artist, trackId);
         return hasAccess;
     }catch(ex){
         return 0;
@@ -87,7 +87,7 @@ const Image = {
      * @param {String} trackId
      * @returns {boolean} 
      */
-    checkArtistHasTrack: async function(artist, trackId) {
+    checkArtistHasTrack: function(artist, trackId) {
         try{
         if (!artist || !trackId) return 0;
         if (!artist.addTracks) return 0;
@@ -128,11 +128,12 @@ const Image = {
     checkArtisthasAlbum: async function(artistId, albumId) {
         try{
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
-        if (await albumDocument.findById(albumId)) {
+        const album = await albumDocument.findById(albumId);
+        if (album) {
             const artist = await artistDocument.findById(artistId);
             if (!artist) return 0;
             if (artist.addAlbums) {
-                return await artist.addAlbums.find(album => String(album.albumId) == String(albumId));
+                return  artist.addAlbums.find(album => String(album.albumId) == String(albumId));
             }
         }
         return 0;
@@ -164,55 +165,61 @@ const Image = {
                     if (!user.images) user.images = [];
                     user.images.push(image);
                     // save user
-                    await user.save();
+                    await userDocument.updateOne({_id:user._id},{$set:user}).catch(ex=>console.log(ex));
                     // return id of the saved image
                     return user.images[user.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'playlist':
-                { // check if user has access to playlist
+                { 
+                    const playlist = await playlistDocument.findById(sourceId);
+                    // check if laylist exist
+                    if (!playlist) return 0;
+                    // check if user has access to playlist
                     const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
                     //  console.log('authorized '+isAuthorized)
                     // user has no access to playlist
                     if (!isAuthorized) return 0;
-                    const playlist = await playlistDocument.findById(sourceId);
-                    // check if laylist exist
-                    if (!playlist) return 0;
+                    
                     if (!playlist.images) playlist.images = [];
                     playlist.images.push(image);
-                    await playlist.save();
+                    await playlistDocument.updateOne({_id:playlist._id},{$set:playlist});
                     return playlist.images[playlist.images.length - 1]._id;
-                    break;
+                   
                 }
             case 'track':
                 {
-                    { // check if user has access to track
+                    { 
+                        const track = await trackDocument.findById(sourceId);
+                        // console.log('track ' + track)
+                         if (!track) return 0;
+                        // check if user has access to track
                         const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
                         //   console.log('authorized '+hasAccess)
                         if (!hasAccess) return 0;
                         // get track
-                        const track = await trackDocument.findById(sourceId);
-                        console.log('track ' + track)
-                        if (!track) return 0;
+                       
                         if (!track.images) track.images = [];
                         track.images.push(image);
-                        await track.save();
+                        await trackDocument.updateOne({_id:track._id},{$set:track});
                         return track.images[track.images.length - 1]._id;
-                        break;
+                       
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
+                { 
+                     // get album
+                     const album = await albumDocument.findById(sourceId);
+                     if (!album) return 0;
+                    // check if user is artist and has access to album
                     const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
                     if (!hasAccess) return 0;
-                    // get track
-                    const album = await albumDocument.findById(sourceId);
-                    if (!album) return 0;
+                   
                     if (!album.images) album.images = [];
                     album.images.push(image);
-                    await album.save();
+                    await albumDocument.updateOne({_id:album._id},{$set:album});
                     return album.images[album.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
@@ -221,18 +228,19 @@ const Image = {
                     if (String(artist._id) != String(sourceId)) return 0;
                     if (!artist.images) artist.images = [];
                     artist.images.push(image);
-                    await artist.save();
+                    await artistDocument.updateOne({_id:artist._id},{$set:artist});
                     return artist.images[artist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'category':
                 return 0;
-                break;
+              
             default:
                 return 0;
 
         }
     }catch(ex){
+    
         return 0;
     }
 
@@ -253,82 +261,101 @@ const Image = {
         const user = await userDocument.findById(userId);
         if (!user) return 0;
         // check if belongs to is user,playlist,track,album,category,artist
-        // delete old images of entity
-        await this.deleteImages(userId, sourceId, belongsTo);
+        
+        //console.log("dekete",user);
         switch (belongsTo) {
             case 'user':
                 { // check if source id equals userId
                     if (sourceId != userId) return 0;
-
+                   
+                   // delete old images of entity
+                    await this.deleteImages(userId, sourceId, belongsTo);
                     user.images = [];
                     user.images.push(image);
                     // save user
-                    await user.save();
+                    //await userDocument.updateOne({_id:user._id},{$set:user});
+                    await userDocument.updateOne({_id:user._id},{$set:user})
                     // return id of the saved image
+                   // console.log("up",user)
+                  //  console.log(await userDocument.findById(userId))
                     return user.images[user.images.length - 1]._id;
-                    break;
+                  
                 }
             case 'playlist':
-                { // check if user has access to playlist
-                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
-                    // user has no access to playlist
-                    if (!isAuthorized) return 0;
+                {   
                     const playlist = await playlistDocument.findById(sourceId);
                     // check if laylist exist
                     if (!playlist) return 0;
+                    // check if user has access to playlist
+                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
+                    // user has no access to playlist
+                    if (!isAuthorized) return 0;
+                    // delete old images of entity
+                    await this.deleteImages(userId, sourceId, belongsTo);    
                     playlist.images = [];
                     playlist.images.push(image);
-                    await playlist.save();
+                    //await playlistDocument.updateOne({_id:playlist._id},{$set:playlist});
+                    await playlistDocument.updateOne({_id:playlist._id},{$set:playlist})
                     return playlist.images[playlist.images.length - 1]._id;
-                    break;
+                   
                 }
             case 'track':
                 {
-                    { // check if user has access to track
-                        const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
-                        if (!hasAccess) return 0;
+                    {   
                         // get track
                         const track = await trackDocument.findById(sourceId);
                         if (!track) return 0;
+                        // check if user has access to track
+                        const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
+                        if (!hasAccess) return 0;
+                        // delete old images of entity
+                        await this.deleteImages(userId, sourceId, belongsTo);
                         track.images = [];
                         track.images.push(image);
-                        await track.save();
+                        
+                        await trackDocument.updateOne({_id:track._id},{$set:track});
                         return track.images[track.images.length - 1]._id;
-                        break;
+                        
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
-                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
-                    if (!hasAccess) return 0;
-                    // get track
+                {   
+                    // get album
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
+                    // check if user is artist and has access to album
+                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
+                    if (!hasAccess) return 0;
+                     // delete old images of entity
+                     await this.deleteImages(userId, sourceId, belongsTo);
                     album.images = [];
                     album.images.push(image);
-                    await album.save();
+                    await albumDocument.updateOne({_id:album._id},{$set:album});
                     return album.images[album.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
                     const artist = await this.findMeAsArtist(userId);
                     if (!artist) return 0;
                     if (String(artist._id) != String(sourceId)) return 0;
+                     // delete old images of entity
+                     await this.deleteImages(userId, sourceId, belongsTo);
                     artist.images = [];
                     artist.images.push(image);
-                    await artist.save();
+                    await artistDocument.updateOne({_id:artist._id},{$set:artist});
                     return artist.images[artist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'category':
                 return 0;
-                break;
+                
             default:
                 return 0;
 
         }
     }catch(ex){
+        console.log(ex)
         return 0;
     }
 
@@ -347,10 +374,10 @@ const Image = {
                     // check if source id equals userId
                     if (!user) return 0;
                     if (!user.images) return 0;
-
+                    if(!user.images.length) return 0;
                     // return id of the saved image
                     return user.images[user.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'playlist':
                 {
@@ -358,8 +385,9 @@ const Image = {
                     // check if laylist exist
                     if (!playlist) return 0;
                     if (!playlist.images) return 0;
+                    if(!playlist.images.length) return 0;
                     return playlist.images[playlist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'track':
                 {
@@ -369,8 +397,9 @@ const Image = {
                         const track = await trackDocument.findById(sourceId);
                         if (!track) return 0;
                         if (!track.images) return 0;
+                        if(!track.images.length) return 0;
                         return track.images[track.images.length - 1]._id;
-                        break;
+                        
                     }
                 }
             case 'album':
@@ -379,25 +408,28 @@ const Image = {
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
                     if (!album.images) return 0;
+                    if(!album.images.length) return 0;
                     return album.images[album.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'artist':
                 {
                     const artist = await artistDocument.findById(sourceId);
                     if (!artist) return 0;
                     if (!artist.images) return 0;
+                    if(!artist.images.length) return 0;
                     return artist.images[artist.images.length - 1]._id;
-                    break;
+                    
                 }
             case 'category':
                 return 0;
-                break;
+               
             default:
                 return 0;
 
         }
     }catch(ex){
+        console.log(ex)
         return 0;
     }
     },
@@ -423,17 +455,18 @@ const Image = {
                 { // check if source id equals userId
                     if (sourceId != userId) return 0;
                     // delete image from user array
+                   
                     const newImages = this.deleteImageFromArray(user.images, imageId);
+                   
                     if (!newImages) return 0;
+                  
                     // update images array for user
                     user.images = newImages;
                     // save user
-                    await user.save();
+                    await userDocument.updateOne({_id:user._id},{$set:user});
                     // delete image from gridfs
-                    const imageFile = await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
-
+                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
-
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                         if (files) {
@@ -449,25 +482,27 @@ const Image = {
 
 
                     return 1;
-                    break;
+                   
                 }
             case 'playlist':
-                { // check if user has access to playlist
-                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
-                    // user has no access to playlist
-                    if (!isAuthorized) return 0;
+                {   
                     const playlist = await playlistDocument.findById(sourceId);
                     // check if playlist exist
                     if (!playlist) return 0;
+                    // check if user has access to playlist
+                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
+                    // user has no access to playlist
+                    if (!isAuthorized) return 0;
+                    
                     // delete image from playlist array
                     const newImages = this.deleteImageFromArray(playlist.images, imageId);
                     if (!newImages) return 0;
                     // update images array for playlist
                     playlist.images = newImages;
                     // save playlist
-                    await playlist.save();
+                    await playlistDocument.updateOne({_id:playlist._id},{$set:playlist});
                     // delete image from gridfs
-                    const imageFile = await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -481,25 +516,27 @@ const Image = {
                         }
                     })
                     return 1;
-                    break;
+                    
                 }
             case 'track':
                 {
-                    { // check if user has access to track
+                    { 
+                         // get track
+                         const track = await trackDocument.findById(sourceId);
+                         if (!track) return 0;
+                        // check if user has access to track
                         const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
                         if (!hasAccess) return 0;
-                        // get track
-                        const track = await trackDocument.findById(sourceId);
-                        if (!track) return 0;
+                       
                         // delete image from track array
                         const newImages = this.deleteImageFromArray(track.images, imageId);
                         if (!newImages) return 0;
                         // update images array for track
                         track.images = newImages;
                         // save track
-                        await track.save();
+                        await trackDocument.updateOne({_id:track._id},{$set:track});
                         // delete image from gridfs
-                        const imageFile = await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) return 0;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -513,25 +550,27 @@ const Image = {
                             }
                         })
                         return 1;
-                        break;
+                        
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
-                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
-                    if (!hasAccess) return 0;
+                { 
                     // get album
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
+                    // check if user is artist and has access to album
+                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
+                    if (!hasAccess) return 0;
+                    
                     // delete image from album array
                     const newImages = this.deleteImageFromArray(album.images, imageId);
                     if (!newImages) return 0;
                     // update images array for album
                     album.images = newImages;
                     // save album
-                    await album.save();
+                    await albumDocument.updateOne({_id:album._id},{$set:album});
                     // delete image from gridfs
-                    const imageFile = await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -545,7 +584,7 @@ const Image = {
                         }
                     })
                     return 1;
-                    break;
+                   
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
@@ -554,13 +593,14 @@ const Image = {
                     if (String(artist._id) != String(sourceId)) return 0;
                     // delete image from artist array
                     const newImages = this.deleteImageFromArray(artist.images, imageId);
+                   
                     if (!newImages) return 0;
                     // update images array for artist
                     artist.images = newImages;
                     // save artist
-                    await artist.save();
+                    await artistDocument.updateOne({_id:artist._id},{$set:artist});
                     // delete image from gridfs
-                    const imageFile = await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -574,15 +614,16 @@ const Image = {
                         }
                     })
                     return 1;
-                    break;
+                   
                 }
             case 'category':
                 return 0;
-                break;
+               
             default:
                 return 0;
         }
     }catch(ex){
+        console.log(ex)
         return 0;
     }
 
@@ -635,7 +676,7 @@ const Image = {
                     if (!user.images) user.images = [];
                     // delete image from gridfs
                     for (let image of user.images) {
-                        const imageFile = gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -653,22 +694,25 @@ const Image = {
                     // update images array for user
                     user.images = [];
                     // save user
-                    await user.save();
+                    await userDocument.updateOne({_id:user._id},{$set:user});
+                    //console.log("ussser",user)
                     return 1;
-                    break;
+                    
                 }
             case 'playlist':
-                { // check if user has access to playlist
-                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
-                    // user has no access to playlist
-                    if (!isAuthorized) return 0;
+                { 
                     const playlist = await playlistDocument.findById(sourceId);
                     // check if playlist exist
                     if (!playlist) return 0;
+                    // check if user has access to playlist
+                    const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
+                    // user has no access to playlist
+                    if (!isAuthorized) return 0;
+                   
                     if (!playlist.images) playlist.images = [];
                     // delete image from gridfs
                     for (let image of playlist.images) {
-                        const imageFile = gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -685,22 +729,24 @@ const Image = {
                     // update images array
                     playlist.images = [];
                     // save 
-                    await playlist.save();
+                    await playlistDocument.updateOne({_id:playlist._id},{$set:playlist});
                     return 1;
-                    break;
+                   
                 }
             case 'track':
                 {
-                    { // check if user has access to track
+                    { 
+                         // get track
+                         const track = await trackDocument.findById(sourceId);
+                         if (!track) return 0;
+                        // check if user has access to track
                         const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
                         if (!hasAccess) return 0;
-                        // get track
-                        const track = await trackDocument.findById(sourceId);
-                        if (!track) return 0;
+                       
                         if (!track.images) track.images = [];
                         // delete image from gridfs
                         for (let image of track.images) {
-                            const imageFile = gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                            const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
                             const imageIdGridfs = imageFile ? imageFile._id : undefined;
                             if (!imageIdGridfs) continue;
                             await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -717,22 +763,25 @@ const Image = {
                         // update images array
                         track.images = [];
                         // save 
-                        await track.save();
+                        await trackDocument.updateOne({_id:track._id},{$set:track});
                         return 1;
-                        break;
+                       
                     }
                 }
             case 'album':
-                { // check if user is artist and has access to album
-                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
-                    if (!hasAccess) return 0;
+                { 
+                    
                     // get album
                     const album = await albumDocument.findById(sourceId);
                     if (!album) return 0;
+                    // check if user is artist and has access to album
+                    const hasAccess = await this.checkAuthorizedAlbum(userId, sourceId);
+                    if (!hasAccess) return 0;
+                    
                     if (!album.images) album.images = [];
                     // delete image from gridfs
                     for (let image of album.images) {
-                        const imageFile = gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -749,9 +798,9 @@ const Image = {
                     // update images array
                     album.images = [];
                     // save 
-                    await album.save();
+                    await albumDocument.updateOne({_id:album._id},{$set:album});
                     return 1;
-                    break;
+                    
                 }
             case 'artist':
                 { // check is user is the artist he claims to be
@@ -761,7 +810,7 @@ const Image = {
                     if (!artist.images) artist.images = [];
                     // delete image from gridfs
                     for (let image of artist.images) {
-                        const imageFile = gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -778,13 +827,13 @@ const Image = {
                     // update images array
                     artist.images = [];
                     // save 
-                    await artist.save();
+                    await artistDocument.updateOne({_id:artist._id},{$set:artist});
                     return 1;
-                    break;
+                   
                 }
             case 'category':
                 return 0;
-                break;
+                
             default:
                 return 0;
         }

@@ -1,33 +1,14 @@
 {
-  "AWSEBDockerrunVersion": 2,
-  "containerDefinitions": [
-    {
-      "name": "back",
-      "image": "belalelhossany/back",
-      "hostname": "back",
-      "essential": false,
-      "memory": 128
-    },
-    {
-      "name": "front",
-      "image": "belalelhossany/front",
-      "hostname": "front",
-      "essential": false,
-      "memory": 128
-    },
-    {
-      "name": "nginx",
-      "image": "belalelhossany/nginx",
-      "hostname": "nginx",
-      "essential": true,
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 80
-        }
-      ],
-      "links": ["back", "front"],
-      "memory": 128
-    }
-  ]
+    "AWSEBDockerrunVersion": 1,
+   
+  
+    "image":{
+        "Name":"belalelhossany/frontend"
+        },
+    "Ports":[
+                {
+                    "HostPort": 80,
+                    "ContainerPort": 80
+                }
+            ],
 }

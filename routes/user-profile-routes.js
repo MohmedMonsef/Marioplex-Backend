@@ -131,6 +131,7 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
             })
         } else {
             const userId = req.user._id;
+            console.log(req.body.user);
             const user = await User.update(req.body.user.repeatedPassword, userId, req.body.user.gender, req.body.user.birthday, req.body.user.displayName, req.body.user.password, req.body.user.email, req.body.user.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.user.newpassword);
             if (user) {
                 res.status(200).json({
@@ -185,5 +186,16 @@ router.post("/user/logout", limiter, checkAuth, async(req, res) => {
     return res.status(202).send({ Success: "Token is set successfully" })
 
 });
+//GET USER PRIVATE PROFILE INFORMATION
+router.get('/me/notifications', checkAuth, limiter, async(req, res) => {
+  
+    const userId = req.user._id; // get it from desierialize auth 
+    let user =await User.getUserById(userId);
+    let notifications=user.notifications;
+    if(!notifications||notifications.length==0){
+        return res.status(404).send("No notifications");
+    }
+    return res.status(200).send(notifications);
 
+})
 module.exports = router;

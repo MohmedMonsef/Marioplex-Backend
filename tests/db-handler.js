@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-
+const Grid = require('gridfs-stream');
 const mongod = new MongoMemoryServer();
 
 /**
@@ -17,6 +17,8 @@ module.exports.connect = async () => {
     };
 
     await mongoose.connect(uri, mongooseOpts);
+    gfsTracks = new Grid(mongoose.connection.db, mongoose.mongo);
+    gfsImages = new Grid(mongoose.connection.db, mongoose.mongo);
 };
 
 /**

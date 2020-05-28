@@ -51,7 +51,12 @@ module.exports = (passport) => {
                             like:[] ,
                             createPlaylist:[] ,
                             saveAlbum:[] ,
-                            playHistory:[]
+                            playHistory:[],
+                            fcmToken: "none",
+                            confirm: false,
+                            premiumConfirm: false,
+                            player: {},
+                            recentlySearch: []
 
 
                         }).save();

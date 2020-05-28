@@ -1,16 +1,13 @@
-FROM ubuntu:bionic
+FROM belalelhossany/start 
 
-WORKDIR "/app"
+WORKDIR '/app'
 
-COPY ./Install.sh /app/Install.sh
+COPY ./package.json /app/package.json
+
 WORKDIR /app
-RUN apt-get update
-RUN apt-get install -y curl
-RUN  bash Install.sh
-
-COPY ./package.json ./
+ENTRYPOINT ["/bin/bash"]
 RUN npm install
 
-COPY . .
-
-CMD ["pm2", "start", "server.js"]
+COPY . /app
+EXPOSE 3000
+CMD ["startcommand.sh"]

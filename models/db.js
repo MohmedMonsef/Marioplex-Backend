@@ -109,6 +109,9 @@ const User = new Schema({
     displayName: String,
     product: String,
     isFacebook: Boolean,
+    notifications: [{
+
+    }],
     offlineNotifications: [{
 
     }],

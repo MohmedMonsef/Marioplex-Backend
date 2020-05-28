@@ -22,6 +22,7 @@ const limiter = rateLimit({
 });
 // get Artist - Path Params : artist_id
 router.get('/Artists/:artist_id', limiter, async(req, res) => {
+  async function getArtist(){  
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     const artistID = req.params.artist_id;
     //GET THE ARTIST WITH THE GIVEN ID
@@ -29,10 +30,18 @@ router.get('/Artists/:artist_id', limiter, async(req, res) => {
     //IF NO SUCH ARTIST RETURN 404 NOT FOUND ELSE RETURN STATUS 200 WITH THE ARTIST
     if (!artist) return res.status(404).send("");
     else return res.status(200).send(artist);
-
+  }
+  try{
+    await getArtist();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 
 router.get('/Artists/numberOfFollowers/:id', limiter, async(req, res) => {
+  async function getNumberOfFollowers()
+  {
     if (req.params.id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     const artistID = req.params.id;
     //GET THE ARTIST WITH THE GIVEN ID
@@ -42,10 +51,17 @@ router.get('/Artists/numberOfFollowers/:id', limiter, async(req, res) => {
     //IF NO SUCH ARTIST RETURN 404 NOT FOUND ELSE RETURN STATUS 200 WITH THE ARTIST
     if (followersPerday==-1||followersPerMonth==-1||followersPerYear==-1) return res.status(404).send("");
     else return res.status(200).send({'numOfFollowers': [followersPerday,followersPerMonth,followersPerYear] });
-
+  }
+  try{
+    await getNumberOfFollowers();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 // get Artists - Query Params : artists_ids
 router.get('/Artists', limiter, async(req, res) => {
+  async function getArtists(){  
     if (req.query.artists_ids == undefined) { return res.status(403).send('Artist IDs is undefined'); }
     //SPLIT THE GIVEN COMMA SEPERATED LIST OF ARTISTS IDS
     const artistsIDs = req.query.artists_ids.split(',');
@@ -54,40 +70,71 @@ router.get('/Artists', limiter, async(req, res) => {
     //IF THE ARRAY IS EMPTY RETURN 404 NOT FOUND ELSE RETURN THE ARTISTS OBJECTS ARRAY
     if (artists.length == 0) return res.status(404).send({ error: "artists with those id's are not found" });
     else return res.status(200).json(artists);
+  }
+  try{
+    await getArtists();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 
 // get Albums - Path Params : artist_id -Query Params : Album Specifications
 router.get('/Artists/:artist_id/Albums', limiter, async(req, res) => {
+   async function getAlbums(){ 
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     //GET ARRAY OF ALBUMS FOR AN ARTIST WITH THE SPECIFICATIONS GIVEN
     const albums = await Artist.getAlbums(req.params.artist_id, req.query.groups, req.query.country, req.query.limit, req.query.offset);
     //IF THE ARRAY IS EMPTY RETURN 404 ELSE RETURN 200 WITH THE ALBUMS ARRAY
     if (albums.length == 0 || albums == 0) return res.status(404).send({ error: "albums with those specifications are not found" });
     else return res.status(200).json(albums);
+   }
+   try{
+    await getAlbums();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 //get Tracks - Path Params : artist_id
 router.get('/Artists/:artist_id/Tracks', checkIfAuth, limiter, async(req, res) => {
+   async function getTracks(){ 
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
-
     let user = undefined;
     if (req.isAuth) user = await User.getUserById(req.user._id);
     //GET THE GIVEN ARTIST TRACKS
     const tracks = await Artist.getTracks(req.params.artist_id, user);
     if (tracks.length == 0 || tracks == 0) return res.status(404).send({ error: "tracks are not found" });
     else return res.status(200).json(tracks);
+   }
+   try{
+    await getTracks();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 // get RelatedArtists - Path Params : artist_id
 router.get('/Artists/:artist_id/related_artists', limiter, async(req, res) => {
+    async function getRelatedArtists(){
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     //GET THE RELATED ARTISTS BY GENRE TO THE GIVEN ARTIST
     const artists = await Artist.getRelatedArtists(req.params.artist_id);
     //RETURN 404 IF EMPTY ELSE RETURN THE ARTISTS
     if (artists.length == 0 || artists == 0) return res.status(404).send({ error: "no artists are found" });
     else return res.status(200).json(artists);
+    }
+    try{
+        await getRelatedArtists();
+    }
+    catch(e){
+        return res.status(500).send("some error occurred");
+    }
 });
 
 // get Top Tracks - Path Params : artist_id
 router.get('/Artists/:artist_id/top-tracks', checkIfAuth, limiter, async(req, res) => {
+    async function getTopTracks(){
     if (req.params.artist_id == undefined) { return res.status(403).send('Artist ID is undefined'); }
     if (req.query.country == undefined) { return res.status(403).send('country code is Required'); }
     let user = undefined
@@ -96,10 +143,17 @@ router.get('/Artists/:artist_id/top-tracks', checkIfAuth, limiter, async(req, re
     const tracks = await Artist.getTopTracks(req.params.artist_id, req.query.country, user);
     if (tracks.length == 0 || tracks == 0) return res.status(404).send({ error: "no top tracks in this country are not found" });
     else return res.status(200).json(tracks);
+    }
+    try{
+        await getTopTracks();
+    }
+    catch(e){
+        return res.status(500).send("some error occurred");
+    }
 });
 // create album 
 router.put('/Artists/me/Albums', [checkAuth, limiter, checkType, checkContent], async(req, res) => {
-
+async function createAlbum(){
     if (req.body.name == undefined || req.body.label == undefined || req.body.availablemarkets == undefined || req.body.albumtype == undefined || req.body.releaseDate == undefined || req.body.genre == undefined) { return res.status(403).send('Missing Data in the Album Data'); }
     if (req.body.name == "" || req.body.label == "" || req.body.availablemarkets == "" || req.body.albumtype == "" || req.body.releaseDate == "" || req.body.genre == "") { return res.status(403).send('Missing Data in the Album Data'); }
     let avMarkets = req.body.availablemarkets.split(',');
@@ -112,12 +166,28 @@ router.put('/Artists/me/Albums', [checkAuth, limiter, checkType, checkContent], 
         Notifications.sendArtistAlbumNotification(artist, artistAlbum);
         return res.status(200).send(artistAlbum);
     }
+}
+try{
+    await createAlbum();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 router.delete('/artist/:album_id', [checkAuth, limiter, checkType, checkContent], async(req, res) => {
+    async function deleteAlbum(){
     if (!checkID([req.params.album_id])) return res.status(403).send({ error: 'id not correct ! ' })
     const deleteAlbums = await Album.deleteAlbum(req.user._id, req.params.album_id);
     if (deleteAlbums) return res.status(200).send({ success: 'deleted album ' })
     else return res.status(400).send({ error: 'can not delete ' })
+    }
+    try{
+        await deleteAlbum();
+    }
+    catch(e){
+        return res.status(500).send("some error occurred");
+    }
+
 })
 
 // upload tracks - Path Params : album_id
@@ -186,15 +256,24 @@ router.post('/artists/me/albums/:album_id/tracks', checkAuth, limiter, checkType
 
 // update artist details 
 router.put('/Artist/update', [checkAuth, limiter, checkType, checkContent], async(req, res) => {
+   async function updateArtist(){
     let genre;
     if (req.body.genre) genre = req.body.genre.split(',');
     const artist = await Artist.updateArtist(req.user._id, req.body.name, genre, req.body.info);
     if (artist) res.status(200).send(artist);
     else res.status(400).send({ error: "can not update " });
+   }
+   try{
+    await updateArtist();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 
 //CLAIM USER TO ARTIST
 router.post('/me/ToArtist', checkAuth, limiter, async(req, res) => {
+    async function claimUser(){
     if (req.body.genre && req.body.genre != "") {
         let genre = req.body.genre.split(',');
         //SEND THE REQUEST IF THE USER IS ALREADY AN ARTIST THEN RETURN 403 ELSE RETURN 200
@@ -202,15 +281,27 @@ router.post('/me/ToArtist', checkAuth, limiter, async(req, res) => {
         if (!isartist) { return res.status(403).send("sorry you can't be an Artist"); }
         return res.status(200).send("Artist Succeded");
     } else return res.status(403).send("should give me genre");
-
+    }
+    try{
+        await claimUser();
+    }
+    catch(e){
+        return res.status(500).send("some error occurred");
+    }
 });
 
 //GET USER AS ARTIST
 router.get('/me/artist', [checkAuth, checkType], limiter, async(req, res) => {
-
+async function getUserArtist(){
     let artist = await Artist.findMeAsArtist(req.user._id);
     if (!artist) { return res.status(404).send("NO SUCH ARTIST"); }
     return res.status(200).send(artist);
-
+}
+try{
+    await getUserArtist();
+}
+catch(e){
+    return res.status(500).send("some error occurred");
+}
 });
 module.exports = router;

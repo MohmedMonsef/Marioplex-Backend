@@ -63,6 +63,9 @@ const Notifications = {
         await profileUser.save();
         return 0;
        }
+       if(!profileUser.notifications)profileUser.notifications=[];
+        profileUser.notifications.push(notificationMessage);
+        await profileUser.save();
        return 1;
 
     },
@@ -120,6 +123,9 @@ const Notifications = {
                         users[i].offlineNotifications.push(notificationMessage);
                         await users[i].save();
                     }
+                    if(!users[i].notifications)users[i].notifications=[];
+                    users[i].notifications.push(notificationMessage);
+                    await users[i].save();
                 }
             }
         }
@@ -167,6 +173,9 @@ const Notifications = {
                       users[i].offlineNotifications.push(notificationMessage);
                       await users[i].save();
                   }
+                  if(!users[i].notifications)users[i].notifications=[];
+                  users[i].notifications.push(notificationMessage);
+                  await users[i].save();
               }
           }
       }
@@ -226,6 +235,9 @@ const Notifications = {
     await profileUser.save();
     return 0;
    }
+   if(!profileUser.notifications)profileUser.notifications=[];
+   profileUser.notifications.push(notificationMessage);
+   await profileUser.save();
    return 1;
 
 }

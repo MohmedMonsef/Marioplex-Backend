@@ -283,7 +283,7 @@ const User = {
             const track = await trackDocument.findById(trackId);
             if (!playlist || !track) { return 0; }
             if (playlist.hasTracks) {
-                user.hasTracks.push({
+                playlist.hasTracks.push({
                     trackId: trackId
 
                 });
@@ -415,7 +415,7 @@ const User = {
         try{
 
             for(let userId of user1.following){
-                if(String(userId) == String(user2.Id)) return 1;
+                if(String(userId) == String(user2._id)) return 1;
             }
             return 0;
         }catch(ex){
@@ -438,10 +438,11 @@ const User = {
             if(this.checkUser1FollowUser2(user1,user2))return 0;
             // add user2Id to user1 following
             user1.following.push(user2Id);
-            user1.save(); 
+           
+            await user1.save(); 
             // add user1Id to user2 followers
             user2.followers.push(user1Id);
-            user2.save();
+            await user2.save();
             return 1;
         } catch (ex) {
             return 0;
@@ -468,7 +469,7 @@ const User = {
                     break;
                 }
             }
-            user1.save(); 
+            await user1.save(); 
             // remove user1Id to user2 followers
             for(let i=0;i<  user2.followers.length;i++){
                 if(String(user2.followers[i]) == String(user1Id)){
@@ -476,7 +477,7 @@ const User = {
                     break;
                 }
             }
-            user2.save();
+            await user2.save();
             return 1;
         } catch (ex) {
             return 0;

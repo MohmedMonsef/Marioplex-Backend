@@ -448,6 +448,41 @@ const User = {
         }
     },
     /**
+     * user follow other user
+     * @param {String} user1Id 
+     * @param {String} user2Id
+     * @returns {Boolean} 
+     */
+    userUnfollowUser: async function(user1Id,user2Id){
+        try {
+            if (!checkMonooseObjectID([user1Id,user2Id])) return 0;
+            const user1 = await this.getUserById(user1Id);
+            const user2 = await this.getUserById(user2Id);
+            if (!user1 || !user2) return 0;
+            // if already followed return 0
+            if(!this.checkUser1FollowUser2(user1,user2))return 0;
+            // remove user2Id to user1 following
+            for(let i=0;i<  user1.following.length;i++){
+                if(String(user1.following[i]) == String(user2Id)){
+                    user1.following.splice(i,1);
+                    break;
+                }
+            }
+            user1.save(); 
+            // remove user1Id to user2 followers
+            for(let i=0;i<  user2.followers.length;i++){
+                if(String(user2.followers[i]) == String(user1Id)){
+                    user2.followers.splice(i,1);
+                    break;
+                }
+            }
+            user2.save();
+            return 1;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
      * 
      * @param {String} userId 
      * @param {String} artistId

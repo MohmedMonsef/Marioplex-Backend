@@ -106,6 +106,14 @@ router.post("/me/follow/user/:user_id",checkAuth,limiter,async (req,res)=>{
     if(!followUser) res.status(403).send("cannot follow user");
     else res.status(201).send("followed user successfully")
 });
+// user unfollow another user
+router.delete("/me/unfollow/user/:user_id",checkAuth,limiter,async (req,res)=>{
+    const user1Id = req.user._id;
+    const user2Id = req.params.user_id;
+    const unfollowUser = await User.userUnfollowUser(user1Id,user2Id);
+    if(!unfollowUser) res.status(403).send("cannot unfollow user");
+    else res.status(200).send("unfollowed user successfully")
+});
 // get user followings
 router.get("/me/following/user",checkAuth,async (req,res)=>{
     const userId = req.user._id;

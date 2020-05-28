@@ -96,4 +96,28 @@ router.get('/me/tracks', checkAuth, limiter, async(req, res) => {
     if (!tracks) res.sendStatus(404); //not found
     else res.status(200).json(tracks);
 });
+
+
+// user follow another user
+router.post("/me/follow/user/:user_id",checkAuth,limiter,async (req,res)=>{
+    const user1Id = req.user._id;
+    const user2Id = req.params.user_id;
+    const followUser = await User.userFollowUser(user1Id,user2Id);
+    if(!followUser) res.status(403).send("cannot follow user");
+    else res.status(201).send("followed user successfully")
+});
+// get user followings
+router.get("/me/following/user",checkAuth,async (req,res)=>{
+    const userId = req.user._id;
+    const usersUserFollow = await User.getUserFollowingUser(userId);
+    if(!followUser) res.status(404).send("the user doesn't follow anyone");
+    else res.status(200).json(usersUserFollow)
+});
+// get user followers
+router.get("/me/followers/user",checkAuth,async (req,res)=>{
+    const userId = req.user._id;
+    const usersFollowers = await User.getUserFollowers(userId);
+    if(!followUser) res.status(404).send("no one  follow this user");
+    else res.status(200).json(usersFollowers)
+});
 module.exports = router;

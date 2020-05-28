@@ -48,7 +48,9 @@ const User = {
                 follow: user.follow,
                 createPlaylist: user.createPlaylist,
                 followPlaylist: user.followPlaylist,
-                saveAlbum: user.saveAlbum
+                saveAlbum: user.saveAlbum,
+                following:[],
+                followers:[]
             }
             return publicUser;
         } catch (ex) {
@@ -365,7 +367,7 @@ const User = {
         }
     },
     /**
-     * 
+     * get users that the user follows
      * @param {String} userId 
      * @returns {object}
      */
@@ -374,21 +376,73 @@ const User = {
             if (!checkMonooseObjectID([userId])) return 0;
             const user = await this.getUserById(userId);
             if (!user) return 0;
-            if (!user.follow) user.follow = [];
-            if (!user.follow.length) { return 0; }
+            if (!user.following) user.following = [];
+            if (!user.following.length) { return[]; }
             let users = []
-            for (let i = 0; i < user.follow.length; i++) {
-                let userFollowed = await this.getUserById(user.follow[i].id);
-                if (userFollowed) {
-                    let userInfo = {};
-                    userInfo['id'] = userFollowed._id;
-                    userInfo['name'] = userFollowed.displayName;
-                    userInfo['images'] = userFollowed.images;
-                    userInfo['type'] = userFollowed.type;
-                    users.push(userInfo);
-                }
+            for(let userId of user.following){
+                let userFollow = await this.getUserById(userId);
+                if(userFollow) users.push(userFollow);
             }
             return users;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
+     * get user followers
+     * @param {String} userId 
+     * @returns {Array<Object>}
+     */
+    getUserFollowers: async function(userId) {
+        try {
+            if (!checkMonooseObjectID([userId])) return 0;
+            const user = await this.getUserById(userId);
+            if (!user) return 0;
+            if (!user.followers) user.followers = [];
+            if (!user.followers.length) { return[]; }
+            let users = []
+            for(let userId of user.followers){
+                let userFollow = await this.getUserById(userId);
+                if(userFollow) users.push(userFollow);
+            }
+            return users;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    
+    checkUser1FollowUser2:  function(user1,user2){
+        try{
+
+            for(let userId of user1.following){
+                if(String(userId) == String(user2.Id)) return 1;
+            }
+            return 0;
+        }catch(ex){
+            return 0;
+        }
+    },
+    /**
+     * user follow other user
+     * @param {String} user1Id 
+     * @param {String} user2Id
+     * @returns {Boolean} 
+     */
+    userFollowUser: async function(user1Id,user2Id){
+        try {
+            if (!checkMonooseObjectID([user1Id,user2Id])) return 0;
+            const user1 = await this.getUserById(user1Id);
+            const user2 = await this.getUserById(user2Id);
+            if (!user1 || !user2) return 0;
+            // if already followed return 0
+            if(this.checkUser1FollowUser2(user1,user2))return 0;
+            // add user2Id to user1 following
+            user1.following.push(user2Id);
+            user1.save(); 
+            // add user1Id to user2 followers
+            user2.followers.push(user1Id);
+            user2.save();
+            return 1;
         } catch (ex) {
             return 0;
         }

@@ -187,7 +187,9 @@ const User = new Schema({
         volume: Number,
         currentTimeStampe: Number,
         isRepeatTrack: Boolean
-    }
+    },
+    following:[mongoose.Schema.Types.ObjectId],
+    followers:[mongoose.Schema.Types.ObjectId]
 });
 
 const Artist = new Schema({

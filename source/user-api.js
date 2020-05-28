@@ -48,7 +48,9 @@ const User = {
                 follow: user.follow,
                 createPlaylist: user.createPlaylist,
                 followPlaylist: user.followPlaylist,
-                saveAlbum: user.saveAlbum
+                saveAlbum: user.saveAlbum,
+                following:user.following,
+                followers:user.followers
             }
             return publicUser;
         } catch (ex) {
@@ -281,7 +283,7 @@ const User = {
             const track = await trackDocument.findById(trackId);
             if (!playlist || !track) { return 0; }
             if (playlist.hasTracks) {
-                user.hasTracks.push({
+                playlist.hasTracks.push({
                     trackId: trackId
 
                 });
@@ -365,7 +367,7 @@ const User = {
         }
     },
     /**
-     * 
+     * get users that the user follows
      * @param {String} userId 
      * @returns {object}
      */
@@ -374,21 +376,111 @@ const User = {
             if (!checkMonooseObjectID([userId])) return 0;
             const user = await this.getUserById(userId);
             if (!user) return 0;
-            if (!user.follow) user.follow = [];
-            if (!user.follow.length) { return 0; }
+            if (!user.following) user.following = [];
+            if (!user.following.length) { return[]; }
             let users = []
-            for (let i = 0; i < user.follow.length; i++) {
-                let userFollowed = await this.getUserById(user.follow[i].id);
-                if (userFollowed) {
-                    let userInfo = {};
-                    userInfo['id'] = userFollowed._id;
-                    userInfo['name'] = userFollowed.displayName;
-                    userInfo['images'] = userFollowed.images;
-                    userInfo['type'] = userFollowed.type;
-                    users.push(userInfo);
-                }
+            for(let userId of user.following){
+                let userFollow = await this.getUnAuthUser(userId);
+                if(userFollow) users.push(userFollow);
             }
             return users;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
+     * get user followers
+     * @param {String} userId 
+     * @returns {Array<Object>}
+     */
+    getUserFollowers: async function(userId) {
+        try {
+            if (!checkMonooseObjectID([userId])) return 0;
+            const user = await this.getUserById(userId);
+            if (!user) return 0;
+            if (!user.followers) user.followers = [];
+            if (!user.followers.length) { return[]; }
+            let users = []
+            for(let userId of user.followers){
+                let userFollow = await this.getUnAuthUser(userId);
+                if(userFollow) users.push(userFollow);
+            }
+            return users;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    
+    checkUser1FollowUser2:  function(user1,user2){
+        try{
+
+            for(let userId of user1.following){
+                if(String(userId) == String(user2._id)) return 1;
+            }
+            return 0;
+        }catch(ex){
+            return 0;
+        }
+    },
+    /**
+     * user follow other user
+     * @param {String} user1Id 
+     * @param {String} user2Id
+     * @returns {Boolean} 
+     */
+    userFollowUser: async function(user1Id,user2Id){
+        try {
+            if (!checkMonooseObjectID([user1Id,user2Id])) return 0;
+            const user1 = await this.getUserById(user1Id);
+            const user2 = await this.getUserById(user2Id);
+            if (!user1 || !user2) return 0;
+            // if already followed return 0
+            if(this.checkUser1FollowUser2(user1,user2))return 0;
+            if (!user1.following) user1.following = [];
+            // add user2Id to user1 following
+            user1.following.push(user2Id);
+           
+            await user1.save(); 
+            if (!user2.followers) user2.followers = [];
+            // add user1Id to user2 followers
+            user2.followers.push(user1Id);
+            await user2.save();
+            return 1;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
+     * user follow other user
+     * @param {String} user1Id 
+     * @param {String} user2Id
+     * @returns {Boolean} 
+     */
+    userUnfollowUser: async function(user1Id,user2Id){
+        try {
+            if (!checkMonooseObjectID([user1Id,user2Id])) return 0;
+            const user1 = await this.getUserById(user1Id);
+            const user2 = await this.getUserById(user2Id);
+            if (!user1 || !user2) return 0;
+            // if already followed return 0
+            if(!this.checkUser1FollowUser2(user1,user2))return 0;
+            // remove user2Id to user1 following
+            for(let i=0;i<  user1.following.length;i++){
+                if(String(user1.following[i]) == String(user2Id)){
+                    user1.following.splice(i,1);
+                    break;
+                }
+            }
+            await user1.save(); 
+            // remove user1Id to user2 followers
+            for(let i=0;i<  user2.followers.length;i++){
+                if(String(user2.followers[i]) == String(user1Id)){
+                    user2.followers.splice(i,1);
+                    break;
+                }
+            }
+            await user2.save();
+            return 1;
         } catch (ex) {
             return 0;
         }
@@ -642,7 +734,9 @@ const User = {
                 saveAlbum: [],
                 playHistory: [],
                 player: {},
-                recentlySearch: []
+                recentlySearch: [],
+                followers:[],
+                following:[]
             });
             user.player["isShuffled"] = false;
             user.player["isPlaying"] = false;

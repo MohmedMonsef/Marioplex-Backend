@@ -49,8 +49,8 @@ const User = {
                 createPlaylist: user.createPlaylist,
                 followPlaylist: user.followPlaylist,
                 saveAlbum: user.saveAlbum,
-                following:[],
-                followers:[]
+                following:user.following,
+                followers:user.followers
             }
             return publicUser;
         } catch (ex) {
@@ -380,7 +380,7 @@ const User = {
             if (!user.following.length) { return[]; }
             let users = []
             for(let userId of user.following){
-                let userFollow = await this.getUserById(userId);
+                let userFollow = await this.getUnAuthUser(userId);
                 if(userFollow) users.push(userFollow);
             }
             return users;
@@ -402,7 +402,7 @@ const User = {
             if (!user.followers.length) { return[]; }
             let users = []
             for(let userId of user.followers){
-                let userFollow = await this.getUserById(userId);
+                let userFollow = await this.getUnAuthUser(userId);
                 if(userFollow) users.push(userFollow);
             }
             return users;
@@ -436,10 +436,12 @@ const User = {
             if (!user1 || !user2) return 0;
             // if already followed return 0
             if(this.checkUser1FollowUser2(user1,user2))return 0;
+            if (!user1.following) user1.following = [];
             // add user2Id to user1 following
             user1.following.push(user2Id);
            
             await user1.save(); 
+            if (!user2.followers) user2.followers = [];
             // add user1Id to user2 followers
             user2.followers.push(user1Id);
             await user2.save();
@@ -732,7 +734,9 @@ const User = {
                 saveAlbum: [],
                 playHistory: [],
                 player: {},
-                recentlySearch: []
+                recentlySearch: [],
+                followers:[],
+                following:[]
             });
             user.player["isShuffled"] = false;
             user.player["isPlaying"] = false;

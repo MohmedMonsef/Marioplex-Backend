@@ -1,0 +1,15 @@
+{
+    "AWSEBDockerrunVersion": 1,
+   
+  
+    "image":{
+        "Name":"belalelhossany/backend"
+        },
+    "Ports":[
+                {
+                    "HostPort": 80,
+                    "ContainerPort": 3000
+                }
+            ]
+
+}

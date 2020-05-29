@@ -315,26 +315,26 @@ const Player = {
         try {
             if (!user) return 0;
             if (!CheckMonooseObjectId([trackId, playlistId])) return 0;
-			if (!await Track.getTrack(trackId)) return 0;
-			if(isPlaylist==true || isPlaylist== 'true'){
-				const playlist = await Playlist.getPlaylist(playlistId);
+            if (!await Track.getTrack(trackId)) return 0;
+            if (isPlaylist == true || isPlaylist == 'true') {
+                const playlist = await Playlist.getPlaylist(playlistId);
                 if (!playlist) return 0;
-				if (!playlist.snapshot || playlist.snapshot.length == 0) return 0;
-                    if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0)  return 0;
-                    // if track not in playlist
-                    for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++) {
-                        if (String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i]) == String(trackId))
-                            break;
-                        if (i == playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length - 1)
-                            return 0
-                    }
-			}else{
-				 const album = await Album.getAlbumById(playlistId);
-				if (!album) return 0;
-				if (!album.hasTracks) return 0;
-				if (!await album.hasTracks.find(track => String(track.trackId) == String(trackId))) return 0;
-				
-			}
+                if (!playlist.snapshot || playlist.snapshot.length == 0) return 0;
+                if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) return 0;
+                // if track not in playlist
+                for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++) {
+                    if (String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i]) == String(trackId))
+                        break;
+                    if (i == playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length - 1)
+                        return 0
+                }
+            } else {
+                const album = await Album.getAlbumById(playlistId);
+                if (!album) return 0;
+                if (!album.hasTracks) return 0;
+                if (!await album.hasTracks.find(track => String(track.trackId) == String(trackId))) return 0;
+
+            }
             if (!user.queue) {
                 user.queue = {};
                 user.queue.tracksInQueue = [{
@@ -416,9 +416,9 @@ const Player = {
             if (!user.player) return 0;
             if (!user.player.nextTrack) return 0;
             if (!user.player.prevTrack) return 0;
-			const player = user.player;
+            const player = user.player;
             var nextPlayingTrack = await Track.getFullTrack(player.nextTrack.trackId, user);
-			if(! nextPlayingTrack) return 0;
+            if (!nextPlayingTrack) return 0;
             user.player.currentTrack = user.player.nextTrack;
             if (user.queue.queuIndex != -1 && String(user.player.nextTrack.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex].trackId)) {
                 user.queue.tracksInQueue.splice(user.queue.queuIndex, 1);
@@ -429,11 +429,11 @@ const Player = {
                 await this.setNextPrev(user, user.player.currentTrack.trackId)
             if (String(user.player.currentTrack.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex + 1].trackId))
                 nextPlayingTrack['fristInSource'] = true;
-			if(nextPlayingTrack.track.playable == false ) return await this.skipNext(user); 
-			nextPlayingTrack['isPlaylist'] = player.nextTrack.isPlaylist;
+            if (nextPlayingTrack.track.playable == false) return await this.skipNext(user);
+            nextPlayingTrack['isPlaylist'] = player.nextTrack.isPlaylist;
             nextPlayingTrack['playlistId'] = player.nextTrack.playlistId;
-            nextPlayingTrack['isPlayable'] = true; 
-			return nextPlayingTrack;
+            nextPlayingTrack['isPlayable'] = true;
+            return nextPlayingTrack;
         } catch (ex) {
             return 0;
         }
@@ -449,15 +449,15 @@ const Player = {
             if (!user.player) return 0;
             if (!user.player.nextTrack) return 0;
             if (!user.player.prevTrack) return 0;
-			const player = user.player;
+            const player = user.player;
             var prevPlayingTrack = await Track.getFullTrack(player.prevTrack.trackId, user);
-			if (! prevPlayingTrack) return 0; 
-			player.currentTrack = user.player.prevTrack;
+            if (!prevPlayingTrack) return 0;
+            player.currentTrack = user.player.prevTrack;
             await this.setNextPrev(user, player.prevTrack.trackId);
-			if(prevPlayingTrack.track.playable == false ) return await this.skipPrevious(user); 
-			prevPlayingTrack['isPlaylist'] = player.prevTrack.isPlaylist;
-			prevPlayingTrack['playlistId'] = player.prevTrack.playlistId;
-			prevPlayingTrack['isPlayable'] = true;
+            if (prevPlayingTrack.track.playable == false) return await this.skipPrevious(user);
+            prevPlayingTrack['isPlaylist'] = player.prevTrack.isPlaylist;
+            prevPlayingTrack['playlistId'] = player.prevTrack.playlistId;
+            prevPlayingTrack['isPlayable'] = true;
             return prevPlayingTrack;
         } catch (ex) {
             return 0;

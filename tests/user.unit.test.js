@@ -408,7 +408,7 @@ test("user unfollow artist",async ()=>{
 })
 test("get user following user", async ()=>{
     const following = await mockUser.getUserFollowingUser(usersInDB[1]._id);
-    expect(following).toBeFalsy();
+    expect(following.length).toBeFalsy();
 })
 
 test("get non existing user following user", async ()=>{
@@ -584,26 +584,88 @@ test("pause playing for non mongoose user",async ()=>{
 
 
 
+test("user 1 follow user 2",async ()=>{
+    //console.log(usersInDB[0])
+    const x = await mockUser.userFollowUser(usersInDB[0]._id,usersInDB[1]._id);
+    expect(x).toBeTruthy();
+})
+test("user 1 follow user 3",async ()=>{
+    //console.log(usersInDB[0])
+    const x = await mockUser.userFollowUser(usersInDB[0]._id,usersInDB[2]._id);
+    expect(x).toBeTruthy();
+})
+test("user 1 follow user 2 which he already followed",async ()=>{
+    const x = await mockUser.userFollowUser(usersInDB[0]._id,usersInDB[1]._id);
+    expect(x).toBeFalsy();
+})
 
+test("non mongoose user 1 follow user 2",async ()=>{
+    const x = await mockUser.userFollowUser("1",usersInDB[1]._id);
+    expect(x).toBeFalsy();
+})
 
+test("non existing user 1 follow user 2",async ()=>{
+    const x = await mockUser.userFollowUser(ObjectId(),usersInDB[1]._id);
+    expect(x).toBeFalsy();
+})
 
+test("non existing user 1 and non existing user2 follow user 2",async ()=>{
+    const x = await mockUser.userFollowUser(ObjectId(),ObjectId());
+    expect(x).toBeFalsy();
+})
+test("get users that user1 follows",async ()=>{
+    const x = await mockUser.getUserFollowingUser(usersInDB[0]._id);
+    expect(x.length).toEqual(2);
+})
+test("get users that non mongoose user1 follows",async ()=>{
+    const x = await mockUser.getUserFollowingUser("1");
+    expect(x).toBeFalsy();
+})
+test("get users that non existing user1 follows",async ()=>{
+    const x = await mockUser.getUserFollowingUser(ObjectId());
+    expect(x).toBeFalsy();
+})
 
+test("get users that follow user1 with no followers",async ()=>{
+    const x = await mockUser.getUserFollowers(usersInDB[0]._id);
+    expect(x.length).toEqual(0);
+})
+test("get users that follow user2 ",async ()=>{
+    const x = await mockUser.getUserFollowers(usersInDB[1]._id);
+    expect(x.length).toEqual(1);
+})
+test("get users that follow non existing user1 ",async ()=>{
+    const x = await mockUser.getUserFollowers(ObjectId());
+    expect(x).toBeFalsy();
+});
 
+test("get users that follow non mongoose user1 ",async ()=>{
+    const x = await mockUser.getUserFollowers("1");
+    expect(x).toBeFalsy();
+});
 
-
-
-
-
-
-
-
-
+test("user1 unfollow user2 ",async ()=>{
+    const x = await mockUser.userUnfollowUser(usersInDB[0]._id,usersInDB[1]._id);
+    expect(x).toBeTruthy();
+})
+test("user1 unfollow user2 which he  unfolllowed ",async ()=>{
+    const x = await mockUser.userUnfollowUser(usersInDB[0]._id,usersInDB[1]._id);
+    expect(x).toBeFalsy();
+})
+test("non existing user1 unfollow non existing user2 ",async ()=>{
+    const x = await mockUser.userUnfollowUser(ObjectId(),ObjectId());
+    expect(x).toBeFalsy();
+})
+test("non mongoose user1 unfollow user2 ",async ()=>{
+    const x = await mockUser.userUnfollowUser("1",usersInDB[1]._id);
+    expect(x).toBeFalsy();
+})
 
 
 
 
 test("delete playlist of user",async ()=>{
-    console.log(usersInDB[0],playlists[0])
+   // console.log(usersInDB[0],playlists[0])
     const deleted = await mockUser.deletePlaylist(usersInDB[0]._id,playlists[0]._id);
     expect(deleted).toBeFalsy();
 })

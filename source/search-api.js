@@ -2,6 +2,8 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 var FuzzySearch = require('fuzzy-search');
 
 
+const limitOffset = require('../middlewares/limitOffset');
+
 // initialize db 
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const artistApi = require('./artist-api');
@@ -158,7 +160,7 @@ const Search = {
         let user = await userDocument.find({}, (err, user) => {
             if (err) return 0;
             return user;
-        }).catch((err) => 0);
+        });
         return user;
 
     },
@@ -171,7 +173,7 @@ const Search = {
         let artist = await artistDocument.find({}, (err, artist) => {
             if (err) return 0;
             return artist;
-        }).catch((err) => 0);
+        });
         return artist;
 
     },
@@ -183,7 +185,7 @@ const Search = {
         let album = await albumDocument.find({}, (err, album) => {
             if (err) return 0;
             return album;
-        }).catch((err) => 0);
+        });
         return album;
 
     },
@@ -238,7 +240,7 @@ const Search = {
         let playlist = await playlistDocument.find({ isPublic: true }, (err, playlist) => {
             if (err) return 0;
             return playlist;
-        }).catch((err) => 0);
+        });
         return playlist;
     },
 
@@ -250,7 +252,7 @@ const Search = {
         let track = await trackDocument.find({}, (err, track) => {
             if (err) return 0;
             return track;
-        }).catch((err) => 0);
+        });
         return track;
     },
 
@@ -556,25 +558,3 @@ const removeDupliactes = (values) => {
     return newArray;
 }
 
-function limitOffset(limit, offset, search) {
-
-    let start = 0;
-    let end = search.length;
-    if (offset != undefined) {
-        if (offset >= 0 && offset <= search.length) {
-            start = offset;
-        }
-    }
-    if (limit != undefined) {
-        if ((start + limit) > 0 && (start + limit) <= search.length) {
-            end = start + limit;
-        }
-    } else {
-        limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-        if ((start + limit) > 0 && (start + limit) <= search.length) {
-            end = start + limit;
-        }
-    }
-    search.slice(start, end);
-    return search;
-}

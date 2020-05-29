@@ -25,6 +25,7 @@ const Album = {
             await album.save();
             return 1;
         }
+        return 0;
     },
     /**
      * get album by id
@@ -39,7 +40,7 @@ const Album = {
         let album = await albumDocument.findById(albumId, (err, album) => {
             if (err) return 0;
             return album;
-        }).catch((err) => 0);
+        });
         return album;
 
 
@@ -70,12 +71,7 @@ const Album = {
             if (err) return 0;
             for (let user of files) {
                 if (user.saveAlbum) {
-                    for (let i = 0; i < user.saveAlbum; i++) {
-                        if (String(user.saveAlbum[i].albumId) == String(albumId)) {
-                            user.saveAlbum.splice(i, 1);
-                            break;
-                        }
-                    }
+                    await userDocument.update({'_id':userId},{$pull:{'saveAlbum':{albumId}}}); 
                 }
                 if (user.recentlySearch) {
                     for (let i = 0; i < user.recentlySearch.length; i++)
@@ -162,6 +158,7 @@ const Album = {
 
             }
         }
+        
         if (album) {
             let artistInfo = await artist.getArtist(album.artistId);
             let track = await this.getTracksAlbum(albumId, user, isAuth);
@@ -174,11 +171,13 @@ const Album = {
             }
             if (track) {
                 albumInfo['track'] = track;
-            } else {
+            } 
+            else {
                 albumInfo['track'] = []
             }
             return albumInfo;
-        } else {
+        } 
+        else {
             return 0;
         }
 
@@ -197,7 +196,7 @@ const Album = {
         if (!checkMonooseObjectId([trackId])) return -1;
         if (!album.hasTracks) album.hasTracks = [];
         for (let i = 0; i < album.hasTracks.length; i++) {
-            if (album.hasTracks[i].trackId == trackId) return i;
+            if (String(album.hasTracks[i].trackId) == String(trackId)) return i;
         }
         return -1
     },

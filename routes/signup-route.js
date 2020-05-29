@@ -5,7 +5,6 @@ const Joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
 var sendmail = require('../source/sendmail');
 const jwt = require('jsonwebtoken');
-require('../config/passport');
 const User = require('../source/user-api')
 const rateLimit = require("express-rate-limit");
 // add rate limiting

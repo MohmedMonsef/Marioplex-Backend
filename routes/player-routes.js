@@ -121,22 +121,10 @@ router.post('/me/player/next-playing', checkAuth, nextLimiter, async(req, res) =
             }
         }
         const user = await User.getUserById(req.user._id);
-        if (user) {
-            const player = user.player;
-            if (player && player.currentTrack) {
-                var nextPlayingTrack = await Track.getFullTrack(player.nextTrack.trackId, user);
-                const skip = await Player.skipNext(user)
-                if (nextPlayingTrack) {
-                    if (skip == 2)
-                        nextPlayingTrack['fristInSource'] = true;
-                    nextPlayingTrack['isPlaylist'] = player.nextTrack.isPlaylist;
-                    nextPlayingTrack['playlistId'] = player.nextTrack.playlistId;
-                    nextPlayingTrack['isPlayable'] = true;
-                    res.send(nextPlayingTrack);
-                } else res.status(404).json({ error: 'track not found' })
-
-            } else res.status(400).send('next does not exist')
-        } else res.status(403).send('user is not correct')
+        if (!user) return res.status(403).send('user is not correct');
+        const skip = await Player.skipNext(user)
+        if (!skip) res.status(404).json({ error: 'track not found' })
+        else return res.send(skip);
     })
     // skip to prev track
 router.post('/me/player/prev-playing', checkAuth, nextLimiter, async(req, res) => {
@@ -147,19 +135,10 @@ router.post('/me/player/prev-playing', checkAuth, nextLimiter, async(req, res) =
             }
         }
         const user = await User.getUserById(req.user._id);
-        if (user) {
-            const player = user.player;
-            if (player && player.prevTrack) {
-                var prevPlayingTrack = await Track.getFullTrack(player.prevTrack.trackId, user);
-                const skip = await Player.skipPrevious(user);
-                if (prevPlayingTrack) {
-                    prevPlayingTrack['isPlaylist'] = player.prevTrack.isPlaylist;
-                    prevPlayingTrack['playlistId'] = player.prevTrack.playlistId;
-                    prevPlayingTrack['isPlayable'] = true;
-                    res.send(prevPlayingTrack);
-                } else res.status(404).json({ error: 'track not found' })
-            } else res.status(400).send('previous does not exist')
-        } else res.status(403).send('user is not correct')
+        if (!user) return res.status(403).send('user is not correct');
+        const skip = await Player.skipPrevious(user);
+        if (skip) return res.send(skip);
+        else res.status(404).json({ error: 'track not found' })
     })
     // get user queue 
 router.get('/me/queue', checkAuth, limiter, async(req, res) => {

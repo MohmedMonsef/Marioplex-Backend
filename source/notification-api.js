@@ -1,7 +1,22 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 var admin = require('firebase-admin');
-admin.initializeApp();
+admin.initializeApp({
+    credential: admin.credential.cert({
+        type:process.env.type,
+        project_id:process.env.project_id,
+        private_key_id:process.env.private_key_id,
+        private_key:process.env.private_key.replace(/\\n/g, '\n'),
+        client_email:process.env.client_email,
+        client_id:process.env.client_id,
+        auth_uri: process.env.auth_uri,
+        token_uri: process.env.token_uri,
+        auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
+        client_x509_cert_url:process.env.client_x509_cert_url
+    })
+});
+
+
 const Notifications = {
   //send one notification to many users
   sendNotification: async function(registrationTokens,message) {
@@ -20,6 +35,7 @@ const Notifications = {
           console.log("Message has been sent successfully")
       }
     });
+
   return failedTokens;
 },
     //the user profile notification
@@ -52,7 +68,12 @@ const Notifications = {
                 tokens: [token]
                };
             //then send the notification object to the profile user (token)
+            try{
             checkFailed=await this.sendNotification([token],message); 
+            }
+            catch(err){
+                console.log("cant send message now");
+            }
             console.log(checkFailed);
             console.log(message);
 
@@ -80,7 +101,13 @@ const Notifications = {
      }
   
         //send the notification object to the profile user (token)
-        await this.sendManyNotifications(messages);      
+        try{
+            await this.sendManyNotifications(messages); 
+        }
+            catch(err){
+                console.log("cant send message now");
+                return;
+        }     
         profileUser.offlineNotifications=[];
         await profileUser.save();
         return 1;
@@ -137,7 +164,12 @@ const Notifications = {
                 tokens: tokens
             };
             //then send the notification object to the followers
-            checkFailed=await this.sendNotification(tokens,messages); 
+            try{
+                checkFailed=await this.sendNotification(tokens,messages); 
+            }
+                catch(err){
+                    console.log("cant send message now");
+            }  
             console.log(checkFailed);
             console.log(messages);
 
@@ -187,7 +219,12 @@ const Notifications = {
               tokens: tokens
           };
           //then send the notification object to the followers
-          checkFailed=await this.sendNotification(tokens,messages); 
+          try{
+            checkFailed=await this.sendNotification(tokens,messages); 
+        }
+            catch(err){
+                console.log("cant send message now");
+        }  
           console.log(checkFailed);
           console.log(messages);
 
@@ -224,7 +261,12 @@ const Notifications = {
             tokens: [token]
            };
         //then send the notification object to the profile user (token)
-        checkFailed=await this.sendNotification([token],message); 
+        try{
+            checkFailed=await this.sendNotification([token],message); 
+        }
+            catch(err){
+                console.log("cant send message now");
+        }  
         console.log(checkFailed);
         console.log(message);
 

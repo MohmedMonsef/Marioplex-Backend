@@ -56,7 +56,9 @@ module.exports = (passport) => {
                             confirm: false,
                             premiumConfirm: false,
                             player: {},
-                            recentlySearch: []
+                            recentlySearch: [],
+                            following:[],
+                            followers:[]
 
 
                         }).save();

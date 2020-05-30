@@ -205,8 +205,8 @@ const Player = {
         try {
             if (!user) return 0;
             if (!CheckMonooseObjectId([trackId])) return 0;
-            if (!await Track.getTrack(trackId)) return 0;
-
+            const trackInfo = await Track.getTrack(trackId, user);
+            if (!trackInfo || !trackInfo.playable) return 0;
             if (!tracksIds) {
                 if (!CheckMonooseObjectId([id])) return 0;
                 if (isPlaylist == 'true' || isPlaylist == true) {
@@ -314,7 +314,9 @@ const Player = {
         try {
             if (!user) return 0;
             if (!CheckMonooseObjectId([trackId, playlistId])) return 0;
-            if (!await Track.getTrack(trackId)) return 0;
+            trackInfo = await Track.getTrack(trackId, user);
+            // if (!await Track.getTrack(trackId)) return 0;
+            if (!trackInfo || !trackInfo.playable) return 0;
             if (isPlaylist == true || isPlaylist == 'true') {
                 const playlist = await Playlist.getPlaylist(playlistId);
                 if (!playlist) return 0;

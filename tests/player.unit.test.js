@@ -725,3 +725,11 @@ test('test album fill by source', async() => {
 test('shuffle queue', async() => {
     expect(await mockPlayer.setShuffle(true, usersInDB[0])).toEqual(1);
 })
+
+test('queue has not playable', async() => {
+    expect(await mockPlayer.createQueue(usersInDB[0], false, albums[2]._id, tracks[14]._id)).toEqual(0);
+})
+
+test('add to queue not playable', async() => {
+    expect(await mockPlayer.addToQueue(usersInDB[0], tracks[14]._id, false, albums[2]._id)).toEqual(0);
+})

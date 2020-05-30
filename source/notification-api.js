@@ -282,6 +282,57 @@ const Notifications = {
    await profileUser.save();
    return 1;
 
+},
+sendUserFollowNotification:async function(currentUser,followedUser) {
+    if(!followedUser.fcmToken)
+    {
+        followedUser.fcmToken="none"; 
+        await followedUser.save();
+    }
+    //get the fcm token of the profile user
+    let token=followedUser.fcmToken;
+    //notification body
+    let curName=currentUser.displayName;
+    //create the notification object
+   let notificationMessage={
+        data: {
+        userId: String(currentUser._id),
+        title: "Look who's getting more followers now ^^",
+        body: curName+" started following you "
+      }
+    };
+    //flag to check succes or not
+    let checkFailed;
+    //check online or offline
+    if(token!="none"){
+        //if online
+        //create the mesaage object
+        var message = {
+            data:notificationMessage.data,
+            tokens: [token]
+           };
+        //then send the notification object to the profile user (token)
+        try{
+            checkFailed=await this.sendNotification([token],message); 
+        }
+            catch(err){
+                console.log("cant send message now");
+        }  
+        console.log(checkFailed);
+        console.log(message);
+
+    }
+   if(token=="none"||checkFailed.length>0){
+    if(!followedUser.offlineNotifications)followedUser.offlineNotifications=[];
+    followedUser.offlineNotifications.push(notificationMessage);
+    await followedUser.save();
+    return 0;
+   }
+   if(!followedUser.notifications)followedUser.notifications=[];
+   followedUser.notifications.push(notificationMessage);
+   await followedUser.save();
+   return 1;
+
 }
 
 }

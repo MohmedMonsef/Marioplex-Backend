@@ -1,4 +1,4 @@
-require("../config/firebase-config")(); // set up google drive
+require('dotenv/config'); // to use env variable 
 const mockTrack = require('../source/track-api');
 const mockPlaylist = require('../source/playlist-api');
 const mockUser = require('../source/user-api');

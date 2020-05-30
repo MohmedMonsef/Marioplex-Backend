@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Library = require('../source/library-api');
 const User = require('../source/user-api')
+const Notifications = require('../source/notification-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const RateLimit = require("express-rate-limit");
 // add rate limiting
@@ -104,7 +105,12 @@ router.post("/me/follow/user/:user_id",checkAuth,limiter,async (req,res)=>{
     const user2Id = req.params.user_id;
     const followUser = await User.userFollowUser(user1Id,user2Id);
     if(!followUser) res.status(403).send("cannot follow user");
-    else res.status(201).send("followed user successfully")
+    else {
+        let currentUser=await User.getUserById(user1Id);
+        let followedUser=await User.getUserById(user2Id);
+        Notifications.sendUserFollowNotification(currentUser,followedUser);
+        res.status(201).send("followed user successfully")
+    }
 });
 // user unfollow another user
 router.delete("/me/unfollow/user/:user_id",checkAuth,limiter,async (req,res)=>{

@@ -1042,6 +1042,8 @@ const User = {
      * @param  {Boolean} isPlaylist - the status of the source of the track (playlist or not)
      * @param  {string} sourceId - the id of the source of the track 
      * @param  {string} trackId - the id of the track the user wants to add
+	 * @param {Array<string>} tracksIds - optional if need to play array of tracks not album and not playlist
+     * @param {string} sourceType - optional name to describe the array of ids 
      * @returns {Number}
      */
 

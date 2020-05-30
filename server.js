@@ -27,7 +27,6 @@ const player = require('./routes/player-routes')
 const facebook = require('./facebook-authentication/facebook-routes');
 const forgpass = require('./routes/forgpass-route');
 
-require('./config/passport');
 
 app.use(cors());
 app.use(bodyparser.urlencoded({ extended: false }));

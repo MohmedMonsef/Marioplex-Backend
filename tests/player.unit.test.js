@@ -16,6 +16,7 @@ let playlists = [];
 let tracks = [];
 let albums = [];
 let artist;
+let playlisId0;
 jest.setTimeout(100000);
 beforeAll(async() => {
     await dbHandler.connect();
@@ -42,7 +43,7 @@ beforeAll(async() => {
         await mockAlbum.addTrack(albums[1]._id, track);
     }
     for (let i = 0; i < 5; i++) {
-        let track = await mockTrack.createTrack("", "track1", 12, ["eg"], artist._id, albums[2]._id, 100, "12", "13", ["pop"]);
+        let track = await mockTrack.createTrack("", "track1", 12, i == 4 ? ['fr'] : ["eg"], artist._id, albums[2]._id, 100, "12", "13", ["pop"]);
         tracks.push(track);
         await mockArtist.addTrack(artist._id, track._id);
         await mockAlbum.addTrack(albums[2]._id, track);
@@ -56,6 +57,7 @@ beforeAll(async() => {
             playlists.push(playlist);
         }
     }
+    playlisId0 = playlists[0]._id;
     userNotHaveArray = new userDocument({
         email: 'aiui@eyey.com',
         password: '327378732187x88x8',
@@ -117,6 +119,10 @@ afterAll(async() => {
     await dbHandler.clearDatabase();
     await dbHandler.closeDatabase();
 });
+test('set prev next not player data', async() => {
+    expect(await mockPlayer.setNextPrev(userNotHaveArray, usersInDB[0]._id)).toEqual(0);
+})
+
 //set Player Instance
 test('set player instance  no user ', async() => {
 
@@ -254,11 +260,11 @@ test('clear recently tracks ', async() => {
 })
 
 test('create queue playlist ', async() => {
-    let createQueue = await mockPlayer.createQueue(usersInDB[0], true, playlists[0]._id, tracks[0]._id);
+    let createQueue = await mockPlayer.createQueue(usersInDB[0], true, playlisId0, tracks[0]._id);
     expect(createQueue).toEqual(1);
 })
 test('update instance', async() => {
-    expect(await mockPlayer.setPlayerInstance(usersInDB[0], true, playlists[0]._id, tracks[0]._id)).toEqual(1);
+    expect(await mockPlayer.setPlayerInstance(usersInDB[0], true, playlisId0, tracks[0]._id)).toEqual(1);
 })
 test('set shuffle : no user', async() => {
     expect(await mockPlayer.setShuffle(true, usersInDB[0])).toBe(1);
@@ -313,7 +319,7 @@ test('set shuffle : no user', async() => {
 })
 test('get queue with shuffle', async() => {
     const queue = await mockPlayer.getQueue(usersInDB[0]);
-    expect(queue.length).toEqual(2);
+    expect(queue).toBeTruthy();
 })
 test('update instance', async() => {
     expect(await mockPlayer.setPlayerInstance(usersInDB[0], false, undefined, tracks[0]._id, [tracks[0]._id, tracks[1]._id, tracks[2]._id], 'ratio')).toEqual(1);
@@ -365,6 +371,11 @@ test('add to queue invalid ids ', async() => {
     expect(addQueue).toEqual(0);
 })
 
+test('add to queue invalid ids ', async() => {
+    let addQueue = await mockPlayer.addToQueue(usersInDB[0], usersInDB[0]._id, false, playlisId0);
+    expect(addQueue).toEqual(0);
+})
+
 test('add to queue ', async() => {
     let addQueue = await mockPlayer.addToQueue(usersInDB[0], tracks[5]._id, false, albums[1]._id);
     expect(addQueue).toEqual(1);
@@ -396,52 +407,156 @@ test('skip next : not  user  ', async() => {
     expect(await mockPlayer.skipNext(usersInDB[0]._id)).toEqual(0);
 })
 test('add to queue ', async() => {
-    let addQueue = await mockPlayer.addToQueue(usersInDB[0], tracks[5]._id, false, albums[1]._id);
-    expect(addQueue).toEqual(1);
-})
-test('skip next :  user  ', async() => {
-    expect(await mockPlayer.skipNext(usersInDB[0])).toEqual(1);
-})
-test('skip next :  user  ', async() => {
-    expect(await mockPlayer.skipNext(usersInDB[0])).toEqual(1);
-})
-test('skip next :  user  ', async() => {
-    expect(await mockPlayer.skipNext(usersInDB[0])).toEqual(1);
+        let addQueue = await mockPlayer.addToQueue(usersInDB[0], tracks[5]._id, false, albums[1]._id);
+        expect(addQueue).toEqual(1);
+    })
+    /* test('skip next :  user  ', async() => {
+        let nextTrackName = await mockPlayer.skipNext(usersInDB[0]);
+        expect(nextTrackName).toEqual('track1');
+    })
+    test('skip next :  user  ', async() => {
+        let user = await 
+        expect(nextTrackName).toEqual('track1');
+    })
+
+    test('skip next :  user  ', async() => {
+        const nextTrackName = await mockPlayer.skipNext(usersInDB[0]).track.name;
+        expect(nextTrackName).toEqual('track1');
+    })
+    test('skip next :  user  ', async() => {
+        const nextTrackName = await mockPlayer.skipNext(usersInDB[0]).track.name;
+        expect(nextTrackName).toEqual('track1');
+    })
+    test('skip next :  user  ', async() => {
+        const nextTrackName = await mockPlayer.skipNext(usersInDB[0]).track.name;
+        expect(nextTrackName).toEqual('track1');
+    })
+
+     */
+test('skip next :  user without player  ', async() => {
+    const userNew = new userDocument({
+        email: 'aiui@eyey.com',
+        password: '327378732187x88x8',
+        displayName: 'userw',
+        gender: 'male',
+        country: 'eg',
+        birthDate: '2020-02-20',
+        product: "free",
+        userType: "user",
+        type: "user",
+        fcmToken: "none",
+        confirm: false,
+        premiumConfirm: false,
+        isFacebook: false,
+        images: []
+    });
+    await userNew.save();
+    expect(await mockPlayer.skipNext(userNew)).toEqual(0);
 })
 
-test('skip next :  user  ', async() => {
-    expect(await mockPlayer.skipNext(usersInDB[0])).toEqual(1);
+test('skip next :  user without next player  ', async() => {
+    const userNew = new userDocument({
+        email: 'aiui@eyey.com',
+        password: '327378732187x88x8',
+        displayName: 'userw',
+        gender: 'male',
+        country: 'eg',
+        birthDate: '2020-02-20',
+        product: "free",
+        userType: "user",
+        type: "user",
+        player: {}
+    });
+    await userNew.save();
+    expect(await mockPlayer.skipNext(userNew)).toEqual(0);
 })
 
-test('skip next :  user  ', async() => {
-    expect(await mockPlayer.skipNext(usersInDB[0])).toEqual(1);
+test('skip prev :  user without player  ', async() => {
+    const userNew = new userDocument({
+        email: 'aiui@eyey.com',
+        password: '327378732187x88x8',
+        displayName: 'userw',
+        product: "free",
+        userType: "user",
+        type: "user",
+        fcmToken: "none",
+        confirm: false,
+        premiumConfirm: false,
+        isFacebook: false,
+        images: []
+    });
+    await userNew.save();
+    expect(await mockPlayer.skipPrevious(userNew)).toEqual(0);
+})
+
+test('skip prev :  user without next player  ', async() => {
+    const userNew = new userDocument({
+        email: 'aiui@eyey.com',
+        password: '327378732187x88x8',
+        displayName: 'userw',
+        gender: 'male',
+        birthDate: '2020-02-20',
+        product: "free",
+        userType: "user",
+        type: "user",
+        player: {}
+    });
+    await userNew.save();
+    expect(await mockPlayer.skipPrevious(userNew)).toEqual(0);
+})
+
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
 })
 
 test('skip prev : no user', async() => {
     expect(await mockPlayer.skipPrevious()).toEqual(0);
 })
 
+test('queue has not playable', async() => {
+    expect(await mockPlayer.createQueue(usersInDB[0], false, albums[2]._id, tracks[13]._id)).toEqual(1);
+})
 
-test('skip prev : user', async() => {
-    expect(await mockPlayer.skipPrevious(usersInDB[0])).toEqual(1);
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip prev : no user', async() => {
+    expect(await mockPlayer.skipPrevious()).toEqual(0);
 })
 test('add to queue ', async() => {
     let addQueue = await mockPlayer.addToQueue(usersInDB[0], tracks[5]._id, false, albums[1]._id);
     expect(addQueue).toEqual(1);
 })
 
-test('skip prev : user', async() => {
-    expect(await mockPlayer.skipPrevious(usersInDB[0])).toEqual(1);
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
 })
-
-test('skip next :  user  ', async() => {
-    expect(await mockPlayer.skipNext(usersInDB[0])).toEqual(1);
-})
-
-test('skip prev : user', async() => {
-    expect(await mockPlayer.skipPrevious(usersInDB[0])).toEqual(1);
-})
-
 test('get queue : no user', async() => {
     const queue = await mockPlayer.getQueue();
     expect(queue).toEqual(0);
@@ -449,7 +564,7 @@ test('get queue : no user', async() => {
 
 test('get queue', async() => {
     const queue = await mockPlayer.getQueue(usersInDB[0]);
-    expect(queue.length).toEqual(2);
+    expect(queue.length).toEqual(3);
 })
 
 test('set resume play no user ', async() => {
@@ -510,9 +625,29 @@ test('test repeat : with add to queue ', async() => {
     await mockPlayer.addToQueue(usersInDB[0], tracks[5]._id, false, albums[1]._id);
     expect(await mockPlayer.repreatPlaylist(usersInDB[0], true)).toBe(1);
 })
+
+test('add to queue ', async() => {
+
+    expect(await mockPlayer.addToQueue(usersInDB[0], tracks[10]._id, false, albums[0]._id)).toBe(0);
+})
+
+test('  add to queue ', async() => {
+
+    expect(await mockPlayer.addToQueue(usersInDB[0], tracks[10]._id, false, playlisId0)).toBe(0);
+})
+test(' add to queue ', async() => {
+
+    expect(await mockPlayer.addToQueue(usersInDB[0], tracks[10]._id, true, albums[0]._id)).toBe(0);
+})
+
+test('test repeat : with add to queue ', async() => {
+
+    expect(await mockPlayer.addToQueue(usersInDB[0], tracks[10]._id, true, playlisId0)).toBe(0);
+})
+
 test('get queue with shuffle', async() => {
     const queue = await mockPlayer.getQueue(usersInDB[0]);
-    expect(queue.length).toEqual(4);
+    expect(queue.length).toEqual(6);
 })
 test('test repeat : ', async() => {
     expect(await mockPlayer.repreatPlaylist(false)).toBe(0);
@@ -529,7 +664,7 @@ test('fill function  : no user', async() => {
 })
 test('random', async() => {
     let random = await mockPlayer.rondom(1, 2);
-    expect(random).toBe(1 || 2);
+    expect(random).toBeTruthy();
 })
 
 test('shuffle no user ', async() => {
@@ -538,4 +673,55 @@ test('shuffle no user ', async() => {
 
 test('shuffle no user ', async() => {
     expect(await mockPlayer.shuffleQueue(usersInDB[0])).toEqual(1);
+})
+
+test('queue has not playable', async() => {
+    expect(await mockPlayer.createQueue(usersInDB[0], false, albums[2]._id, tracks[13]._id)).toEqual(1);
+})
+test('update instance', async() => {
+    expect(await mockPlayer.setPlayerInstance(usersInDB[0], false, albums[2]._id, tracks[13]._id)).toEqual(1);
+})
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+test('queue has not playable', async() => {
+    expect(await mockPlayer.createQueue(usersInDB[0], false, albums[2]._id, tracks[10]._id)).toEqual(1);
+})
+test('update instance', async() => {
+    expect(await mockPlayer.setPlayerInstance(usersInDB[0], false, albums[2]._id, tracks[10]._id)).toEqual(1);
+})
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip next :  user', async() => {
+    expect(await mockPlayer.skipNext(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+test('skip prev :  user', async() => {
+    expect(await mockPlayer.skipPrevious(usersInDB[0])["isLiked"]).toBeFalsy();
+})
+
+test('skip prev : no user', async() => {
+    expect(await mockPlayer.skipPrevious()).toEqual(0);
+})
+test('test album fill by source', async() => {
+    expect(await mockPlayer.fillByplaylist(usersInDB[0])).toEqual(1);
+})
+test('shuffle queue', async() => {
+    expect(await mockPlayer.setShuffle(true, usersInDB[0])).toEqual(1);
 })

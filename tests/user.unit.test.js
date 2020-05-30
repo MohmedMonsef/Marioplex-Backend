@@ -899,3 +899,19 @@ test('delete non existing account ', async () => {
     
     expect(await mockUser.deleteAccount(ObjectId())).toBeFalsy();
 })
+
+
+
+
+
+// update player errors in param 
+test('update user player with error to create queue', async() => {
+    expect(await mockUser.updateUserPlayer(usersInDB[0]._id, true, undefined, tracks[0]._id, ['duufuhfh'])).toEqual(0);
+})
+test('update user player with error to create queue', async() => {
+    expect(await mockUser.updateUserPlayer(usersInDB[0]._id, true, tracks[0]._id, tracks[0]._id)).toEqual(0);
+})
+
+test('update user player with error to create queue', async() => {
+    expect(await mockUser.updateUserPlayer(usersInDB[0]._id, true, 'fsfsdfdsf', tracks[0]._id)).toEqual(0);
+})

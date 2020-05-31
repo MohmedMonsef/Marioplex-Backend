@@ -6,7 +6,7 @@ const Player = require('../source/player-api');
 const User = require('../source/user-api');
 const Playlist = require('../source/playlist-api');
 const Browse = require('../source/browse-api');
-const Recommendation = require('../source/recommendation-api');
+//const Recommendation = require('../source/recommendation-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const rateLimit = require("express-rate-limit");
 // add rate limiting
@@ -62,7 +62,7 @@ router.get('/browse/recently-playing', checkAuth, limiter, async(req, res) => {
 router.get('/browse/madeforyou', checkAuth, limiter, async(req, res) => {
     const user = await User.getUserById(req.user._id);
     if (user) {
-        const tracks = await Recommendation.getSimilarTracks(user);
+        const tracks = 0//await Recommendation.getSimilarTracks(user);
         if (!tracks || tracks.length == 0) res.status(404).send('No similar tracks found');
         else res.status(200).send(tracks);
     } else res.status(400).send('not user');

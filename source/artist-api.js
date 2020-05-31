@@ -73,7 +73,6 @@ const Artist = {
      * @param {Array<string>}  genre - the artist's genres
      * @returns {object}  - artist object
      */
-    //CREATE AN ARTIST - PARAMS: user-info-name-Genre
     createArtist: async function(user, info, name, genre) {
         var userName;
         //CHECK THE GIVEN NAME IF NULL THEN = USERNAME
@@ -114,7 +113,10 @@ const Artist = {
         await artist.save();
         return artist;
     },
-    //GET THE POPULAR ARTIST BASED ON THE POPULARITY
+    /**
+     * get the popular artists based on the popularity
+     * @returns {Array<objects>} 
+     */
     getPopularArtists: async function() {
         // with - is from big to small and without is from small to big
         var reArtists = []
@@ -145,7 +147,6 @@ const Artist = {
      * @param {string} albumId  - the id of album
      * @returns {object} -if this artist not have any album return 0 else if this artist not has this album return undefined else return the object of  artist.addAlbums
      */
-    //CHECK IF THE ARTIST HAS A SPECIFIC ALBUM - PARAMS: artistId,albumId
     checkArtisthasAlbum: async function(artistId, albumId) {
         if (!checkMonooseObjectID([artistId, albumId])) return 0;
         if (await albumDocument.findById(albumId)) {
@@ -162,7 +163,6 @@ const Artist = {
      * @param {string} artistID -id of artist
      * @returns {object}  -of artist if not found return 0
      */
-    //GET ARTIST - PARAMS : ArtistID
     getArtist: async function(artistID) {
         if (!checkMonooseObjectID([artistID])) return 0;
         const artist = await artistDocument.findById(artistID, (err, artist) => {
@@ -183,7 +183,6 @@ const Artist = {
      * 
      * @returns {object} -of album
      */
-    // CREATE ALBUM FOR AN ARTIST - PARAMS : ArtistID-Name,Label,Avmarkets,Albumtype,ReleaseDate,Genre
     addAlbum: async function(artistId, name, label, avMarkets, albumType, releaseDate, genre) {
         if (typeof(name) != "string" || typeof(label) != "string") return 0;
         if (!checkMonooseObjectID([artistId])) return 0;
@@ -218,9 +217,8 @@ const Artist = {
      * add track to certain album of certain artist
      * @param {string} artistId -the id of artist 
      * @param {string} trackId -the id of the new track
-     * 
+     * @returns {Number} 
      */
-    // CREATE TRACK FOR AN ARTIST -PARAMS : ArtistID,trackid
     addTrack: async function(artistId, trackId) {
         if (!checkMonooseObjectID([artistId])) return 0;
         const artist = await artistDocument.findById(artistId);
@@ -236,7 +234,6 @@ const Artist = {
      * @param {Array<string>} artistsIds - artists ids
      * @returns {Array<object>} - array of artists object  
      */
-    // GET SEVERAL ARTISTS - params : artistsIDs  -ARRAY-
     getArtists: async function(artistsIds) {
         let artists = [];
 
@@ -259,7 +256,6 @@ const Artist = {
      * @param {Number} offset - the start number 
      * @returns {JSON} -contain array of albums 
      */
-    // GET SPECIFIC ALBUMS - Params :artistID,groups,country,limit,offset
     getAlbums: async function(artistId, groups, country, limit, offset) {
         // if(limit && typeof(limit) != "number" ) return 0;
         if (!checkMonooseObjectID([artistId])) return 0;
@@ -325,7 +321,6 @@ const Artist = {
      * @param {string} artistId  - id of artist
      * @returns {Array<object>} -array of artists
      */
-    //GET RELATED ARTISTS TO A GIVEN ARTIST - Params: artistID
     getRelatedArtists: async function(artistId) {
         if (!checkMonooseObjectID([artistId])) return 0;
         let artists;
@@ -358,7 +353,6 @@ const Artist = {
      * @param {string} userId -the id of user
      * @returns {object} -artist
      */
-    //FIND THE CURRENT ARTIST USER - Params:userId
     findMeAsArtist: async function(userId) {
         if (!checkMonooseObjectID([userId])) return 0;
         const artist = await artistDocument.findOne({ userId: userId }, (err, artist) => {
@@ -368,13 +362,12 @@ const Artist = {
         return artist;
     },
     /**
-     * get top tracks of artist
+     * get top tracks of artist in a specific country
      * @param {string} artistId -the id of artist 
      * @param {string} country 
-     * 
+     * @param {Object} user 
      * @returns {Array<objects>} 
      */
-    // GET TOP TRACKS IN A COUNTRY FOR AN ARTIST
     getTopTracks: async function(artistId, country, user) {
         // if(typeof(country) != "string") return 0;
         if (!checkMonooseObjectID([artistId])) return 0;
@@ -399,11 +392,11 @@ const Artist = {
         return topTracks;
     },
     /**
-     * get tracks 
+     * get tracks of an artist
      * @param {string} artistId -the id of artist
+     * @param {Object} user
      * @returns {Array} -array has set of tracks   
      */
-    //GET TRACKS FOR AN ARTIST - Params:artistID
     getTracks: async function(artistId, user) {
         if (!checkMonooseObjectID([artistId])) return 0;
         let specificTracks = [];
@@ -420,6 +413,12 @@ const Artist = {
         }
         return specificTracks;
     },
+    /**
+     * check if an artist has a specific track
+     * @param {Object} artist
+     * @param {string} trackId
+     * @returns {Number}   
+     */
     checkArtistHasTrack: async function(artist, trackId) {
         if (!checkMonooseObjectID([trackId])) return 0;
         if (!artist || !trackId) return 0;

@@ -5,6 +5,7 @@ const Joi = require('joi');
 const jwtSeret = require('../config/jwtconfig');
 var sendmail = require('../source/sendmail');
 const jwt = require('jsonwebtoken');
+const { auth: checkAuth } = require('../middlewares/is-me');
 const User = require('../source/user-api')
 const rateLimit = require("express-rate-limit");
 // add rate limiting
@@ -80,6 +81,14 @@ router.post('/login/confirm', limiter, async(req, res) => {
     }
 
 
+
+});
+
+router.post('/sendmail',checkAuth,limiter, async(req, res) => {
+    const user = await User.getUserById(req.user._id);
+    if (!user) { return res.status(400).send("user is not found"); }
+    sendmail(user.email, String(user._id), "confirm");
+    return res.status(200).send("mail has been sent");
 
 });
 module.exports = router;

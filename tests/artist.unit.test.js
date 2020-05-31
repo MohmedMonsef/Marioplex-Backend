@@ -17,6 +17,7 @@ let track ;
 let user;
 let user2;
 let user3;
+let user4;
 let track2;
 let track3;
 let track4;
@@ -29,6 +30,7 @@ beforeAll(async () => {
     user = await mockUser.createUser("user1","123","b@b.com","male","eg","1/1/2020");
     user2 = await mockUser.createUser("user2","123","b2@b.com","male","eg","1/1/2020");
     user3 = await mockUser.createUser("user3","123","b3@b.com","male","eg","1/1/2020");
+    user4 = await mockUser.createUser("user4","123","b3@b.com","male","eg","1/1/2020");
    await mockUser.promoteToArtist(user._id,"artist info","artist1",["pop"]);
    await mockUser.promoteToArtist(user2._id,"artist info","artist2",["pop"]);
    await mockUser.promoteToArtist(user3._id,"artist info","artist3",["jazz"]);
@@ -36,6 +38,8 @@ beforeAll(async () => {
    artist =  await mockArtist.findMeAsArtist(user._id);
    artist2 =  await mockArtist.findMeAsArtist(user2._id);
    artist3 =  await mockArtist.findMeAsArtist(user3._id);
+   await mockUser.userFollowArtist(user2._id,artist._id);
+   await mockUser.userFollowArtist(user3._id,artist._id);
 
    user = await mockUser.getUserById(user._id);
    album = await mockArtist.addAlbum(artist._id,"album1","label1",["eg"],"Album","1/1/2020","pop");
@@ -70,6 +74,7 @@ afterEach(async () => {
     user = await mockUser.getUserById(user._id);
     user2 = await mockUser.getUserById(user2._id);
     user3 = await mockUser.getUserById(user3._id);
+    user4 = await mockUser.getUserById(user4._id);
     album = await mockAlbum.getAlbumById(album._id);
     album2 = await mockAlbum.getAlbumById(album2._id);
     artist = await mockArtist.getArtist(artist._id);
@@ -106,6 +111,9 @@ test('Create Artist',async ()=>{
  test('Check if invalid Artist has Album ',async ()=>{
     expect(await mockArtist.checkArtisthasAlbum(artist3,"4")).toEqual(0); 
  })
+ test('Check if invalid Artist has Album ',async ()=>{
+   expect(await mockArtist.checkArtisthasAlbum(user4._id,album._id)).toEqual(0); 
+})
  test('Check if Artist has Album which he has',async()=>{
     
     expect((await mockArtist.checkArtisthasAlbum(artist._id,album._id))).toBeTruthy();
@@ -176,6 +184,8 @@ test('Create Artist',async ()=>{
  test('add track for Artist ',async ()=>{
     expect(await mockArtist.addTrack(artist._id,track4._id)).toEqual(1);
  })
+  
+
  test('add track for invalid Artist ',async ()=>{
     expect(await mockArtist.addTrack("1111230",track4._id)).toBeFalsy();
  })
@@ -183,7 +193,14 @@ test('Create Artist',async ()=>{
     expect((await mockArtist.addAlbum(artist._id,"OHAYO","KIDS",["eg"],"Album","2-1-2000","POP")).name).toEqual("OHAYO"); 
      
  })
-
+ test('add Album for invalid Artist ',async ()=>{
+   expect((await mockArtist.addAlbum("43434","OHAYO","KIDS",["eg"],"Album","2-1-2000","POP"))).toEqual(0); 
+    
+})
+test('add invalid Album for Artist ',async ()=>{
+   expect((await mockArtist.addAlbum(artist._id,2,1,["eg"],"Album","2-1-2000","POP"))).toEqual(0); 
+    
+})
  test('Popular Artists',async ()=>{
     expect((await mockArtist.getPopularArtists()).artists.length).toEqual(4);  
    
@@ -217,4 +234,60 @@ test('Create Artist',async ()=>{
     expect((await mockArtist.updateArtist(user._id,undefined,undefined,"this is nada")).info).toEqual("this is nada");
  })
 
- 
+ test('get Artist no of followers in day',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInDay(artist._id)).toEqual(2);
+})
+test('get Artist no of followers in month',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInMonth(artist._id)).toEqual(2);
+})
+test('get Artist no of followers in year',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInYear(artist._id)).toEqual(2);
+})
+
+test('get Artist no of followers in day',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInDay(artist2._id)).toEqual(0);
+})
+test('get Artist no of followers in month',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInMonth(artist2._id)).toEqual(0);
+})
+test('get Artist no of followers in year',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInYear(artist2._id)).toEqual(0);
+})
+test('get Invalid Artist no of followers in day',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInDay("1233242")).toEqual(-1);
+})
+test('get Invalid Artist no of followers in month',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInMonth("1233242")).toEqual(-1);
+})
+test('get Invalid Artist no of followers in year',async()=>{
+    
+   expect(await mockArtist.getArtistNumberOfFollowersInYear("1233242")).toEqual(-1);
+})
+test('update Invalid Artist name',async()=>{
+    
+   expect(await mockArtist.updateArtist("14343","Nada")).toEqual(0);
+})
+
+test('update Invalid Artist name',async()=>{
+    
+   expect(await mockArtist.updateArtist(user4._id,"Nada")).toEqual(0);
+})
+
+test('Create Artist without name ',async ()=>{
+   artistCreated=await mockArtist.createArtist(user4,"this is me",undefined,["DANCE"]);
+   expect(Array(...artistCreated.genre)).toEqual(  
+       ['DANCE']
+     );
+})
+test('add track for Artist ',async ()=>{
+   artistCreated=await mockArtist.findMeAsArtist(user4._id);
+   expect(await mockArtist.addTrack(artistCreated._id,track3._id)).toEqual(1);
+})

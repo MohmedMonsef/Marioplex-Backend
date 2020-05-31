@@ -221,7 +221,7 @@ test('add invalid Album for Artist ',async ()=>{
     expect((await mockArtist.checkArtistHasTrack(artist,track._id))).toBeTruthy();
  })
 
- test('update Artist name',async()=>{
+ test('update the Artist name',async()=>{
     
     expect((await mockArtist.updateArtist(user._id,"Nada")).Name).toEqual("Nada");
  })

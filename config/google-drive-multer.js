@@ -1,3 +1,6 @@
+/**
+ * acknowledgement : this code is inspired by https://github.com/omardoma/multer-drive
+ */
 const { google } = require('googleapis');
 
 class DriveStorage {

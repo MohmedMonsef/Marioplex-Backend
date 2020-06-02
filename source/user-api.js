@@ -49,8 +49,8 @@ const User = {
                 createPlaylist: user.createPlaylist,
                 followPlaylist: user.followPlaylist,
                 saveAlbum: user.saveAlbum,
-                following:user.following,
-                followers:user.followers
+                following: user.following,
+                followers: user.followers
             }
             return publicUser;
         } catch (ex) {
@@ -377,11 +377,11 @@ const User = {
             const user = await this.getUserById(userId);
             if (!user) return 0;
             if (!user.following) user.following = [];
-            if (!user.following.length) { return[]; }
+            if (!user.following.length) { return []; }
             let users = []
-            for(let userId of user.following){
+            for (let userId of user.following) {
                 let userFollow = await this.getUnAuthUser(userId);
-                if(userFollow) users.push(userFollow);
+                if (userFollow) users.push(userFollow);
             }
             return users;
         } catch (ex) {
@@ -399,26 +399,26 @@ const User = {
             const user = await this.getUserById(userId);
             if (!user) return 0;
             if (!user.followers) user.followers = [];
-            if (!user.followers.length) { return[]; }
+            if (!user.followers.length) { return []; }
             let users = []
-            for(let userId of user.followers){
+            for (let userId of user.followers) {
                 let userFollow = await this.getUnAuthUser(userId);
-                if(userFollow) users.push(userFollow);
+                if (userFollow) users.push(userFollow);
             }
             return users;
         } catch (ex) {
             return 0;
         }
     },
-    
-    checkUser1FollowUser2:  function(user1,user2){
-        try{
 
-            for(let userId of user1.following){
-                if(String(userId) == String(user2._id)) return 1;
+    checkUser1FollowUser2: function(user1, user2) {
+        try {
+
+            for (let userId of user1.following) {
+                if (String(userId) == String(user2._id)) return 1;
             }
             return 0;
-        }catch(ex){
+        } catch (ex) {
             return 0;
         }
     },
@@ -428,19 +428,19 @@ const User = {
      * @param {String} user2Id
      * @returns {Boolean} 
      */
-    userFollowUser: async function(user1Id,user2Id){
+    userFollowUser: async function(user1Id, user2Id) {
         try {
-            if (!checkMonooseObjectID([user1Id,user2Id])) return 0;
+            if (!checkMonooseObjectID([user1Id, user2Id])) return 0;
             const user1 = await this.getUserById(user1Id);
             const user2 = await this.getUserById(user2Id);
             if (!user1 || !user2) return 0;
             // if already followed return 0
-            if(this.checkUser1FollowUser2(user1,user2))return 0;
+            if (this.checkUser1FollowUser2(user1, user2)) return 0;
             if (!user1.following) user1.following = [];
             // add user2Id to user1 following
             user1.following.push(user2Id);
-           
-            await user1.save(); 
+
+            await user1.save();
             if (!user2.followers) user2.followers = [];
             // add user1Id to user2 followers
             user2.followers.push(user1Id);
@@ -456,26 +456,26 @@ const User = {
      * @param {String} user2Id
      * @returns {Boolean} 
      */
-    userUnfollowUser: async function(user1Id,user2Id){
+    userUnfollowUser: async function(user1Id, user2Id) {
         try {
-            if (!checkMonooseObjectID([user1Id,user2Id])) return 0;
+            if (!checkMonooseObjectID([user1Id, user2Id])) return 0;
             const user1 = await this.getUserById(user1Id);
             const user2 = await this.getUserById(user2Id);
             if (!user1 || !user2) return 0;
             // if already followed return 0
-            if(!this.checkUser1FollowUser2(user1,user2))return 0;
+            if (!this.checkUser1FollowUser2(user1, user2)) return 0;
             // remove user2Id to user1 following
-            for(let i=0;i<  user1.following.length;i++){
-                if(String(user1.following[i]) == String(user2Id)){
-                    user1.following.splice(i,1);
+            for (let i = 0; i < user1.following.length; i++) {
+                if (String(user1.following[i]) == String(user2Id)) {
+                    user1.following.splice(i, 1);
                     break;
                 }
             }
-            await user1.save(); 
+            await user1.save();
             // remove user1Id to user2 followers
-            for(let i=0;i<  user2.followers.length;i++){
-                if(String(user2.followers[i]) == String(user1Id)){
-                    user2.followers.splice(i,1);
+            for (let i = 0; i < user2.followers.length; i++) {
+                if (String(user2.followers[i]) == String(user1Id)) {
+                    user2.followers.splice(i, 1);
                     break;
                 }
             }
@@ -735,8 +735,8 @@ const User = {
                 playHistory: [],
                 player: {},
                 recentlySearch: [],
-                followers:[],
-                following:[]
+                followers: [],
+                following: []
             });
             user.player["isShuffled"] = false;
             user.player["isPlaying"] = false;
@@ -1042,7 +1042,7 @@ const User = {
      * @param  {Boolean} isPlaylist - the status of the source of the track (playlist or not)
      * @param  {string} sourceId - the id of the source of the track 
      * @param  {string} trackId - the id of the track the user wants to add
-	 * @param {Array<string>} tracksIds - optional if need to play array of tracks not album and not playlist
+     * @param {Array<string>} tracksIds - optional if need to play array of tracks not album and not playlist
      * @param {string} sourceType - optional name to describe the array of ids 
      * @returns {Number}
      */

@@ -61,14 +61,5 @@ router.get('/browse/recently-playing', checkAuth, limiter, async(req, res) => {
     } else res.status(400).send('not user');
 })
 
-// to get similar-tracks
-router.get('/browse/madeforyou', checkAuth, limiter, async(req, res) => {
-    const user = await User.getUserById(req.user._id);
-    if (user) {
-        const tracks = await Recommendation.getSimilarTracks(user);
-        if (!tracks || tracks.length == 0) res.status(404).send('No similar tracks found');
-        else res.status(200).send(tracks);
-    } else res.status(400).send('not user');
-})
 
 module.exports = router;

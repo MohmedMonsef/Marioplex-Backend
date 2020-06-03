@@ -6,7 +6,6 @@ const Player = require('../source/player-api');
 const User = require('../source/user-api');
 const Playlist = require('../source/playlist-api');
 const Browse = require('../source/browse-api');
-const Recommendation = require('../source/recommendation-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const rateLimit = require("express-rate-limit");
 // add rate limiting

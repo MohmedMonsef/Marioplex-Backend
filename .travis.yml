@@ -13,10 +13,10 @@ after_success:
 deploy:
   provider: elasticbeanstalk
   region: us-east-1
-  app: MarioPlexBack
-  env: Marioplexback-env-1
+  app: Back
+  env: Back-env
   bucket_name: elasticbeanstalk-us-east-1-658647886370
-  bucket_path: MarioPlexBack
+  bucket_path: Back
   on:
     branch: master
   access_key_id: $AWS_ACCESS_KEY

@@ -1,4 +1,32 @@
-const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: artist-api.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: artist-api.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 const spotify = require('../models/db');
 const checkMonooseObjectID = require('../validation/mongoose-objectid');
 const Track = require('./track-api');
@@ -16,9 +44,9 @@ const Artist = {
         if (!artist.followed) {artist.followed = []; return 0;}
         var numberOfFollowers = 0;
         var today = new Date();
-        for(let i=0;i<artist.followed.length;i++){
+        for(let i=0;i&lt;artist.followed.length;i++){
             let date=artist.followed[i].date;
-            if(date.getMonth() == today.getMonth() &&
+            if(date.getMonth() == today.getMonth() &amp;&amp;
             date.getFullYear() == today.getFullYear())
               numberOfFollowers +=1;
         }
@@ -36,10 +64,10 @@ const Artist = {
         if (!artist.followed) {artist.followed = []; return 0;}
         var numberOfFollowers = 0;
         var today = new Date();
-        for(let i=0;i<artist.followed.length;i++){
+        for(let i=0;i&lt;artist.followed.length;i++){
             let date=artist.followed[i].date;
-            if(date.getMonth() == today.getMonth() &&
-            date.getFullYear() == today.getFullYear() &&
+            if(date.getMonth() == today.getMonth() &amp;&amp;
+            date.getFullYear() == today.getFullYear() &amp;&amp;
             date.getDay() == today.getDay())
                numberOfFollowers +=1;
         }
@@ -57,7 +85,7 @@ const Artist = {
         var today = new Date();
         var numberOfFollowers = 0;
         if(!artist.followed)artist.followed=[];
-        for(let i=0;i<artist.followed.length;i++){
+        for(let i=0;i&lt;artist.followed.length;i++){
             let date=artist.followed[i].date;
             if(date.getFullYear() == today.getFullYear())
                numberOfFollowers +=1;
@@ -70,7 +98,7 @@ const Artist = {
      * @param  {object} user - the user who promote to artist 
      * @param  {string}  info - information about new artist
      * @param {string} name  - the name of new artist if it is undefined his name will be user name
-     * @param {Array<string>}  genre - the artist's genres
+     * @param {Array&lt;string>}  genre - the artist's genres
      * @returns {object}  - artist object
      */
     createArtist: async function(user, info, name, genre) {
@@ -99,7 +127,7 @@ const Artist = {
      * update artist
      * @param {string } userId -id of artist as user
      * @param {string} name - the new name of artist
-     * @param {Array<string>} genre -array of artist genre   
+     * @param {Array&lt;string>} genre -array of artist genre   
      * @param {string} info  - information about artist 
      * @returns {Object}
      */
@@ -115,7 +143,7 @@ const Artist = {
     },
     /**
      * get the popular artists based on the popularity
-     * @returns {Array<objects>} 
+     * @returns {Array&lt;objects>} 
      */
     getPopularArtists: async function() {
         // with - is from big to small and without is from small to big
@@ -123,9 +151,9 @@ const Artist = {
         const artists = await artistDocument.find({}).sort('-popularity')
         if (artists) {
             var limit; // to limit the num of artists by frist 20 only but should check if num of albums less than 10  
-            if (artists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = artists.length;
+            if (artists.length &lt; Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = artists.length;
             else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-            for (let i = 0; i < limit; i++) {
+            for (let i = 0; i &lt; limit; i++) {
 
                 reArtists.push({
                     genre: artists[i].genre,
@@ -176,7 +204,7 @@ const Artist = {
      * @param {string} artistId -the id of artist
      * @param {string} name - the name of album
      * @param {string} label -label of album
-     * @param {Array<string>} avMarkets -the available markets of this album
+     * @param {Array&lt;string>} avMarkets -the available markets of this album
      * @param {string} albumType - album type
      * @param {date} releaseDate  -the date this album release
      * @param {string} genre  -the genre of this album
@@ -231,8 +259,8 @@ const Artist = {
     },
     /**
      * get artists
-     * @param {Array<string>} artistsIds - artists ids
-     * @returns {Array<object>} - array of artists object  
+     * @param {Array&lt;string>} artistsIds - artists ids
+     * @returns {Array&lt;object>} - array of artists object  
      */
     getArtists: async function(artistsIds) {
         let artists = [];
@@ -250,14 +278,14 @@ const Artist = {
     /**
      * get albums for certain artist
      * @param {string} artistId  - artist id 
-     * @param {Array<string>} groups - the groups of album
+     * @param {Array&lt;string>} groups - the groups of album
      * @param {string} country -the country 
      * @param {Number} limit -the max number of albums
      * @param {Number} offset - the start number 
      * @returns {JSON} -contain array of albums 
      */
     getAlbums: async function(artistId, groups, country, limit, offset) {
-        // if(limit && typeof(limit) != "number" ) return 0;
+        // if(limit &amp;&amp; typeof(limit) != "number" ) return 0;
         if (!checkMonooseObjectID([artistId])) return 0;
         let specificAlbums = [];
         let albums = {};
@@ -265,26 +293,26 @@ const Artist = {
         if (!artist) return 0;
         if (!artist.addAlbums) artist.addAlbums = [];
         //GET ALL THE ALBUMS OF THIS ARTIST
-        for (let i = 0; i < artist.addAlbums.length; i++) {
+        for (let i = 0; i &lt; artist.addAlbums.length; i++) {
             albums[artist.addAlbums[i].albumId] = await albumDocument.findById(artist.addAlbums[i].albumId, (err, album) => {
                 if (err) return 0;
                 return album;
             }).catch((err) => 0);
         }
         //FILTER THE ALBUMS BASED ON THE INPUT
-        if (groups != undefined && country != undefined) {
+        if (groups != undefined &amp;&amp; country != undefined) {
             for (let Album in albums) {
-                if (groups.includes(albums[Album].albumType) && albums[Album].availableMarkets.includes(country)) {
+                if (groups.includes(albums[Album].albumType) &amp;&amp; albums[Album].availableMarkets.includes(country)) {
                     specificAlbums.push(albums[Album]);
                 }
             }
-        } else if (groups == undefined && country != undefined) {
+        } else if (groups == undefined &amp;&amp; country != undefined) {
             for (let Album in albums) {
                 if (albums[Album].availableMarkets.includes(country)) {
                     specificAlbums.push(albums[Album]);
                 }
             }
-        } else if (groups != undefined && country == undefined) {
+        } else if (groups != undefined &amp;&amp; country == undefined) {
             for (let Album in albums) {
                 if (groups.includes(albums[Album].albumType)) {
                     specificAlbums.push(albums[Album]);
@@ -299,17 +327,17 @@ const Artist = {
         let start = 0;
         let end = specificAlbums.length;
         if (offset != undefined) {
-            if (offset >= 0 && offset <= specificAlbums.length) {
+            if (offset >= 0 &amp;&amp; offset &lt;= specificAlbums.length) {
                 start = offset;
             }
         }
         if (limit != undefined) {
-            if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
+            if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= specificAlbums.length) {
                 end = start + limit;
             }
         } else {
             limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-            if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
+            if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= specificAlbums.length) {
                 end = start + limit;
             }
         }
@@ -319,7 +347,7 @@ const Artist = {
     /**
      * get related artists of an artist
      * @param {string} artistId  - id of artist
-     * @returns {Array<object>} -array of artists
+     * @returns {Array&lt;object>} -array of artists
      */
     getRelatedArtists: async function(artistId) {
         if (!checkMonooseObjectID([artistId])) return 0;
@@ -334,8 +362,8 @@ const Artist = {
         //FILTER THE ARTISTS BASED ON THEIR GENRE
         for (let artistIndx in artists) {
             if(String(artists[artistIndx]._id)==String(artistId))continue;
-            for (var i = 0; i < artists[artistIndx].genre.length; i++) {
-                for (var j = 0; j < artist.genre.length; j++) {
+            for (var i = 0; i &lt; artists[artistIndx].genre.length; i++) {
+                for (var j = 0; j &lt; artist.genre.length; j++) {
                     if (artists[artistIndx].genre[i] == artist.genre[j]) {
                         if (!relatedArtists.find(artist1 => artist1._id == artists[artistIndx]._id))
                             relatedArtists.push(artists[artistIndx]);
@@ -366,7 +394,7 @@ const Artist = {
      * @param {string} artistId -the id of artist 
      * @param {string} country 
      * @param {Object} user 
-     * @returns {Array<objects>} 
+     * @returns {Array&lt;objects>} 
      */
     getTopTracks: async function(artistId, country, user) {
         // if(typeof(country) != "string") return 0;
@@ -375,14 +403,14 @@ const Artist = {
         let tracks = {};
         let artist = await this.getArtist(artistId);
         if (!artist) return 0;
-        for (let i = 0; i < artist.addTracks.length; i++) {
+        for (let i = 0; i &lt; artist.addTracks.length; i++) {
             let track = await Track.getTrack(artist.addTracks[i].trackId, user);
             if (track) { tracks[artist.addTracks[i].trackId] = track; }
         }
 
         //FILTER TRACKS BASED ON THE COUNTRY
         for (let track in tracks) {
-            if (tracks[track].availableMarkets && tracks[track].availableMarkets.includes(country)) {
+            if (tracks[track].availableMarkets &amp;&amp; tracks[track].availableMarkets.includes(country)) {
                 topTracks.push(tracks[track]);
             }
         }
@@ -404,7 +432,7 @@ const Artist = {
         let artist = await this.getArtist(artistId);
         if (!artist) return 0;
         if (!artist.addTracks) artist.addTracks = [];
-        for (let i = 0; i < artist.addTracks.length; i++) {
+        for (let i = 0; i &lt; artist.addTracks.length; i++) {
             let track = await Track.getTrack(artist.addTracks[i].trackId, user);
             if (track) { tracks[artist.addTracks[i].trackId] = track; }
         }
@@ -430,4 +458,26 @@ const Artist = {
     }
 }
 
-module.exports = Artist;
+module.exports = Artist;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Album.html">Album</a></li><li><a href="Artist.html">Artist</a></li><li><a href="Browse.html">Browse</a></li><li><a href="Image.html">Image</a></li><li><a href="Library.html">Library</a></li><li><a href="Player.html">Player</a></li><li><a href="Playlist.html">Playlist</a></li><li><a href="Search.html">Search</a></li><li><a href="Track.html">Track</a></li><li><a href="User.html">User</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Fuzzysearch">Fuzzysearch</a></li><li><a href="global.html#limitOffset">limitOffset</a></li><li><a href="global.html#removeDupliactes">removeDupliactes</a></li><li><a href="global.html#search">search</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 03 2020 09:59:38 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,4 +1,32 @@
-const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: library-api.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: library-api.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 
 const Album = require('./album-api');
 const ArtistApi = require('./artist-api');
@@ -8,9 +36,9 @@ const CheckMonooseObjectId = require('../validation/mongoose-objectid');
 const Library = {
     /**
      * check if user saves albums
-     * @param {Array<string>} albumsIds - array of albums' id
+     * @param {Array&lt;string>} albumsIds - array of albums' id
      * @param {string} userId - user id
-     * @returns {Array<boolean>} 
+     * @returns {Array&lt;boolean>} 
      */
     checkSavedAlbums: async function(albumsIds, userId) {
         try {
@@ -26,7 +54,7 @@ const Library = {
             if (!user) return 0;
             //  console.log(user);
             if (!user.saveAlbum) user.saveAlbum = [];
-            for (var i = 0; i < albumsIds.length; i++) {
+            for (var i = 0; i &lt; albumsIds.length; i++) {
                 found = false;
 
                 for (let album in user.saveAlbum) {
@@ -51,9 +79,9 @@ const Library = {
     },
     /**
      * check if user saves tracks
-     * @param {Array<string>} tracksIds - array of tracks' id
+     * @param {Array&lt;string>} tracksIds - array of tracks' id
      * @param {string} userId - user id
-     * @returns {Array<boolean>} 
+     * @returns {Array&lt;boolean>} 
      */
     checkSavedTracks: async function(tracksIds, userId) {
         try {
@@ -65,7 +93,7 @@ const Library = {
             }).catch((err) => 0);
             if (!user) return 0;
             let checks = [];
-            for (let i = 0; i < tracksIds.length; i++)
+            for (let i = 0; i &lt; tracksIds.length; i++)
                 checks.push(false);
             //console.log(user);
             // console.log(user['likesTracksPlaylist']);
@@ -81,7 +109,7 @@ const Library = {
      * @param {string} userId - user id
      * @param {number} [limit] - the maximum number of objects to return
      * @param {number} [offset] - the index of the first object to return
-     * @returns {Array<object>} - array of albums' object
+     * @returns {Array&lt;object>} - array of albums' object
      */
     getSavedAlbums: async function(userId, limit, offset) {
         try {
@@ -91,7 +119,7 @@ const Library = {
             if (!user) return 0;
             if (!user.saveAlbum) user.saveAlbum = [];
             if (user.saveAlbum.length == 0) return 0;
-            for (let i = 0; i < user.saveAlbum.length; i++) {
+            for (let i = 0; i &lt; user.saveAlbum.length; i++) {
                 let album = await Album.getAlbumById(user.saveAlbum[i].albumId);
                 if (album) albumsArray.push(album);
             }
@@ -99,23 +127,23 @@ const Library = {
             let start = 0;
             let end = (albumsArray.length > 20) ? 20 : albumsArray.length;
             if (offset != undefined) {
-                if (offset >= 0 && offset <= albumsArray.length) {
+                if (offset >= 0 &amp;&amp; offset &lt;= albumsArray.length) {
                     start = offset;
                 }
             }
             if (limit != undefined) {
-                if ((start + limit) > 0 && (start + limit) <= albumsArray.length) {
+                if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= albumsArray.length) {
                     end = start + limit;
                 }
             } else {
                 limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-                if ((start + limit) > 0 && (start + limit) <= albumsArray.length) {
+                if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= albumsArray.length) {
                     end = start + limit;
                 }
             }
             let albumSlice = albumsArray.slice(start, end);
             albumInfo = []
-            for (let i = 0; i < albumSlice.length; i++) {
+            for (let i = 0; i &lt; albumSlice.length; i++) {
                 let albums = await Album.getAlbumArtist(albumSlice[i]._id, userId);
                 if (albums) {
                     albumInfo.push(albums);
@@ -148,23 +176,23 @@ const Library = {
             let start = 0;
             let end = (tracksPlaylist.length > 20) ? 20 : tracksPlaylist.length;
             if (offset != undefined) {
-                if (offset >= 0 && offset <= tracksPlaylist.length) {
+                if (offset >= 0 &amp;&amp; offset &lt;= tracksPlaylist.length) {
                     start = offset;
                 }
             }
             if (limit != undefined) {
-                if ((start + limit) > 0 && (start + limit) <= tracksPlaylist.length) {
+                if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= tracksPlaylist.length) {
                     end = start + limit;
                 }
             } else {
                 limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
-                if ((start + limit) > 0 && (start + limit) <= tracksPlaylist.length) {
+                if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= tracksPlaylist.length) {
                     end = start + limit;
                 }
             }
             let trackSlice = tracksPlaylist.slice(start, end);
             trackInfo = []
-            for (let i = 0; i < trackSlice.length; i++) {
+            for (let i = 0; i &lt; trackSlice.length; i++) {
                 let artist = await ArtistApi.getArtist(trackSlice[i].artistId)
                 tracks = {}
                 if (artist) {
@@ -194,4 +222,26 @@ const Library = {
 
 }
 
-module.exports = Library;
+module.exports = Library;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Album.html">Album</a></li><li><a href="Artist.html">Artist</a></li><li><a href="Browse.html">Browse</a></li><li><a href="Image.html">Image</a></li><li><a href="Library.html">Library</a></li><li><a href="Player.html">Player</a></li><li><a href="Playlist.html">Playlist</a></li><li><a href="Search.html">Search</a></li><li><a href="Track.html">Track</a></li><li><a href="User.html">User</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Fuzzysearch">Fuzzysearch</a></li><li><a href="global.html#limitOffset">limitOffset</a></li><li><a href="global.html#removeDupliactes">removeDupliactes</a></li><li><a href="global.html#search">search</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 03 2020 09:59:38 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

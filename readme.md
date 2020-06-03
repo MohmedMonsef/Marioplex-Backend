@@ -38,7 +38,7 @@
 <li> :mag_right: Search for your beloved track/artist/user by using our fuzzy search engine</li>
 <li> :pensive: Deleted a playlist by mistake ? Don't worry my child you can always recover it from our deleted playlist</li>
 <li> :desktop_computer: Your homepage is specially customized for you and your taste with a spoon of the most populat tracks/artists in your area</li>
-<li> :leaves: Your recently played songs are always stored so you will never mmiss them</li>
+<li> :leaves: Your recently played songs are always stored so you will never miss them</li>
 
 
 

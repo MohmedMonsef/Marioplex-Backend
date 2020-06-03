@@ -1,0 +1,182 @@
+{
+	"info": {
+		"_postman_id": "b8d5d8b0-f899-4810-a765-b02c308b941f",
+		"name": "home-page",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get new releases",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/new-releases",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"new-releases"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get popular albums",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/popular-albums",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"popular-albums"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get popular playlists",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/popular-playlists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"popular-playlists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get popular artists",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/popular-artists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"popular-artists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get recently playing",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/recently-playing",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"recently-playing"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get genres' playlists",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/genre",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"genre"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

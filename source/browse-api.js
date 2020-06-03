@@ -151,9 +151,12 @@ const Browse = {
                     if (track && track.genre && (track.genre[0] == genres[k] || track.genre[1] == genres[k])) {
                         const user1 = await userDocument.findById(playlists[i].ownerId);
                         playlistsGenre.push({ playlist: playlists[i], owner: { id: playlists[i].ownerId, name: user1 ? user1.name : '' } });
+                        playlistsGenre[playlistsGenre.length - 1].playlist.snapshot = undefined;
                     }
+                    if (playlistsGenre.length == 10) break;
                 }
                 if (playlistsGenre.length != 0)
+
                     allGenre.push({ genre: genres[k], "playlists": playlistsGenre });
                 playlistsGenre = [];
             }

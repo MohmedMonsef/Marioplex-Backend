@@ -25,30 +25,33 @@ router.get('/browse/new-releases', limiter, async(req, res) => {
 // to get genre
 router.get('/browse/genre', limiter, async(req, res) => {
     const genre = await Browse.getGenreList();
-    if (!genre) res.status(400).send('can not get albums');
+    if (!genre) res.status(400).send('can not get genres');
     else res.send(genre);
 
 });
 
 // to get popular albums
 router.get('/browse/popular-albums', limiter, async(req, res) => {
-        const popularAlbums = await Album.getPopularAlbums();
-        if (!popularAlbums) res.status(400).send('can not get albums');
-        else res.send(popularAlbums);
-    })
-    // to get popular artists
+    const popularAlbums = await Album.getPopularAlbums();
+    if (!popularAlbums) res.status(400).send('can not get albums');
+    else res.send(popularAlbums);
+})
+
+// to get popular artists
 router.get('/browse/popular-artists', limiter, async(req, res) => {
-        const popularArtist = await Artist.getPopularArtists();
-        if (!popularArtist) res.status(400).send('can not get albums');
-        else res.send(popularArtist);
-    })
-    // to get popular playlists
+    const popularArtist = await Artist.getPopularArtists();
+    if (!popularArtist) res.status(400).send('can not get albums');
+    else res.send(popularArtist);
+})
+
+// to get popular playlists
 router.get('/browse/popular-playlists', limiter, async(req, res) => {
-        const popularPlaylists = await Playlist.getPopularPlaylists();
-        if (!popularPlaylists) res.status(400).send('can not get albums');
-        else res.send(popularPlaylists);
-    })
-    // to get recently-playing
+    const popularPlaylists = await Playlist.getPopularPlaylists();
+    if (!popularPlaylists) res.status(400).send('can not get albums');
+    else res.send(popularPlaylists);
+})
+
+// to get recently-playing
 router.get('/browse/recently-playing', checkAuth, limiter, async(req, res) => {
     const user = await User.getUserById(req.user._id);
     if (user) {

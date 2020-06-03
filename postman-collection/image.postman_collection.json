@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "http://localhost:3000/api/images/upload/5e8cb118084a9d2e6c8f21d7?belongs_to=user&height=100&width=100",
+			"name": "upload image",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -76,7 +76,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/images/5ea5e68a2adfe1180479cdb8?belongs_to=artist",
+			"name": "get image",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -109,7 +109,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/images/update/5eb0a499ec0c444e9c489820?belongs_to=track&height=100&width=100",
+			"name": "update image",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -161,7 +161,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/images/5eb511d0dd06db2ffca302be?belongs_to=user",
+			"name": "het images of entity",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -195,7 +195,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/images/get_id/5eb0906430a9a01f144b723c/?belongs_to=user",
+			"name": "get image if of entity",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -224,14 +224,14 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/images/delete/5eb511d0dd06db2ffca302be?source_id=5eb0906430a9a01f144b723c&belongs_to=user",
+			"name": "delete image",
 			"request": {
 				"method": "DELETE",
 				"header": [
 					{
 						"key": "x-auth-token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDEyNDI3LCJleHAiOjMxNDY0ODg4NzgwMjYxMjgwMDB9.fTocCHc0k5BzE0ijGOm27s0QxOVFjdOyuxqjyEGuspE",
-						"type": "text"
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDEyNDI3LCJleHAiOjMxNDY0ODg4NzgwMjYxMjgwMDB9.fTocCHc0k5BzE0ijGOm27s0QxOVFjdOyuxqjyEGuspE"
 					}
 				],
 				"url": {

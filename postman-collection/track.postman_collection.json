@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "http://localhost:3000/api/tracks/delete/5ea5ea432adfe1180479ceba",
+			"name": "delete track",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -35,7 +35,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/tracks/update/5eb0a499ec0c444e9c489820",
+			"name": "update track",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -72,7 +72,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/track/5eb0a499ec0c444e9c489820",
+			"name": "get track info",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -99,7 +99,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/track/5eb0a499ec0c444e9c489820",
+			"name": "get more track info",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -134,7 +134,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/tracks/audio-features",
+			"name": "get tracks audio features",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -180,7 +180,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/track/audio-features/5eb0a499ec0c444e9c489820",
+			"name": "get track audio features",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -215,7 +215,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/tracks/related/full-track/5eb0a499ec0c444e9c489820",
+			"name": "gwet related full track",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -244,7 +244,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/tracks/related/5eb0a499ec0c444e9c489820",
+			"name": "get related tracks",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -272,7 +272,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/tracks/android/5eb0a499ec0c444e9c489820?type=high",
+			"name": "get track audio for android",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -311,7 +311,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/tracks/web-player/5eb0a499ec0c444e9c489820?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZThjYjExODA4NGE5ZDJlNmM4ZjIxZDciLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg3MjM4MzE3LCJleHAiOjQ3MzM3MjQ3MTd9.QeijMcfcRjP3SzXFfT58cCnrTBVYEL7boMp9XYDKc2U",
+			"name": "get track audoi for web",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -356,7 +356,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/tracks/encryption/5eb0a499ec0c444e9c489820/keys",
+			"name": "get track keys",
 			"request": {
 				"method": "GET",
 				"header": [

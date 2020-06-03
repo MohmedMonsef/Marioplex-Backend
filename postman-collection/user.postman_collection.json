@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "http://localhost:3000/api/login",
+			"name": "login",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -36,7 +36,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/users/5eb08fce30a9a01f144b722d",
+			"name": "get other user",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -57,7 +57,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me",
+			"name": "get my profile",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -83,7 +83,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me-player",
+			"name": "get player",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -109,7 +109,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/login",
+			"name": "login-1",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -151,7 +151,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/ToArtist",
+			"name": "promote to artist",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -187,7 +187,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/sign_up",
+			"name": "sign up",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -216,7 +216,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/login/forgetpassword",
+			"name": "forget password",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -246,7 +246,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/user/logout",
+			"name": "logout",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -273,7 +273,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/login/reset_password",
+			"name": "reset password",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -303,7 +303,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/notification/token",
+			"name": "set notification token",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -339,7 +339,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/free",
+			"name": "promote to free",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -366,7 +366,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/promote",
+			"name": "promote to premium",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -393,7 +393,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/update",
+			"name": "update user info",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -429,7 +429,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/albums/contains",
+			"name": "check if user save album",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -463,7 +463,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/tracks/contains",
+			"name": "check if user save track",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -497,7 +497,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/albums",
+			"name": "get my albums",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -524,7 +524,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/albums",
+			"name": "get my albums-1",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -551,7 +551,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/like/5eb0a499ec0c444e9c489820",
+			"name": "like track",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -586,7 +586,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/unlike/5eb0a499ec0c444e9c489820",
+			"name": "unlike track",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -614,7 +614,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/following/user",
+			"name": "get my followings",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -642,7 +642,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/follow/user/5eb08fce30a9a01f144b722d",
+			"name": "follow user",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -671,7 +671,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/unfollow/user/5eb08fce30a9a01f144b722d",
+			"name": "unfollow user",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -700,7 +700,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/api/me/followers/user",
+			"name": "get my followers",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -728,7 +728,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:3000/remove",
+			"name": "delete account",
 			"request": {
 				"method": "DELETE",
 				"header": [

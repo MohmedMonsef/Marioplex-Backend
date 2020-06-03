@@ -1,4 +1,32 @@
-const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: user-api.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: user-api.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 const Track = require('./track-api');
 const Playlist = require('./playlist-api');
 // initialize db 
@@ -103,7 +131,7 @@ const User = {
                         user.displayName = displayName;
                     }
 
-                    if (newPassword != undefined && repeatedPassword == newPassword) {
+                    if (newPassword != undefined &amp;&amp; repeatedPassword == newPassword) {
                         const salt = await bcrypt.genSalt(10);
                         let hashed = await bcrypt.hash(newPassword, salt);
                         user.password = hashed;
@@ -175,7 +203,7 @@ const User = {
             const user = await this.getUserById(userId);
             if (!user) { return 0; }
             if (user.userType == 'Artist') return 0;
-            for (let i = 0; i < user.createPlaylist.length; i++) {
+            for (let i = 0; i &lt; user.createPlaylist.length; i++) {
                 await this.deletePlaylist(userId, user.createPlaylist[i].playListId);
             }
             await Image.deleteImages(userId, userId, 'user');
@@ -232,7 +260,7 @@ const User = {
                 await user.save();
             } else {
                 const ifFind = await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], [trackId]);
-                if (ifFind && ifFind[0] == true) return 0;
+                if (ifFind &amp;&amp; ifFind[0] == true) return 0;
             }
 
             if (!await Playlist.addTrackToPlaylist(user['likesTracksPlaylist'], [trackId])) return 0;
@@ -341,7 +369,7 @@ const User = {
     /** 
      * get user's following artist
      * @param  {string} userId - the user id 
-     * @returns {Array<Object>}
+     * @returns {Array&lt;Object>}
      */
     getUserFollowingArtist: async function(userId) {
         try {
@@ -351,7 +379,7 @@ const User = {
             if (!user.follow) user.follow = [];
             if (!user.follow.length) { return []; }
             let artists = []
-            for (let i = 0; i < user.follow.length; i++) {
+            for (let i = 0; i &lt; user.follow.length; i++) {
                 let artist = await Artist.getArtist(user.follow[i].id);
                 if (artist) {
                     let artistInfo = {};
@@ -392,7 +420,7 @@ const User = {
     /**
      * get user followers
      * @param {String} userId 
-     * @returns {Array<Object>}
+     * @returns {Array&lt;Object>}
      */
     getUserFollowers: async function(userId) {
         try {
@@ -466,7 +494,7 @@ const User = {
             // if already followed return 0
             if (!this.checkUser1FollowUser2(user1, user2)) return 0;
             // remove user2Id to user1 following
-            for (let i = 0; i < user1.following.length; i++) {
+            for (let i = 0; i &lt; user1.following.length; i++) {
                 if (String(user1.following[i]) == String(user2Id)) {
                     user1.following.splice(i, 1);
                     break;
@@ -474,7 +502,7 @@ const User = {
             }
             await user1.save();
             // remove user1Id to user2 followers
-            for (let i = 0; i < user2.followers.length; i++) {
+            for (let i = 0; i &lt; user2.followers.length; i++) {
                 if (String(user2.followers[i]) == String(user1Id)) {
                     user2.followers.splice(i, 1);
                     break;
@@ -529,13 +557,13 @@ const User = {
             if (!user.follow.length) return 0;
             if (!artist.followed) artist.followed = [];
             if (!await this.checkIfUserFollowArtist(userId, artistId)) return 0;
-            for (let i = 0; i < user.follow.length; i++) {
+            for (let i = 0; i &lt; user.follow.length; i++) {
                 if (String(user.follow[i].id) == String(artistId)) {
                     user.follow.splice(i, 1);
                     await user.save();
                 }
             }
-            for (let i = 0; i < artist.followed.length; i++) {
+            for (let i = 0; i &lt; artist.followed.length; i++) {
                 if (String(artist.followed[i].id) == String(userId)) {
                     artist.followed.splice(i, 1);
                     await artist.save();
@@ -561,7 +589,7 @@ const User = {
             if (!user || (!artist)) return 0;
             if (!user.follow) user.follow = [];
             if (!user.follow.length) return false;
-            for (let i = 0; i < user.follow.length; i++) {
+            for (let i = 0; i &lt; user.follow.length; i++) {
                 if (String(user.follow[i].id) == String(artistId))
                     return true;
 
@@ -758,7 +786,7 @@ const User = {
      * @param  {string} playlistId - the playlist Id
      * @param  {string} snapshot - the snapshot Id if given
      * @param  {string} userId - the user Id
-     * @returns {Array<Object>}
+     * @returns {Array&lt;Object>}
      */
     getPlaylist: async function(playlistId, snapshot, userId) {
         try {
@@ -828,7 +856,7 @@ const User = {
     /**
      * 
      * @param {string} userId 
-     * @param {Array<String>} playlistsIds
+     * @param {Array&lt;String>} playlistsIds
      * @returns {object} 
      */
     restorePlaylists: async function(userId, playlistsIds) {
@@ -843,8 +871,8 @@ const User = {
             console.log(spotifyUser);
             if (!spotifyUser) return 0;
             let deleted = [];
-            for (let i = 0; i < playlistsIds.length; i++) {
-                for (let j = 0; j < user.deletedPlaylists.length; j++) {
+            for (let i = 0; i &lt; playlistsIds.length; i++) {
+                for (let j = 0; j &lt; user.deletedPlaylists.length; j++) {
                     if (user.deletedPlaylists[j].id == playlistsIds[i]) {
                         let playlist = await Playlist.getPlaylist(playlistsIds[i]);
                         if (!playlist) { restored.push(false); break; }
@@ -858,8 +886,8 @@ const User = {
                     }
                 }
             }
-            for (var i = 0; i < deleted.length; i++) {
-                for (var j = 0; j < user.deletedPlaylists.length; j++) {
+            for (var i = 0; i &lt; deleted.length; i++) {
+                for (var j = 0; j &lt; user.deletedPlaylists.length; j++) {
                     if (deleted[i] == user.deletedPlaylists[j].id) {
                         user.deletedPlaylists.splice(j, 1);
                     }
@@ -893,13 +921,13 @@ const User = {
             //console.log(createdUser);
             if (String(createdUser._id) == String(userId)) return true;
             else {
-                for (var i = 0; i < createdUser.createPlaylist.length; i++) {
+                for (var i = 0; i &lt; createdUser.createPlaylist.length; i++) {
                     if (String(createdUser.createPlaylist[i].playListId) == String(playlistId)) {
                         playlistIndex = i;
                         break;
                     }
                 }
-                for (var i = 0; i < createdUser.createPlaylist[playlistIndex].collaboratorsId.length; i++) {
+                for (var i = 0; i &lt; createdUser.createPlaylist[playlistIndex].collaboratorsId.length; i++) {
                     if (String(createdUser.createPlaylist[playlistIndex].collaboratorsId[i]) == String(userId)) {
                         return true;
                     }
@@ -919,7 +947,7 @@ const User = {
      * @param  {string} userId - the user Id
      * @param  {string} info - the info of the new Artist 
      * @param  {string} name - the name of the new Artist 
-     * @param  {Array<string>} genre - the genre(s) of the new Artist
+     * @param  {Array&lt;string>} genre - the genre(s) of the new Artist
      * @returns {Boolean}
      */
 
@@ -1043,7 +1071,7 @@ const User = {
      * @param  {Boolean} isPlaylist - the status of the source of the track (playlist or not)
      * @param  {string} sourceId - the id of the source of the track 
      * @param  {string} trackId - the id of the track the user wants to add
-     * @param {Array<string>} tracksIds - optional if need to play array of tracks not album and not playlist
+     * @param {Array&lt;string>} tracksIds - optional if need to play array of tracks not album and not playlist
      * @param {string} sourceType - optional name to describe the array of ids 
      * @returns {Number}
      */
@@ -1094,7 +1122,7 @@ const User = {
     /** 
      * get user's queue
      * @param  {string} userId - the user Id
-     * @returns {Array<Object>}
+     * @returns {Array&lt;Object>}
      */
 
     getQueue: async function(userId) {
@@ -1216,4 +1244,26 @@ const User = {
 
 }
 
-module.exports = User;
+module.exports = User;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Album.html">Album</a></li><li><a href="Artist.html">Artist</a></li><li><a href="Browse.html">Browse</a></li><li><a href="Image.html">Image</a></li><li><a href="Library.html">Library</a></li><li><a href="Player.html">Player</a></li><li><a href="Playlist.html">Playlist</a></li><li><a href="Search.html">Search</a></li><li><a href="Track.html">Track</a></li><li><a href="User.html">User</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Fuzzysearch">Fuzzysearch</a></li><li><a href="global.html#limitOffset">limitOffset</a></li><li><a href="global.html#removeDupliactes">removeDupliactes</a></li><li><a href="global.html#search">search</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 03 2020 09:59:38 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

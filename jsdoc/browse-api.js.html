@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: browse-api.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: browse-api.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
+
+
+// initialize db 
+const User = require('./user-api');
+const Playlist = require('./playlist-api');
+const checkMonooseObjectId = require('../validation/mongoose-objectid');
+/** @namespace */
+const Browse = {
+
+    //get category by id
+    /**
+     * get category by id .
+     * @param {String} categoryId -the id of category
+     * @returns {object} - category object
+     */
+    getCategoryById: async function(categoryId) {
+        try {
+            if (!checkMonooseObjectId([categoryId])) return 0;
+
+            let category = await categoryDocument.findById(categoryId, (err, category) => {
+                if (err) return 0;
+                return category;
+            }).catch((err) => 0);
+            if (!category) return 0;
+            if (category.playlist[0]) {
+                let playlist = await Playlist.getPlaylist(category.playlist[0]);
+                category.images = playlist.images;
+            }
+            return category;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
+     * Get list of playlists of one category
+     * @param {String} categoryId -the id of category
+     * @param {Number} limit
+     * @param {Number} offset
+     * @returns {Array&lt;object>} -array of playlist object
+     */
+    getCategoryPlaylists: async function(categoryId, limit, offset) {
+        try {
+            if (!checkMonooseObjectId([categoryId])) return 0;
+            let category = await this.getCategoryById(categoryId);
+            if (!category) return 0;
+            let playlists = []
+            for (let i = 0; i &lt; category.playlist.length; i++) {
+                let playlist = await Playlist.getPlaylist(category.playlist[i]);
+                if (playlist) {
+                    let playlistInfo = {};
+                    playlistInfo['_id'] = playlist._id;
+                    playlistInfo['name'] = playlist.name;
+                    playlistInfo['images'] = playlist.images;
+                    let owner = await User.getUserById(playlist.ownerId);
+                    if (owner) {
+                        playlistInfo['ownerId'] = owner._id;
+                        playlistInfo['ownerName'] = owner.displayName;
+                    }
+                    playlists.push(playlistInfo);
+                }
+            }
+            return limitOffset(limit, offset, playlists);
+        } catch (ex) {
+            return 0;
+        }
+    },
+
+    // get categories
+    /**
+     * get all categories
+     * @returns {Array&lt;object>} -array of categories object
+     * 
+     */
+    getCategoryies: async function() {
+        try {
+            let category = await categoryDocument.find({}, (err, category) => {
+                if (err) return 0;
+                return category;
+            }).catch((err) => 0);
+            for (let i = 0; i &lt; category.length; i++) {
+                if (category[i].playlist[0]) {
+                    let playlist = await Playlist.getPlaylist(category[i].playlist[0]);
+                    category[i].images = playlist.images;
+                }
+            }
+            return category;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    // to get genre list
+    /**
+     * get list of genre from artist object
+     * @returns {Array&lt;String>} -array of genres
+     * 
+     */
+    getGenreList: async function() {
+        try {
+            let artists = await artistDocument.find({}, (err, artists) => {
+                if (err) return 0;
+                return artists;
+            }).catch((err) => 0);
+
+            if (artists.length == 0) return 0;
+            var genre = [];
+            genre.push(artists[0].genre[0])
+            for (let i = 0; i &lt; artists.length; i++) {
+                if (genre.length == (Number(process.env.GENRE_LIMIT) ? Number(process.env.GENRE_LIMIT) : 10))
+                    continue;
+                for (let j = 0; j &lt; artists[i].genre.length; j++) {
+                    if (genre.length == (Number(process.env.GENRE_LIMIT) ? Number(process.env.GENRE_LIMIT) : 10))
+                        continue;
+                    for (let k = 0; k &lt; genre.length; k++) {
+                        if (artists[i].genre[j] == genre[k])
+                            break;
+                        if (k == genre.length - 1)
+                            genre.push(artists[i].genre[j]);
+                    }
+                }
+            }
+            return this.getPlaylistGenre(genre);
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
+     * get playlists of genre
+     * @param {Array&lt;string>} genres -array of genre  
+     * @returns {Array&lt;object>}
+     */
+    getPlaylistGenre: async function(genres) {
+        try {
+            if (!genres) return 0;
+            let playlists = await playlistDocument.find({}, (err, playlists) => {
+                if (err) return 0;
+                return playlists;
+            }).catch((err) => 0);
+            if (!playlists) return 0;
+            var allGenre = [];
+            var playlistsGenre = [];
+            for (let k = 0; k &lt; genres.length; k++) {
+                for (let i = 0; i &lt; playlists.length; i++) {
+                    if (!playlists[i].snapshot) continue;
+                    if (!playlists[i].snapshot[playlists[i].snapshot.length - 1]) continue;
+                    if (!playlists[i].snapshot[playlists[i].snapshot.length - 1].hasTracks) continue;
+                    let track = await trackDocument.findById(playlists[i].snapshot[playlists[i].snapshot.length - 1].hasTracks[0], (err, track) => {
+                        if (err) return 0;
+                        return track;
+                    }).catch((err) => 0);
+                    if (track &amp;&amp; track.genre &amp;&amp; (track.genre[0] == genres[k] || track.genre[1] == genres[k])) {
+                        const user1 = await userDocument.findById(playlists[i].ownerId);
+                        playlistsGenre.push({ playlist: playlists[i], owner: { id: playlists[i].ownerId, name: user1 ? user1.name : '' } });
+                        playlistsGenre[playlistsGenre.length - 1].playlist.snapshot = undefined;
+                    }
+                    if (playlistsGenre.length == 10) break;
+                }
+                if (playlistsGenre.length != 0)
+
+                    allGenre.push({ genre: genres[k], "playlists": playlistsGenre });
+                playlistsGenre = [];
+            }
+            return allGenre;
+        } catch (ex) {
+            return 0;
+        }
+    }
+
+
+}
+module.exports = Browse;
+/**
+ * set array by limit and offset
+ * @param {Number} limit 
+ * @param {Number} offset 
+ * @param {Array} categories 
+ */
+function limitOffset(limit, offset, categories) {
+    try {
+        let start = 0;
+        let end = categories.length;
+        if (offset != undefined) {
+            if (offset >= 0 &amp;&amp; offset &lt;= categories.length) {
+                start = offset;
+            }
+        }
+        if (limit != undefined) {
+            if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= categories.length) {
+                end = start + limit;
+            }
+        } else {
+            limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
+            if ((start + limit) > 0 &amp;&amp; (start + limit) &lt;= categories.length) {
+                end = start + limit;
+            }
+        }
+        return categories.slice(start, end);
+    } catch (ex) {
+        return 0;
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Album.html">Album</a></li><li><a href="Artist.html">Artist</a></li><li><a href="Browse.html">Browse</a></li><li><a href="Image.html">Image</a></li><li><a href="Library.html">Library</a></li><li><a href="Player.html">Player</a></li><li><a href="Playlist.html">Playlist</a></li><li><a href="Search.html">Search</a></li><li><a href="Track.html">Track</a></li><li><a href="User.html">User</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Fuzzysearch">Fuzzysearch</a></li><li><a href="global.html#limitOffset">limitOffset</a></li><li><a href="global.html#removeDupliactes">removeDupliactes</a></li><li><a href="global.html#search">search</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 03 2020 09:59:38 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

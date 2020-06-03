@@ -1,4 +1,32 @@
-const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: track-api.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: track-api.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 const Image = require('./image-api');
 /** @namespace */
@@ -101,9 +129,9 @@ const Track = {
     },
     /** 
      *  get several tracks
-     * @param {Array<string>} tracksIDs - the track ids
+     * @param {Array&lt;string>} tracksIDs - the track ids
      * @param {Object} user - the user
-     * @returns {Array<objects>}
+     * @returns {Array&lt;objects>}
      */
     getTracks: async function(trackIds, user) {
         try{
@@ -154,7 +182,7 @@ const Track = {
     /** 
      *  get audio features for tracks
      * @param {string}  trackIds  - the track ids 
-     * @returns {Array<Object>}
+     * @returns {Array&lt;Object>}
      */
     getAudioFeaturesTracks: async function(trackIds) {
         try{
@@ -192,7 +220,7 @@ const Track = {
         if (playlist.snapshot.length == 0) return false;
         if (playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length == 0) return false;
         ifFind = false;
-        for (let i = 0; i < playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++)
+        for (let i = 0; i &lt; playlist.snapshot[playlist.snapshot.length - 1].hasTracks.length; i++)
             if (String(trackId) == String(playlist.snapshot[playlist.snapshot.length - 1].hasTracks[i])) {
                 ifFind = true;
                 break;
@@ -247,7 +275,7 @@ const Track = {
      * user create track
      * @param {string}  url - the url of track
      * @param  {Number}  trackNumber - the number of track
-     * @param {Array<string>}  availableMarkets - the markets
+     * @param {Array&lt;string>}  availableMarkets - the markets
      * @param {String} artistID - the artist id
      * @param {String} albumID - the album id
      *  @param {String} key - track encryption key
@@ -321,7 +349,7 @@ const Track = {
         // delete from artist
 
         if (!artist.addTracks) return 0;
-        for (let i = 0; i < artist.addTracks.length; i++) {
+        for (let i = 0; i &lt; artist.addTracks.length; i++) {
             if (String(artist.addTracks[i].trackId) == trackId) {
                 artist.addTracks.splice(i, 1);
                 break;
@@ -333,7 +361,7 @@ const Track = {
 
         if (!album) return 0;
         if (!album.hasTracks) return 0;
-        for (let i = 0; i < album.hasTracks.length; i++) {
+        for (let i = 0; i &lt; album.hasTracks.length; i++) {
             if (String(album.hasTracks[i].trackId) == trackId) {
                 album.hasTracks.splice(i, 1);
                 break;
@@ -346,9 +374,9 @@ const Track = {
             for (let playlist of files) {
                 if (!playlist.snapshot) continue;
 
-                for (let i = 0; i < playlist.snapshot.length; i++) {
+                for (let i = 0; i &lt; playlist.snapshot.length; i++) {
                     if (!playlist.snapshot[i].hasTracks) continue;
-                    for (let j = 0; j < playlist.snapshot[i].hasTracks.length; j++) {
+                    for (let j = 0; j &lt; playlist.snapshot[i].hasTracks.length; j++) {
                         if (String(playlist.snapshot[i].hasTracks[j]) == trackId) {
                             playlist.snapshot[i].hasTracks.splice(j, 1);
                             break;
@@ -362,12 +390,12 @@ const Track = {
             if (err) return 0;
             for (let user1 of files) {
                 if (user1.recentlySearch) {
-                    for (let i = 0; i < user1.recentlySearch.length; i++)
-                        if (String(user1.recentlySearch[i].id) == String(trackId) && user1.recentlySearch[i].objectType == 'track')
+                    for (let i = 0; i &lt; user1.recentlySearch.length; i++)
+                        if (String(user1.recentlySearch[i].id) == String(trackId) &amp;&amp; user1.recentlySearch[i].objectType == 'track')
                             user1.recentlySearch.splice(i, 1)
                 }
                 if (user1.playHistory) {
-                    for (let i = 0; i < user1.playHistory.length; i++)
+                    for (let i = 0; i &lt; user1.playHistory.length; i++)
                         if (String(user1.playHistory[i].trackId) == String(trackId))
                             user1.playHistory.splice(i, 1)
                 }
@@ -423,7 +451,7 @@ const Track = {
                 if (tracksRelated.length > 10) return tracksRelated;
                 if (!trackFile.genre) continue;
                 if (String(trackFile._id) == trackId) continue;
-                for (let i = 0; i < trackFile.genre.length; i++) {
+                for (let i = 0; i &lt; trackFile.genre.length; i++) {
                     if (track.genre.includes(trackFile.genre[i])) {
                         tracksRelated.push(trackFile);
                         break;
@@ -464,7 +492,7 @@ const Track = {
             if (tracksRelated.length > 10) return;
             if (!trackFile.genre) continue;
             if (String(trackFile._id) == trackId) continue;
-            for (let i = 0; i < trackFile.genre.length; i++) {
+            for (let i = 0; i &lt; trackFile.genre.length; i++) {
                 if (track.genre.includes(trackFile.genre[i])) {
                     // get full track
                     const fullTrackFile = await this.getFullTrack(String(trackFile._id), user);
@@ -542,4 +570,26 @@ const Track = {
 
 }
 
-module.exports = Track;
+module.exports = Track;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Album.html">Album</a></li><li><a href="Artist.html">Artist</a></li><li><a href="Browse.html">Browse</a></li><li><a href="Image.html">Image</a></li><li><a href="Library.html">Library</a></li><li><a href="Player.html">Player</a></li><li><a href="Playlist.html">Playlist</a></li><li><a href="Search.html">Search</a></li><li><a href="Track.html">Track</a></li><li><a href="User.html">User</a></li></ul><h3>Global</h3><ul><li><a href="global.html#Fuzzysearch">Fuzzysearch</a></li><li><a href="global.html#limitOffset">limitOffset</a></li><li><a href="global.html#removeDupliactes">removeDupliactes</a></li><li><a href="global.html#search">search</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Wed Jun 03 2020 09:59:38 GMT+0200 (Eastern European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

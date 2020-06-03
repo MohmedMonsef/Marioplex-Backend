@@ -1,0 +1,97 @@
+{
+	"info": {
+		"_postman_id": "3a74f534-277f-4c72-bf92-6776edc56bc2",
+		"name": "browse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get category",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/categories/5ec36eeaedbc6b20ecdbd823",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"categories",
+						"5ec36eeaedbc6b20ecdbd823"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get playlists of category",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/categories/5ec36eeaedbc6b20ecdbd823/playlists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"categories",
+						"5ec36eeaedbc6b20ecdbd823",
+						"playlists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get categories ",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/browse/categories",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"browse",
+						"categories"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

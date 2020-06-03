@@ -1,156 +1,12 @@
 {
 	"info": {
 		"_postman_id": "9673d7d3-2c96-4274-aca2-e87beae72ae8",
-		"name": "Browse and library collection",
+		"name": "library",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "get category",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"name": "Content-Type",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "image",
-							"value": null,
-							"type": "file"
-						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/browse/categories/5ec36eeaedbc6b20ecdbd823",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"browse",
-						"categories",
-						"5ec36eeaedbc6b20ecdbd823"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get playlists of category",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "image",
-							"value": null,
-							"type": "file"
-						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/browse/categories/5ec36eeaedbc6b20ecdbd823/playlists",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"browse",
-						"categories",
-						"5ec36eeaedbc6b20ecdbd823",
-						"playlists"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get categories ",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "x-auth-token",
-						"name": "Content-Type",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "image",
-							"value": null,
-							"type": "file"
-						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/browse/categories",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"browse",
-						"categories"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "get following artist",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -161,21 +17,6 @@
 						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw"
 					}
 				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "image",
-							"value": null,
-							"type": "file"
-						}
-					],
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "http://localhost:3000/api/me/followingArtist",
 					"protocol": "http",
@@ -212,8 +53,9 @@
 					"formdata": [
 						{
 							"key": "image",
-							"value": null,
-							"type": "file"
+							"type": "file",
+							"src": [],
+							"disabled": true
 						}
 					],
 					"options": {

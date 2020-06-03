@@ -1,0 +1,266 @@
+{
+	"info": {
+		"_postman_id": "dc72a091-5174-435d-a457-7dbfd24bc57b",
+		"name": "image",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3000/api/images/upload/5e8cb118084a9d2e6c8f21d7?belongs_to=user&height=100&width=100",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5ODUxNjgzLCJleHAiOjMxNDY0ODg4NzgwMjU5NjcwMDB9.11pzqAhQfGhoXv9qMMzr5piaLYjVZb2uKNMQ9amYC_I",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": "/C:/Users/bahaaEldeen/Pictures/image.png",
+							"disabled": true
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/images/upload/5eb52a2563eea332d416b9ae?height=100&width=100&belongs_to=playlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"images",
+						"upload",
+						"5eb52a2563eea332d416b9ae"
+					],
+					"query": [
+						{
+							"key": "height",
+							"value": "100"
+						},
+						{
+							"key": "width",
+							"value": "100"
+						},
+						{
+							"key": "source_id",
+							"value": "5eb0906430a9a01f144b723c",
+							"disabled": true
+						},
+						{
+							"key": "belongs_to",
+							"value": "playlist"
+						}
+					]
+				},
+				"description": "upload image"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/images/5ea5e68a2adfe1180479cdb8?belongs_to=artist",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZThjYjExODA4NGE5ZDJlNmM4ZjIxZDciLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg2NTk3MDk4LCJleHAiOjQ3MzMwODM0OTh9.uP8Qm7K7537QBib4HGVEG1BF_Neb-o8EGeSRwwDwbRM"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/images/5ec3372e903e064e047da9ab?belongs_to=playlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"images",
+						"5ec3372e903e064e047da9ab"
+					],
+					"query": [
+						{
+							"key": "belongs_to",
+							"value": "playlist"
+						}
+					]
+				},
+				"description": "get image "
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/images/update/5eb0a499ec0c444e9c489820?belongs_to=track&height=100&width=100",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDEyNDI3LCJleHAiOjMxNDY0ODg4NzgwMjYxMjgwMDB9.fTocCHc0k5BzE0ijGOm27s0QxOVFjdOyuxqjyEGusp",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/bahaaEldeen/Pictures/2-1___Best_Tech-Sites.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/images/update/5eb0a499ec0c444e9c489820?belongs_to=track&height=100&width=100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"images",
+						"update",
+						"5eb0a499ec0c444e9c489820"
+					],
+					"query": [
+						{
+							"key": "belongs_to",
+							"value": "track"
+						},
+						{
+							"key": "height",
+							"value": "100"
+						},
+						{
+							"key": "width",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/images/5eb511d0dd06db2ffca302be?belongs_to=user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/images/5eb511d0dd06db2ffca302be?belongs_to=user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"images",
+						"5eb511d0dd06db2ffca302be"
+					],
+					"query": [
+						{
+							"key": "belongs_to",
+							"value": "user"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/images/get_id/5eb0906430a9a01f144b723c/?belongs_to=user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/images/get_id/5eb0906430a9a01f144b723c/?belongs_to=user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"images",
+						"get_id",
+						"5eb0906430a9a01f144b723c",
+						""
+					],
+					"query": [
+						{
+							"key": "belongs_to",
+							"value": "user"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/images/delete/5eb511d0dd06db2ffca302be?source_id=5eb0906430a9a01f144b723c&belongs_to=user",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDEyNDI3LCJleHAiOjMxNDY0ODg4NzgwMjYxMjgwMDB9.fTocCHc0k5BzE0ijGOm27s0QxOVFjdOyuxqjyEGuspE",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/images/delete/5eb511d0dd06db2ffca302be?source_id=5eb0906430a9a01f144b723c&belongs_to=user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"images",
+						"delete",
+						"5eb511d0dd06db2ffca302be"
+					],
+					"query": [
+						{
+							"key": "source_id",
+							"value": "5eb0906430a9a01f144b723c"
+						},
+						{
+							"key": "belongs_to",
+							"value": "user"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

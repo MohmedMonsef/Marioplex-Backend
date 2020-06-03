@@ -12,7 +12,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\"email\":\"bahaaeldeen1999@gmail.com\",\n\"password\":\"12345678\"\n}",
+					"raw": "{\n\"email\":\"dai.a.elrihany@gmail.com\",\n\"password\":\"12345678\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -430,9 +430,6 @@
 		},
 		{
 			"name": "http://localhost:3000/api/me/albums/contains",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -442,17 +439,8 @@
 						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"albums_ids\":\"5eb0a498ec0c444e9c48981e\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "http://localhost:3000/api/me/albums/contains",
+					"raw": "http://localhost:3000/api/me/albums/contains?albums_ids=5eb0a498ec0c444e9c48981e",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -463,6 +451,12 @@
 						"me",
 						"albums",
 						"contains"
+					],
+					"query": [
+						{
+							"key": "albums_ids",
+							"value": "5eb0a498ec0c444e9c48981e"
+						}
 					]
 				}
 			},
@@ -470,9 +464,6 @@
 		},
 		{
 			"name": "http://localhost:3000/api/me/tracks/contains",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [
@@ -482,17 +473,8 @@
 						"type": "text"
 					}
 				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"tracks_ids\":\"5eb0a499ec0c444e9c489820\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "http://localhost:3000/api/me/tracks/contains",
+					"raw": "http://localhost:3000/api/me/tracks/contains?tracks_ids=5eb0a499ec0c444e9c489820",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -503,6 +485,12 @@
 						"me",
 						"tracks",
 						"contains"
+					],
+					"query": [
+						{
+							"key": "tracks_ids",
+							"value": "5eb0a499ec0c444e9c489820"
+						}
 					]
 				}
 			},
@@ -620,6 +608,149 @@
 						"me",
 						"unlike",
 						"5eb0a499ec0c444e9c489820"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/me/following/user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwNjg4MTkwLCJleHAiOjMxNDY0ODg4NzgwMjY4MDM3MDB9.jr-AzUxXBEF9veCGB0JZHUtEpnjSQOQ-_w5Vi5XGh0M",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/following/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"following",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/me/follow/user/5eb08fce30a9a01f144b722d",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwNjg4MTkwLCJleHAiOjMxNDY0ODg4NzgwMjY4MDM3MDB9.jr-AzUxXBEF9veCGB0JZHUtEpnjSQOQ-_w5Vi5XGh0M",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/follow/user/5eb08fce30a9a01f144b722d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"follow",
+						"user",
+						"5eb08fce30a9a01f144b722d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/me/unfollow/user/5eb08fce30a9a01f144b722d",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTA2NDMwYTlhMDFmMTQ0YjcyM2MiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwNjg4MTkwLCJleHAiOjMxNDY0ODg4NzgwMjY4MDM3MDB9.jr-AzUxXBEF9veCGB0JZHUtEpnjSQOQ-_w5Vi5XGh0M",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/unfollow/user/5eb08fce30a9a01f144b722d",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"unfollow",
+						"user",
+						"5eb08fce30a9a01f144b722d"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/me/followers/user",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZjZTMwYTlhMDFmMTQ0YjcyMmQiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwNjg4NzkzLCJleHAiOjMxNDY0ODg4NzgwMjY4MDQwMDB9.gaUBESzDLwhm7uPg9pvv03aH4gsS4RlT3TyPAj7mtoA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/followers/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"followers",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/remove",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWQyMDAxNDZlZDVmNTM1YzQ0MmQwODYiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU5MDgyMDg4NSwiZXhwIjozMjU1OTMwNDQ3MzY4NX0.kSNAHesNibSbwqVCF3IFm-Lq5YisrqvVB0fTW0NXtV0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/remove",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"remove"
 					]
 				}
 			},

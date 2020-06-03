@@ -1,0 +1,526 @@
+{
+	"info": {
+		"_postman_id": "d407258c-d73a-48dd-8540-76315923293b",
+		"name": "artist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create album",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"name\":\"album1\",\r\n\t\"label\":\"label\",\r\n\t\"albumtype\":\"normal\",\r\n\t\"releaseDate\":\"1/1/2002\",\r\n\t\"availablemarkets\":\"eg,fr\",\r\n\t\"genre\":\"normal\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/Artists/me/Albums",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists",
+						"me",
+						"Albums"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get artist",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/Artists/:artist_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists",
+						":artist_id"
+					],
+					"variable": [
+						{
+							"key": "artist_id",
+							"value": "5eb0a44b9b15d854c08f7362"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get several artists",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/Artists?artists_ids=5eb0a44b9b15d854c08f7362,5eb0a44e9b15d854c08f7363,5eb0a4519b15d854c08f7364",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists"
+					],
+					"query": [
+						{
+							"key": "artists_ids",
+							"value": "5eb0a44b9b15d854c08f7362,5eb0a44e9b15d854c08f7363,5eb0a4519b15d854c08f7364"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user artist",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/artist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"artist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create track",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "high",
+							"type": "file",
+							"src": "/G:/MARIOPLEX/New folder/audio_320k7.webm"
+						},
+						{
+							"key": "medium",
+							"type": "file",
+							"src": "/G:/MARIOPLEX/New folder/audio_256k7.webm"
+						},
+						{
+							"key": "low",
+							"type": "file",
+							"src": "/G:/MARIOPLEX/New folder/audio_128k7.webm"
+						},
+						{
+							"key": "high_enc",
+							"type": "file",
+							"src": "/G:/MARIOPLEX/New folder/audio_320k_e7.webm"
+						},
+						{
+							"key": "medium_enc",
+							"type": "file",
+							"src": "/G:/MARIOPLEX/New folder/audio_256k_e7.webm"
+						},
+						{
+							"key": "low_enc",
+							"type": "file",
+							"src": "/G:/MARIOPLEX/New folder/audio_128k_e7.webm"
+						},
+						{
+							"key": "review",
+							"type": "file",
+							"src": "/G:/MARIOPLEX/New folder/audio_review7.webm"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/artists/me/albums/:album_id/tracks?name=track1&availableMarkets=eg,fr&trackNumber=12&duration=1200&key=a4631a153a443df9eed0593043db7519&keyId=f3c5e0361e6654b28f8049c778b23946&genres=pop,jazz",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"artists",
+						"me",
+						"albums",
+						":album_id",
+						"tracks"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "track1"
+						},
+						{
+							"key": "availableMarkets",
+							"value": "eg,fr"
+						},
+						{
+							"key": "trackNumber",
+							"value": "12"
+						},
+						{
+							"key": "duration",
+							"value": "1200"
+						},
+						{
+							"key": "key",
+							"value": "a4631a153a443df9eed0593043db7519"
+						},
+						{
+							"key": "keyId",
+							"value": "f3c5e0361e6654b28f8049c778b23946"
+						},
+						{
+							"key": "genres",
+							"value": "pop,jazz"
+						}
+					],
+					"variable": [
+						{
+							"key": "album_id",
+							"value": "5ec6c7c5765eaa4040d376bb"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get related artists",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/Artists/:artist_id/related_artists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists",
+						":artist_id",
+						"related_artists"
+					],
+					"variable": [
+						{
+							"key": "artist_id",
+							"value": "5eb0a44b9b15d854c08f7362"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get top tracks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/Artists/:artist_id/top-tracks?country=eg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists",
+						":artist_id",
+						"top-tracks"
+					],
+					"query": [
+						{
+							"key": "country",
+							"value": "eg"
+						}
+					],
+					"variable": [
+						{
+							"key": "artist_id",
+							"value": "5eb0a44b9b15d854c08f7362"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get artist albums",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/Artists/:artist_id/Albums",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists",
+						":artist_id",
+						"Albums"
+					],
+					"variable": [
+						{
+							"key": "artist_id",
+							"value": "5eb0a44b9b15d854c08f7362"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get artist number of followers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/Artists/numberOfFollowers/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists",
+						"numberOfFollowers",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "5eb0a4749b15d854c08f736e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get artist tracks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/Artists/:artist_id/Tracks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artists",
+						":artist_id",
+						"Tracks"
+					],
+					"variable": [
+						{
+							"key": "artist_id",
+							"value": "5eb0a4749b15d854c08f736e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete artist album",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/artist/:album_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"artist",
+						":album_id"
+					],
+					"variable": [
+						{
+							"key": "album_id",
+							"value": "5ec6c7c5765eaa4040d376bb"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update artist info",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"name\":\"Nada\",\r\n\"genre\":\"action,scifi\",\r\n\"info\":\"info\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/Artist/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Artist",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "claim user to artist",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTE2MzMwYTlhMDFmMTQ0YjcyM2YiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU5MDA4ODMxNywiZXhwIjozMTQ2NDg4ODc4MDI2MjAzNjAwfQ.FR1Tn35EZPyCny3pDjd34A07VVddnLeyjJlqfkKqTd8",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"new artist\",\r\n\"genre\":\"action,scifi\",\r\n\"info\":\"info\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/me/ToArtist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"ToArtist"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

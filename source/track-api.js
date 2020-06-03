@@ -282,6 +282,7 @@ const Track = {
             mode: Math.floor(Math.random() * 100),
             speechiness: Math.floor(Math.random() * 100),
             tempo: Math.floor(Math.random() * 100),
+            popularity: Math.floor(Math.random() * 100),
             timeSignature: Date.now(),
             valence: Math.floor(Math.random() * 100),
             like: 0,

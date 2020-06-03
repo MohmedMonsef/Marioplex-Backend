@@ -1,0 +1,576 @@
+{
+	"info": {
+		"_postman_id": "75cc0fbb-e660-4608-bc10-b2f671ee3a74",
+		"name": "playlist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add track to playlist",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"tracks\":\"5eb0a499ec0c444e9c489820,5eb0a4dcec0c444e9c489825,5eb0a51eec0c444e9c48982a,5eb0a55eec0c444e9c48982f,5eb0a5a1ec0c444e9c489834\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/tracks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"tracks"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "change playlist details",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"name\":\"new ole ole\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create playlist",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"name\":\"ole ole\",\r\n\t\"describtion\":\"ant desc\"\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/users/playlists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"playlists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get playlist tracks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/tracks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"tracks"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get current user playlists",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/playlists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"playlists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get public user playlists",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/users/:user_id/playlists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						":user_id",
+						"playlists"
+					],
+					"variable": [
+						{
+							"key": "user_id",
+							"value": "5eb08fce30a9a01f144b722d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get playlist",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user deleted playlist",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/deletedplaylists",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"deletedplaylists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove tracks from playlist",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"track_ids\":\"5eb0a55eec0c444e9c48982f,5eb0a5a1ec0c444e9c489834\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/tracks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"tracks"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reorder playlist tracks",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"range_start\":2,\r\n\t\"range_length\":2,\r\n\t\"insert_before\":1\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/tracks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"tracks"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "restore deleted playlist",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/restoreplaylists?playlistsIds=5eb5249d680ef51b4c4492a9",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"restoreplaylists"
+					],
+					"query": [
+						{
+							"key": "playlistsIds",
+							"value": "5eb5249d680ef51b4c4492a9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete playlist",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/me/delete/playlists/:playlist_id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"delete",
+						"playlists",
+						":playlist_id"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5eb5249d680ef51b4c4492a9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "toggle public state",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/public",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"public"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "toggle collaborative state",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/collaborative",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"collaborative"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec6d7b1765eaa4040d376c1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "follow playlist",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/followers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"followers"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec2af11afb12b366cf0476d"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "unfollow playlist",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOGZlMjMwYTlhMDFmMTQ0YjcyMmYiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTkwMDg1NDcwLCJleHAiOjMxNDY0ODg4NzgwMjYyMDEwMDB9.c3b9KyIXDwdWv4orboFgXwC63AwUqLelanTZZ2_AQYI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/playlists/:playlist_id/followers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"playlists",
+						":playlist_id",
+						"followers"
+					],
+					"variable": [
+						{
+							"key": "playlist_id",
+							"value": "5ec2af11afb12b366cf0476d"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

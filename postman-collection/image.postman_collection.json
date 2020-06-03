@@ -161,7 +161,7 @@
 			"response": []
 		},
 		{
-			"name": "het images of entity",
+			"name": "get images of entity",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -195,7 +195,7 @@
 			"response": []
 		},
 		{
-			"name": "get image if of entity",
+			"name": "get image id of entity",
 			"request": {
 				"method": "GET",
 				"header": [],

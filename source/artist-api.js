@@ -13,14 +13,14 @@ const Artist = {
     getArtistNumberOfFollowersInMonth: async function(artistId) {
         let artist = await this.getArtist(artistId);
         if (!artist) return -1;
-        if (!artist.followed) {artist.followed = []; return 0;}
+        if (!artist.followed) { artist.followed = []; return 0; }
         var numberOfFollowers = 0;
         var today = new Date();
-        for(let i=0;i<artist.followed.length;i++){
-            let date=artist.followed[i].date;
-            if(date.getMonth() == today.getMonth() &&
-            date.getFullYear() == today.getFullYear())
-              numberOfFollowers +=1;
+        for (let i = 0; i < artist.followed.length; i++) {
+            let date = artist.followed[i].date;
+            if (date.getMonth() == today.getMonth() &&
+                date.getFullYear() == today.getFullYear())
+                numberOfFollowers += 1;
         }
         return numberOfFollowers;
 
@@ -33,15 +33,15 @@ const Artist = {
     getArtistNumberOfFollowersInDay: async function(artistId) {
         let artist = await this.getArtist(artistId);
         if (!artist) return -1;
-        if (!artist.followed) {artist.followed = []; return 0;}
+        if (!artist.followed) { artist.followed = []; return 0; }
         var numberOfFollowers = 0;
         var today = new Date();
-        for(let i=0;i<artist.followed.length;i++){
-            let date=artist.followed[i].date;
-            if(date.getMonth() == today.getMonth() &&
-            date.getFullYear() == today.getFullYear() &&
-            date.getDay() == today.getDay())
-               numberOfFollowers +=1;
+        for (let i = 0; i < artist.followed.length; i++) {
+            let date = artist.followed[i].date;
+            if (date.getMonth() == today.getMonth() &&
+                date.getFullYear() == today.getFullYear() &&
+                date.getDay() == today.getDay())
+                numberOfFollowers += 1;
         }
         return numberOfFollowers;
     },
@@ -53,14 +53,14 @@ const Artist = {
     getArtistNumberOfFollowersInYear: async function(artistId) {
         let artist = await this.getArtist(artistId);
         if (!artist) return -1;
-        if (!artist.followed) {artist.followed = []; return 0;}
+        if (!artist.followed) { artist.followed = []; return 0; }
         var today = new Date();
         var numberOfFollowers = 0;
-        if(!artist.followed)artist.followed=[];
-        for(let i=0;i<artist.followed.length;i++){
-            let date=artist.followed[i].date;
-            if(date.getFullYear() == today.getFullYear())
-               numberOfFollowers +=1;
+        if (!artist.followed) artist.followed = [];
+        for (let i = 0; i < artist.followed.length; i++) {
+            let date = artist.followed[i].date;
+            if (date.getFullYear() == today.getFullYear())
+                numberOfFollowers += 1;
         }
         return numberOfFollowers;
 
@@ -120,7 +120,7 @@ const Artist = {
     getPopularArtists: async function() {
         // with - is from big to small and without is from small to big
         var reArtists = []
-        const artists = await artistDocument.find({}).sort('-popularity')
+        const artists = await artistDocument.find({}).sort('-popularity').limit(Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20);
         if (artists) {
             var limit; // to limit the num of artists by frist 20 only but should check if num of albums less than 10  
             if (artists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = artists.length;
@@ -333,7 +333,7 @@ const Artist = {
         let relatedArtists = [];
         //FILTER THE ARTISTS BASED ON THEIR GENRE
         for (let artistIndx in artists) {
-            if(String(artists[artistIndx]._id)==String(artistId))continue;
+            if (String(artists[artistIndx]._id) == String(artistId)) continue;
             for (var i = 0; i < artists[artistIndx].genre.length; i++) {
                 for (var j = 0; j < artist.genre.length; j++) {
                     if (artists[artistIndx].genre[i] == artist.genre[j]) {

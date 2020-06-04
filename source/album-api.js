@@ -6,9 +6,9 @@ const connection = require('../db-connection/connection');
 const track = require('./track-api');
 const artist = require('./artist-api');
 const checkMonooseObjectId = require('../validation/mongoose-objectid')
-/** @namespace */
+    /** @namespace */
 const Album = {
-     /**
+    /**
      * add track to album
      * @param {string} albumId - album id
      * @param {object} track
@@ -63,15 +63,15 @@ const Album = {
                 await track.deleteTrack(userId, album.hasTracks[i].trackId);
             }
         }
-        await artistDocument.update({'_id':artistD._id},{$pull:{'addAlbums':{albumId}}}); 
-    
-        
+        await artistDocument.update({ '_id': artistD._id }, { $pull: { 'addAlbums': { albumId } } });
+
+
         if (!await albumDocument.findByIdAndDelete(albumId)) return 0;
         await userDocument.find({}, async(err, files) => {
             if (err) return 0;
             for (let user of files) {
                 if (user.saveAlbum) {
-                    await userDocument.update({'_id':userId},{$pull:{'saveAlbum':{albumId}}}); 
+                    await userDocument.update({ '_id': userId }, { $pull: { 'saveAlbum': { albumId } } });
                 }
                 if (user.recentlySearch) {
                     for (let i = 0; i < user.recentlySearch.length; i++)
@@ -90,14 +90,14 @@ const Album = {
 
         return 1;
     },
-     /**
+    /**
      * get new releases
      * @returns {JSON} -contain array of albums object
      */
     getNewReleases: async function() {
         // with - is from big to small and without is from small to big
         var reAlbums = []
-        const albums = await albumDocument.find({}).sort('-releaseDate')
+        const albums = await albumDocument.find({}).sort('-releaseDate').limit(Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20);
         if (albums) {
             var limit; // to limit the num of albums by frist 10 only but should check if num of albums less than 10  
             if (albums.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = albums.length;
@@ -111,14 +111,14 @@ const Album = {
         const reAlbumsJson = { albums: reAlbums };
         return reAlbumsJson;
     },
-     /**
+    /**
      * get popular albums
      * @returns {JSON} -contain array of albums object
      */
     getPopularAlbums: async function() {
         // with - is from big to small and without is from small to big
         var reAlbums = []
-        const albums = await albumDocument.find({}).sort('-popularity')
+        const albums = await albumDocument.find({}).sort('-popularity').limit(Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20);
         if (albums) {
             var limit; // to limit the num of albums by frist 20 only but should check if num of albums less than 10  
             if (albums.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = albums.length;
@@ -158,7 +158,7 @@ const Album = {
 
             }
         }
-        
+
         if (album) {
             let artistInfo = await artist.getArtist(album.artistId);
             let track = await this.getTracksAlbum(albumId, user, isAuth);
@@ -171,20 +171,18 @@ const Album = {
             }
             if (track) {
                 albumInfo['track'] = track;
-            } 
-            else {
+            } else {
                 albumInfo['track'] = []
             }
             return albumInfo;
-        } 
-        else {
+        } else {
             return 0;
         }
 
 
 
     },
-     /**
+    /**
      * find the order of track in album
      * @param {string} trackId -the id of track
      * @param {object} album -album object
@@ -289,7 +287,7 @@ const Album = {
         }
         return 0;
     },
-     /**
+    /**
      * save album (make user follow an album)
      * @param {object} user 
      * @param {string} albumId
@@ -365,4 +363,3 @@ const Album = {
     }
 }
 module.exports = Album;
-

@@ -6,7 +6,7 @@ const Track = require('./track-api');
 const Album = require('./album-api');
 const Artist = require('./artist-api');
 const checkMonooseObjectId = require('../validation/mongoose-objectid')
-/** @namespace */
+    /** @namespace */
 const Playlist = {
 
     /**
@@ -30,7 +30,7 @@ const Playlist = {
     getPopularPlaylists: async function() {
         // with - is from big to small and without is from small to big
         var rePlaylists = []
-        const playlists = await playlistDocument.find({ isPublic: true }).sort('-popularity')
+        const playlists = await playlistDocument.find({ isPublic: true }).sort('-popularity').limit(Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20);
         if (playlists) {
             var limit; // to limit the num of playlists by frist 20 only but should check if num of albums less than 10  
             if (playlists.length < Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20) limit = playlists.length;

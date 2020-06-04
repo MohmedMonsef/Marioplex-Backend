@@ -13,9 +13,9 @@ after_success:
 deploy:
   provider: elasticbeanstalk
   region: us-east-1
-  app: Back
-  env: Back-env
-  bucket_name: elasticbeanstalk-us-east-1-658647886370
+  app: BackEnd
+  env: Backend-env
+  bucket_name: marioplex
   bucket_path: Back
   on:
     branch: master

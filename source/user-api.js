@@ -602,7 +602,7 @@ const User = {
     confirmPremium: async function(user) {
         try {
             if (!user.premiumConfirm) user.premiumConfirm = true;
-
+            user.product = 'premium';
             await user.save();
             return true;
         } catch (ex) {
@@ -955,7 +955,6 @@ const User = {
             if (user.product == 'premium') {
                 return false;
             }
-            user.product = 'premium';
             user.premium['expiresDate'] = expiresDate;
             user.premium['cardNumber'] = cardNumber;
             user.premium['isMonth'] = isMonth;

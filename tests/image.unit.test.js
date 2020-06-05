@@ -147,6 +147,7 @@ afterEach(async () => {
     await albumDocument.find({},(err,files)=>{
         for(let file of files) albums.push(file)
     })
+
  });
 afterAll(async () => {
     await dbHandler.clearDatabase();

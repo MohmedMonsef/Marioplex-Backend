@@ -124,7 +124,6 @@ beforeAll(async () => {
     
 });
 afterEach(async () => {
-    ;
     await userDocument.find({},(err,files)=>{
         usersInDB = [];
         for(let user of files) usersInDB.push(user);
@@ -132,15 +131,17 @@ afterEach(async () => {
     tracks = [];
     albums = [];
     artists = [];
+    await albumDocument.find({},(err,files)=>{
+        for(let file of files) albums.push(file)
+    })
     await artistDocument.find({},(err,files)=>{
         for(let file of files) artists.push(file)
     })
     await trackDocument.find({},(err,files)=>{
         for(let file of files) tracks.push(file)
     })
-    await albumDocument.find({},(err,files)=>{
-        for(let file of files) albums.push(file)
-    })
+   await new Promise(resolve => setTimeout(resolve, 10));
+
  });
 afterAll(async () => {
     await dbHandler.clearDatabase();
@@ -719,6 +720,10 @@ test("promote to premium",async ()=>{
     const p = await mockUser.promoteToPremium(usersInDB[2]._id);
     expect(p).toBeTruthy();
 })
+test("confirm premium of user",async ()=>{
+    let confirm = await mockUser.confirmPremium(usersInDB[2]);
+    expect(confirm).toBeTruthy();
+})
 test("promote to premium non mongoose",async ()=>{
     const p = await mockUser.promoteToPremium("1");
     expect(p).toBeFalsy();
@@ -773,6 +778,7 @@ test("check authorized album for user",async ()=>{
     expect(t).toBeTruthy();
 })
 test("check authorized album for non mongoose user",async ()=>{
+    console.log(albums[0]);
     const t = await mockUser.checkAuthorizedAlbum("1",albums[0]._id);
     expect(t).toBeFalsy();
 })

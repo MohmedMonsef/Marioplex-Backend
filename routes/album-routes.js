@@ -1,13 +1,13 @@
 const router = require('express').Router();
 
-const albumApi = require('../source/album-api');
-const userApi = require('../source/user-api');
+const Album = require('../source/album-api');
+const User = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
-const rateLimit = require("express-rate-limit");
+const RateLimit = require("express-rate-limit");
 const limitOffset = require('../middlewares/limitOffset');
 // add rate limiting
-const limiter = rateLimit({
+const limiter = RateLimit({
     windowMs: 60 * 1000,
     max: 30
 
@@ -20,10 +20,10 @@ router.delete('/me/albums', checkAuth, limiter, async(req, res, next) => {
     }
     const albumId = req.body.ids.split(',');
     const userId = req.user._id;
-    const user = await userApi.getUserById(userId);
+    const user = await User.getUserById(userId);
     if (!user) res.status(403);
     else {
-        const album = await albumApi.unsaveAlbum(user, albumId).catch(next);
+        const album = await Album.unsaveAlbum(user, albumId).catch(next);
         if (!album) res.status(404).json({
             message: "album hasn't been saved before"
 
@@ -43,10 +43,10 @@ router.put('/me/Albums', checkAuth, limiter, async(req, res, next) => {
     }
     const albumId = req.body.ids.split(',');
     const userId = req.user._id;
-    const user = await userApi.getUserById(userId);
+    const user = await User.getUserById(userId);
     if (!user) res.status(403);
     else {
-        const album = await albumApi.saveAlbum(user, albumId).catch(next);
+        const album = await Album.saveAlbum(user, albumId).catch(next);
         if (!album) res.status(404).json({
             message: "album has been already saved"
         }); //not found
@@ -67,7 +67,7 @@ router.get('/albums/:album_id', checkIfAuth, limiter, async(req, res, next) => {
     let userId = undefined;
     if (req.isAuth)
         userId = req.user._id;
-    const album = await albumApi.getAlbumArtist(albumId, userId, req.isAuth).catch(next);
+    const album = await Album.getAlbumArtist(albumId, userId, req.isAuth).catch(next);
     if (!album) res.status(404).send("NO Albums found"); //not found
     else res.status(200).send(album);
 
@@ -81,7 +81,7 @@ router.get('/albums', limiter, async(req, res, next) => {
     }
     var albumIds = req.body.ids.split(',');
 
-    album = await albumApi.getAlbums(albumIds).catch(next);
+    album = await Album.getAlbums(albumIds).catch(next);
     if (!album) res.status(404).json({
         message: "no albums found"
     }); //not found
@@ -97,8 +97,8 @@ router.get('/albums/:id/tracks', checkIfAuth, limiter, async(req, res, next) => 
     const albumId = req.params.id;
     let user = undefined;
     if (req.isAuth)
-        user = await userApi.getUserById(req.user._id);
-    const tracks = await albumApi.getTracksAlbum(albumId, user, req.isAuth).catch(next);
+        user = await User.getUserById(req.user._id);
+    const tracks = await Album.getTracksAlbum(albumId, user, req.isAuth).catch(next);
     if (!tracks) {
         res.status(404).json({
             message: "no tracks found"

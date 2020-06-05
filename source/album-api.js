@@ -2,10 +2,9 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 
 
 // initialize db 
-const connection = require('../db-connection/connection');
-const track = require('./track-api');
-const artist = require('./artist-api');
-const checkMonooseObjectId = require('../validation/mongoose-objectid')
+const Track = require('./track-api');
+const Artist = require('./artist-api');
+const CheckMonooseObjectId = require('../validation/mongoose-objectid')
     /** @namespace */
 const Album = {
     /**
@@ -15,7 +14,7 @@ const Album = {
      *   
      */
     addTrack: async function(albumId, track) {
-        if (!checkMonooseObjectId([albumId])) return 0;
+        if (!CheckMonooseObjectId([albumId])) return 0;
         const album = await albumDocument.findById(albumId);
         if (album) {
             if (!album.hasTracks) album.hasTracks = [];
@@ -36,7 +35,7 @@ const Album = {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        if (!checkMonooseObjectId([albumId])) return 0;
+        if (!CheckMonooseObjectId([albumId])) return 0;
         let album = await albumDocument.findById(albumId, (err, album) => {
             if (err) return 0;
             return album;
@@ -52,15 +51,15 @@ const Album = {
      * @returns {Boolean}
      */
     deleteAlbum: async function(userId, albumId) {
-        if (!checkMonooseObjectId([albumId])) return 0;
-        const artistD = await artist.findMeAsArtist(userId);
+        if (!CheckMonooseObjectId([albumId])) return 0;
+        const artistD = await Artist.findMeAsArtist(userId);
         if (!artistD) return 0;
-        if (!artist.checkArtisthasAlbum(artistD._id, albumId)) return 0;
+        if (!Artist.checkArtisthasAlbum(artistD._id, albumId)) return 0;
         const album = await this.getAlbumById(albumId);
         if (!album) return 0;
         if (album.hasTracks) {
             for (let i = 0; i < album.hasTracks.length; i++) {
-                await track.deleteTrack(userId, album.hasTracks[i].trackId);
+                await Track.deleteTrack(userId, album.hasTracks[i].trackId);
             }
         }
         await artistDocument.update({ '_id': artistD._id }, { $pull: { 'addAlbums': { albumId } } });
@@ -104,7 +103,7 @@ const Album = {
             else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
 
             for (let i = 0; i < limit; i++) {
-                const artist1 = await artist.getArtist(albums[i].artistId);
+                const artist1 = await Artist.getArtist(albums[i].artistId);
                 reAlbums.push({ album_type: albums[i].albumType, artist: { type: 'artist', id: albums[i].artistId, name: artist1.Name }, available_markets: albums[i].availableMarkets, images: albums[i].images, id: albums[i]._id, name: albums[i].name, type: 'album' });
             }
         }
@@ -125,7 +124,7 @@ const Album = {
             else limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             for (let i = 0; i < limit; i++) {
                 if (albums[i].artistId) {
-                    const artist1 = await artist.getArtist(albums[i].artistId);
+                    const artist1 = await Artist.getArtist(albums[i].artistId);
                     reAlbums.push({ album_type: albums[i].albumType, artist: { type: 'artist', id: albums[i].artistId, name: artist1.Name }, available_markets: albums[i].availableMarkets, images: albums[i].images, id: albums[i]._id, name: albums[i].name, type: 'album' });
                 }
             }
@@ -143,7 +142,7 @@ const Album = {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        if (!checkMonooseObjectId([albumId, userId])) return 0;
+        if (!CheckMonooseObjectId([albumId, userId])) return 0;
         let album = await this.getAlbumById(albumId);
         let albumInfo = {}
         let user = await userDocument.findById(userId);
@@ -160,7 +159,7 @@ const Album = {
         }
 
         if (album) {
-            let artistInfo = await artist.getArtist(album.artistId);
+            let artistInfo = await Artist.getArtist(album.artistId);
             let track = await this.getTracksAlbum(albumId, user, isAuth);
             albumInfo['_id'] = album._id;
             albumInfo['name'] = album.name;
@@ -191,7 +190,7 @@ const Album = {
      */
     // the order of track in album 's tracks
     findIndexOfTrackInAlbum: async function(trackId, album) {
-        if (!checkMonooseObjectId([trackId])) return -1;
+        if (!CheckMonooseObjectId([trackId])) return -1;
         if (!album.hasTracks) album.hasTracks = [];
         for (let i = 0; i < album.hasTracks.length; i++) {
             if (String(album.hasTracks[i].trackId) == String(trackId)) return i;
@@ -211,7 +210,7 @@ const Album = {
 
         var albums = []
         if (albumIds == undefined) return 0;
-        if (!checkMonooseObjectId(albumIds)) return 0;
+        if (!CheckMonooseObjectId(albumIds)) return 0;
         for (var i = 0; i < albumIds.length; i++) {
             var album = await this.getAlbumById(albumIds[i]);
             if (album) {
@@ -221,9 +220,9 @@ const Album = {
         if (albums.length > 0) {
             albumWithArtist = []
             for (let i = 0; i < albums.length; i++) {
-                let Artist = await artist.getArtist(albums[i].artistId);
-                if (Artist) {
-                    albumWithArtist.push({ Album: albums[i], Artist: Artist });
+                let artistData = await Artist.getArtist(albums[i].artistId);
+                if (artistData) {
+                    albumWithArtist.push({ Album: albums[i], Artist: artistData });
                 }
             }
             return albumWithArtist;
@@ -241,7 +240,7 @@ const Album = {
 
         // connect to db and find album with the same id then return it as json file
         // if found return album else return 0
-        if (!checkMonooseObjectId([albumId])) return 0;
+        if (!CheckMonooseObjectId([albumId])) return 0;
         const tracksInfo = [];
         const album = await this.getAlbumById(albumId);
         if (!album) {
@@ -250,14 +249,14 @@ const Album = {
             if (!album.hasTracks) album.hasTracks = [];
             for (i = 0; i < album.hasTracks.length; i++) {
                 if (!album.hasTracks[i].trackId) continue;
-                var trackInfo = await track.getTrack(album.hasTracks[i].trackId, user);
+                var trackInfo = await Track.getTrack(album.hasTracks[i].trackId, user);
                 if (trackInfo) {
                     let tracks = {}
                     tracks['_id'] = trackInfo._id;
                     tracks['name'] = trackInfo.name;
                     tracks['images'] = trackInfo.images;
                     if (isAuth) {
-                        tracks['isLiked'] = await track.checkIfUserLikeTrack(user, trackInfo._id);
+                        tracks['isLiked'] = await Track.checkIfUserLikeTrack(user, trackInfo._id);
                     }
                     tracks['playable'] = trackInfo.playable;
                     tracks['duration'] = trackInfo.duration;
@@ -279,7 +278,7 @@ const Album = {
     //user like album by track-id
     //params : user , track-id
     checkIfUserSaveAlbum: function(user, albumId) {
-        if (!checkMonooseObjectId([albumId])) return 0;
+        if (!CheckMonooseObjectId([albumId])) return 0;
         const albumsUserSaved = user.saveAlbum;
         // if user.like.contains({track_id:track.track_id})
         if (albumsUserSaved) {
@@ -299,7 +298,7 @@ const Album = {
         // if not found then add album.album_id to user likes and return the updated user
         // else return 0 as he already saved the album
         if (albumId == undefined) return 2;
-        if (!checkMonooseObjectId(albumId)) return 0;
+        if (!CheckMonooseObjectId(albumId)) return 0;
         let albums = [];
         for (let j = 0; j < albumId.length; j++) {
             let album = await this.getAlbumById(albumId[j]);
@@ -343,7 +342,7 @@ const Album = {
         // else return 0 as he already saved the album
         let found = false;
         if (albumId == undefined) return 0;
-        if (!checkMonooseObjectId(albumId)) return 0;
+        if (!CheckMonooseObjectId(albumId)) return 0;
         for (let j = 0; j < albumId.length; j++) {
             if (this.checkIfUserSaveAlbum(user, albumId[j])) {
                 found = true;

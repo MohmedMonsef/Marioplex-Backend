@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.73% </span>
+                <span class="strong">85.07% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>111/131</span>
+                <span class='fraction'>114/134</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">83.75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>65/78</span>
+                <span class='fraction'>67/80</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.99% </span>
+                <span class="strong">89.19% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>97/109</span>
+                <span class='fraction'>99/111</span>
             </div>
         
             
@@ -254,7 +254,10 @@
 <a name='L195'></a><a href='#L195'>195</a>
 <a name='L196'></a><a href='#L196'>196</a>
 <a name='L197'></a><a href='#L197'>197</a>
-<a name='L198'></a><a href='#L198'>198</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -398,19 +401,22 @@
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">77x</span>
-<span class="cline-any cline-yes">77x</span>
-<span class="cline-any cline-yes">57x</span>
-<span class="cline-any cline-yes">57x</span>
-<span class="cline-any cline-yes">57x</span>
-<span class="cline-any cline-yes">57x</span>
+<span class="cline-any cline-yes">52x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">32x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">57x</span>
-<span class="cline-any cline-yes">31x</span>
-<span class="cline-any cline-yes">31x</span>
+<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-yes">30x</span>
+<span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">32x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">7x</span>
@@ -594,7 +600,7 @@ const Browse = {
             var playlistsGenre = [];
             for (let k = 0; k &lt; genres.length; k++) {
                 for (let i = 0; i &lt; playlists.length; i++) {
-                    <span class="missing-if-branch" title="if path not taken" >I</span>if (!playlists[i].snapshot) <span class="cstat-no" title="statement not covered" >continue;</span>
+                    if (!playlists[i].snapshot) continue;
                     if (!playlists[i].snapshot[playlists[i].snapshot.length - 1]) continue;
                     <span class="missing-if-branch" title="if path not taken" >I</span>if (!playlists[i].snapshot[playlists[i].snapshot.length - 1].hasTracks) <span class="cstat-no" title="statement not covered" >continue;</span>
                     let track = await trackDocument.findById(playlists[i].snapshot[playlists[i].snapshot.length - 1].hasTracks[0], (err, track) =&gt; {
@@ -604,9 +610,12 @@ const Browse = {
                     if (track &amp;&amp; track.genre &amp;&amp; (track.genre[0] == genres[k] || track.genre[1] == genres[k])) {
                         const user1 = await userDocument.findById(playlists[i].ownerId);
                         playlistsGenre.push({ playlist: playlists[i], owner: { id: playlists[i].ownerId, name: user1 ? user1.name : <span class="branch-1 cbranch-no" title="branch not covered" >'' </span>} });
+                        playlistsGenre[playlistsGenre.length - 1].playlist.snapshot = undefined;
                     }
+                    <span class="missing-if-branch" title="if path not taken" >I</span>if (playlistsGenre.length == 10) <span class="cstat-no" title="statement not covered" >break;</span>
                 }
                 if (playlistsGenre.length != 0)
+&nbsp;
                     allGenre.push({ genre: genres[k], "playlists": playlistsGenre });
                 playlistsGenre = [];
             }
@@ -655,7 +664,7 @@ function limitOffset(limit, offset, categories) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sat May 30 2020 06:11:32 GMT+0200 (Eastern European Standard Time)
+                at Fri Jun 05 2020 07:57:00 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

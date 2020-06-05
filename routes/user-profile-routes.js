@@ -63,8 +63,6 @@ router.post('/premium/confirm', limiter, async(req, res) => {
 
     let checkConfirm = await User.confirmPremium(user);
     if (checkConfirm) {
-        user.product = 'premium';
-        await user.save();
         return res.status(200).send("user is confirmed");
     } else {
         return res.status(403).send("user is not confirmed");

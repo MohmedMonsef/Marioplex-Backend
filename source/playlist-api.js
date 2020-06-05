@@ -168,9 +168,9 @@ const Playlist = {
      */
     findIndexOfTrackInPlaylist: async function(trackId, tplaylist) {
         if (!checkMonooseObjectId([trackId])) return 0;
-        if (!tplaylist.hasTracks) tplaylist.hasTracks = [];
-        for (let i = 0; i < tplaylist.hasTracks.length; i++) {
-            if (String(tplaylist.hasTracks[i].trackId) == String(trackId))
+        if(tplaylist.snapshot.length==0)return -1;
+        for (let i = 0; i < tplaylist.snapshot[tplaylist.snapshot.length-1].hasTracks.length; i++) {
+            if (String(tplaylist.snapshot[tplaylist.snapshot.length-1].hasTracks[i].trackId) == String(trackId))
                 return i;
         }
         return -1

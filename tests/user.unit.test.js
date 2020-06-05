@@ -1,6 +1,7 @@
 const mockTrack = require('../source/track-api');
 const mockUser = require('../source/user-api');
 const mockArtist = require('../source/artist-api');
+const sendmail = require('../source/sendmail');
 const mockAlbum = require('../source/album-api');
 const mongoose = require('mongoose');
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');

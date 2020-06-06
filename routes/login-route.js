@@ -18,6 +18,7 @@ const limiter = rateLimit({
 });
 //request to log in the user
 router.post("/login", limiter, (req, res) => {
+    try{
     // Form validation
 
     const { errors, isValid } = validateLoginInput(req.body);
@@ -53,11 +54,14 @@ router.post("/login", limiter, (req, res) => {
             }
         });
     });
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 
 //Notification Token Set
 router.post("/notification/token", checkAuth, limiter, async(req, res) => {
-
+    try{
     if (!req.body.fcmToken || req.body.fcmToken == "") { return res.status(404).send({ error: "FCM TOKEN IS NOT PROVIDED" }) }
     let userId = req.user._id;
     let user = await Users.getUserById(userId);
@@ -74,7 +78,9 @@ router.post("/notification/token", checkAuth, limiter, async(req, res) => {
 
     }
     return res.status(200).send({ Success: "Token is set successfully" })
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 
 

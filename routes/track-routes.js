@@ -15,6 +15,7 @@ const limiter = rateLimit({
 });
 
 router.get('/me/track/:track_id', checkIfAuth, limiter, async(req, res) => {
+    try{
     if (req.isAuth) {
         const trackId = req.params.track_id;
         let user = await User.getUserById(req.user._id);
@@ -28,11 +29,14 @@ router.get('/me/track/:track_id', checkIfAuth, limiter, async(req, res) => {
         if (!track) res.status(404).json({ "error": "track not found" }); //not found
         else res.json(track);
     }
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // get track with some user info as like
 router.get('/track/:track_id', checkIfAuth, limiter, async(req, res) => {
+    try{
         if (req.isAuth) {
 
             const trackId = req.params.track_id;
@@ -49,10 +53,13 @@ router.get('/track/:track_id', checkIfAuth, limiter, async(req, res) => {
             if (!track) res.sendStatus(404); //not found
             else res.json(track);
         }
-
+    }catch(ex){
+        res.status(400).send({ "error": "error in making the request" });
+    }
     })
     // get tracks
 router.get('/tracks/', checkAuth, limiter, async(req, res) => {
+    try{
         if (req.body.ids) {
 
             const user = await User.getUserById(req.user._id);
@@ -61,50 +68,69 @@ router.get('/tracks/', checkAuth, limiter, async(req, res) => {
             if (tracks.length == 0) res.status(404).send({ error: "tracks with those id's are not found" });
             else res.json(tracks);
         } else res.status(404).send({ error: "tracks id's are required" });
+    }catch(ex){
+        res.status(400).send({ "error": "error in making the request" });
+    }
     })
+
     // get track audio feature/analysis
 router.get('/track/audio-features/:track_id', checkAuth, limiter, async(req, res) => {
+    try{
     const audioFeature = await Track.getAudioFeaturesTrack(req.params.track_id);
     if (!audioFeature) res.status(404).send({ error: "no track with this id" });
     else res.json(audioFeature);
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // get tracks audio feature/analysis 
 router.get('/tracks/audio-features/', checkAuth, limiter, async(req, res) => {
+    try{
     if (req.body.ids) {
         const trackIds = req.body.ids ? req.body.ids.split(',') : [];
         const audioFeatures = await Track.getAudioFeaturesTracks(trackIds);
         if (!audioFeatures) res.status(404).send({ error: "no tracks with this id" });
         else res.json(audioFeatures);
     } else res.status(400).send({ error: "tracks id's are required" });
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // user like track
 router.put('/me/like/:track_id', checkAuth, limiter, async(req, res) => {
+    try{
 
     const userId = req.user._id; // get it from desierialize auth 
     const trackId = req.params.track_id;
     const updatedUser = await User.likeTrack(userId, trackId);
     if (!updatedUser) res.status(405).send({ error: "already liked the song" }); // if user already liked the song
     else res.send({ success: "liked the song successfully" });
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 
 // user unlike track
 router.delete('/me/unlike/:track_id', checkAuth, limiter, async(req, res) => {
+    try{
     const userId = req.user._id; // get it from desierialize auth
     const trackId = req.params.track_id;
     const updatedUser = await User.unlikeTrack(userId, trackId);
 
     if (!updatedUser) res.status(405).send({ error: "user didnt liked the song before" }); // if user already liked the song
     else res.send({ success: "unliked the song successfully" });
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 
 // set android route which will just serve webm media file
 
 
 router.get('/tracks/android/:track_id', checkAuth, limiter, async(req, res) => {
+    try{
         let type = req.query.type; // high low medium or review
         let user = await User.getUserById(req.user._id);
         if (type != "review") {
@@ -167,11 +193,14 @@ router.get('/tracks/android/:track_id', checkAuth, limiter, async(req, res) => {
                 });
         });
 
-
+    }catch(ex){
+        res.status(400).send({ "error": "error in making the request" });
+    }
 
     })
     // set web player route which will just serve encrypted webm media file
 router.get('/tracks/web-player/:track_id', limiter, async(req, res) => {
+    try{
     let type = req.query.type; // high low medium or review
     // get token as query parameter
     const token = req.query.token;
@@ -244,11 +273,14 @@ router.get('/tracks/web-player/:track_id', limiter, async(req, res) => {
 
             });
     });
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // set the route to get the track encryption key to decrypt the track
 router.get('/tracks/encryption/:track_id/keys', checkAuth, limiter, async(req, res) => {
+    try{
     const trackId = req.params.track_id;
     const track = await Track.getTrack(trackId);
     if (!track) res.status(404).send({ "error": "not found" });
@@ -256,44 +288,63 @@ router.get('/tracks/encryption/:track_id/keys', checkAuth, limiter, async(req, r
         if (!track.key || !track.keyId) res.status(404).send({ "error": "not found" });
         else res.status(200).json({ "key": track.key, "keyId": track.keyId });
     }
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // delete track
 router.delete('/tracks/delete/:track_id', checkAuth, limiter, async(req, res) => {
+    try{
     const userId = req.user._id;
     const trackId = req.params.track_id;
     const deleteTrack = await Track.deleteTrack(userId, trackId);
     if (!deleteTrack) res.status(404).json({ "error": "cannot delete track" });
     else res.status(200).json({ "success": "deleted track" });
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // get related track
 router.get('/tracks/related/:track_id', checkAuth, limiter, async(req, res) => {
+    try{
     const trackId = req.params.track_id;
     const tracksRelated = await Track.getRelatedTrack(trackId);
     if (!tracksRelated) res.status(404).json({ "error": "no related tracks found" });
     else res.status(200).json(tracksRelated);
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 
 })
 
 
 // get related track
 router.get('/tracks/related/full-track/:track_id', limiter, checkAuth, async(req, res) => {
+    try{
     const trackId = req.params.track_id;
     const userId = req.user._id;
     const tracksRelated = await Track.getFullRelatedTracks(userId, trackId);
     if (!tracksRelated) res.status(404).json({ "error": "no related tracks found" });
     else res.status(200).json(tracksRelated);
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 
 })
 
 // update track 
 router.put('/tracks/update/:track_id', limiter, checkAuth, async(req, res) => {
+    try{
     const trackId = req.params.track_id;
     const userId = req.user._id;
     const info = req.body;
     const updateTrack = await Track.updateTrack(userId, trackId, info);
     if (!updateTrack) res.status(400).json({ "error": "cannot update track" });
     else res.json(updateTrack);
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 module.exports = router;

@@ -16,6 +16,7 @@ const limiter = rateLimit({
 });
 
 router.post('/login/forgetpassword', jsonparser, limiter, async function(req, res) {
+    try{
     let email = req.body.email;
     let user = await users.checkmail(email);
 
@@ -29,9 +30,13 @@ router.post('/login/forgetpassword', jsonparser, limiter, async function(req, re
         res.status(200).send("PLEASE CHECK YOUR MAIL");
 
     }
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 
 });
 router.post('/login/reset_password', checkAuth, limiter, async(req, res) => {
+    try{
     let user = await users.getUserById(req.user._id);
 
     let newPass = await users.updateforgottenpassword(user, req.body.password);
@@ -40,7 +45,9 @@ router.post('/login/reset_password', checkAuth, limiter, async(req, res) => {
     } else {
         return res.status(400).send("PASSWORD CAN'T BE UPDATED");
     }
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 
 
 });

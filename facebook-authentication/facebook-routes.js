@@ -39,6 +39,7 @@ router.get('/facebook/callback',passport.authenticate('facebook', {  successRedi
 
 // custom route to generate jwt token for user if succeded to login from facebook
 router.get('/facebookJWT',checkAuthentication,async (req,res)=>{
+    try{
     const id = req.session.passport.user;
     const user = await userDocument.findById(id);
     
@@ -49,11 +50,15 @@ router.get('/facebookJWT',checkAuthentication,async (req,res)=>{
      
       // return the information including token as JSON
       res.json({ token: token});
+    }catch(ex){
+        res.status(400).send({ "error": "error in making the request" });
+    }
      
 });
 
 // custom route to work with facebook sdk with android, where it set up the user in database when user login with facebook from android sdk
 router.post('/facebookAndroid',async (req,res)=>{
+    try{
     let email = req.body.email;
     if(!email){
         res.status(403).send("No Email");
@@ -96,7 +101,9 @@ router.post('/facebookAndroid',async (req,res)=>{
             like:[] ,
             createPlaylist:[] ,
             saveAlbum:[] ,
-            playHistory:[]
+            playHistory:[],
+            followers:[],
+            following:[]
 
 
         }).save();
@@ -109,6 +116,9 @@ router.post('/facebookAndroid',async (req,res)=>{
           // return the information including token as JSON
           res.status(200).json({ token: token});
     }
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 }
 
 

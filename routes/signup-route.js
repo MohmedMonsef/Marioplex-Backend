@@ -17,6 +17,7 @@ const limiter = rateLimit({
 
 // route for user sign up
 router.post('/sign_up', limiter, async(req, res) => {
+    try{
     // set Joi validation schema to check correctness of data
     const shcema = Joi.object().keys({
         email: Joi.string().trim().email().required(),
@@ -67,9 +68,13 @@ router.post('/sign_up', limiter, async(req, res) => {
             })
         }
     });
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 
 router.post('/login/confirm', limiter, async(req, res) => {
+    try{
     if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
     let user = await User.getUserById(req.query.id);
 
@@ -80,15 +85,20 @@ router.post('/login/confirm', limiter, async(req, res) => {
         return res.status(403).send("user is not confirmed");
     }
 
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 
 });
 
 router.post('/sendmail',checkAuth,limiter, async(req, res) => {
+    try{
     const user = await User.getUserById(req.user._id);
     if (!user) { return res.status(400).send("user is not found"); }
     sendmail(user.email, String(user._id), "confirm");
     return res.status(200).send("mail has been sent");
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 module.exports = router;

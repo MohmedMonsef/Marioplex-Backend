@@ -17,6 +17,7 @@ const limiter = rateLimit({
 
 //GET USER'S PUBLIC PROFILE, PATH PARAMS: id
 router.get('/users/:id', checkIfAuth, limiter, async(req, res) => {
+    try{
     if (req.isAuth) {
         const user = await User.me(req.params.id, req.user._id);
         if (user) {
@@ -32,8 +33,12 @@ router.get('/users/:id', checkIfAuth, limiter, async(req, res) => {
         if (!user) res.sendStatus(404);
         else res.status(200).json(user);
     }
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 router.put('/me/promote', checkAuth, limiter, async(req, res) => {
+    try{
     const prmoteData = Joi.object().keys({
         expiresDate: Joi.date().min(Date.now()).raw().required(),
         cardNumber: Joi.string().creditCard().required(),
@@ -55,9 +60,12 @@ router.put('/me/promote', checkAuth, limiter, async(req, res) => {
             } else res.status(400).send({ error: 'can not promote' })
         }
     });
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 router.post('/premium/confirm', limiter, async(req, res) => {
-
+    try{
     if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
     let user = await User.getUserById(req.query.id);
 
@@ -68,18 +76,25 @@ router.post('/premium/confirm', limiter, async(req, res) => {
         return res.status(403).send("user is not confirmed");
     }
 
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 
 });
 router.put('/me/free', checkAuth, limiter, async(req, res) => {
+    try{
     const isPromote = await User.promoteToFree(req.user._id);
     if (isPromote) res.status(200).send({ success: 'become free ' });
     else res.status(400).send({ error: 'you are not a premium' })
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 
 
 //GET USER'S PRIVATE PROFILE WITH PLAYER with player info
 router.get('/me-player', checkAuth, limiter, async(req, res) => {
+    try{
     const userId = req.user._id; // get it from desierialize auth 
     const user = await spotifySchema.user.find({ _id: userId });
     let userOut = [{
@@ -103,11 +118,14 @@ router.get('/me-player', checkAuth, limiter, async(req, res) => {
     userOut[0].player['isRepeatTrack'] = user[0].player['isRepeatTrack'];
     userOut[0].player['haveQueue'] = user[0].player['currentTrack'] && user[0].player['currentTrack'].trackId ? true : false;
     return res.status(200).send(userOut);
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 //UPDATE USER PROFILE INFORMATION 
 router.put('/me/update', checkAuth, limiter, (req, res) => {
+    try{
 
     const shcema = Joi.object().keys({
         email: Joi.string().trim().email(),
@@ -138,11 +156,14 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
             } else res.sendStatus(404);
         }
     })
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 //GET USER PRIVATE PROFILE INFORMATION
 router.get('/me', checkAuth, limiter, async(req, res) => {
+    try{
     const userId = req.user._id; // get it from desierialize auth 
     await spotifySchema.user.find({ _id: userId }, {
         displayName: 1,
@@ -157,11 +178,14 @@ router.get('/me', checkAuth, limiter, async(req, res) => {
             return res.status(200).send(user);
         }
     });
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 //REMOVE USER ACCOUNT
-router.delete('/remove', checkAuth, limiter, async(req, res, next) => {
+router.delete('/remove', checkAuth, limiter, async(req, res) => {
+    try{
     const userId = req.user._id; // get it from desierialize auth 
     const user = await User.deleteAccount(userId)
     if (user) {
@@ -169,10 +193,14 @@ router.delete('/remove', checkAuth, limiter, async(req, res, next) => {
     } else {
         res.status(400).json({ "error": "delete failed" });
     }
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 //User logs out
 router.post("/user/logout", limiter, checkAuth, async(req, res) => {
+    try{
 
     let userId = req.user._id;
     let user = await User.getUserById(userId);
@@ -182,10 +210,13 @@ router.post("/user/logout", limiter, checkAuth, async(req, res) => {
     await user.save();
     User.updatePlayerInfoLogOut(user, req.body.currentTimeStampe, req.body.isRepeatTrack, req.body.volume);
     return res.status(202).send({ Success: "Token is set successfully" })
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 });
 //GET USER PRIVATE PROFILE INFORMATION
 router.get('/me/notifications', checkAuth, limiter, async(req, res) => {
+    try{
   
     const userId = req.user._id; // get it from desierialize auth 
     let user =await User.getUserById(userId);
@@ -194,6 +225,8 @@ router.get('/me/notifications', checkAuth, limiter, async(req, res) => {
         return res.status(404).send("No notifications");
     }
     return res.status(200).send(notifications);
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 module.exports = router;

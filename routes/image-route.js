@@ -14,6 +14,7 @@ const limiter = rateLimit({
 });
 // upload image for a user for different entities with a source id 
 router.post('/images/upload/:source_id', checkAuth, limiter, async(req, res) => {
+    try{
     const userId = req.user._id;
     const belongsTo = req.query.belongs_to;
     const sourceId = req.params.source_id;
@@ -53,13 +54,16 @@ router.post('/images/upload/:source_id', checkAuth, limiter, async(req, res) => 
         }
     });
 
-
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 
 
 })
 
 // update image for a user for different entities with a source id 
 router.post('/images/update/:source_id', checkAuth, limiter, async(req, res) => {
+    try{
         const userId = req.user._id;
         const belongsTo = req.query.belongs_to;
         const sourceId = req.params.source_id;
@@ -101,11 +105,14 @@ router.post('/images/update/:source_id', checkAuth, limiter, async(req, res) => 
         });
 
 
-
+    }catch(ex){
+        res.status(400).send({ "error": "error in making the request" });
+    }
 
     })
     // get image 
 router.get('/images/:image_id', limiter, async(req, res) => {
+    try{
 
 
     const belongsTo = req.query.belongs_to;
@@ -176,10 +183,14 @@ router.get('/images/:image_id', limiter, async(req, res) => {
             }
         })
     }
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // delete image 
 router.delete('/images/delete/:image_id', checkAuth, limiter, async(req, res) => {
+    try{
     const imageId = req.params.image_id;
     const userId = req.user._id;
     const belongsTo = req.query.belongs_to;
@@ -191,15 +202,22 @@ router.delete('/images/delete/:image_id', checkAuth, limiter, async(req, res) =>
     const deletedImage = await Image.deleteImage(imageId, userId, sourceId, belongsTo);
     if (!deletedImage) res.status(400).json({ "error": "image not deleted" });
     else res.status(200).json({ "success": "image deleted" })
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 // get image id 
 router.get('/images/get_id/:source_id', limiter, async(req, res) => {
+    try{
     const sourceId = req.params.source_id;
     const belongsTo = req.query.belongs_to;
     const imageId = await Image.getImage(sourceId, belongsTo);
     if (!imageId) res.status(404).json({ "error": "cannot get image id" });
     else res.status(200).json({ "imageId": imageId });
+}catch(ex){
+    res.status(400).send({ "error": "error in making the request" });
+}
 })
 
 module.exports = router;

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const Grid = require('gridfs-stream');
 const mongod = new MongoMemoryServer();
-
+global.gfsImages = undefined;
 /**
  * Connect to the in-memory database.
  */
@@ -16,9 +16,9 @@ module.exports.connect = async () => {
         reconnectInterval: 1000
     };
 
-    await mongoose.connect(uri, mongooseOpts);
-    gfsTracks = new Grid(mongoose.connection.db, mongoose.mongo);
+    await mongoose.connect(uri, mongooseOpts); 
     gfsImages = new Grid(mongoose.connection.db, mongoose.mongo);
+    gfsImages.collection('images');
 };
 
 /**

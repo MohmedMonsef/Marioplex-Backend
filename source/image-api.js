@@ -686,7 +686,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })
@@ -722,7 +722,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })
@@ -756,7 +756,7 @@ const Image = {
                                     for (let file of files) {
 
                                         await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                        await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                        await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
                                     }
                                 }
                             })
@@ -791,7 +791,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })
@@ -820,7 +820,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })

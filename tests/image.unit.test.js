@@ -89,6 +89,7 @@ let albumsObjs = [{
 let playlist;
 beforeAll(async () => {
     await dbHandler.connect();
+   // await new Promise((resolve)=>setTimeout(resolve,100));
     let i = 0;
     for(let user of users){
     let u = await mockUser.createUser(user.displayName,user.password,user.email,user.gender,user.country,user.birthDate);
@@ -130,6 +131,7 @@ beforeAll(async () => {
     
 });
 afterEach(async () => {
+   // console.log("ddd")
     playlist = await playlistDocument.findById(playlist._id)
     await userDocument.find({},(err,files)=>{
         usersInDB = [];
@@ -147,11 +149,14 @@ afterEach(async () => {
     await albumDocument.find({},(err,files)=>{
         for(let file of files) albums.push(file)
     })
-
+    //await new Promise((resolve)=>setTimeout(resolve,100));
+    
  });
 afterAll(async () => {
     await dbHandler.clearDatabase();
+
      await dbHandler.closeDatabase();
+
  });
 
 let image = {
@@ -160,7 +165,7 @@ let image = {
 
 }
 
- test('upload image for user',async ()=>{
+ test('upload image for user',async (done)=>{
      const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,usersInDB[0]._id,'user',image) 
     // console.log(usersInDB[0].images)
     let writestream = gfsImages.createWriteStream({
@@ -172,25 +177,19 @@ let image = {
     });
     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
     
-    //await new Promise(fulfill => writestream.on('close', fulfill));
-   
-    let h = 0;
-    // while(!h){
-         writestream.on('close',async (file)=>{
-             console.log(file)
-             console.log(uploadedImageId)
-          await gfsImages.files.find({},(err,file)=>{
-              console.log(err,file)
-          })
-            expect(uploadedImageId).toBeTruthy();
-         })
-    // }
-   // writestream.on('pipe',(file)=>{console.log("sime");h=1;})
-    //console.log(await gfsImages.files.findOne({"metadata.imageId":uploadedImageId}))
+   writestream.on('close', async (file)=>{
+    expect(uploadedImageId).toBeTruthy();
+done();
+   //console.log("ddd")
+    
+   });
+
+            
+    
      
  })
  
- test('upload image for artist',async ()=>{
+ test('upload image for artist',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,artists[0]._id,'artist',image) 
     let writestream = gfsImages.createWriteStream({
         filename: 'not_found',
@@ -201,10 +200,15 @@ let image = {
     });
     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
     
-    await new Promise(fulfill => writestream.on('close', fulfill));
+    writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
+    
 })
-test('upload image for playlist',async ()=>{
+test('upload image for playlist',async (done)=>{
    // console.log(usersInDB[0],playlist)
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,playlist._id,'playlist',image)
     let writestream = gfsImages.createWriteStream({
@@ -216,11 +220,16 @@ test('upload image for playlist',async ()=>{
     });
     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
     
-    await new Promise(fulfill => writestream.on('close', fulfill)); 
+    writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   }); 
+    
 })
 
-test('upload image for track',async ()=>{
+test('upload image for track',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,tracks[0]._id,'track',image) 
     let writestream = gfsImages.createWriteStream({
         filename: 'not_found',
@@ -231,11 +240,16 @@ test('upload image for track',async ()=>{
     });
     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
     
-    await new Promise(fulfill => writestream.on('close', fulfill));
+    writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
+   
 })
 
-test('upload image for album',async ()=>{
+test('upload image for album',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,albums[0]._id,'album',image) 
     let writestream = gfsImages.createWriteStream({
         filename: 'not_found',
@@ -246,67 +260,86 @@ test('upload image for album',async ()=>{
     });
     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
     
-    await new Promise(fulfill => writestream.on('close', fulfill));
+    writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
+   
 })
 
-test('upload image for category',async ()=>{
+test('upload image for category',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,usersInDB[0]._id,'category',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
 
-test('upload image for non mongoose user',async ()=>{
+test('upload image for non mongoose user',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage('1',usersInDB[0]._id,'user',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for non existing user',async ()=>{
+test('upload image for non existing user',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(ObjectId(),usersInDB[0]._id,'user',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for user with no belongs to and no imaghe',async ()=>{
+test('upload image for user with no belongs to and no imaghe',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,usersInDB[0]._id) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for user with not same source id',async ()=>{
+test('upload image for user with not same source id',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,ObjectId(),'user',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for playlist that is not authoeized for user',async ()=>{
+test('upload image for playlist that is not authoeized for user',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[1]._id,playlist._id,'playlist',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for playlist not existing',async ()=>{
+test('upload image for playlist not existing',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,ObjectId(),'playlist',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for track thats is unauthorized',async ()=>{
+test('upload image for track thats is unauthorized',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[1]._id,tracks[0]._id,'track',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for track that doesnt exist',async ()=>{
+test('upload image for track that doesnt exist',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,ObjectId(),'track',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
 
-test('upload image for album thats is unauthorized',async ()=>{
+test('upload image for album thats is unauthorized',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[1]._id,albums[0]._id,'album',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for album that doesnt exist',async ()=>{
+test('upload image for album that doesnt exist',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,ObjectId(),'album',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for artist thats is unauthorized',async ()=>{
+test('upload image for artist thats is unauthorized',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[1]._id,artists[0]._id,'artist',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for album that doesnt exist',async ()=>{
+test('upload image for album that doesnt exist',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,ObjectId(),'artist',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('upload image for not entity',async ()=>{
+test('upload image for not entity',async (done)=>{
     const uploadedImageId = await mockImage.uploadImage(usersInDB[0]._id,ObjectId(),'none',image) 
     expect(uploadedImageId).toBeFalsy();
+done();
 })
 
 
@@ -318,7 +351,7 @@ test('upload image for not entity',async ()=>{
 
 
 
-test('update image for user',async ()=>{
+test('update image for user',async (done)=>{
    // console.log(usersInDB[0])
     const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,usersInDB[0]._id,'user',image);
     let writestream = gfsImages.createWriteStream({
@@ -330,12 +363,14 @@ test('update image for user',async ()=>{
     });
     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
     
-    await new Promise(fulfill => writestream.on('close', fulfill));
-    //await delay(5000)
-   // console.log(await userDocument.findById(usersInDB[0]._id))
+    writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
 })
-test('update image for artist',async ()=>{
+test('update image for artist',async (done)=>{
     
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,artists[0]._id,'artist',image) 
    let writestream = gfsImages.createWriteStream({
@@ -349,8 +384,9 @@ fs.createReadStream('../static/not_found.jpeg').pipe(writestream);
 
 //await delay(5000)
    expect(uploadedImageId).toBeTruthy();
+done();
 })
-test('update image for playlist',async ()=>{
+test('update image for playlist',async (done)=>{
   // console.log(usersInDB[0],playlist)
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,playlist._id,'playlist',image) 
    let writestream = gfsImages.createWriteStream({
@@ -362,12 +398,18 @@ test('update image for playlist',async ()=>{
 });
 fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
 
-await new Promise(fulfill => writestream.on('close', fulfill));
+writestream.on('close', async (file)=>{
+    expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
 //await delay(5000)
    expect(uploadedImageId).toBeTruthy();
+done();
 })
 
-test('update image for track',async ()=>{
+test('update image for track',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,tracks[0]._id,'track',image) 
    let writestream = gfsImages.createWriteStream({
     filename: 'not_found',
@@ -378,12 +420,15 @@ test('update image for track',async ()=>{
 });
 fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
 
-await new Promise(fulfill => writestream.on('close', fulfill));
-//await delay(5000)
-   expect(uploadedImageId).toBeTruthy();
+writestream.on('close', async (file)=>{
+    expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
 })
 
-test('update image for album',async ()=>{
+test('update image for album',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,albums[0]._id,'album',image) 
    let writestream = gfsImages.createWriteStream({
     filename: 'not_found',
@@ -394,132 +439,164 @@ test('update image for album',async ()=>{
 });
 fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
 //await delay(5000)
-await new Promise(fulfill => writestream.on('close', fulfill));
-   expect(uploadedImageId).toBeTruthy();
+writestream.on('close', async (file)=>{
+    expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
 })
 
 
 
-test('update image for category',async ()=>{
+test('update image for category',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,usersInDB[0]._id,'category',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
 
-test('update image for non mongoose user',async ()=>{
+test('update image for non mongoose user',async (done)=>{
    const uploadedImageId = await mockImage.updateImage('1',usersInDB[0]._id,'user',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for non existing user',async ()=>{
+test('update image for non existing user',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(ObjectId(),usersInDB[0]._id,'user',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for user with no belongs to and no imaghe',async ()=>{
+test('update image for user with no belongs to and no imaghe',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,usersInDB[0]._id) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for user with not same source id',async ()=>{
+test('update image for user with not same source id',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,ObjectId(),'user',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for playlist that is not authoeized for user',async ()=>{
+test('update image for playlist that is not authoeized for user',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[1]._id,playlist._id,'playlist',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for playlist not existing',async ()=>{
+test('update image for playlist not existing',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,ObjectId(),'playlist',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for track thats is unauthorized',async ()=>{
+test('update image for track thats is unauthorized',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[1]._id,tracks[0]._id,'track',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for track that doesnt exist',async ()=>{
+test('update image for track that doesnt exist',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,ObjectId(),'track',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
 
-test('update image for album thats is unauthorized',async ()=>{
+test('update image for album thats is unauthorized',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[1]._id,albums[0]._id,'album',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for album that doesnt exist',async ()=>{
+test('update image for album that doesnt exist',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,ObjectId(),'album',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for artist thats is unauthorized',async ()=>{
+test('update image for artist thats is unauthorized',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[1]._id,artists[0]._id,'artist',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for album that doesnt exist',async ()=>{
+test('update image for album that doesnt exist',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,ObjectId(),'artist',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
-test('update image for not entity',async ()=>{
+test('update image for not entity',async (done)=>{
    const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,ObjectId(),'none',image) 
    expect(uploadedImageId).toBeFalsy();
+done();
 })
 
 
 
 
 
-test('get image for user',async ()=>{
+test('get image for user',async (done)=>{
     
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     expect(imageId).toBeTruthy();
+done();
 })
-test('get image for album',async ()=>{
+test('get image for album',async (done)=>{
     const imageId = await mockImage.getImage(albums[0]._id,'album');
     expect(imageId).toBeTruthy();
+done();
 })
-test('get image for track',async ()=>{
+test('get image for track',async (done)=>{
     const imageId = await mockImage.getImage(tracks[0]._id,'track');
     expect(imageId).toBeTruthy();
+done();
 })
-test('get image for artist',async ()=>{
+test('get image for artist',async (done)=>{
     const imageId = await mockImage.getImage(artists[0]._id,'artist');
     expect(imageId).toBeTruthy();
+done();
 })
-test('get image for album',async ()=>{
+test('get image for album',async (done)=>{
     const imageId = await mockImage.getImage(playlist._id,'playlist');
     expect(imageId).toBeTruthy();
+done();
 })
 
-test('get image for non mongoose user',async ()=>{
+test('get image for non mongoose user',async (done)=>{
     const imageId = await mockImage.getImage('1','user');
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image without belongs to',async ()=>{
+test('get image without belongs to',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId());
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image for non existing user',async ()=>{
+test('get image for non existing user',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId(),'user');
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image for non existing playlist',async ()=>{
+test('get image for non existing playlist',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId(),'playlist');
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image for non existing album',async ()=>{
+test('get image for non existing album',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId(),'album');
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image for non existing artist',async ()=>{
+test('get image for non existing artist',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId(),'artist');
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image for non existing track',async ()=>{
+test('get image for non existing track',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId(),'track');
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image for non existing category',async ()=>{
+test('get image for non existing category',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId(),'category');
     expect(imageId).toBeFalsy();
+done();
 })
-test('get image for non existing entity',async ()=>{
+test('get image for non existing entity',async (done)=>{
     const imageId = await mockImage.getImage(ObjectId(),'none');
     expect(imageId).toBeFalsy();
+done();
 })
 
 
@@ -533,134 +610,160 @@ test('get image for non existing entity',async ()=>{
 
 
 // the image is deleted but returned 0 as it is not in grid fs but it does cover the seleted branch that's how i know it was deleted successfully
-test('delete image for user',async ()=>{
+test('delete image for user',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     console.log(imageId)
     const isDeleted = await mockImage.deleteImage(imageId,usersInDB[0]._id,usersInDB[0]._id,'user');
     expect(isDeleted).toBeTruthy();
+done();
 })
-/*
-test('delete image for album',async ()=>{
+
+test('delete image for album',async (done)=>{
+   // console.log(albums)
     const imageId = await mockImage.getImage(albums[0]._id,'album');
     const isDeleted = await mockImage.deleteImage(imageId,usersInDB[0]._id,albums[0]._id,'album');
     expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete image for playlist',async ()=>{
+test('delete image for playlist',async (done)=>{
     const imageId = await mockImage.getImage(playlist._id,'playlist');
     const isDeleted = await mockImage.deleteImage(imageId,usersInDB[0]._id,playlist._id,'playlist');
     expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete image for track',async ()=>{
+test('delete image for track',async (done)=>{
     const imageId = await mockImage.getImage(tracks[0]._id,'track');
     const isDeleted = await mockImage.deleteImage(imageId,usersInDB[0]._id,tracks[0]._id,'track');
     expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete non existing image for artist',async ()=>{
+test('delete non existing image for artist',async (done)=>{
     const imageId = await mockImage.getImage(artists[0]._id,'artist');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,artists[0]._id,'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for artist',async ()=>{
+test('delete image for artist',async (done)=>{
     const imageId = await mockImage.getImage(artists[0]._id,'artist');
     const isDeleted = await mockImage.deleteImage(imageId,usersInDB[0]._id,artists[0]._id,'artist');
     expect(isDeleted).toBeTruthy();
+done();
 })
 
-test('delete image for non mongoose id',async ()=>{
+test('delete image for non mongoose id',async (done)=>{
     const imageId = await mockImage.getImage(artists[0]._id,'artist');
     const isDeleted = await mockImage.deleteImage(ObjectId(),'1',artists[0]._id,'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for with no belons to or source id',async ()=>{
+test('delete image for with no belons to or source id',async (done)=>{
      const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
      const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id);
      expect(isDeleted).toBeFalsy();
+done();
  })
- test('delete image for non existing user',async ()=>{
+ test('delete image for non existing user',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),ObjectId(),usersInDB[0]._id,'user');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for user with no images',async ()=>{
+test('delete image for user with no images',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,usersInDB[0]._id,'user');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for user unauthorized',async ()=>{
+test('delete image for user unauthorized',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[1]._id,usersInDB[0]._id,'user');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non existing playlist',async ()=>{
+test('delete image for non existing playlist',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,ObjectId(),'playlist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non authorized playlist',async ()=>{
+test('delete image for non authorized playlist',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[1]._id,playlist._id,'playlist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for playlist with no images',async ()=>{
+test('delete image for playlist with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,playlist._id,'playlist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non existing track',async ()=>{
+test('delete image for non existing track',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,ObjectId(),'track');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non authorized track',async ()=>{
+test('delete image for non authorized track',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[1]._id,tracks[0]._id,'track');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for track with no images',async ()=>{
+test('delete image for track with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,tracks[0]._id,'track');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non existing albums',async ()=>{
+test('delete image for non existing albums',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,ObjectId(),'album');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non authorized album',async ()=>{
+test('delete image for non authorized album',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[1]._id,albums[0]._id,'album');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for track with no images',async ()=>{
+test('delete image for track with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,albums[0]._id,'album');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non existing albums',async ()=>{
+test('delete image for non existing albums',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,ObjectId(),'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non authorized artist',async ()=>{
+test('delete image for non authorized artist',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[1]._id,artists[0]._id,'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for artist with no images',async ()=>{
+test('delete image for artist with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,artists[0]._id,'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for category',async ()=>{
+test('delete image for category',async (done)=>{
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,artists[0]._id,'category');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non entity',async ()=>{
+test('delete image for non entity',async (done)=>{
     const isDeleted = await mockImage.deleteImage(ObjectId(),usersInDB[0]._id,artists[0]._id,'none');
     expect(isDeleted).toBeFalsy();
+done();
 })
 
 // add back images to database
 
 
 
-test('update image for user 1',async ()=>{
+test('update image for user 1',async (done)=>{
     // console.log(usersInDB[0])
      const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,usersInDB[0]._id,'user',image);
      let writestream = gfsImages.createWriteStream({
@@ -672,12 +775,14 @@ test('update image for user 1',async ()=>{
      });
      fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
      
-     await new Promise(fulfill => writestream.on('close', fulfill));
-     //await delay(5000)
-    // console.log(await userDocument.findById(usersInDB[0]._id))
-     expect(uploadedImageId).toBeTruthy();
+     writestream.on('close', async (file)=>{
+    expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
  })
- test('update image for artist 1',async ()=>{
+ test('update image for artist 1',async (done)=>{
      
     const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,artists[0]._id,'artist',image) 
     let writestream = gfsImages.createWriteStream({
@@ -689,10 +794,14 @@ test('update image for user 1',async ()=>{
  });
  fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
  
- //await delay(5000)
+ writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
  })
- test('update image for playlist 1',async ()=>{
+ test('update image for playlist 1',async (done)=>{
    // console.log(usersInDB[0],playlist)
     const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,playlist._id,'playlist',image) 
     let writestream = gfsImages.createWriteStream({
@@ -704,12 +813,15 @@ test('update image for user 1',async ()=>{
  });
  fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
  
- await new Promise(fulfill => writestream.on('close', fulfill));
- //await delay(5000)
+ writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
  })
  
- test('update image for track 1',async ()=>{
+ test('update image for track 1',async (done)=>{
     const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,tracks[0]._id,'track',image) 
     let writestream = gfsImages.createWriteStream({
      filename: 'not_found',
@@ -720,12 +832,15 @@ test('update image for user 1',async ()=>{
  });
  fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
  
- await new Promise(fulfill => writestream.on('close', fulfill));
- //await delay(5000)
+ writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
  })
  
- test('update image for album 1',async ()=>{
+ test('update image for album 1',async (done)=>{
     const uploadedImageId = await mockImage.updateImage(usersInDB[0]._id,albums[0]._id,'album',image) 
     let writestream = gfsImages.createWriteStream({
      filename: 'not_found',
@@ -736,8 +851,12 @@ test('update image for user 1',async ()=>{
  });
  fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
  //await delay(5000)
- await new Promise(fulfill => writestream.on('close', fulfill));
+ writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
+done();
+   
+    
+   });
  })
  
 
@@ -751,124 +870,148 @@ test('update image for user 1',async ()=>{
 
 
 // the image is deleted but returned 0 as it is not in grid fs but it does cover the seleted branch that's how i know it was deleted successfully
-test('delete images for user',async ()=>{
+test('delete images for user',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,usersInDB[0]._id,'user');
     expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for album',async ()=>{
+test('delete images for album',async (done)=>{
     const imageId = await mockImage.getImage(albums[0]._id,'album');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,albums[0]._id,'album');
     expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for playlist',async ()=>{
+test('delete images for playlist',async (done)=>{
     const imageId = await mockImage.getImage(playlist._id,'playlist');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,playlist._id,'playlist');
     expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for track',async ()=>{
+test('delete images for track',async (done)=>{
     const imageId = await mockImage.getImage(tracks[0]._id,'track');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,tracks[0]._id,'track');
     expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete non existing images for artist',async ()=>{
-    const imageId = await mockImage.getImage(artists[0]._id,'artist');
-    const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,artists[0]._id,'artist');
-    expect(isDeleted).toBeFalsy();
-})
-test('delete images for artist',async ()=>{
+test('delete non existing images for artist',async (done)=>{
     const imageId = await mockImage.getImage(artists[0]._id,'artist');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,artists[0]._id,'artist');
     expect(isDeleted).toBeTruthy();
+done();
+})
+test('delete images for artist',async (done)=>{
+    const imageId = await mockImage.getImage(artists[0]._id,'artist');
+    const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,artists[0]._id,'artist');
+    expect(isDeleted).toBeTruthy();
+done();
 })
 
-test('delete images for non mongoose id',async ()=>{
+test('delete images for non mongoose id',async (done)=>{
     const imageId = await mockImage.getImage(artists[0]._id,'artist');
     const isDeleted = await mockImage.deleteImages('1',artists[0]._id,'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for with no belons to or source id',async ()=>{
+test('delete images for with no belons to or source id',async (done)=>{
      const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
      const isDeleted = await mockImage.deleteImages(usersInDB[0]._id);
      expect(isDeleted).toBeFalsy();
+done();
  })
- test('delete images for non existing user',async ()=>{
+ test('delete images for non existing user',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(ObjectId(),usersInDB[0]._id,'user');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for user with no images',async ()=>{
+test('delete images for user with no images',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,usersInDB[0]._id,'user');
-    expect(isDeleted).toBeFalsy();
+    expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for user unauthorized',async ()=>{
+test('delete images for user unauthorized',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[1]._id,usersInDB[0]._id,'user');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete image for non existing playlist',async ()=>{
+test('delete image for non existing playlist',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,ObjectId(),'playlist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for non authorized playlist',async ()=>{
+test('delete images for non authorized playlist',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[1]._id,playlist._id,'playlist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for playlist with no images',async ()=>{
+test('delete images for playlist with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,playlist._id,'playlist');
-    expect(isDeleted).toBeFalsy();
+    expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for non existing track',async ()=>{
+test('delete images for non existing track',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,ObjectId(),'track');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for non authorized track',async ()=>{
+test('delete images for non authorized track',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[1]._id,tracks[0]._id,'track');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for track with no images',async ()=>{
+test('delete images for track with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,tracks[0]._id,'track');
-    expect(isDeleted).toBeFalsy();
+    expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for non existing albums',async ()=>{
+test('delete images for non existing albums',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,ObjectId(),'album');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for non authorized album',async ()=>{
+test('delete images for non authorized album',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[1]._id,albums[0]._id,'album');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for track with no images',async ()=>{
+test('delete images for track with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,albums[0]._id,'album');
-    expect(isDeleted).toBeFalsy();
+    expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for non existing albums',async ()=>{
+test('delete images for non existing albums',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,ObjectId(),'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for non authorized artist',async ()=>{
+test('delete images for non authorized artist',async (done)=>{
     const imageId = await mockImage.getImage(usersInDB[0]._id,'user');
     const isDeleted = await mockImage.deleteImages(usersInDB[1]._id,artists[0]._id,'artist');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for artist with no images',async ()=>{
+test('delete images for artist with no images',async (done)=>{
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,artists[0]._id,'artist');
-    expect(isDeleted).toBeFalsy();
+    expect(isDeleted).toBeTruthy();
+done();
 })
-test('delete images for category',async ()=>{
+test('delete images for category',async (done)=>{
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,artists[0]._id,'category');
     expect(isDeleted).toBeFalsy();
+done();
 })
-test('delete images for non entity',async ()=>{
+test('delete images for non entity',async (done)=>{
     const isDeleted = await mockImage.deleteImages(usersInDB[0]._id,artists[0]._id,'none');
     expect(isDeleted).toBeFalsy();
+done();
 })
-*/

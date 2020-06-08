@@ -230,6 +230,102 @@ test('user like already liked  track ',async () => {
     expect(await mockUser.likeTrack(user._id,track._id)).toBeFalsy();
 })
 
+
+test("get no of track likes per day given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay(track._id,date.getDate(),date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(2);
+})
+test("get no of track likes per day given the next day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay(track._id,date.getDate()+1,date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+test("get no of non existing track likes per day given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay(ObjectId(),date.getDate(),date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+test("get no of non  track likes per day given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay("track._id",date.getDate(),date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+
+
+
+test("get no of track likes per month given the current month",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerMonth(track._id,date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(2);
+})
+test("get no of track likes per month given the next month",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerMonth(track._id,date.getMonth()+2,date.getFullYear());
+    expect(num).toEqual(0);
+})
+test("get no of non existing track likes per month given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerMonth(ObjectId(),date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+test("get no of non  track likes per month given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerMonth("track._id",date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+
+
+test("get no of track likes per year given the current year",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerYear(track._id,date.getFullYear());
+    expect(num).toEqual(2);
+})
+test("get no of track likes per year given the next year",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerYear(track._id,date.getFullYear()+1);
+    expect(num).toEqual(0);
+})
+test("get no of non existing track likes per year given the current year",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerYear(ObjectId(),date.getFullYear());
+    expect(num).toEqual(0);
+})
+test("get no of non  track likes per year given the current year",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerYear("track._id",date.getFullYear());
+    expect(num).toEqual(0);
+})
+
+
+
+test("get no of track likes per day given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay(track._id,date.getDate(),date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(2);
+})
+test("get no of track likes per day given the next day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay(track._id,date.getDate()+1,date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+test("get no of non existing track likes per day given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay(ObjectId(),date.getDate(),date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+test("get no of non  track likes per day given the current day",async ()=>{
+    let date = new Date();
+    const num = await mockTrack.getTrackLikesPerDay("track._id",date.getDate(),date.getMonth()+1,date.getFullYear());
+    expect(num).toEqual(0);
+})
+
+
+
+
+
+
+
 test('user unlike  track  which he liked before',async () => {
     expect(await mockUser.unlikeTrack(user._id,track._id)).toBeTruthy();
 })

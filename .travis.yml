@@ -11,9 +11,9 @@ after_success:
   # Take those images and push them to docker hub
   - docker push belalelhossany/backend
 deploy:
-  skip_cleanup: true
+  edge: true
   provider: elasticbeanstalk
-  region: us-west-1
+  region: us-east-1
   app: BackEnd
   env: Backend-env
   bucket_name: marioplex

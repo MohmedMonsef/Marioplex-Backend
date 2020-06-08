@@ -34,5 +34,6 @@ Other:
 	- default image when there is no image for any entity (new)
 	- user/track/image unit test (new)
 	- UML and initial schema (old)
+	- integrating google apis (new)
 	
 

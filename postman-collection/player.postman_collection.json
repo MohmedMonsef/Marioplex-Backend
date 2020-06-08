@@ -72,7 +72,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/createQueue/5eb0a498ec0c444e9c48981e/5eb0a499ec0c444e9c489820?isPlaylist=false",
+					"raw": "http://localhost:3000/api/createQueue/5eb5246b680ef51b4c449291/5eb0a668ec0c444e9c489843?isPlaylist=true",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -81,13 +81,13 @@
 					"path": [
 						"api",
 						"createQueue",
-						"5eb0a498ec0c444e9c48981e",
-						"5eb0a499ec0c444e9c489820"
+						"5eb5246b680ef51b4c449291",
+						"5eb0a668ec0c444e9c489843"
 					],
 					"query": [
 						{
 							"key": "isPlaylist",
-							"value": "false"
+							"value": "true"
 						}
 					]
 				},
@@ -530,7 +530,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/player/add-to-queue/5eb5246b680ef51b4c449291/5eb0a877ec0c444e9c48986b?isPlaylist=true",
+					"raw": "http://localhost:3000/api/player/add-to-queue/5eb0a498ec0c444e9c48981e/5eb0a499ec0c444e9c489820?isPlaylist=false",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -540,13 +540,13 @@
 						"api",
 						"player",
 						"add-to-queue",
-						"5eb5246b680ef51b4c449291",
-						"5eb0a877ec0c444e9c48986b"
+						"5eb0a498ec0c444e9c48981e",
+						"5eb0a499ec0c444e9c489820"
 					],
 					"query": [
 						{
 							"key": "isPlaylist",
-							"value": "true"
+							"value": "false"
 						}
 					]
 				},

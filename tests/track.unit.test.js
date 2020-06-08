@@ -324,6 +324,10 @@ test("get no of non  track likes per day given the current day",async ()=>{
 
 
 
+test('user unlike non monmgoose  track  which he liked before',async () => {
+    expect(await mockUser.unlikeTrack(user._id,"1")).toBeFalsy();
+})
+
 
 
 test('user unlike  track  which he liked before',async () => {

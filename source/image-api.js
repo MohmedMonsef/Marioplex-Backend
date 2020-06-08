@@ -72,7 +72,7 @@ const Image = {
      */
     findMeAsArtist: async function(userId) {
         try{
-        if (!checkMonooseObjectID([userId])) return 0;
+        if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
         const artist = await artistDocument.findOne({ userId: userId }, (err, artist) => {
             if (err) return 0;
             return artist;
@@ -128,7 +128,7 @@ const Image = {
      */
     checkArtisthasAlbum: async function(artistId, albumId) {
         try{
-        if (!checkMonooseObjectID([artistId, albumId])) return 0;
+        if (!checkMonooseObjectID([artistId, albumId]))  throw new Error("not mongoose id");
         const album = await albumDocument.findById(albumId);
         if (album) {
             const artist = await artistDocument.findById(artistId);
@@ -153,7 +153,7 @@ const Image = {
      */
     uploadImage: async function(userId, sourceId, belongsTo, image) {
         try{
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId])) throw new Error("not mongoose id");
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -257,7 +257,7 @@ const Image = {
      */
     updateImage: async function(userId, sourceId, belongsTo, image) {
         try{
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -363,7 +363,7 @@ const Image = {
     },
     getImage: async function(sourceId, belongsTo) {
         try{
-        if (!checkMonooseObjectID([sourceId])) return 0;
+        if (!checkMonooseObjectID([sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo) return 0;
 
 
@@ -446,7 +446,7 @@ const Image = {
         try{
         // remove image from database and from gridfs
         // check if user has access to delete image then delete the image
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo || !imageId) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -624,7 +624,7 @@ const Image = {
                 return 0;
         }
     }catch(ex){
-        console.log(ex)
+     
         return 0;
     }
 
@@ -665,7 +665,7 @@ const Image = {
         try{
         // remove images from database and from gridfs
         // check if user has access to delete image then delete the image
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;

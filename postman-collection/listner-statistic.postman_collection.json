@@ -1,0 +1,256 @@
+{
+	"info": {
+		"_postman_id": "95f88331-ff94-47e5-88ef-6f7d0b4deda4",
+		"name": "listner-statistic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "track listeners per day",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/tracks/listeners-per-day/5eb0a499ec0c444e9c489820?year=2020&day=8&month=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tracks",
+						"listeners-per-day",
+						"5eb0a499ec0c444e9c489820"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2020"
+						},
+						{
+							"key": "day",
+							"value": "8"
+						},
+						{
+							"key": "month",
+							"value": "6"
+						}
+					]
+				},
+				"description": "skip to next "
+			},
+			"response": []
+		},
+		{
+			"name": "album listeners per day",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/albums/listeners-per-day/5eb0a498ec0c444e9c48981e?year=2020&day=8&month=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"albums",
+						"listeners-per-day",
+						"5eb0a498ec0c444e9c48981e"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2020"
+						},
+						{
+							"key": "day",
+							"value": "8"
+						},
+						{
+							"key": "month",
+							"value": "6"
+						}
+					]
+				},
+				"description": "skip to next "
+			},
+			"response": []
+		},
+		{
+			"name": "album listeners per month",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/albums/listeners-per-month/5eb0a498ec0c444e9c48981e?year=2020&month=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"albums",
+						"listeners-per-month",
+						"5eb0a498ec0c444e9c48981e"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2020"
+						},
+						{
+							"key": "month",
+							"value": "6"
+						}
+					]
+				},
+				"description": "skip to next "
+			},
+			"response": []
+		},
+		{
+			"name": "album listeners per year",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/albums/listeners-per-year/5eb0a498ec0c444e9c48981e?year=2020",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"albums",
+						"listeners-per-year",
+						"5eb0a498ec0c444e9c48981e"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2020"
+						}
+					]
+				},
+				"description": "skip to next "
+			},
+			"response": []
+		},
+		{
+			"name": "track listeners per Month",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/tracks/listeners-per-month/5eb0a499ec0c444e9c489820?year=2020&month=6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tracks",
+						"listeners-per-month",
+						"5eb0a499ec0c444e9c489820"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2020"
+						},
+						{
+							"key": "month",
+							"value": "6"
+						}
+					]
+				},
+				"description": "skip to next "
+			},
+			"response": []
+		},
+		{
+			"name": "track listeners per year",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWIwOTAwYTMwYTlhMDFmMTQ0YjcyMzMiLCJwcm9kdWN0IjoicHJlbWl1bSIsInVzZXJUeXBlIjoiQXJ0aXN0IiwiaWF0IjoxNTg5NzY5OTA3LCJleHAiOjMxNDY0ODg4NzgwMjU4ODUwMDB9.qogKcDSIbiUXrLA7i-qIBI6F_g8pxH-kyh0uiV-Hnpw",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/api/tracks/listeners-per-year/5eb0a499ec0c444e9c489820?year=2020",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tracks",
+						"listeners-per-year",
+						"5eb0a499ec0c444e9c489820"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2020"
+						}
+					]
+				},
+				"description": "skip to next "
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

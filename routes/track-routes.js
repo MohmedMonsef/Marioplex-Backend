@@ -350,7 +350,7 @@ router.put('/tracks/update/:track_id', limiter, checkAuth, async(req, res) => {
 
 // get track statistics 
 
-router.get('/tracks/likes-per-day/:track_id',limiter,checkAuth,async (req,res)=>{
+router.get('/tracks/likes-per-day/:track_id',limiter,async (req,res)=>{
     try{
     const trackId = req.params.track_id;
     const day = req.query.day;
@@ -363,7 +363,7 @@ router.get('/tracks/likes-per-day/:track_id',limiter,checkAuth,async (req,res)=>
 }
 })
 
-router.get('/tracks/likes-per-month/:track_id',limiter,checkAuth,async (req,res)=>{
+router.get('/tracks/likes-per-month/:track_id',limiter,async (req,res)=>{
     try{
     const trackId = req.params.track_id;
     const month = req.query.month;
@@ -375,7 +375,7 @@ router.get('/tracks/likes-per-month/:track_id',limiter,checkAuth,async (req,res)
 }
 })
 
-router.get('/tracks/likes-per-year/:track_id',limiter,checkAuth,async (req,res)=>{
+router.get('/tracks/likes-per-year/:track_id',limiter,async (req,res)=>{
     try{
     const trackId = req.params.track_id;
     const year = req.query.year;

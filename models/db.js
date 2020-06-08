@@ -43,9 +43,12 @@ const Track = new Schema({
     likes: [{
         userId: mongoose.Schema.Types.ObjectId,
         day: Number,
-        month:Number,
+        month: Number,
         year: Number
-
+    }],
+    liseteners: [{
+        numberOfLiseteners: Number,
+        dateForThis: Number // save in ddmmyyyy make it number to easier treat with it 
     }]
 });
 
@@ -79,8 +82,11 @@ const Album = new Schema({
     hasTracks: [{
         trackId: mongoose.Schema.Types.ObjectId,
         //ref: 'Track'
+    }],
+    liseteners: [{
+        numberOfLiseteners: Number,
+        dateForThis: Number // save in ddmmyyyy make it number to easier treat with it 
     }]
-
 });
 
 const Category = new Schema({
@@ -195,8 +201,8 @@ const User = new Schema({
         currentTimeStampe: Number,
         isRepeatTrack: Boolean
     },
-    following:[mongoose.Schema.Types.ObjectId],
-    followers:[mongoose.Schema.Types.ObjectId]
+    following: [mongoose.Schema.Types.ObjectId],
+    followers: [mongoose.Schema.Types.ObjectId]
 });
 
 const Artist = new Schema({

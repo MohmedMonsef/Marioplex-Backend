@@ -14,7 +14,7 @@ Track:
 	- get tracks related to certain track (new)
 	- like and unlike track (old)
 	- delete track (new)
-	- track like statistics per day/month/year
+	- track like statistics per day/month/year (new)
 Image:
 	- upload image file for all entities in database (new)
 	- upload image binary data in GridFS (new)

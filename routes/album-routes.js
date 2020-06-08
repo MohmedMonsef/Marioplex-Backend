@@ -5,7 +5,7 @@ const User = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
 const RateLimit = require("express-rate-limit");
-const limitOffset = require('../middlewares/limitOffset');
+const limitOffset = require('../middlewares/limit-offset');
 // add rate limiting
 const limiter = RateLimit({
     windowMs: 60 * 1000,

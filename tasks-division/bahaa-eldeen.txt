@@ -1,0 +1,33 @@
+Features:
+Track:
+	- upload track audio file with multiple quality and supports encryption (new)
+	- upload track binary data in google drive for the free 15GB (new)
+	- get and stream track audio file (new)
+	- edit track (new)
+	- get track info, audoi features, get multiple tracks (old)
+	- get tracks related to certain track (new)
+	- like and unlike track (old)
+	- delete track (new)
+Image:
+	- upload image file for all entities in database (new)
+	- upload image binary data in GridFS (new)
+	- update image file for all entities in database (new)
+	- get and stream image binary data for all entities (new)
+	- delete image from all entities (new)
+Player: 
+	- pause/resume track (old)
+User:
+	- follow/unfollow users (new)
+	- get followers (new)
+	- get users whom user follow (new)
+Facebook: 
+	- login with facebook (old)
+	- sign up from facebook info if user wasn't in database (old)
+Other:
+	- added rate limit to all routes to avoid bots and automation to server (new)
+	- added migration to mongoose (old)
+	- default image when there is no image for any entity (new)
+	- user/track/image unit test (new)
+	- UML and initial schema (old)
+	
+

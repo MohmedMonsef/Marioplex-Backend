@@ -2,7 +2,7 @@ const { user: userDocument, artist: artistDocument, album: albumDocument, track:
 var FuzzySearch = require('fuzzy-search');
 
 
-const limitOffset = require('../middlewares/limitOffset');
+const limitOffset = require('../middlewares/limit-offset');
 
 // initialize db 
 const checkMonooseObjectID = require('../validation/mongoose-objectid')

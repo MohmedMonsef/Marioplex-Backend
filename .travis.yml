@@ -13,7 +13,7 @@ after_success:
 deploy:
   skip_cleanup: true
   provider: elasticbeanstalk
-  region: us-east-1
+  region: us-west-1
   app: BackEnd
   env: Backend-env
   bucket_name: marioplex

@@ -204,10 +204,11 @@ const Track = {
     },
     /** 
      * user like track
+     * @param {String} userId
      * @param {string} trackId - the track id 
      * @returns {Number}
      */
-    likeTrack: async function(trackId) {
+    likeTrack: async function(userId,trackId) {
         try{
         // if not found then add track.track_id to user likes and return the updated user
         // else return 0 as he already like the track
@@ -216,6 +217,18 @@ const Track = {
         if (!track) return 0;
         if (!track.like) track.like = 0;
         track.like += 1;
+        // add this like to track likes statistics
+        let date = new Date();
+        let trackLikeStatistics = {
+            userId: userId,
+            day: date.getDate(),
+            month: date.getMonth()+1,
+            year: date.getFullYear()
+
+        }
+        if(!track.likes) track.likes = [];
+        track.likes.push(trackLikeStatistics);
+
         // save track
         await track.save().catch();
         return 1;
@@ -226,10 +239,11 @@ const Track = {
 
     /** 
      * user unlike track 
+     * @param {String} userId
      * @param {string} trackId - the track id 
      * @returns {Number}
      */
-    unlikeTrack: async function(trackId) {
+    unlikeTrack: async function(userId,trackId) {
         try{
         // else return 0 as he didn't like the 
         if (!checkMonooseObjectID([trackId])) return 0;
@@ -237,6 +251,14 @@ const Track = {
         if (!track) return 0;
         if (!track.like) return 0;
         track.like -= 1;
+        // remove the like from the likes statistics
+        if(!track.likes) track.likes = 0;
+        for(let i=0;i<track.likes.length;i++){
+            if(String(track.likes[i].userId) == String(userId)){
+                track.likes.splice(i,1);
+                break;
+            }
+        }
         await track.save().catch();
         return 1;
     }catch(ex){
@@ -289,7 +311,8 @@ const Track = {
             like: 0,
             key: key,
             keyId: keyId,
-            genre: genre
+            genre: genre,
+            likes:[]
 
         });
         await track.save();
@@ -539,6 +562,67 @@ const Track = {
     }catch(ex){
         return 0;
     }
+    },
+    /**
+     * 
+     * @param {String} trackId 
+     * @param {Number} day 
+     * @param {Number} month 
+     * @param {Number} year 
+     * @returns {Number}
+     */
+    getTrackLikesPerDay: async function(trackId,day,month,year){
+        try{
+            const track = await trackDocument.findById(trackId);
+            let noOfLikes = 0 ;
+            if(!track || !track.likes)return 0;
+            for(let i = 0;i<track.likes.length;i++){
+                
+                if(track.likes[i].day == day && track.likes[i].month == month && track.likes[i].year == year) noOfLikes++;
+            }
+            return noOfLikes;
+        }catch(ex){
+            return 0;
+        }
+    },
+    /**
+     * 
+     * @param {String} trackId 
+     * @param {Number} month 
+     * @param {Number} year 
+     * @returns {Number}
+     */
+    getTrackLikesPerMonth: async function(trackId,month,year){
+        try{
+            const track = await trackDocument.findById(trackId);
+            let noOfLikes = 0 ;
+            if(!track || !track.likes)return 0;
+            for(let i = 0;i<track.likes.length;i++){
+                if(  track.likes[i].month == month && track.likes[i].year == year) noOfLikes++;
+            }
+            return noOfLikes;
+        }catch(ex){
+            return 0;
+        }
+    },
+    /**
+     * 
+     * @param {String} trackId  
+     * @param {Number} year 
+     * @returns {Number}
+     */
+    getTrackLikesPerYear: async function(trackId,year){
+        try{
+            const track = await trackDocument.findById(trackId);
+            let noOfLikes = 0 ;
+            if(!track || !track.likes)return 0;
+            for(let i = 0;i<track.likes.length;i++){
+                if( track.likes[i].year == year) noOfLikes++;
+            }
+            return noOfLikes;
+        }catch(ex){
+            return 0;
+        }
     }
 
 }

@@ -236,7 +236,7 @@ const User = {
             }
 
             if (!await Playlist.addTrackToPlaylist(user['likesTracksPlaylist'], [trackId])) return 0;
-            return Track.likeTrack(trackId);
+            return Track.likeTrack(userId,trackId);
         } catch (ex) {
             return 0;
         }
@@ -263,7 +263,7 @@ const User = {
             const ifFind = await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], [trackId]);
             if (!ifFind || ifFind[0] == false) return 0;
             if (!await Playlist.removePlaylistTracks(user['likesTracksPlaylist'], [trackId])) return 0;
-            return Track.unlikeTrack(trackId);
+            return Track.unlikeTrack(userId,trackId);
         } catch (ex) {
             return 0;
         }

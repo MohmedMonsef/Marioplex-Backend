@@ -39,7 +39,14 @@ const Track = new Schema({
     like: Number,
     key: String,
     keyId: String,
-    genre: [String]
+    genre: [String],
+    likes: [{
+        userId: mongoose.Schema.Types.ObjectId,
+        day: Number,
+        month:Number,
+        year: Number
+
+    }]
 });
 
 const Playlist = new Schema({

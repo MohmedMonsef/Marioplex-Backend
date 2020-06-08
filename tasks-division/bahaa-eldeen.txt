@@ -21,6 +21,7 @@ Image:
 	- delete image from all entities (new)
 Player: 
 	- pause/resume track (old)
+	- prototype for set player instance and update player, but it get changed heavily
 User:
 	- follow/unfollow users (new)
 	- get followers (new)
@@ -35,5 +36,6 @@ Other:
 	- user/track/image unit test (new)
 	- UML and initial schema (old)
 	- integrating google apis (new)
+	- using EME API to play encrypted tracks in the web
 	
 

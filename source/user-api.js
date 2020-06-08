@@ -23,7 +23,7 @@ const User = {
      */
     getUserById: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await userDocument.findById(userId, (err, user) => {
                 if (err) return 0;
                 return user;
@@ -36,7 +36,7 @@ const User = {
     },
     getUnAuthUser: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const publicUser = {
@@ -77,7 +77,7 @@ const User = {
      */
     update: async function(repeatedPassword, userId, gender, birthDate, displayName, password, email, country, expiresDate, cardNumber, isMonth, newPassword) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
 
             const user = await this.getUserById(userId);
             if (user) {
@@ -145,7 +145,7 @@ const User = {
      */
     me: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) {
                 return 0;
@@ -171,7 +171,7 @@ const User = {
      */
     deleteAccount: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) { return 0; }
             if (user.userType == 'Artist') return 0;
@@ -217,7 +217,7 @@ const User = {
      */
     likeTrack: async function(userId, trackId) {
         try {
-            if (!checkMonooseObjectID([userId, trackId])) return 0;
+            if (!checkMonooseObjectID([userId, trackId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) { return 0; }
             const likeTrack = await Track.getTrack(trackId, user);
@@ -254,7 +254,7 @@ const User = {
      */
     unlikeTrack: async function(userId, trackId) {
         try {
-            if (!checkMonooseObjectID([userId, trackId])) return 0;
+            if (!checkMonooseObjectID([userId, trackId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) { return 0; }
             const unlikeTrack = await Track.getTrack(trackId, user);
@@ -279,7 +279,7 @@ const User = {
     //params: user, trackId, playlistId
     addTrack: async function(user, trackId, playlistId) {
         try {
-            if (!checkMonooseObjectID([playlistId, trackId])) return 0;
+            if (!checkMonooseObjectID([playlistId, trackId]))  throw new Error("not mongoose id");
             const playlist = await playlistDocument.findById(playlistId);
             const track = await trackDocument.findById(trackId);
             if (!playlist || !track) { return 0; }
@@ -317,7 +317,7 @@ const User = {
      */
     AddTrackToPlaylist: async function(userId, trackId, playlistId) {
         try {
-            if (!checkMonooseObjectID([userId, trackId, playlistId])) return 0;
+            if (!checkMonooseObjectID([userId, trackId, playlistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             let userPlaylist = undefined;
@@ -345,7 +345,7 @@ const User = {
      */
     getUserFollowingArtist: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             if (!user.follow) user.follow = [];
@@ -374,7 +374,7 @@ const User = {
      */
     getUserFollowingUser: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             if (!user.following) user.following = [];
@@ -396,7 +396,7 @@ const User = {
      */
     getUserFollowers: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             if (!user.followers) user.followers = [];
@@ -431,7 +431,7 @@ const User = {
      */
     userFollowUser: async function(user1Id, user2Id) {
         try {
-            if (!checkMonooseObjectID([user1Id, user2Id])) return 0;
+            if (!checkMonooseObjectID([user1Id, user2Id])) throw new Error("not mongoose id");
             const user1 = await this.getUserById(user1Id);
             const user2 = await this.getUserById(user2Id);
             if (!user1 || !user2) return 0;
@@ -459,7 +459,7 @@ const User = {
      */
     userUnfollowUser: async function(user1Id, user2Id) {
         try {
-            if (!checkMonooseObjectID([user1Id, user2Id])) return 0;
+            if (!checkMonooseObjectID([user1Id, user2Id])) throw new Error("not mongoose id");
             const user1 = await this.getUserById(user1Id);
             const user2 = await this.getUserById(user2Id);
             if (!user1 || !user2) return 0;
@@ -494,7 +494,7 @@ const User = {
      */
     userFollowArtist: async function(userId, artistId) {
         try {
-            if (!checkMonooseObjectID([userId, artistId])) return 0;
+            if (!checkMonooseObjectID([userId, artistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             let artist = await Artist.getArtist(artistId);
             if (!user || (!artist)) return 0;
@@ -521,7 +521,7 @@ const User = {
      */
     userUnfollowArtist: async function(userId, artistId) {
         try {
-            if (!checkMonooseObjectID([userId, artistId])) return 0;
+            if (!checkMonooseObjectID([userId, artistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             let artist = await Artist.getArtist(artistId);
             if (!user || !artist) return 0;
@@ -555,7 +555,7 @@ const User = {
      */
     checkIfUserFollowArtist: async function(userId, artistId) {
         try {
-            if (!checkMonooseObjectID([userId, artistId])) return 0;
+            if (!checkMonooseObjectID([userId, artistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             let artist = await Artist.getArtist(artistId);
             if (!user || (!artist)) return 0;
@@ -642,7 +642,7 @@ const User = {
      */
     followPlaylist: async function(userId, playlistId, isprivate) {
         try {
-            if (!checkMonooseObjectID([userId, playlistId])) return 0;
+            if (!checkMonooseObjectID([userId, playlistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             return await Playlist.followPlaylits(user, playlistId, isprivate);
@@ -662,7 +662,7 @@ const User = {
      */
     unfollowPlaylist: async function(userId, playlistId) {
         try {
-            if (!checkMonooseObjectID([userId, playlistId])) return 0;
+            if (!checkMonooseObjectID([userId, playlistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             return await Playlist.unfollowPlaylist(user, playlistId);
@@ -681,7 +681,7 @@ const User = {
      */
     deletePlaylist: async function(userId, playlistId) {
         try {
-            if (!checkMonooseObjectID([userId, playlistId])) return 0;
+            if (!checkMonooseObjectID([userId, playlistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const isDelete = await Playlist.deletePlaylist(user, playlistId);
@@ -762,7 +762,7 @@ const User = {
      */
     getPlaylist: async function(playlistId, snapshot, userId) {
         try {
-            if (!checkMonooseObjectID([userId, playlistId])) return 0;
+            if (!checkMonooseObjectID([userId, playlistId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const playlist = await Playlist.getPlaylistWithTracks(playlistId, snapshot, user);
@@ -788,7 +788,7 @@ const User = {
      */
     createdPlaylist: async function(userId, playlistName, description) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             // create new playlist
             if (!user) return 0;
@@ -833,7 +833,7 @@ const User = {
      */
     restorePlaylists: async function(userId, playlistsIds) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             if (!checkMonooseObjectID(playlistsIds)) return 0;
             let user = await userDocument.findById(userId);
             let restored = [];
@@ -881,7 +881,7 @@ const User = {
      */
     checkAuthorizedPlaylist: async function(userId, playlistId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             let users = await userDocument.find({});
             if (!users) return 0;
             let createdUser;
@@ -925,7 +925,7 @@ const User = {
 
     promoteToArtist: async function(userId, info, name, genre) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             user = await this.getUserById(userId);
             if (!user) return false;
             if (user.userType == "Artist") {
@@ -949,7 +949,7 @@ const User = {
      */
     promoteToPremium: async function(userId, cardNumber, isMonth, expiresDate) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             user = await this.getUserById(userId);
             if (!user) return false;
             if (user.product == 'premium') {
@@ -973,7 +973,7 @@ const User = {
      */
     promoteToFree: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             user = await this.getUserById(userId);
             if (!user) return 0;
             // if not premium return 0
@@ -1024,7 +1024,7 @@ const User = {
      */
     addToQueue: async function(userId, trackId, isPlaylist, sourceId) {
         try {
-            if (!checkMonooseObjectID([userId, sourceId, trackId])) return 0;
+            if (!checkMonooseObjectID([userId, sourceId, trackId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const isAddQueue = await Player.addToQueue(user, trackId, isPlaylist, sourceId);
@@ -1049,7 +1049,7 @@ const User = {
 
     updateUserPlayer: async function(userId, isPlaylist, sourceId, trackId, tracksIds, sourceType) {
         try {
-            if (!checkMonooseObjectID([userId, trackId])) return 0;
+            if (!checkMonooseObjectID([userId, trackId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             if (!tracksIds) {
@@ -1078,7 +1078,7 @@ const User = {
 
     repreatPlaylist: async function(userId, state) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (user)
                 return await Player.repreatPlaylist(user, state);
@@ -1098,7 +1098,7 @@ const User = {
 
     getQueue: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const tracks = await Player.getQueue(user);
@@ -1120,7 +1120,7 @@ const User = {
 
     resumePlaying: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const player = await Player.resumePlaying(user);
@@ -1142,7 +1142,7 @@ const User = {
 
     pausePlaying: async function(userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const player = await Player.pausePlaying(user);
@@ -1164,7 +1164,7 @@ const User = {
 
     setShuffle: async function(state, userId) {
         try {
-            if (!checkMonooseObjectID([userId])) return 0;
+            if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
             const user = await this.getUserById(userId);
             if (!user) return 0;
             const isShuffle = await Player.setShuffle(state, user);

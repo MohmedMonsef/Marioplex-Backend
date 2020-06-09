@@ -735,3 +735,20 @@ test('queue has not playable', async() => {
 test('add to queue not playable', async() => {
     expect(await mockPlayer.addToQueue(usersInDB[0], tracks[14]._id, false, albums[2]._id)).toEqual(0);
 })
+
+test('increament liseners in track error object', async() => {
+    expect(await mockPlayer.incrementListeners('iuui', 'track')).toEqual(0);
+})
+
+test('increament liseners in track object', async() => {
+    expect(await mockPlayer.incrementListeners(tracks[10], 'track')).toEqual(1);
+})
+
+test('increament liseners in album object', async() => {
+    expect(await mockPlayer.incrementListeners(albums[2], 'album')).toEqual(1);
+})
+
+
+test('increament liseners in album object', async() => {
+    expect(await mockPlayer.incrementListeners(albums[1], 'album')).toEqual(1);
+})

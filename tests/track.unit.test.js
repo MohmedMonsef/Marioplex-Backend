@@ -1,3 +1,5 @@
+
+jest.setTimeout(100000);
 const mockTrack = require('../source/track-api');
 const mockUser = require('../source/user-api');
 const mockArtist = require('../source/artist-api');

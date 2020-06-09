@@ -472,12 +472,17 @@ const Playlist = {
         if (len == 0) { return 0; }
         if (!playlist.snapshot[len - 1].hasTracks) playlist.snapshot[len - 1].hasTracks = [];
         for (var i = 0; i < playlist.snapshot[len - 1].hasTracks.length; i++) {
-            let track = await Track.getTrack(playlist.snapshot[len - 1].hasTracks[i]);
-            if (track) {
-                tracks.push(track);
-            }
+            const track1 = await Track.getTrack(playlist.snapshot[len - 1].hasTracks[i]);
+            const artistId = track1.artistId;
+            const albumId = track1.albumId;
+            const album = await Album.getAlbumById(albumId);
+            const artist = await Artist.getArtist(artistId);
+            if (!album || !artist) { return 0; }
+            tracks.push({ trackid: track1._id, name: track1.name, artistId: artistId, artistName: artist.Name, albumId: albumId, albumName: album.name, duration: track1.duration, images: track1.images });
         }
-        playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks });
+        let owner=await userDocument.findById(playlist.ownerId);
+        userName=owner.displayName;
+        playlistJson.push({ id: playlist._id, type: playlist.type, name: playlist.name,ownerName:userName, ownerId: playlist.ownerId, collaborative: playlist.collaborative, isPublic: playlist.isPublic, images: playlist.images, tracks: tracks });
         return playlistJson;
 
     },

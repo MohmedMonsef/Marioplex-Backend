@@ -30,7 +30,6 @@
         "jquery": "^3.5.1",
         "jsonwebtoken": "^8.5.1",
         "method-override": "^3.0.0",
-        "mongodb-memory-server": "^6.6.0",
         "mongoose": "^5.9.4",
         "mongoose-fuzzy-searching": "^1.1.9",
         "morgan": "^1.9.1",
@@ -47,7 +46,8 @@
         "winston": "^3.2.1"
     },
     "devDependencies": {
-        "supertest": "^4.0.2"
+        "supertest": "^4.0.2",
+        "mongodb-memory-server": "^6.6.0"
     },
     "scripts": {
         "test": "jest",

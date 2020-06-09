@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">92.47% </span>
+                <span class="strong">92.61% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>258/279</span>
+                <span class='fraction'>263/284</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">99.58% </span>
+                <span class="strong">99.59% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>238/239</span>
+                <span class='fraction'>243/244</span>
             </div>
         
             
@@ -605,7 +605,14 @@
 <a name='L546'></a><a href='#L546'>546</a>
 <a name='L547'></a><a href='#L547'>547</a>
 <a name='L548'></a><a href='#L548'>548</a>
-<a name='L549'></a><a href='#L549'>549</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L549'></a><a href='#L549'>549</a>
+<a name='L550'></a><a href='#L550'>550</a>
+<a name='L551'></a><a href='#L551'>551</a>
+<a name='L552'></a><a href='#L552'>552</a>
+<a name='L553'></a><a href='#L553'>553</a>
+<a name='L554'></a><a href='#L554'>554</a>
+<a name='L555'></a><a href='#L555'>555</a>
+<a name='L556'></a><a href='#L556'>556</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -682,7 +689,6 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -829,7 +835,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -918,6 +923,8 @@
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -962,6 +969,7 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
@@ -1018,6 +1026,8 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
@@ -1048,6 +1058,8 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -1077,6 +1089,8 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1230,7 +1244,6 @@ const Search = {
         if (!checkMonooseObjectID([userId])) return 0;
         user = await userDocument.findById(userId);
         if (!user) return 0;
-        // console.log(user.recentlySearch)
         if (!user.recentlySearch || user.recentlySearch.length == 0) user.recentlySearch = [];
         let artists = [];
         let tracks = [];
@@ -1377,7 +1390,6 @@ const Search = {
     getTop: async function(name) {
 &nbsp;
         const artist = await this.getArtistProfile(name);
-        //console.log(artist)
         if (artist) {
             return artist[0]._id
         }
@@ -1459,11 +1471,13 @@ const Search = {
             let albums = await Album.getAlbumArtist(allalbum[i]._id);
             <span class="missing-if-branch" title="else path not taken" >E</span>if (albums) {
                 album = {}
-                album["_id"] = albums._id
-                album["name"] = albums.name
-                album["images"] = albums.images
-                album["artistId"] = albums.artistId;
-                album["artistName"] = albums.artistName;
+                album['_id'] = albums._id
+                album['name'] = albums.name
+                album['images'] = albums.images
+                album['artistId'] = albums.artistId;
+                album['artistName'] = albums.artistName;
+                album['type'] = 'album';
+&nbsp;
                 albumsInfo.push(album);
             }
         }
@@ -1498,17 +1512,18 @@ const Search = {
             let artist = await Artist.getArtist(tracks[i].artistId)
             trackValues = {}
             <span class="missing-if-branch" title="else path not taken" >E</span>if (artist) {
-                trackValues["artistId"] = artist._id
-                trackValues["artistName"] = artist.Name
+                trackValues['artistId'] = artist._id
+                trackValues['artistName'] = artist.Name
             }
             let album = await Album.getAlbumById(tracks[i].albumId)
             <span class="missing-if-branch" title="else path not taken" >E</span>if (album) {
-                trackValues["albumId"] = album._id
-                trackValues["albumName"] = album.name
+                trackValues['albumId'] = album._id
+                trackValues['albumName'] = album.name
             }
-            trackValues["_id"] = tracks[i]._id
-            trackValues["name"] = tracks[i].name
-            trackValues["images"] = tracks[i].images
+            trackValues['_id'] = tracks[i]._id
+            trackValues['name'] = tracks[i].name
+            trackValues['images'] = tracks[i].images
+            trackValues['type'] = 'track'
             trackInfo.push(trackValues);
 &nbsp;
         }
@@ -1561,9 +1576,11 @@ const Search = {
         else {
             for (let i = 0; i &lt; artist.length; i++) {
                 artistInfo = {}
-                artistInfo["_id"] = artist[i]._id
-                artistInfo["name"] = artist[i].Name
-                artistInfo["images"] = artist[i].images
+                artistInfo['_id'] = artist[i]._id
+                artistInfo['name'] = artist[i].Name
+                artistInfo['images'] = artist[i].images
+                artistInfo['type'] = 'artist'
+&nbsp;
                 artistsInfo.push(artistInfo);
 &nbsp;
             }
@@ -1587,13 +1604,15 @@ const Search = {
         if (user.length == 0) return user;
         else {
             for (let i = 0; i &lt; user.length; i++) {
-                if (user[i].userType == "Artist") {
+                if (user[i].userType == 'Artist') {
                     continue;
                 } else {
                     userInfo = {}
-                    userInfo["_id"] = user[i]._id
-                    userInfo["displayName"] = user[i].displayName
-                    userInfo["images"] = user[i].images
+                    userInfo['_id'] = user[i]._id
+                    userInfo['displayName'] = user[i].displayName
+                    userInfo['images'] = user[i].images
+                    userInfo['type'] = 'user'
+&nbsp;
                     usersInfo.push(userInfo)
                 }
             }
@@ -1619,12 +1638,14 @@ const Search = {
                 let user = await User.getUserById(playlists[i].ownerId)
                 playlist = {}
                 <span class="missing-if-branch" title="else path not taken" >E</span>if (user) {
-                    playlist["ownerId"] = user._id
-                    playlist["ownerName"] = user.displayName
+                    playlist['ownerId'] = user._id
+                    playlist['ownerName'] = user.displayName
                 }
-                playlist["_id"] = playlists[i]._id
-                playlist["name"] = playlists[i].name
-                playlist["images"] = playlists[i].images
+                playlist['_id'] = playlists[i]._id
+                playlist['name'] = playlists[i].name
+                playlist['images'] = playlists[i].images
+                playlist['type'] = 'playlist'
+&nbsp;
                 playlistInfo.push(playlist)
 &nbsp;
             }
@@ -1708,7 +1729,7 @@ const removeDupliactes = (values) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Jun 09 2020 13:03:53 GMT+0200 (Eastern European Standard Time)
+                at Tue Jun 09 2020 13:24:04 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

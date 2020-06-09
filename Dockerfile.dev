@@ -9,5 +9,10 @@ ENTRYPOINT ["/bin/bash"]
 RUN sudo npm install
 
 COPY . /app
+
+WORKDIR /app/tests
+RUN sudo rm	image.unit.test.js
+
 EXPOSE 3000
+WORKDIR /app
 CMD ["testcommand.sh"]

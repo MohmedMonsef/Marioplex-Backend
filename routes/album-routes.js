@@ -91,7 +91,18 @@ router.get('/albums', limiter, async(req, res, next) => {
     }
 
 })
+router.get('/Albums/numberOfLikes/:id', limiter, async(req, res, next) => {
+      if (req.params.id == undefined) { return res.status(403).send('Artist ID is undefined'); }
+      const albumId = req.params.id;
+      //GET THE ARTIST WITH THE GIVEN ID
+      const likesPerday = await Album.getAlbumNumberOfLikesInDay(albumId).catch(next);;
+      const likesPerMonth = await Album.getAlbumNumberOfLikesInMonth(albumId).catch(next);;
+      const likesPerYear = await Album.getAlbumNumberOfLikesInYear(albumId).catch(next);;
+      //IF NO SUCH ARTIST RETURN 404 NOT FOUND ELSE RETURN STATUS 200 WITH THE ARTIST
+      if (likesPerday==-1||likesPerMonth==-1||likesPerYear==-1) return res.status(404).send("");
+      else return res.status(200).send({'numOfLikes': [likesPerday,likesPerMonth,likesPerYear] });
 
+  });
 router.get('/albums/:id/tracks', checkIfAuth, limiter, async(req, res, next) => {
 
     const albumId = req.params.id;

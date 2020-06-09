@@ -7,6 +7,67 @@ const Artist = require('./artist-api');
 const CheckMonooseObjectId = require('../validation/mongoose-objectid')
     /** @namespace */
 const Album = {
+    
+    /**
+     * get number of likes for an album per month
+     * @param {String} albumId
+     * @returns {Number} 
+     */
+    getAlbumNumberOfLikesInMonth: async function(albumId) {
+        let album = await this.getAlbumById(albumId);
+        if (!album) return -1;
+        if (!album.followed) { album.followed = []; return 0; }
+        var numberOfLikes = 0;
+        var today = new Date();
+        for (let i = 0; i < album.followed.length; i++) {
+            let date = album.followed[i].date;
+            if (date.getMonth() == today.getMonth() &&
+                date.getFullYear() == today.getFullYear())
+                numberOfLikes += 1;
+        }
+        return numberOfLikes;
+
+    },
+    /**
+     * get number of likes for an album per day
+     * @param {String} albumId
+     * @returns {Number} 
+     */
+    getAlbumNumberOfLikesInDay: async function(albumId) {
+        let album = await this.getAlbumById(albumId);
+        if (!album) return -1;
+        if (!album.followed) { album.followed = []; return 0; }
+        var numberOfLikes = 0;
+        var today = new Date();
+        for (let i = 0; i < album.followed.length; i++) {
+            let date = album.followed[i].date;
+            if (date.getMonth() == today.getMonth() &&
+                date.getFullYear() == today.getFullYear() &&
+                date.getDay() == today.getDay())
+                numberOfLikes += 1;
+        }
+        return numberOfLikes;
+    },
+    /**
+     * get number of likes for an album per year
+     * @param {String} artistId
+     * @returns {Number} 
+     */
+    getAlbumNumberOfLikesInYear: async function(albumId) {
+        let album = await this.getAlbumById(albumId);
+        if (!album) return -1;
+        if (!album.followed) { album.followed = []; return 0; }
+        var today = new Date();
+        var numberOfLikes = 0;
+        if (!album.followed) album.followed = [];
+        for (let i = 0; i < album.followed.length; i++) {
+            let date = album.followed[i].date;
+            if (date.getFullYear() == today.getFullYear())
+                numberOfLikes += 1;
+        }
+        return numberOfLikes;
+
+    },
     /**
      * add track to album
      * @param {string} albumId - album id
@@ -299,37 +360,35 @@ const Album = {
         // else return 0 as he already saved the album
         if (albumId == undefined) return 2;
         if (!CheckMonooseObjectId(albumId)) return 0;
-        let albums = [];
+        let count=0;
         for (let j = 0; j < albumId.length; j++) {
             let album = await this.getAlbumById(albumId[j]);
             if (album) {
-                albums.push(albumId[j]);
-            }
-        }
-        if (albums.length == 0) { return 2; }
-        let count = 0;
-        for (let i = 0; i < albums.length; i++) {
-            if (this.checkIfUserSaveAlbum(user, albums[i]) == undefined) {
-                if (user.saveAlbum) {
-                    user.saveAlbum.push({
-                        albumId: albums[i],
-                        savedAt: Date.now()
-                    });
-                    await user.save();
-                } else {
+                if (this.checkIfUserSaveAlbum(user, album._id) == undefined) {
+                if (!user.saveAlbum) {
                     user.saveAlbum = [];
-                    user.saveAlbum.push({
-                        albumId: albums[i],
-                        savedAt: Date.now()
-                    });
-                    await user.save();
                 }
-            } else { count++; }
+                user.saveAlbum.push({
+                    albumId: album._id,
+                    savedAt: Date.now()
+                });
+                await user.save();
+                if(!album.followed){
+                    album.followed = [];
+                }
+                album.followed.push({ 'id': user._id, 'date': new Date() });
+                await album.save();
+                } 
+                else { count++; }
+            }
+            else { count++; }
+                 
         }
-        if (count == albums.length) {
+        if(count == albumId.length){
             return 0;
         }
         return 1;
+        
     },
     /**
      * unsave album (make user unfollow an album)
@@ -346,13 +405,10 @@ const Album = {
         for (let j = 0; j < albumId.length; j++) {
             if (this.checkIfUserSaveAlbum(user, albumId[j])) {
                 found = true;
-                for (let i = 0; i < user.saveAlbum.length; i++) {
-                    if (String(user.saveAlbum[i].albumId) == String(albumId[j])) {
-                        user.saveAlbum.splice(i, 1);
-                    }
-                }
-                await user.save().catch();
-            } else {
+                await albumDocument.update({ '_id': albumId[j] }, { $pull: { 'followed': { 'id': user._id } } });
+                await userDocument.update({ '_id': user._id }, { $pull: { 'saveAlbum': { 'albumId': albumId[j] } } });
+            } 
+            else {
                 if ((!found && (j == (albumId.length - 1))) || (albumId.length == 1)) {
                     return 0;
                 }

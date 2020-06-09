@@ -68,6 +68,10 @@ const Playlist = new Schema({
 });
 
 const Album = new Schema({
+    followed: [{
+        date: Date,
+        id: mongoose.Schema.Types.ObjectId
+    }],
     images: [Image],
     artistId: mongoose.Schema.Types.ObjectId,
     name: String,

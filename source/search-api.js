@@ -75,7 +75,6 @@ const Search = {
         if (!checkMonooseObjectID([userId])) return 0;
         user = await userDocument.findById(userId);
         if (!user) return 0;
-        // console.log(user.recentlySearch)
         if (!user.recentlySearch || user.recentlySearch.length == 0) user.recentlySearch = [];
         let artists = [];
         let tracks = [];
@@ -222,7 +221,6 @@ const Search = {
     getTop: async function(name) {
 
         const artist = await this.getArtistProfile(name);
-        //console.log(artist)
         if (artist) {
             return artist[0]._id
         }
@@ -304,11 +302,13 @@ const Search = {
             let albums = await Album.getAlbumArtist(allalbum[i]._id);
             if (albums) {
                 album = {}
-                album["_id"] = albums._id
-                album["name"] = albums.name
-                album["images"] = albums.images
-                album["artistId"] = albums.artistId;
-                album["artistName"] = albums.artistName;
+                album['_id'] = albums._id
+                album['name'] = albums.name
+                album['images'] = albums.images
+                album['artistId'] = albums.artistId;
+                album['artistName'] = albums.artistName;
+                album['type'] = 'album';
+
                 albumsInfo.push(album);
             }
         }
@@ -343,17 +343,18 @@ const Search = {
             let artist = await Artist.getArtist(tracks[i].artistId)
             trackValues = {}
             if (artist) {
-                trackValues["artistId"] = artist._id
-                trackValues["artistName"] = artist.Name
+                trackValues['artistId'] = artist._id
+                trackValues['artistName'] = artist.Name
             }
             let album = await Album.getAlbumById(tracks[i].albumId)
             if (album) {
-                trackValues["albumId"] = album._id
-                trackValues["albumName"] = album.name
+                trackValues['albumId'] = album._id
+                trackValues['albumName'] = album.name
             }
-            trackValues["_id"] = tracks[i]._id
-            trackValues["name"] = tracks[i].name
-            trackValues["images"] = tracks[i].images
+            trackValues['_id'] = tracks[i]._id
+            trackValues['name'] = tracks[i].name
+            trackValues['images'] = tracks[i].images
+            trackValues['type'] = 'track'
             trackInfo.push(trackValues);
 
         }
@@ -406,9 +407,11 @@ const Search = {
         else {
             for (let i = 0; i < artist.length; i++) {
                 artistInfo = {}
-                artistInfo["_id"] = artist[i]._id
-                artistInfo["name"] = artist[i].Name
-                artistInfo["images"] = artist[i].images
+                artistInfo['_id'] = artist[i]._id
+                artistInfo['name'] = artist[i].Name
+                artistInfo['images'] = artist[i].images
+                artistInfo['type'] = 'artist'
+
                 artistsInfo.push(artistInfo);
 
             }
@@ -432,13 +435,15 @@ const Search = {
         if (user.length == 0) return user;
         else {
             for (let i = 0; i < user.length; i++) {
-                if (user[i].userType == "Artist") {
+                if (user[i].userType == 'Artist') {
                     continue;
                 } else {
                     userInfo = {}
-                    userInfo["_id"] = user[i]._id
-                    userInfo["displayName"] = user[i].displayName
-                    userInfo["images"] = user[i].images
+                    userInfo['_id'] = user[i]._id
+                    userInfo['displayName'] = user[i].displayName
+                    userInfo['images'] = user[i].images
+                    userInfo['type'] = 'user'
+
                     usersInfo.push(userInfo)
                 }
             }
@@ -464,12 +469,14 @@ const Search = {
                 let user = await User.getUserById(playlists[i].ownerId)
                 playlist = {}
                 if (user) {
-                    playlist["ownerId"] = user._id
-                    playlist["ownerName"] = user.displayName
+                    playlist['ownerId'] = user._id
+                    playlist['ownerName'] = user.displayName
                 }
-                playlist["_id"] = playlists[i]._id
-                playlist["name"] = playlists[i].name
-                playlist["images"] = playlists[i].images
+                playlist['_id'] = playlists[i]._id
+                playlist['name'] = playlists[i].name
+                playlist['images'] = playlists[i].images
+                playlist['type'] = 'playlist'
+
                 playlistInfo.push(playlist)
 
             }

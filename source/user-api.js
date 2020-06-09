@@ -179,6 +179,13 @@ const User = {
                 await this.deletePlaylist(userId, user.createPlaylist[i].playListId);
             }
             await Image.deleteImages(userId, userId, 'user');
+            
+            await artistDocument.update({}, { $pull: { 'followed': {'id' : userId}} });
+            await trackDocument.update({}, { $pull: { 'likes': {'userId' : userId}} });
+            await albumDocument.update({}, { $pull: { 'followed': {'id' : userId}} });
+            await userDocument.update({}, { $pull: { 'following': [userId] } });
+            await userDocument.update({}, { $pull: { 'followers': [userId] } });
+
             // delete user himseld from db
             await userDocument.findByIdAndDelete(userId);
             return 1;

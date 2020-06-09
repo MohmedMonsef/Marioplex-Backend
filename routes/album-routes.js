@@ -4,7 +4,7 @@ const Album = require('../source/album-api');
 const User = require('../source/user-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
-const RateLimit = require("express-rate-limit");
+const RateLimit = require('express-rate-limit');
 const limitOffset = require('../middlewares/limit-offset');
 // add rate limiting
 const limiter = RateLimit({
@@ -15,7 +15,7 @@ const limiter = RateLimit({
 router.delete('/me/albums', checkAuth, limiter, async(req, res, next) => {
     if (req.body.ids == undefined) {
         res.status(403).json({
-            message: "These albums can't be Unsaved"
+            message: 'These albums can not be Unsaved'
         });
     }
     const albumId = req.body.ids.split(',');
@@ -25,11 +25,11 @@ router.delete('/me/albums', checkAuth, limiter, async(req, res, next) => {
     else {
         const album = await Album.unsaveAlbum(user, albumId).catch(next);
         if (!album) res.status(404).json({
-            message: "album hasn't been saved before"
+            message: 'album has not been saved before'
 
         }); //not found
         else res.status(200).json({
-            message: "album has been unsaved suceesfully"
+            message: 'album has been unsaved suceesfully'
         })
     }
 
@@ -38,7 +38,7 @@ router.delete('/me/albums', checkAuth, limiter, async(req, res, next) => {
 router.put('/me/Albums', checkAuth, limiter, async(req, res, next) => {
     if (req.body.ids == undefined) {
         res.status(403).json({
-            message: "These albums can't be saved"
+            message: 'These albums can not be saved'
         });
     }
     const albumId = req.body.ids.split(',');
@@ -48,14 +48,14 @@ router.put('/me/Albums', checkAuth, limiter, async(req, res, next) => {
     else {
         const album = await Album.saveAlbum(user, albumId).catch(next);
         if (!album) res.status(404).json({
-            message: "album has been already saved"
+            message: 'album has been already saved'
         }); //not found
         else if (album == 2) {
             res.status(403).json({
-                message: "These albums can't be saved"
+                message: 'These albums can not be saved'
             });
         } else res.status(200).json({
-            message: "album has been save suceesfully"
+            message: 'album has been save suceesfully'
         })
     }
 })
@@ -68,7 +68,7 @@ router.get('/albums/:album_id', checkIfAuth, limiter, async(req, res, next) => {
     if (req.isAuth)
         userId = req.user._id;
     const album = await Album.getAlbumArtist(albumId, userId, req.isAuth).catch(next);
-    if (!album) res.status(404).send("NO Albums found"); //not found
+    if (!album) res.status(404).send('NO Albums found'); //not found
     else res.status(200).send(album);
 
 })
@@ -76,14 +76,14 @@ router.get('/albums/:album_id', checkIfAuth, limiter, async(req, res, next) => {
 router.get('/albums', limiter, async(req, res, next) => {
     if (req.body.ids == undefined) {
         res.status(404).json({
-            message: "no albums found"
+            message: 'no albums found'
         });
     }
     var albumIds = req.body.ids.split(',');
 
     album = await Album.getAlbums(albumIds).catch(next);
     if (!album) res.status(404).json({
-        message: "no albums found"
+        message: 'no albums found'
     }); //not found
     else {
         specifiedAlbums = limitOffset(req.limit, req.offset, album);
@@ -99,7 +99,7 @@ router.get('/Albums/numberOfLikes/:id', limiter, async(req, res, next) => {
       const likesPerMonth = await Album.getAlbumNumberOfLikesInMonth(albumId).catch(next);;
       const likesPerYear = await Album.getAlbumNumberOfLikesInYear(albumId).catch(next);;
       //IF NO SUCH ARTIST RETURN 404 NOT FOUND ELSE RETURN STATUS 200 WITH THE ARTIST
-      if (likesPerday==-1||likesPerMonth==-1||likesPerYear==-1) return res.status(404).send("");
+      if (likesPerday==-1||likesPerMonth==-1||likesPerYear==-1) return res.status(404).send('');
       else return res.status(200).send({'numOfLikes': [likesPerday,likesPerMonth,likesPerYear] });
 
   });
@@ -112,7 +112,7 @@ router.get('/albums/:id/tracks', checkIfAuth, limiter, async(req, res, next) => 
     const tracks = await Album.getTracksAlbum(albumId, user, req.isAuth).catch(next);
     if (!tracks) {
         res.status(404).json({
-            message: "no tracks found"
+            message: 'no tracks found'
         });
     } //not found
     else {

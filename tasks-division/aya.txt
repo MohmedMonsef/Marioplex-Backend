@@ -4,6 +4,8 @@ ID : 9180351
  
 
 Features:
+Album:
+	- album listeners statistics per day/month/year (new)
 Track:
 	- track listeners statistics per day/month/year (new)
 Player: 

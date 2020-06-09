@@ -47,7 +47,8 @@ day, month, and year. also we didn't forget to add our beloved artist statistics
 
 </ul>
 
-<span style="display:block;text-align:center">![intro](static/intro.gif)</span>
+![intro](static/intro.gif) 
+
 
 ## Best of all, It is totally free and open-sourced
 ### want to try it yourself

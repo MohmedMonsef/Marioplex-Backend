@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.29% </span>
+                <span class="strong">7.14% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/14</span>
+                <span class='fraction'>1/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/18</span>
+                <span class='fraction'>0/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">64.29% </span>
+                <span class="strong">7.14% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/14</span>
+                <span class='fraction'>1/14</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -81,47 +81,47 @@
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">25x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">function limitOffset(limit, offset, specificAlbums) {
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">function <span class="fstat-no" title="function not covered" >limitOffset(</span>limit, offset, specificAlbums) {
 &nbsp;
-    let start = 0;
-    let end = specificAlbums.length;
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (offset != undefined) {
+    let start = <span class="cstat-no" title="statement not covered" >0;</span>
+    let end = <span class="cstat-no" title="statement not covered" >specificAlbums.length;</span>
+<span class="cstat-no" title="statement not covered" >    if (offset != undefined) {</span>
 <span class="cstat-no" title="statement not covered" >        if (offset &gt;= 0 &amp;&amp; offset &lt;= specificAlbums.length) {</span>
 <span class="cstat-no" title="statement not covered" >            start = offset;</span>
         }
     }
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (limit != undefined) {
+<span class="cstat-no" title="statement not covered" >    if (limit != undefined) {</span>
 <span class="cstat-no" title="statement not covered" >        if ((start + limit) &gt; 0 &amp;&amp; (start + limit) &lt;= specificAlbums.length) {</span>
 <span class="cstat-no" title="statement not covered" >            end = start + limit;</span>
         }
     } else {
-        limit = Number(process.env.LIMIT) ? <span class="branch-0 cbranch-no" title="branch not covered" >Number(process.env.LIMIT) </span>: 20;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if ((start + limit) &gt; 0 &amp;&amp; (start + limit) &lt;= specificAlbums.length) {
+<span class="cstat-no" title="statement not covered" >        limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;</span>
+<span class="cstat-no" title="statement not covered" >        if ((start + limit) &gt; 0 &amp;&amp; (start + limit) &lt;= specificAlbums.length) {</span>
 <span class="cstat-no" title="statement not covered" >            end = start + limit;</span>
         }
     }
-    specificAlbums.slice(start, end);
-    return specificAlbums;
+<span class="cstat-no" title="statement not covered" >    specificAlbums.slice(start, end);</span>
+<span class="cstat-no" title="statement not covered" >    return specificAlbums;</span>
 }
 module.exports=limitOffset;</pre></td></tr></table></pre>
 
@@ -130,7 +130,7 @@ module.exports=limitOffset;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Mon Jun 08 2020 14:57:32 GMT+0200 (Eastern European Standard Time)
+                at Tue Jun 09 2020 10:22:30 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

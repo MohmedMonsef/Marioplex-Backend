@@ -96,7 +96,6 @@ const User = {
                     await user.save();
                 }
                 let isCorrectPassword = await bcrypt.compare(password, user.password);
-                // console.log(isCorrectPassword);
                 if (!isCorrectPassword) return 0;
                 if (user.isFacebook) {
                     //if from facebok change country only
@@ -116,8 +115,6 @@ const User = {
                     if (displayName != undefined) {
                         user.updatedInfo.displayName = displayName;
                     }
-                    console.log(newPassword);
-                    console.log(repeatedPassword);
                     if (newPassword != undefined && repeatedPassword == newPassword) {
                         let salt = await bcrypt.genSalt(10);
                         let hashed = await bcrypt.hash(newPassword, salt);
@@ -520,7 +517,7 @@ const User = {
             if (!await this.checkIfUserFollowArtist(userId, artistId)) {
                 user.follow.push({ 'id': artistId });
                 await user.save();
-                console.log('1');
+               
                 artist.followed.push({ 'id': userId, 'date': new Date() });
                 await artist.save();
             }
@@ -908,7 +905,6 @@ const User = {
             if (!user) return 0;
             if (!user.deletedPlaylists || user.deletedPlaylists.length == 0) return 0;
             let spotifyUser = await this.checkmail(String(process.env.SPOTIFY_EMAIL));
-            console.log(spotifyUser);
             if (!spotifyUser) return 0;
             let deleted = [];
             for (let i = 0; i < playlistsIds.length; i++) {
@@ -958,7 +954,6 @@ const User = {
             let playlist = await Playlist.getPlaylist(playlistId);
             createdUser = await this.getUserById(playlist.ownerId);
             if (!createdUser) { return false; }
-            //console.log(createdUser);
             if (String(createdUser._id) == String(userId)) return true;
             else {
                 for (var i = 0; i < createdUser.createPlaylist.length; i++) {

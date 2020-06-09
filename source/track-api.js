@@ -473,7 +473,6 @@ const Track = {
             if (!checkMonooseObjectID([userId, trackId])) return 0;
 
             const user = await userDocument.findById(userId);
-
             if (!user) return 0;
             const fullTrack = await this.getFullTrack(trackId, user);
             if (!fullTrack) return 0;
@@ -483,10 +482,10 @@ const Track = {
 
             if (!track.genre) return tracksRelated;
 
-            const tracks = await trackDocument.find({});
+            const tracks = await trackDocument.find({}).limit(50);
             if (!tracks) return tracksRelated;
             for (let trackFile of tracks) {
-                if (tracksRelated.length > 10) return;
+                if (tracksRelated.length > 10) return tracksRelated;
                 if (!trackFile.genre) continue;
                 if (String(trackFile._id) == trackId) continue;
                 for (let i = 0; i < trackFile.genre.length; i++) {
@@ -502,11 +501,10 @@ const Track = {
                     }
                 }
             }
-
-
             if (tracksRelated.length == 0) return 0;
             return tracksRelated;
         } catch (ex) {
+            console.log(ex)
             return 0;
         }
     },

@@ -1,1 +1,1 @@
-./node_modules/.bin/jest -c  --coverage --collectCoverageFrom=source/*.js
+./node_modules/.bin/jest -c  --coverage track.unit.test.js --collectCoverageFrom=source/*.js

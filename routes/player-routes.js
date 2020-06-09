@@ -5,7 +5,7 @@ const Track = require('../source/track-api')
 const { auth: checkAuth } = require('../middlewares/is-me');
 const CheckId = require('../validation/mongoose-objectid');
 const StateValidation = require('../validation/validate-boolean');
-const RateLimit = require("express-rate-limit");
+const RateLimit = require('express-rate-limit');
 // add rate limiting
 const limiter = RateLimit({
     windowMs: 60 * 1000,
@@ -103,9 +103,9 @@ router.post('/player/add-to-queue/:playlist_id/:track_id', checkAuth, limiter, a
 // skip to next track 
 router.post('/me/player/next-playing', checkAuth, nextLimiter, async(req, res) => {
     // allow for 6 requests per hour only
-    if (req.user.product == "free") {
+    if (req.user.product == 'free') {
         if (req.rateLimit.current > 6) {
-            res.status(429).json({ "error": "rate limit reached for free user skip tracks" });
+            res.status(429).json({ 'error': 'rate limit reached for free user skip tracks' });
             return 0;
         }
     }
@@ -118,9 +118,9 @@ router.post('/me/player/next-playing', checkAuth, nextLimiter, async(req, res) =
 
 // skip to prev track
 router.post('/me/player/prev-playing', checkAuth, nextLimiter, async(req, res) => {
-    if (req.user.product == "free") {
+    if (req.user.product == 'free') {
         if (req.rateLimit.current > 6) {
-            res.status(429).json({ "error": "rate limit reached for free user skip tracks" });
+            res.status(429).json({ 'error': 'rate limit reached for free user skip tracks' });
             return 0;
         }
     }

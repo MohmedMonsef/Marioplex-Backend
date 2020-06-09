@@ -20,8 +20,8 @@ const Player = {
 
     setPlayerInstance: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
         try {
-            if (!user) return 0;
-            if ((!CheckMonooseObjectId([id]) && !CheckMonooseObjectId(tracksIds)) || !CheckMonooseObjectId([trackId])) return 0;
+            if (!user) throw new Error('not user');
+            if ((!CheckMonooseObjectId([id]) && !CheckMonooseObjectId(tracksIds)) || !CheckMonooseObjectId([trackId])) throw new Error('not mongoose id');
             if (!user.player) user.player = {};
 
             user.player.nextTrack = {};
@@ -56,7 +56,7 @@ const Player = {
      */
     getRecentlyHomePage: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             if (!user.playHistory) return 0;
             let recentlyArtist = [];
             let recentlyPlaylist = [];
@@ -77,7 +77,7 @@ const Player = {
                         const album = await Album.getAlbumById(playHistory[i].sourceId);
                         if (!album) continue;
                         const artist = await Artist.getArtist(album.artistId);
-                        recentlyAlbum.push({ id: album._id, name: album.name, type: "album", album_type: album.albumType, images: album.images, availableMarkets: album.availableMarkets, artist: { type: 'artist', id: album.artistId, name: artist.Name }, index: index })
+                        recentlyAlbum.push({ id: album._id, name: album.name, type: 'album', album_type: album.albumType, images: album.images, availableMarkets: album.availableMarkets, artist: { type: 'artist', id: album.artistId, name: artist.Name }, index: index })
                         index++;
                     }
                 } else if (playHistory[i].sourceType == 'artist') {
@@ -99,13 +99,13 @@ const Player = {
                         const playlist = await Playlist.getPlaylist(playHistory[i].sourceId);
                         if (!playlist) continue;
                         const user1 = await userDocument.findById(playlist.ownerId);
-                        recentlyPlaylist.push({ owner: { id: playlist.ownerId, type: "user", name: user1.displayName }, collaborative: playlist.collaborative, type: 'playlist', name: playlist.name, images: playlist.images, id: playlist._id, Description: playlist.Description, isPublic: playlist.isPublic, index: index });
+                        recentlyPlaylist.push({ owner: { id: playlist.ownerId, type: 'user', name: user1.displayName }, collaborative: playlist.collaborative, type: 'playlist', name: playlist.name, images: playlist.images, id: playlist._id, Description: playlist.Description, isPublic: playlist.isPublic, index: index });
                         index++;
                     }
                 }
 
             }
-            // const recently = { "recentlyPlaying": recentPlaying };
+            // const recently = { 'recentlyPlaying': recentPlaying };
             if (recentlyArtist.length == 0 && recentlyPlaylist.length == 0 && recentlyAlbum.length == 0)
                 return 0;
             return {
@@ -127,6 +127,7 @@ const Player = {
      */
     clearRecentTracks: async function(user) {
         try {
+            if (!user) throw new Error('not user');
             user.playHistory = [];
             await userDocument.updateOne({ _id: user._id }, { playHistory: user.playHistory });
             return 1;
@@ -146,7 +147,7 @@ const Player = {
     addRecentTrack: async function(user, trackId, sourceType, sourceId) {
         try {
             if (!user) return 0;
-            if (!CheckMonooseObjectId([sourceId, trackId])) return 0;
+            if (!CheckMonooseObjectId([sourceId, trackId])) throw new Error('not mongoose id');
             if (user.playHistory) {
                 if (user.playHistory.length > 50) user.playHistory.pop();
                 user.playHistory.unshift({
@@ -179,7 +180,7 @@ const Player = {
      */
     getRecentTracks: function(user, limit) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not mongoose id');
             limit = limit || Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
             let tracks = [];
             if (!user.playHistory) return tracks;
@@ -204,7 +205,7 @@ const Player = {
     createQueue: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
         try {
             if (!user) return 0;
-            if (!CheckMonooseObjectId([trackId])) return 0;
+            if (!CheckMonooseObjectId([trackId])) throw new Error('not mongoose id');
             const trackInfo = await Track.getTrack(trackId, user);
             if (!trackInfo || !trackInfo.playable) return 0;
             if (!tracksIds) {
@@ -313,6 +314,7 @@ const Player = {
      */
     incrementListeners: async function(objectInfo, type) {
         try {
+            if (!objectInfo) throw new Error('not object');
             const nowDate = new Date();
             const currentDate = Number(nowDate.getFullYear()) * 10000 + Number(nowDate.getMonth() + 1) * 100 + Number(nowDate.getDate());
             if (!objectInfo.liseteners)
@@ -339,7 +341,7 @@ const Player = {
     addToQueue: async function(user, trackId, isPlaylist, playlistId) {
         try {
             if (!user) return 0;
-            if (!CheckMonooseObjectId([trackId, playlistId])) return 0;
+            if (!CheckMonooseObjectId([trackId, playlistId])) throw new Error('not mongoose ids');
             trackInfo = await Track.getTrack(trackId, user);
             // if (!await Track.getTrack(trackId)) return 0;
             if (!trackInfo || !trackInfo.playable) return 0;
@@ -390,7 +392,7 @@ const Player = {
                     user.player.nextTrack['trackId'] = user.queue.tracksInQueue[0].trackId;
                     user.player.nextTrack['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;
                     user.player.nextTrack['playlistId'] = user.queue.tracksInQueue[0].playlistId;
-                    user.player["lastPlaylistTrackIndex"]++;
+                    user.player['lastPlaylistTrackIndex']++;
                     await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
 
                     return 1;
@@ -406,8 +408,8 @@ const Player = {
                         user.player.nextTrack['trackId'] = user.queue.tracksInQueue[0].trackId;
                         user.player.nextTrack['isPlaylist'] = user.queue.tracksInQueue[0].isPlaylist;
                         user.player.nextTrack['playlistId'] = user.queue.tracksInQueue[0].playlistId;
-                        //if (!user.player["lastPlaylistTrackIndex"]) user.player["lastPlaylistTrackIndex"] = 0;
-                        user.player["lastPlaylistTrackIndex"]++;
+                        //if (!user.player['lastPlaylistTrackIndex']) user.player['lastPlaylistTrackIndex'] = 0;
+                        user.player['lastPlaylistTrackIndex']++;
                         await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
                         return 1;
                     } else {
@@ -421,7 +423,7 @@ const Player = {
                             playlistId: playlistId
                         });
                         user.queue.queuIndex = index + 1;
-                        user.player["lastPlaylistTrackIndex"]++;
+                        user.player['lastPlaylistTrackIndex']++;
                         await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
                         return 1;
                     }
@@ -439,7 +441,7 @@ const Player = {
      */
     skipNext: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             if (!user.player) return 0;
             if (!user.player.nextTrack) return 0;
             const player = user.player;
@@ -449,8 +451,8 @@ const Player = {
             if (user.queue.queuIndex != -1 && String(user.player.nextTrack.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex].trackId)) {
                 user.queue.tracksInQueue.splice(user.queue.queuIndex, 1);
                 user.queue.queuIndex--;
-                user.player["lastPlaylistTrackIndex"]--;
-                await this.setNextPrev(user, user.queue.tracksInQueue[user.player["lastPlaylistTrackIndex"]].trackId)
+                user.player['lastPlaylistTrackIndex']--;
+                await this.setNextPrev(user, user.queue.tracksInQueue[user.player['lastPlaylistTrackIndex']].trackId)
                 if (!player.currentTrack.isPlaylist && player.currentTrack.playlistId)
                     await this.incrementListeners(await Album.getAlbumById(player.currentTrack.playlistId), 'album');
             } else
@@ -474,7 +476,7 @@ const Player = {
      */
     skipPrevious: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             if (!user.player) return 0;
             if (!user.player.prevTrack) return 0;
             const player = user.player;
@@ -499,7 +501,7 @@ const Player = {
      */
     getQueue: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             const queue = user.queue;
             let tracks = [];
             if (!queue) return 0;
@@ -551,10 +553,10 @@ const Player = {
      */
     resumePlaying: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             const player = user.player;
             if (!player) return 0;
-            user.player["isPlaying"] = true;
+            user.player['isPlaying'] = true;
             await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
             return 1;
         } catch (ex) {
@@ -569,10 +571,10 @@ const Player = {
      */
     pausePlaying: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             const player = user.player;
             if (!player) return 0;
-            user.player["isPlaying"] = false;
+            user.player['isPlaying'] = false;
             await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
             return 1;
         } catch (ex) {
@@ -588,6 +590,7 @@ const Player = {
      */
     rondom: async function(low, high) {
         try {
+            if (!low || !high) throw new Error('not low or high');
             const randomValue = await Math.floor(Math.random() * (high - low + 1) + low);
             return randomValue;
         } catch (ex) {
@@ -602,12 +605,12 @@ const Player = {
      */
     shuffleQueue: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             if (!user.player) return 0;
             if (!user.queue) return 0;
             if (!user.queue.tracksInQueue) return 0;
             if (user.queue.tracksInQueue.length == 0) return 0;
-            const track_last_playlist = user.queue.tracksInQueue[user.player["lastPlaylistTrackIndex"]].trackId;
+            const track_last_playlist = user.queue.tracksInQueue[user.player['lastPlaylistTrackIndex']].trackId;
             for (let i = user.queue.queuIndex + 1; i < user.queue.tracksInQueue.length; i++) {
                 const randomIndex = await this.rondom(user.queue.queuIndex + 1, user.queue.tracksInQueue.length - 1);
                 const temp = user.queue.tracksInQueue[i].trackId;
@@ -629,13 +632,13 @@ const Player = {
      */
     fillByplaylist: async function(user) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
 
             if (!user.player) return 0;
             if (!user.queue) return 0;
             if (!user.queue.tracksInQueue) return 0;
             if (user.queue.tracksInQueue.length == 0) return 0;
-            const track_last_playlist = user.queue.tracksInQueue[user.player["lastPlaylistTrackIndex"]].trackId;
+            const track_last_playlist = user.queue.tracksInQueue[user.player['lastPlaylistTrackIndex']].trackId;
 
             if (user.player['sourceName'] != 'playlist' && user.player['sourceName'] != 'album') {
                 let queueTracks = user.queue.tracksInQueue;
@@ -698,7 +701,7 @@ const Player = {
      */
     setShuffle: async function(state, user) {
         try {
-            if (!user || !user.player) return 0;
+            if (!user || !user.player) throw new Error('not user');
             if (user.queue.tracksInQueue) {
                 if (state == 'true' || state == true) {
                     user.player['isShuffled'] = true;
@@ -727,13 +730,13 @@ const Player = {
      */
     setNextPrev: async function(user, lastTrack) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             if (!user.player) return 0;
             if (!user.player.nextTrack) user.player.nextTrack = {};
             if (!user.player.prevTrack) user.player.prevTrack = {};
             for (let i = user.queue.queuIndex + 1; i < user.queue.tracksInQueue.length; i++) {
                 if (String(user.queue.tracksInQueue[i].trackId) == String(lastTrack)) {
-                    user.player["lastPlaylistTrackIndex"] = i;
+                    user.player['lastPlaylistTrackIndex'] = i;
                     await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
 
                     user.player.prevTrack['trackId'] = i - 1 > user.queue.queuIndex ? user.queue.tracksInQueue[i - 1].trackId : user.queue.tracksInQueue[user.queue.tracksInQueue.length - 1].trackId;
@@ -767,12 +770,12 @@ const Player = {
      */
     repreatPlaylist: async function(user, state) {
         try {
-            if (!user) return 0;
+            if (!user) throw new Error('not user');
             if (!user.player) return 0;
             if (state == 'true' || state == true)
-                user.player["isRepeat"] = true;
+                user.player['isRepeat'] = true;
             else if (state == 'false' || state == false)
-                user.player["isRepeat"] = false;
+                user.player['isRepeat'] = false;
             else
                 return 0;
             await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });

@@ -3,7 +3,7 @@ const Library = require('../source/library-api');
 const User = require('../source/user-api')
 const Notifications = require('../source/notification-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
-const RateLimit = require("express-rate-limit");
+const RateLimit = require('express-rate-limit');
 // add rate limiting
 const limiter = RateLimit({
     windowMs: 60 * 1000,
@@ -20,9 +20,9 @@ router.get('/me/followingArtist', checkAuth, limiter, async(req, res) => {
 //CHECK IF A USER FOLLOW ARTISTS
 router.get('/me/following/contains/:id', checkAuth, limiter, async(req, res) => {
     const userId = req.user._id;
-    if (req.params.id == undefined) return res.sendStatus(400).json({ message: "id is not defined" });
+    if (req.params.id == undefined) return res.sendStatus(400).json({ message: 'id is not defined' });
     const checks = await User.checkIfUserFollowArtist(userId, req.params.id);
-    if (!checks) return res.sendStatus(403).json({ message: "not user or not artist" });
+    if (!checks) return res.sendStatus(403).json({ message: 'not user or not artist' });
     res.status(200).json({ 'follow': checks });
 
 });
@@ -48,7 +48,7 @@ router.delete('/me/following', checkAuth, limiter, async(req, res) => {
 
 //CHECK IF USER SAVES ALBUMS - QUERY PARAMS: albums_ids
 router.get('/me/albums/contains', checkAuth, limiter, async(req, res) => {
-    if (req.query.albums_ids == undefined || req.query.albums_ids == "") return res.status(400).send("No Album ids given");
+    if (req.query.albums_ids == undefined || req.query.albums_ids == '') return res.status(400).send('No Album ids given');
     const userId = req.user._id;
     const albumsIds = req.query.albums_ids.split(',');
     const checks = await Library.checkSavedAlbums(albumsIds, userId);
@@ -58,7 +58,7 @@ router.get('/me/albums/contains', checkAuth, limiter, async(req, res) => {
 
 //CHECK IF USER SAVES TRACKS - QUERY PARAMS: tracks_ids
 router.get('/me/tracks/contains', checkAuth, limiter, async(req, res) => {
-    if (req.query.tracks_ids == undefined || req.query.tracks_ids == "") return res.status(400).send("No Tracks ids given");
+    if (req.query.tracks_ids == undefined || req.query.tracks_ids == '') return res.status(400).send('No Tracks ids given');
     const userId = req.user._id;
     const tracksIds = req.query.tracks_ids.split(',');
     const checks = await Library.checkSavedTracks(tracksIds, userId);
@@ -85,37 +85,37 @@ router.get('/me/tracks', checkAuth, limiter, async(req, res) => {
 });
 
 // user follow another user
-router.put("/me/follow/user/:user_id", checkAuth, limiter, async(req, res) => {
+router.put('/me/follow/user/:user_id', checkAuth, limiter, async(req, res) => {
     const user1Id = req.user._id;
     const user2Id = req.params.user_id;
     const followUser = await User.userFollowUser(user1Id, user2Id);
-    if (!followUser) return res.status(403).send("cannot follow user");
+    if (!followUser) return res.status(403).send('cannot follow user');
     let currentUser = await User.getUserById(user1Id);
     let followedUser = await User.getUserById(user2Id);
     Notifications.sendUserFollowNotification(currentUser, followedUser);
-    res.status(200).send("followed user successfully");
+    res.status(200).send('followed user successfully');
 
 });
 // user unfollow another user
-router.delete("/me/unfollow/user/:user_id", checkAuth, limiter, async(req, res) => {
+router.delete('/me/unfollow/user/:user_id', checkAuth, limiter, async(req, res) => {
     const user1Id = req.user._id;
     const user2Id = req.params.user_id;
     const unfollowUser = await User.userUnfollowUser(user1Id, user2Id);
-    if (!unfollowUser) res.status(403).send("cannot unfollow user");
-    else res.status(200).send("unfollowed user successfully")
+    if (!unfollowUser) res.status(403).send('cannot unfollow user');
+    else res.status(200).send('unfollowed user successfully')
 });
 // get user followings
-router.get("/me/following/user", checkAuth, async(req, res) => {
+router.get('/me/following/user', checkAuth, async(req, res) => {
     const userId = req.user._id;
     const usersUserFollow = await User.getUserFollowingUser(userId);
-    if (!usersUserFollow) res.status(404).send("the user doesn't follow anyone");
+    if (!usersUserFollow) res.status(404).send('the user doesnt follow anyone');
     else res.status(200).json(usersUserFollow)
 });
 // get user followers
-router.get("/me/followers/user", checkAuth, async(req, res) => {
+router.get('/me/followers/user', checkAuth, async(req, res) => {
     const userId = req.user._id;
     const usersFollowers = await User.getUserFollowers(userId);
-    if (!usersFollowers) res.status(404).send("no one  follow this user");
+    if (!usersFollowers) res.status(404).send('no one  follow this user');
     else res.status(200).json(usersFollowers)
 });
 module.exports = router;

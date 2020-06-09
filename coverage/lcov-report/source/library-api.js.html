@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">91.97% </span>
+                <span class="strong">94.89% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>126/137</span>
+                <span class='fraction'>130/137</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.81% </span>
+                <span class="strong">97.35% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>106/113</span>
+                <span class='fraction'>110/113</span>
             </div>
         
             
@@ -301,7 +301,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -328,7 +328,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -379,7 +379,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -443,7 +443,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -466,7 +466,7 @@ const Library = {
     checkSavedAlbums: async function(albumsIds, userId) {
         try {
             //  console.log(albumsIds)
-            if (!CheckMonooseObjectId(albumsIds)) return 0;
+            if (!CheckMonooseObjectId(albumsIds)) throw new Error('not mongoose ids');
             if (!CheckMonooseObjectId([userId])) return 0;
             let checks = [];
             let found = false;
@@ -497,7 +497,7 @@ const Library = {
             //console.log(checks);
             return checks;
         } catch (ex) {
-<span class="cstat-no" title="statement not covered" >            return 0;</span>
+            return 0;
         }
     },
     /**
@@ -508,7 +508,7 @@ const Library = {
      */
     checkSavedTracks: async function(tracksIds, userId) {
         try {
-            if (!CheckMonooseObjectId([userId])) return 0;
+            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
             if (!CheckMonooseObjectId(tracksIds)) return 0;
             const user = await userDocument.findById(userId, (err, user) =&gt; {
                 <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >return 0;</span>
@@ -524,7 +524,7 @@ const Library = {
             //console.log('this is me :')
             return await Playlist.checkPlaylistHasTracks(user['likesTracksPlaylist'], tracksIds);
         } catch (ex) {
-<span class="cstat-no" title="statement not covered" >            return 0;</span>
+            return 0;
         }
     },
     /**
@@ -536,7 +536,7 @@ const Library = {
      */
     getSavedAlbums: async function(userId, limit, offset) {
         try {
-            if (!CheckMonooseObjectId([userId])) return 0;
+            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
             let albumsArray = [];
             let user = await userDocument.findById(userId);
             if (!user) return 0;
@@ -575,7 +575,7 @@ const Library = {
             }
             return albumInfo;
         } catch (ex) {
-<span class="cstat-no" title="statement not covered" >            return 0;</span>
+            return 0;
         }
     },
 &nbsp;
@@ -588,7 +588,7 @@ const Library = {
      */
     getSavedTracks: async function(userId, limit, offset) {
         try {
-            if (!CheckMonooseObjectId([userId])) return 0;
+            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
             let user = await userDocument.findById(userId);
             if (!user) return 0;
             if (!user['likesTracksPlaylist']) return 0;
@@ -619,27 +619,27 @@ const Library = {
                 let artist = await ArtistApi.getArtist(trackSlice[i].artistId)
                 tracks = {}
                 <span class="missing-if-branch" title="else path not taken" >E</span>if (artist) {
-                    tracks["artistId"] = artist._id
-                    tracks["artistName"] = artist.Name
-                    tracks["artistimages"] = artist.images
-                    tracks["artistType"] = artist.type
+                    tracks['artistId'] = artist._id
+                    tracks['artistName'] = artist.Name
+                    tracks['artistimages'] = artist.images
+                    tracks['artistType'] = artist.type
                 }
                 let album = await Album.getAlbumById(trackSlice[i].albumId)
                 <span class="missing-if-branch" title="else path not taken" >E</span>if (album) {
-                    tracks["albumId"] = album._id
-                    tracks["albumName"] = album.name
-                    tracks["albumImages"] = album.images
-                    tracks["albumType"] = album.type
+                    tracks['albumId'] = album._id
+                    tracks['albumName'] = album.name
+                    tracks['albumImages'] = album.images
+                    tracks['albumType'] = album.type
                 }
-                tracks["_id"] = trackSlice[i]._id
-                tracks["name"] = trackSlice[i].name
-                tracks["type"] = trackSlice[i].type
-                tracks["images"] = trackSlice[i].images
+                tracks['_id'] = trackSlice[i]._id
+                tracks['name'] = trackSlice[i].name
+                tracks['type'] = trackSlice[i].type
+                tracks['images'] = trackSlice[i].images
                 trackInfo.push(tracks);
             }
-            return { "tracks": trackInfo, "ownerName": user.displayName, playlistId: user['likestracksPlaylist'] };
+            return { 'tracks': trackInfo, 'ownerName': user.displayName, playlistId: user['likestracksPlaylist'] };
         } catch (ex) {
-<span class="cstat-no" title="statement not covered" >            return 0;</span>
+            return 0;
         }
     }
 &nbsp;
@@ -652,7 +652,7 @@ module.exports = Library;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Tue Jun 09 2020 10:33:06 GMT+0200 (Eastern European Standard Time)
+                at Tue Jun 09 2020 13:03:53 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

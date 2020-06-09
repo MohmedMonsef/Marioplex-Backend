@@ -16,7 +16,7 @@ const Browse = {
      */
     getCategoryById: async function(categoryId) {
         try {
-            if (!checkMonooseObjectId([categoryId])) return 0;
+            if (!checkMonooseObjectId([categoryId])) throw new Error('no id');
 
             let category = await categoryDocument.findById(categoryId, (err, category) => {
                 if (err) return 0;
@@ -41,7 +41,7 @@ const Browse = {
      */
     getCategoryPlaylists: async function(categoryId, limit, offset) {
         try {
-            if (!checkMonooseObjectId([categoryId])) return 0;
+            if (!checkMonooseObjectId([categoryId])) throw new Error('no id');
             let category = await this.getCategoryById(categoryId);
             if (!category) return 0;
             let playlists = []
@@ -131,7 +131,7 @@ const Browse = {
      */
     getPlaylistGenre: async function(genres) {
         try {
-            if (!genres) return 0;
+            if (!genres) throw new Error('no genres');
             let playlists = await playlistDocument.find({}, (err, playlists) => {
                 if (err) return 0;
                 return playlists;
@@ -157,7 +157,7 @@ const Browse = {
                 }
                 if (playlistsGenre.length != 0)
 
-                    allGenre.push({ genre: genres[k], "playlists": playlistsGenre });
+                    allGenre.push({ genre: genres[k], 'playlists': playlistsGenre });
                 playlistsGenre = [];
             }
             return allGenre;

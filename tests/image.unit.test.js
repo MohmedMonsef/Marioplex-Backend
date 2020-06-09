@@ -175,7 +175,7 @@ let image = {
         bucketName: 'images',
         root: 'images',
     });
-    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
     
    writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -198,7 +198,7 @@ done();
         bucketName: 'images',
         root: 'images',
     });
-    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
     
     writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -218,7 +218,7 @@ test('upload image for playlist',async (done)=>{
         bucketName: 'images',
         root: 'images',
     });
-    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
     
     writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -238,7 +238,7 @@ test('upload image for track',async (done)=>{
         bucketName: 'images',
         root: 'images',
     });
-    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
     
     writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -258,7 +258,7 @@ test('upload image for album',async (done)=>{
         bucketName: 'images',
         root: 'images',
     });
-    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
     
     writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -361,7 +361,7 @@ test('update image for user',async (done)=>{
         bucketName: 'images',
         root: 'images',
     });
-    fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+    fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
     
     writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -380,7 +380,7 @@ test('update image for artist',async (done)=>{
     bucketName: 'images',
     root: 'images',
 });
-fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
 
 //await delay(5000)
    expect(uploadedImageId).toBeTruthy();
@@ -396,7 +396,7 @@ test('update image for playlist',async (done)=>{
     bucketName: 'images',
     root: 'images',
 });
-fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
 
 writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -418,7 +418,7 @@ test('update image for track',async (done)=>{
     bucketName: 'images',
     root: 'images',
 });
-fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
 
 writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -437,7 +437,7 @@ test('update image for album',async (done)=>{
     bucketName: 'images',
     root: 'images',
 });
-fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
 //await delay(5000)
 writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -773,7 +773,7 @@ test('update image for user 1',async (done)=>{
          bucketName: 'images',
          root: 'images',
      });
-     fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+     fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
      
      writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -792,7 +792,7 @@ done();
      bucketName: 'images',
      root: 'images',
  });
- fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
  
  writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -811,7 +811,7 @@ done();
      bucketName: 'images',
      root: 'images',
  });
- fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
  
  writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -830,7 +830,7 @@ done();
      bucketName: 'images',
      root: 'images',
  });
- fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
  
  writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
@@ -849,7 +849,7 @@ done();
      bucketName: 'images',
      root: 'images',
  });
- fs.createReadStream('../static/not_found.jpeg').pipe(writestream); 
+ fs.createReadStream('./static/not_found.jpeg').pipe(writestream); 
  //await delay(5000)
  writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();

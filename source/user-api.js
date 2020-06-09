@@ -79,52 +79,69 @@ const User = {
         try {
             if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
 
-            const user = await this.getUserById(userId);
+            let user = await this.getUserById(userId);
             if (user) {
+                if(!user.updatedInfo){
+                    user.updatedInfo={
+                        email:null,
+                        password:null,
+                        country:null,
+                        displayName:null,
+                        expiresDate: null,
+                        cardNumber: null,
+                        isMonth: null,
+                        gender:null,
+                        birthDate:null
+                    }
+                    await user.save();
+                }
                 let isCorrectPassword = await bcrypt.compare(password, user.password);
                 // console.log(isCorrectPassword);
                 if (!isCorrectPassword) return 0;
                 if (user.isFacebook) {
                     //if from facebok change country only
                     if (country)
-                        user.country = country;
+                        user.updatedInfo.country = country;
 
                 } else {
                     // else update the
                     if (gender != undefined) {
-                        user.gender = gender;
+                        user.updatedInfo.gender = gender;
                     }
 
                     if (birthDate != undefined) {
-                        user.birthDate = birthDate;
+                        user.updatedInfo.birthDate = birthDate;
                     }
 
                     if (displayName != undefined) {
-                        user.displayName = displayName;
+                        user.updatedInfo.displayName = displayName;
                     }
-
+                    console.log(newPassword);
+                    console.log(repeatedPassword);
                     if (newPassword != undefined && repeatedPassword == newPassword) {
-                        const salt = await bcrypt.genSalt(10);
+                        let salt = await bcrypt.genSalt(10);
                         let hashed = await bcrypt.hash(newPassword, salt);
-                        user.password = hashed;
+                        user.updatedInfo.password = hashed;
                     }
 
                     if (email != undefined) {
                         // check email is not used in the website
-                        const UserByEmail = await userDocument.findOne({ email: email });
-                        if (!UserByEmail) user.email = email;
+                        let UserByEmail = await userDocument.findOne({ email: email });
+                        if (!UserByEmail) user.updatedInfo.email = email;
                     }
 
                     if (country != undefined) {
-                        user.country = country;
+                        user.updatedInfo.country = country;
                     }
 
                 }
                 if (user.product == 'premium') {
-                    if (expiresDate) user.premium['expiresDate'] = expiresDate;
-                    if (cardNumber) user.premium['cardNumber'] = cardNumber;
-                    if (isMonth) user.premium['isMonth'] = isMonth;
+                    if (expiresDate) user.updatedInfo.expiresDate = expiresDate;
+                    if (cardNumber) user.updatedInfo.cardNumber = cardNumber;
+                    if (isMonth) user.updatedInfo.isMonth = isMonth;
                 }
+                if(!user.updateConfirm)user.updateConfirm=false
+                user.updateConfirm=false
                 await user.save();
                 return 1;
 
@@ -603,6 +620,57 @@ const User = {
         try {
             if (!user.premiumConfirm) user.premiumConfirm = true;
             user.product = 'premium';
+            await user.save();
+            return true;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    confirmUpdate: async function(user) {
+        try {
+            if (!user.updateConfirm) user.updateConfirm = false;
+            if(user.updateConfirm==true)return true;
+            if (user.updatedInfo.gender != undefined && user.updatedInfo.gender!=null) {
+                user.gender = user.updatedInfo.gender;
+            }
+
+            if (user.updatedInfo.birthDate != undefined && user.updatedInfo.birthDate != null) {
+                user.birthDate = user.updatedInfo.birthDate;
+            }
+
+            if (user.updatedInfo.displayName != undefined && user.updatedInfo.displayName !=null) {
+                user.displayName = user.updatedInfo.displayName;
+            }
+
+            if (user.updatedInfo.password !=undefined && user.updatedInfo.password !=null) {
+                user.password = user.updatedInfo.password;
+            }
+
+            if (user.updatedInfo.email != undefined && user.updatedInfo.email !=null) {
+                user.email = user.updatedInfo.email;
+            }
+
+            if (user.updatedInfo.country != undefined && user.updatedInfo.country !=null) {
+                user.country = user.updatedInfo.country;
+            }
+
+        if (user.product == 'premium') {
+            if (user.updatedInfo.expiresDate !=undefined && user.updatedInfo.expiresDate !=null) user.premium['expiresDate'] = user.updatedInfo.expiresDate;
+            if (user.updatedInfo.cardNumber !=undefined && user.updatedInfo.cardNumber !=null) user.premium['cardNumber'] = user.updatedInfo.cardNumber;
+            if (user.updatedInfo.isMonth != undefined && user.updatedInfo.isMonth !=null) user.premium['isMonth'] = user.updatedInfo.isMonth;
+        }
+        user.updatedInfo={
+            email:null,
+            password:null,
+            country:null,
+            displayName:null,
+            expiresDate: null,
+            cardNumber: null,
+            isMonth: null,
+            gender:null,
+            birthDate:null
+        }
+        user.updateConfirm=true;
             await user.save();
             return true;
         } catch (ex) {

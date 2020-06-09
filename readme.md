@@ -41,7 +41,7 @@
 <li> :leaves: Your recently played songs are always stored so you will never miss them</li>
 <li> :notes: Tracks are ordered based on different categories to always find the best category for you</li>
 <li> :chart_with_upwards_trend: Statistics for uploaded songs and albums. number of listeners and likes per
-day, month, and year. also we didn't forget to add our beloved artist statistics which include number of followers per day/month/year </li>
+day, month, and year. also we didn't forget to add our beloved artist statistics which include number of followers per day, month and year </li>
 <li> :broken_heart: you can always delete your account when you get bored or spammed by our emails, but please don't we will miss you </li>
 
 </ul>

@@ -245,6 +245,7 @@ const Player = {
                     await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
                     user.queue.queuIndex = -1;
                     await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
+                    await this.incrementListeners(trackInfo, 'track');
                     return 1;
                 } else { // this track from album not from playlist
                     const album = await Album.getAlbumById(id);
@@ -269,6 +270,8 @@ const Player = {
                         i++;
                     }
                     await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
+                    await this.incrementListeners(trackInfo, 'track');
+                    await this.incrementListeners(album, 'album');
                     return 1;
                 }
             } else {
@@ -295,13 +298,32 @@ const Player = {
                 user.player.isPlaylist = undefined;
                 user.player['sourceName'] = sourceType;
                 await userDocument.updateOne({ _id: user._id }, { queue: user.queue, player: user.player });
+                await this.incrementListeners(trackInfo, 'track');
                 return 1;
             }
         } catch (ex) {
             return 0;
         }
     },
-
+    /**
+     * to increment number of listener in album and tracks 
+     * @param {object} objectInfo - album or track object
+     * @param {String} type - if object is track ='track' if album = 'album'
+     * @returns {Number}
+     */
+    incrementListeners: async function(objectInfo, type) {
+        const nowDate = new Date();
+        const currentDate = Number(nowDate.getFullYear()) * 10000 + Number(nowDate.getMonth() + 1) * 100 + Number(nowDate.getDate());
+        if (!objectInfo.liseteners)
+            objectInfo.liseteners = [];
+        if (objectInfo.liseteners.length == 0 || objectInfo.liseteners[objectInfo.liseteners.length - 1].dateForThis != currentDate)
+            objectInfo.liseteners.push({ numberOfLiseteners: 1, dateForThis: currentDate });
+        else
+            objectInfo.liseteners[objectInfo.liseteners.length - 1].numberOfLiseteners++;
+        if (type == 'track') await trackDocument.updateOne({ _id: String(objectInfo._id) }, { 'liseteners': objectInfo.liseteners });
+        else if (type = 'album') await albumDocument.updateOne({ _id: String(objectInfo._id) }, { 'liseteners': objectInfo.liseteners });
+        return 1;
+    },
     /** 
      *  add track to user's queue
      * @param  {Object} user - the user
@@ -425,14 +447,17 @@ const Player = {
                 user.queue.queuIndex--;
                 user.player["lastPlaylistTrackIndex"]--;
                 await this.setNextPrev(user, user.queue.tracksInQueue[user.player["lastPlaylistTrackIndex"]].trackId)
+                if (!player.currentTrack.isPlaylist && player.currentTrack.playlistId)
+                    await this.incrementListeners(await Album.getAlbumById(player.currentTrack.playlistId), 'album');
             } else
                 await this.setNextPrev(user, user.player.currentTrack.trackId)
             if (String(user.player.currentTrack.trackId) == String(user.queue.tracksInQueue[user.queue.queuIndex + 1].trackId))
                 nextPlayingTrack['fristInSource'] = true;
             if (nextPlayingTrack.track.playable == false) return await this.skipNext(user);
-            nextPlayingTrack['isPlaylist'] = player.nextTrack.isPlaylist;
-            nextPlayingTrack['playlistId'] = player.nextTrack.playlistId;
+            nextPlayingTrack['isPlaylist'] = player.currentTrack.isPlaylist;
+            nextPlayingTrack['playlistId'] = player.currentTrack.playlistId;
             nextPlayingTrack['isPlayable'] = true;
+            await this.incrementListeners(await Track.getTrack(player.currentTrack.trackId), 'track');
             return nextPlayingTrack;
         } catch (ex) {
             return 0;
@@ -454,9 +479,10 @@ const Player = {
             player.currentTrack = user.player.prevTrack;
             await this.setNextPrev(user, player.prevTrack.trackId);
             if (prevPlayingTrack.track.playable == false) return await this.skipPrevious(user);
-            prevPlayingTrack['isPlaylist'] = player.prevTrack.isPlaylist;
-            prevPlayingTrack['playlistId'] = player.prevTrack.playlistId;
+            prevPlayingTrack['isPlaylist'] = player.currentTrack.isPlaylist;
+            prevPlayingTrack['playlistId'] = player.currentTrack.playlistId;
             prevPlayingTrack['isPlayable'] = true;
+            await this.incrementListeners(await Track.getTrack(player.currentTrack.trackId), 'track');
             return prevPlayingTrack;
         } catch (ex) {
             return 0;

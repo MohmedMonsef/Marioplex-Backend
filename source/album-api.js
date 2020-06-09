@@ -359,6 +359,67 @@ const Album = {
             }
         }
         return 1;
-    }
+    },
+    /**
+     *  get number of listeners  of album per day
+     * @param {String} albumId -the id of album 
+     * @param {Number} year 
+     * @param {Number} month 
+     * @param {Number} day 
+     * @returns {Number}
+     */
+    getAlbumListenersPerDay: async function(albumId, year, month, day) {
+        try {
+            const album = await albumDocument.findById(albumId);
+            if (!album || !album.liseteners || album.liseteners.length == 0) return 0;
+            for (let i = 0; i < album.liseteners.length; i++)
+                if (album.liseteners[i].dateForThis == Number(year) * 10000 + Number(day) + Number(month) * 100)
+                    return album.liseteners[i].numberOfLiseteners;
+            return 0;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
+     *  get number of listeners  of album per month
+     * @param {String} albumId -the id of album 
+     * @param {Number} year 
+     * @param {Number} month 
+     * @returns {Number}
+     */
+    getAlbumListenersPerMonth: async function(albumId, year, month) {
+        try {
+            const album = await albumDocument.findById(albumId);
+            let noOfLisners = 0;
+            if (!album || !album.liseteners || album.liseteners.length == 0) return 0;
+            for (let i = 0; i < album.liseteners.length; i++)
+                if (album.liseteners[i].dateForThis >= Number(year) * 10000 + Number(month) * 100 && album.liseteners[i].dateForThis < Number(year) * 10000 + (Number(month) + 1) * 100)
+                    noOfLisners += album.liseteners[i].numberOfLiseteners;
+
+            return noOfLisners;
+        } catch (ex) {
+            return 0;
+        }
+    },
+    /**
+     *  get number of listeners p of album per year
+     * @param {String} albumId -the id of album 
+     * @param {Number} year  
+     * @returns {Number}
+     */
+    getAlbumListenersPerYear: async function(albumId, year) {
+        try {
+            const album = await albumDocument.findById(albumId);
+            let noOfLisners = 0;
+            if (!album || !album.liseteners || album.liseteners.length == 0) return 0;
+            for (let i = 0; i < album.liseteners.length; i++)
+                if (album.liseteners[i].dateForThis >= Number(year) * 10000 && album.liseteners[i].dateForThis < (Number(year) + 1) * 10000)
+                    noOfLisners += album.liseteners[i].numberOfLiseteners;
+
+            return noOfLisners;
+        } catch (ex) {
+            return 0;
+        }
+    },
 }
 module.exports = Album;

@@ -1,0 +1,42 @@
+ID:9181513
+Name:Nada Abdelmaboud
+Team no.: 3
+*Artist 
+   - get artist
+   - get several artists
+   - get Artist albums
+   - get Artist Tracks
+   - get Related Artists
+   - get Top tracks in a specific country
+   - create album
+   - get artist as user
+*Playlist
+   -Add track/s to playlist
+   -remove track/s from playlist
+   -reorder track/s in playlist
+   -update playlist details
+   -get current user playlists
+   -get any user public playlists
+   -toggle collaboration status
+   -toggle public status
+   -get list of user deleted playlists
+*Library :
+   -check saved track
+   -check saved album
+*others:
+   -sendmail with node mailer
+   -claim user to artist
+new features :
+*Confirmation (signup - premium)
+*Forget/Reset password
+*Restore deleted playlists
+*Notifications for :
+ -Artist upload track 
+ -Artist upload album 
+ - user view profile 
+ - user follow playlist 
+ - user follow user 
+*store Offline Notifications when user is logged out & get them once he logged in again
+*Notifications History
+*Unprotected Authorization for Artist & Playlist routes
+*Album likes statistics

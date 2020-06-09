@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.9% </span>
+                <span class="strong">89.49% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>436/496</span>
+                <span class='fraction'>443/495</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95.05% </span>
+                <span class="strong">97.13% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>365/384</span>
+                <span class='fraction'>372/383</span>
             </div>
         
             
@@ -1149,7 +1149,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1263,8 +1263,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1337,8 +1337,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1531,8 +1531,8 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1746,7 +1746,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1827,7 +1827,7 @@ const Image = {
      */
     findMeAsArtist: async function(userId) {
         try{
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!checkMonooseObjectID([userId])) <span class="cstat-no" title="statement not covered" >return 0;</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!checkMonooseObjectID([userId])) <span class="cstat-no" title="statement not covered" >throw new Error("not mongoose id");</span>
         const artist = await artistDocument.findOne({ userId: userId }, (err, artist) =&gt; {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (err) <span class="cstat-no" title="statement not covered" >return 0;</span>
             return artist;
@@ -1883,7 +1883,7 @@ const Image = {
      */
     checkArtisthasAlbum: async function(artistId, albumId) {
         try{
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!checkMonooseObjectID([artistId, albumId])) <span class="cstat-no" title="statement not covered" >return 0;</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!checkMonooseObjectID([artistId, albumId]))  <span class="cstat-no" title="statement not covered" >throw new Error("not mongoose id");</span>
         const album = await albumDocument.findById(albumId);
         <span class="missing-if-branch" title="else path not taken" >E</span>if (album) {
             const artist = await artistDocument.findById(artistId);
@@ -1908,7 +1908,7 @@ const Image = {
      */
     uploadImage: async function(userId, sourceId, belongsTo, image) {
         try{
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId])) throw new Error("not mongoose id");
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -1997,7 +1997,7 @@ const Image = {
         }
     }catch(ex){
     
-<span class="cstat-no" title="statement not covered" >        return 0;</span>
+        return 0;
     }
 &nbsp;
     },
@@ -2012,7 +2012,7 @@ const Image = {
      */
     updateImage: async function(userId, sourceId, belongsTo, image) {
         try{
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -2111,14 +2111,14 @@ const Image = {
 &nbsp;
         }
     }catch(ex){
-<span class="cstat-no" title="statement not covered" >        console.log(ex)</span>
-<span class="cstat-no" title="statement not covered" >        return 0;</span>
+        console.log(ex)
+        return 0;
     }
 &nbsp;
     },
     getImage: async function(sourceId, belongsTo) {
         try{
-        if (!checkMonooseObjectID([sourceId])) return 0;
+        if (!checkMonooseObjectID([sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo) return 0;
 &nbsp;
 &nbsp;
@@ -2185,8 +2185,8 @@ const Image = {
 &nbsp;
         }
     }catch(ex){
-<span class="cstat-no" title="statement not covered" >        console.log(ex)</span>
-<span class="cstat-no" title="statement not covered" >        return 0;</span>
+        console.log(ex)
+        return 0;
     }
     },
     /**
@@ -2201,7 +2201,7 @@ const Image = {
         try{
         // remove image from database and from gridfs
         // check if user has access to delete image then delete the image
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo || !imageId) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -2379,8 +2379,8 @@ const Image = {
                 return 0;
         }
     }catch(ex){
-<span class="cstat-no" title="statement not covered" >        console.log(ex)</span>
-<span class="cstat-no" title="statement not covered" >        return 0;</span>
+     
+        return 0;
     }
 &nbsp;
     },
@@ -2420,7 +2420,7 @@ const Image = {
         try{
         // remove images from database and from gridfs
         // check if user has access to delete image then delete the image
-        if (!checkMonooseObjectID([userId, sourceId])) return 0;
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
         if (!belongsTo) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -2594,7 +2594,7 @@ const Image = {
                 return 0;
         }
     }catch(ex){
-<span class="cstat-no" title="statement not covered" >        return 0;</span>
+        return 0;
     }
     }
 &nbsp;
@@ -2608,7 +2608,7 @@ module.exports = Image;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sat Jun 06 2020 13:17:14 GMT+0200 (Eastern European Standard Time)
+                at Mon Jun 08 2020 14:57:32 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>

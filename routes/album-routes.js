@@ -109,5 +109,38 @@ router.get('/albums/:id/tracks', checkIfAuth, limiter, async(req, res, next) => 
     }
 
 })
+router.get('/albums/listeners-per-day/:album_id', limiter, async(req, res) => {
+    try {
+        const albumId = req.params.album_id;
+        const year = req.query.year;
+        const day = req.query.day;
+        const month = req.query.month;
+        const num = await Album.getAlbumListenersPerDay(albumId, year, month, day);
+        res.status(200).json({ 'numberOfListners': num });
+    } catch (ex) {
+        res.status(400).send({ 'error': 'error in making the request' });
+    }
+})
 
+router.get('/albums/listeners-per-month/:album_id', limiter, async(req, res) => {
+    try {
+        const albumId = req.params.album_id;
+        const year = req.query.year;
+        const month = req.query.month;
+        const num = await Album.getAlbumListenersPerMonth(albumId, year, month);
+        res.status(200).json({ 'numberOfListners': num });
+    } catch (ex) {
+        res.status(400).send({ 'error': 'error in making the request' });
+    }
+})
+router.get('/albums/listeners-per-year/:album_id', limiter, async(req, res) => {
+    try {
+        const albumId = req.params.album_id;
+        const year = req.query.year;
+        const num = await Album.getAlbumListenersPerYear(albumId, year);
+        res.status(200).json({ 'numberOfListners': num });
+    } catch (ex) {
+        res.status(400).send({ 'error': 'error in making the request' });
+    }
+})
 module.exports = router;

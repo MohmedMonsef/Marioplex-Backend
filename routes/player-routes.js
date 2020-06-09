@@ -80,6 +80,7 @@ router.post('/createQueue/:source_id/:track_id', checkAuth, limiter, async(req, 
         const isPlaylist = req.query.isPlaylist;
         const userId = req.user._id;
         const createQueue = await User.updateUserPlayer(userId, isPlaylist, sourceId, trackId, undefined, undefined)
+            //console.log(await Track.getTrack(trackId));
         if (createQueue) res.send(' Queue is created successfully');
         else res.status(403).send('can not create queue');
     } else {

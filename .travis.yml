@@ -1,9 +1,12 @@
 sudo: required
 services:
-  - docker 
+  - docker  
+before_install:
+  - docker build -t belalelhossany/backtest -f ./Dockerfile.dev ./
+
 script:
-  - true
-  - echo " SCRIPT FINISHED " 
+  - docker run belalelhossany/backtest
+  
 after_success:
   - docker build -t belalelhossany/backend .
   # Log in to the docker CLI

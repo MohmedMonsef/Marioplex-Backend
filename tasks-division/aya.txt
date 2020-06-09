@@ -38,9 +38,9 @@ Home page :
 Browse:
     - get playlists of genres (new)
 search:
-	- add to recently search
-	-delete from recently search
-	- get recently search 
+	- add to recently search (new)
+	-delete from recently search  (new)
+	- get recently search  (new)
 Other:
     - intialize half of api documentation  before start project  (old)
     - do environment variable (new)

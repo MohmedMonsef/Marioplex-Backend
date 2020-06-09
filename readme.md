@@ -45,10 +45,12 @@ day, month, and year. </li>
 
 </ul>
 
+![intro](static/intro.gif)
+
 ## Best of all, It is totally free and open-sourced
 ### want to try it yourself
 
-![intro](static/intro.gif)
+
 ### run for developers <br/>
 #### first install the devDependencies and dependencies by running
 > npm install

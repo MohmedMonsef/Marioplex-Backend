@@ -312,17 +312,21 @@ const Player = {
      * @returns {Number}
      */
     incrementListeners: async function(objectInfo, type) {
-        const nowDate = new Date();
-        const currentDate = Number(nowDate.getFullYear()) * 10000 + Number(nowDate.getMonth() + 1) * 100 + Number(nowDate.getDate());
-        if (!objectInfo.liseteners)
-            objectInfo.liseteners = [];
-        if (objectInfo.liseteners.length == 0 || objectInfo.liseteners[objectInfo.liseteners.length - 1].dateForThis != currentDate)
-            objectInfo.liseteners.push({ numberOfLiseteners: 1, dateForThis: currentDate });
-        else
-            objectInfo.liseteners[objectInfo.liseteners.length - 1].numberOfLiseteners++;
-        if (type == 'track') await trackDocument.updateOne({ _id: String(objectInfo._id) }, { 'liseteners': objectInfo.liseteners });
-        else if (type = 'album') await albumDocument.updateOne({ _id: String(objectInfo._id) }, { 'liseteners': objectInfo.liseteners });
-        return 1;
+        try {
+            const nowDate = new Date();
+            const currentDate = Number(nowDate.getFullYear()) * 10000 + Number(nowDate.getMonth() + 1) * 100 + Number(nowDate.getDate());
+            if (!objectInfo.liseteners)
+                objectInfo.liseteners = [];
+            if (objectInfo.liseteners.length == 0 || objectInfo.liseteners[objectInfo.liseteners.length - 1].dateForThis != currentDate)
+                objectInfo.liseteners.push({ numberOfLiseteners: 1, dateForThis: currentDate });
+            else
+                objectInfo.liseteners[objectInfo.liseteners.length - 1].numberOfLiseteners++;
+            if (type == 'track') await trackDocument.updateOne({ _id: String(objectInfo._id) }, { 'liseteners': objectInfo.liseteners });
+            else if (type = 'album') await albumDocument.updateOne({ _id: String(objectInfo._id) }, { 'liseteners': objectInfo.liseteners });
+            return 1;
+        } catch (ex) {
+            return 0;
+        }
     },
     /** 
      *  add track to user's queue

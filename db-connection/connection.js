@@ -28,7 +28,7 @@ module.exports = function(app) {
             // check to see if there is defUault image
             gfsImages.files.findOne({ "metadata.belongsTo": "default" }, function(err, file) {
                 if(err || !file){
-                    console.log("uploading default")
+                   
                     // upload image
                     let writestream = gfsImages.createWriteStream({
                         filename: 'not_found',
@@ -40,8 +40,7 @@ module.exports = function(app) {
                     fs.createReadStream('static/not_found.jpeg').pipe(writestream);
                   
                     writestream.on('close', function (file) {
-                       
-                        console.log(file);
+                
 
                       });
                 }

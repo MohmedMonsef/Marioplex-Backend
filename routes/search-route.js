@@ -18,9 +18,9 @@ router.get('/search', limiter, async(req, res, next) => {
     const type = req.query.type.split(',');
     const limit = req.body.limit;
     const offset = req.body.offset;
-    const n = name.split(' ').join('')
+    const n = name.split(' ');
     let searchResult = {};
-    if(n!=''){
+    if(n.length+1!=name.length){
         for (let i = 0; i < type.length; i++) {
             if (type[i] == 'top') {
                 const artist = await Search.getTopResults(name).catch(next);

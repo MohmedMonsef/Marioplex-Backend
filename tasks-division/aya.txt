@@ -9,7 +9,7 @@ Album:
 Track:
 	- track listeners statistics per day/month/year (new)
 Player: 
-	- create Queue by array of tracks are not in same album or playlist like (playing track from radio ratio in spotify )
+    - create Queue by array of tracks are not in same album or playlist like (playing track from radio ratio in spotify )
     -add track to queue (old)
     - skip next (old)
     -skip prev (old)
@@ -37,6 +37,10 @@ Home page :
     - get new releases albums (old)
 Browse:
     - get playlists of genres (new)
+search:
+	- add to recently search
+	-delete from recently search
+	- get recently search 
 Other:
     - intialize half of api documentation  before start project  (old)
     - do environment variable (new)
@@ -44,4 +48,3 @@ Other:
     - unit test library/player/browse (new)
     - update in apidocumentation 
     - store volume ,current timeStamp in playing track and repeat track flag when logout  (new)
-

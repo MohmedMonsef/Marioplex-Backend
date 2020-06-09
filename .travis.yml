@@ -13,7 +13,7 @@ after_success:
 deploy:
   edge: true
   provider: elasticbeanstalk
-  region: us-west-1
+  region: us-east-1
   app: BackEnd
   env: Backend-env
   bucket_name: marioplex

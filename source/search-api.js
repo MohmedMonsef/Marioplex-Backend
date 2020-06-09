@@ -350,10 +350,13 @@ const Search = {
             if (album) {
                 trackValues['albumId'] = album._id
                 trackValues['albumName'] = album.name
+                trackValues["albumImages"] = album.images	
+
             }
             trackValues['_id'] = tracks[i]._id
             trackValues['name'] = tracks[i].name
             trackValues['images'] = tracks[i].images
+            trackValues['duration'] = tracks[i].duration
             trackValues['type'] = 'track'
             trackInfo.push(trackValues);
 
@@ -471,12 +474,13 @@ const Search = {
                 if (user) {
                     playlist['ownerId'] = user._id
                     playlist['ownerName'] = user.displayName
+                    playlist["ownerImages"] = user.images	
+
                 }
                 playlist['_id'] = playlists[i]._id
                 playlist['name'] = playlists[i].name
                 playlist['images'] = playlists[i].images
                 playlist['type'] = 'playlist'
-
                 playlistInfo.push(playlist)
 
             }

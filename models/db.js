@@ -109,6 +109,18 @@ const User = new Schema({
     country: String,
     fcmToken: String,
     confirm: Boolean,
+    updatedInfo:{
+        email:String,
+        password:String,
+        country:String,
+        displayName:String,
+        expiresDate: Date,
+        cardNumber: String,
+        isMonth: Boolean,
+        gender:String,
+        birthDate:Date
+    },
+    updateConfirm:Boolean,
     premiumConfirm: Boolean,
     isLogged: Boolean,
     recentlySearch: [{

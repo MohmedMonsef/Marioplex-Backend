@@ -23,7 +23,7 @@ Image:
 	- delete image from all entities (new)
 Player: 
 	- pause/resume track (old)
-	- prototype for set player instance and update player, but it get changed heavily
+	- prototype for set player instance and update player, but it get changed heavily (old)
 User:
 	- follow/unfollow users (new)
 	- get followers (new)

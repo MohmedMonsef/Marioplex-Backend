@@ -68,7 +68,7 @@ router.post('/premium/confirm', limiter, async(req, res) => {
     try{
     if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
     let user = await User.getUserById(req.query.id);
-
+    if(!user){ return res.status(400).send("user is not found"); }
     let checkConfirm = await User.confirmPremium(user);
     if (checkConfirm) {
         return res.status(200).send("user is confirmed");
@@ -146,15 +146,22 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
                 error: err
             })
         } else {
-            const user = 0;
+            let user = 0;
             const userId = req.user._id;
             console.log(req.body.user);
             if(req.body.user){
             user = await User.update(req.body.user.repeatedPassword, userId, req.body.user.gender, req.body.user.birthday, req.body.user.displayName, req.body.user.password, req.body.user.email, req.body.user.country, req.body.expiresDate, req.body.cardNumber, req.body.isMonth, req.body.user.newpassword);
             }
             if (user) {
+                const newUser=await User.getUserById(req.user._id);
+                let mail=newUser.email;
+                if (req.body.user.email != undefined) {
+                    const UserByEmail = await spotifySchema.user.findOne({ email: req.body.user.email });
+                    if (!UserByEmail) mail = newUser.updatedInfo.email;
+                }
+                sendmail(mail, String(newUser._id), "confirmUpdate");
                 res.status(200).json({
-                    "success": "information has been updated successfully"
+                    "success": "Please check your mail and confirm to update your info"
                 });
             } else res.sendStatus(404);
         }
@@ -163,7 +170,26 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
     res.status(400).send({ "error": "error in making the request" });
 }
 })
+//confirmUpdatedData
+router.post('/me/confirmUpdate', limiter, async(req, res) => {
+    try{
+    if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
+        let user = await User.getUserById(req.query.id);
+        if(!user){ return res.status(400).send("user is not found"); }
+        let checkConfirm = await User.confirmUpdate(user);
+        if(checkConfirm==true){
+            return res.status(200).send("user is updated");
+        }
+        else{
+            return res.status(400).send("user cant be updated");
 
+        }
+    }
+    catch(err){
+        res.status(400).send({ "error": "error in making the request" });
+    }
+
+}),
 //GET USER PRIVATE PROFILE INFORMATION
 router.get('/me', checkAuth, limiter, async(req, res) => {
     try{

@@ -298,6 +298,53 @@ test('delete album with id does not exist', async() => {
     expect(await mockAlbum.deleteAlbum("1", album._id)).toBeFalsy()
 })
 
+test('get track liseners per year with wrong album  ', async() => {
+    expect(await mockAlbum.getAlbumListenersPerYear('8u', 2020)).toEqual(0);
+})
+
+test('get track liseners per month with wrong album ', async() => {
+    expect(await mockAlbum.getAlbumListenersPerMonth('8u', 2020, 6)).toEqual(0);
+})
+
+test('get track liseners per day with wrong album ', async() => {
+    expect(await mockAlbum.getAlbumListenersPerDay('8u', 2020, 3, 3)).toEqual(0);
+})
+
+test('get album liseners per year no listeners ', async() => {
+    let nowDate = new Date();
+    expect(await mockAlbum.getAlbumListenersPerYear(album._id, Number(nowDate.getFullYear()))).toEqual(0);
+})
+
+test('get album liseners per month no listeners  ', async() => {
+    let nowDate = new Date();
+    expect(await mockAlbum.getAlbumListenersPerMonth(album._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1))).toEqual(0);
+})
+
+test('get album liseners per day no listeners ', async() => {
+    let nowDate = new Date();
+    console.log(album)
+    expect(await mockAlbum.getAlbumListenersPerDay(album._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1), Number(nowDate.getDate()))).toEqual(0);
+})
+
+test('get album liseners per year  ', async() => {
+    await mockPlayer.createQueue(user, false, album._id, track._id);
+    let nowDate = new Date();
+    expect(await mockAlbum.getAlbumListenersPerYear(album._id, Number(nowDate.getFullYear()))).toEqual(1);
+})
+
+test('get album liseners per month  ', async() => {
+    let nowDate = new Date();
+    await mockPlayer.createQueue(user, false, album._id, track._id);
+    expect(await mockAlbum.getAlbumListenersPerMonth(album._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1))).toEqual(2);
+})
+
+test('get album liseners per day ', async() => {
+    await mockPlayer.createQueue(user, false, album._id, track._id);
+    let nowDate = new Date();
+    expect(await mockAlbum.getAlbumListenersPerDay(album._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1), Number(nowDate.getDate()))).toEqual(3);
+})
+
+
 test('delete album with id does not exist', async() => {
     expect(await mockAlbum.deleteAlbum(user3._id, mongoose.Types.ObjectId())).toBeFalsy()
 })

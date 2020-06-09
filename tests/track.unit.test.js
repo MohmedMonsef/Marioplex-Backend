@@ -556,28 +556,35 @@ test('get track liseners per day with wrong track id ', async() => {
 })
 
 test('get track liseners per year no listeners ', async() => {
-    expect(await mockTrack.getTrackListenersPerYear(track._id, 2020)).toEqual(0);
+    let nowDate = new Date();
+    expect(await mockTrack.getTrackListenersPerYear(track._id, Number(nowDate.getFullYear()))).toEqual(0);
 })
 
 test('get track liseners per month no listeners  ', async() => {
-    expect(await mockTrack.getTrackListenersPerMonth(track._id, 2020, 6)).toEqual(0);
+    let nowDate = new Date();
+    expect(await mockTrack.getTrackListenersPerMonth(track._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1))).toEqual(0);
 })
 
 test('get track liseners per day no listeners ', async() => {
-    expect(await mockTrack.getTrackListenersPerYear(track._id, 2020, 3, 3)).toEqual(0);
+    let nowDate = new Date();
+    console.log(track)
+    expect(await mockTrack.getTrackListenersPerDay(track._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1), Number(nowDate.getDate()))).toEqual(0);
 })
 
 test('get track liseners per year  ', async() => {
     await mockPlayer.createQueue(user, false, album._id, track._id);
-    expect(await mockTrack.getTrackListenersPerYear(track._id, 2020)).toEqual(1);
+    let nowDate = new Date();
+    expect(await mockTrack.getTrackListenersPerYear(track._id, Number(nowDate.getFullYear()))).toEqual(1);
 })
 
 test('get track liseners per month  ', async() => {
+    let nowDate = new Date();
     await mockPlayer.createQueue(user, false, album._id, track._id);
-    expect(await mockTrack.getTrackListenersPerMonth(track._id, 2020, 6)).toEqual(2);
+    expect(await mockTrack.getTrackListenersPerMonth(track._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1))).toEqual(2);
 })
 
 test('get track liseners per day ', async() => {
     await mockPlayer.createQueue(user, false, album._id, track._id);
-    expect(await mockTrack.getTrackListenersPerYear(track._id, 2020, 3, 3)).toEqual(3);
+    let nowDate = new Date();
+    expect(await mockTrack.getTrackListenersPerDay(track._id, Number(nowDate.getFullYear()), Number(nowDate.getMonth() + 1), Number(nowDate.getDate()))).toEqual(3);
 })

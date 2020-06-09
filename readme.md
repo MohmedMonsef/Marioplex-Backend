@@ -16,6 +16,7 @@
 <li>Sign up</li>
 <li>Froget you password</li>
 <li>Promoted to be premium user</li>
+<li>Updated your profile info</li>
 </ul>
  </li>
 <li> :moneybag: Privileges for our awesome premium users   </li>
@@ -35,17 +36,22 @@
 </li>
 <li> :link: Customize every detail about your profile</li>
 <li> :bulb: Recommendations based on what you like and who you follow</li>
-<li> :mag_right: Search for your beloved track/artist/user by using our fuzzy search engine</li>
+<li> :mag_right: Search for your beloved track/artist/user/albums/playlist by using our fuzzy search engine and get the top results and best match possible</li>
 <li> :pensive: Deleted a playlist by mistake ? Don't worry my child you can always recover it from our deleted playlist</li>
 <li> :desktop_computer: Your homepage is specially customized for you and your taste with a spoon of the most populat tracks/artists in your area</li>
 <li> :leaves: Your recently played songs are always stored so you will never miss them</li>
-
-
+<li> :notes: Tracks are ordered based on different categories to always find the best category for you</li>
+<li> :chart_with_upwards_trend: Statistics for uploaded songs and albums. number of listeners and likes per
+day, month, and year. also we didn't forget to add our beloved artist statistics which include number of followers per day, month and year </li>
+<li> :broken_heart: you can always delete your account when you get bored or spammed by our emails, but please don't we will miss you </li>
 
 </ul>
 
+![intro](static/intro.gif)
+
 ## Best of all, It is totally free and open-sourced
 ### want to try it yourself
+
 
 ### run for developers <br/>
 #### first install the devDependencies and dependencies by running

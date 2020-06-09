@@ -180,8 +180,24 @@ test('add track to invalid album', async() => {
     expect(await mockAlbum.addTrack('1', track3._id)).toEqual(0);
 })
 
-
-
+test('get number of likes for an album per day', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInDay(album._id)).toEqual(0);
+})
+test('get number of likes for an album per day', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInDay('1')).toEqual(-1);
+})
+test('get number of likes for an album per month', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInMonth(album._id)).toEqual(0);
+})
+test('get number of likes for an album per month', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInMonth('1')).toEqual(-1);
+})
+test('get number of likes for an album per year', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInYear(album._id)).toEqual(0);
+})
+test('get number of likes for an album per year', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInYear('1')).toEqual(-1);
+})
 
 
 test('check if user does not saves album', async() => {
@@ -189,7 +205,7 @@ test('check if user does not saves album', async() => {
 })
 
 test('user saves album that does not exist', async() => {
-    expect(await mockAlbum.saveAlbum(user2, [mongoose.Types.ObjectId()])).toEqual(2);
+    expect(await mockAlbum.saveAlbum(user2, [mongoose.Types.ObjectId()])).toEqual(0);
 })
 test('user saves album that does not exist', async() => {
     expect(await mockAlbum.unsaveAlbum(user2, [mongoose.Types.ObjectId()])).toBeFalsy();
@@ -204,7 +220,15 @@ test('check if saves album that does not exist', async() => {
 test('user saves album', async() => {
     expect(await mockAlbum.saveAlbum(user2, [album._id])).toBeTruthy()
 })
-
+test('get number of likes for an album per year', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInYear(album._id)).toEqual(1);
+})
+test('get number of likes for an album per year', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInMonth(album._id)).toEqual(1);
+})
+test('get number of likes for an album per year', async() => {
+    expect(await mockAlbum.getAlbumNumberOfLikesInDay(album._id)).toEqual(1);
+})
 test('get album with artist with false is saved', async() => {
     expect(await mockAlbum.getAlbumArtist(album._id, user2._id, true)).toHaveProperty('_id', album._id);
 
@@ -227,7 +251,7 @@ test('user saves album already saved', async() => {
 
 
 test('user saves album with empty array', async() => {
-    expect(await mockAlbum.saveAlbum(user2, [])).toEqual(2)
+    expect(await mockAlbum.saveAlbum(user2, [])).toEqual(0)
 })
 
 

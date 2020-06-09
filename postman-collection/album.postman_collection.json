@@ -23,76 +23,6 @@
 						}
 					]
 				},
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					},
-					{
-						"key": "x-auth-token",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTc2Njg0OCwiZXhwIjo0NzM2MjUzMjQ4fQ.TAkHzm3mDhd_YhieRnXJ3GiPa42GOScu8sFSrdyTfgs",
-						"type": "text"
-					},
-					{
-						"key": "",
-						"value": "",
-						"type": "text"
-					},
-					{
-						"key": "",
-						"value": "",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{  \"ids\":\"5eb0a498ec0c444e9c48981e\"\r\n}\r\n        ",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "127.0.0.1:3000/api/me/Albums",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"me",
-						"Albums"
-					]
-				},
-				"description": "delete album"
-			},
-			"response": []
-		},
-		{
-			"name": "127.0.0.1:3000/api/albums/5eb0a498ec0c444e9c48981e",
-			"request": {
-				"auth": {
-					"type": "oauth2",
-					"oauth2": [
-						{
-							"key": "accessToken",
-							"value": "",
-							"type": "string"
-						},
-						{
-							"key": "addTokenTo",
-							"value": "header",
-							"type": "string"
-						}
-					]
-				},
 				"method": "PUT",
 				"header": [
 					{
@@ -142,6 +72,76 @@
 					]
 				},
 				"description": "save album"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/albums/5eb0a498ec0c444e9c48981e",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "",
+							"type": "string"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTc2Njg0OCwiZXhwIjo0NzM2MjUzMjQ4fQ.TAkHzm3mDhd_YhieRnXJ3GiPa42GOScu8sFSrdyTfgs",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{  \"ids\":\"5eb0a498ec0c444e9c48981e\"\r\n}\r\n        ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/me/Albums",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"me",
+						"Albums"
+					]
+				},
+				"description": "delete album"
 			},
 			"response": []
 		},
@@ -360,6 +360,31 @@
 					]
 				},
 				"description": "get albums with artist"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/Albums/numberOfLikes/5eb0a498ec0c444e9c48981e",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:3000/api/Albums/numberOfLikes/5eb0a498ec0c444e9c48981e",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Albums",
+						"numberOfLikes",
+						"5eb0a498ec0c444e9c48981e"
+					]
+				},
+				"description": "get number of likes per day, month and year for an album."
 			},
 			"response": []
 		}

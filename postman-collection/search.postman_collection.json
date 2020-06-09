@@ -1,0 +1,630 @@
+{
+	"info": {
+		"_postman_id": "6f8ef246-5a5b-48e7-a51f-3bc7843589d3",
+		"name": "search routes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "127.0.0.1:3000/api/search?name=a&type=top,artist,playlist,track,profile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:3000/api/search?name=a&type=top,artist,playlist,track,profile,album",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "a"
+						},
+						{
+							"key": "type",
+							"value": "top,artist,playlist,track,profile,album"
+						}
+					]
+				},
+				"description": "search "
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/search?name=a&type=top,artist,playlist,track,profile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:3000/api/search?name=artist1&type=top,artist,playlist,track,profile,album",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "artist1"
+						},
+						{
+							"key": "type",
+							"value": "top,artist,playlist,track,profile,album"
+						}
+					]
+				},
+				"description": "search for artist1\r\ngets tracks and albums of artist1"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/search?name=a&type=top,artist,playlist,track,profile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "127.0.0.1:3000/api/search?name=r&type=top,artist,playlist,track,profile,album",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "r"
+						},
+						{
+							"key": "type",
+							"value": "top,artist,playlist,track,profile,album"
+						}
+					]
+				},
+				"description": "search for 'r'"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb0a51bec0c444e9c489828"
+						},
+						{
+							"key": "type",
+							"value": "album"
+						}
+					]
+				},
+				"description": "save album to recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb0a51bec0c444e9c489828"
+						},
+						{
+							"key": "type",
+							"value": "album"
+						}
+					]
+				},
+				"description": "delete album from recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb0a44b9b15d854c08f7362&type=artist",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb0a44b9b15d854c08f7362"
+						},
+						{
+							"key": "type",
+							"value": "artist"
+						}
+					]
+				},
+				"description": "save artist to recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb0a44b9b15d854c08f7362&type=artist",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb0a44b9b15d854c08f7362"
+						},
+						{
+							"key": "type",
+							"value": "artist"
+						}
+					]
+				},
+				"description": "delete artist from recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb0a499ec0c444e9c489820&type=track",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb0a499ec0c444e9c489820"
+						},
+						{
+							"key": "type",
+							"value": "track"
+						}
+					]
+				},
+				"description": "save track to recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb0a499ec0c444e9c489820&type=track",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb0a499ec0c444e9c489820"
+						},
+						{
+							"key": "type",
+							"value": "track"
+						}
+					]
+				},
+				"description": "delete track from recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb5a61177cd481fa80bd41b&type=user",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb5a61177cd481fa80bd41b"
+						},
+						{
+							"key": "type",
+							"value": "user"
+						}
+					]
+				},
+				"description": "save user to recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb5a61177cd481fa80bd41b&type=user",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb5a61177cd481fa80bd41b"
+						},
+						{
+							"key": "type",
+							"value": "user"
+						}
+					]
+				},
+				"description": "delete user from recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb5246b680ef51b4c449291&type=playlist",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb5246b680ef51b4c449291"
+						},
+						{
+							"key": "type",
+							"value": "playlist"
+						}
+					]
+				},
+				"description": "save playlist to recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search?id=5eb5246b680ef51b4c449291&type=playlist",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5eb5246b680ef51b4c449291"
+						},
+						{
+							"key": "type",
+							"value": "playlist"
+						}
+					]
+				},
+				"description": "delete playlist from recently search"
+			},
+			"response": []
+		},
+		{
+			"name": "127.0.0.1:3000/api/recently-search?id=5eb0a51bec0c444e9c489828&type=album",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWI1YTcxNzc3Y2Q0ODFmYTgwYmQ0MWMiLCJwcm9kdWN0IjoiZnJlZSIsInVzZXJUeXBlIjoidXNlciIsImlhdCI6MTU4OTkxMjQ0NywiZXhwIjozMTQ2NDg4ODc4MDI2MDI4MDAwfQ.bvWXaS3yQ9qXVxrMbVv4Y37IwV9ThIjaLmKI8FeRA80",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"email\":\"dina@gmail.com\",\n\"password\":\"12345\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:3000/api/recently-search",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"recently-search"
+					]
+				},
+				"description": "get recently search"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

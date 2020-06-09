@@ -52,12 +52,11 @@ const Image = {
     checkAuthorizedTrack: async function(userId, trackId) {
         try{
         const user = await userDocument.findById(userId);
-        //  console.log('user')
-        // console.log(user)
+ 
         if (!user) return 0;
         // chekc if user is artist
         const artist = await this.findMeAsArtist(userId);
-        //console.log(artist)
+
         if (!artist) return 0;
         const hasAccess =  this.checkArtistHasTrack(artist, trackId);
         return hasAccess;
@@ -166,7 +165,7 @@ const Image = {
                     if (!user.images) user.images = [];
                     user.images.push(image);
                     // save user
-                    await userDocument.updateOne({_id:user._id},{$set:user}).catch(ex=>console.log(ex));
+                    await userDocument.updateOne({_id:user._id},{$set:user});
                     // return id of the saved image
                     return user.images[user.images.length - 1]._id;
                     
@@ -178,7 +177,6 @@ const Image = {
                     if (!playlist) return 0;
                     // check if user has access to playlist
                     const isAuthorized = await this.checkAuthorizedPlaylist(userId, sourceId);
-                    //  console.log('authorized '+isAuthorized)
                     // user has no access to playlist
                     if (!isAuthorized) return 0;
                     
@@ -192,11 +190,9 @@ const Image = {
                 {
                     { 
                         const track = await trackDocument.findById(sourceId);
-                        // console.log('track ' + track)
                          if (!track) return 0;
                         // check if user has access to track
                         const hasAccess = await this.checkAuthorizedTrack(userId, sourceId);
-                        //   console.log('authorized '+hasAccess)
                         if (!hasAccess) return 0;
                         // get track
                        
@@ -262,8 +258,6 @@ const Image = {
         const user = await userDocument.findById(userId);
         if (!user) return 0;
         // check if belongs to is user,playlist,track,album,category,artist
-        
-        //console.log("dekete",user);
         switch (belongsTo) {
             case 'user':
                 { // check if source id equals userId
@@ -277,8 +271,6 @@ const Image = {
                     //await userDocument.updateOne({_id:user._id},{$set:user});
                     await userDocument.updateOne({_id:user._id},{$set:user})
                     // return id of the saved image
-                   // console.log("up",user)
-                  //  console.log(await userDocument.findById(userId))
                     return user.images[user.images.length - 1]._id;
                   
                 }
@@ -356,7 +348,6 @@ const Image = {
 
         }
     }catch(ex){
-        console.log(ex)
         return 0;
     }
 
@@ -430,7 +421,6 @@ const Image = {
 
         }
     }catch(ex){
-        console.log(ex)
         return 0;
     }
     },
@@ -471,7 +461,6 @@ const Image = {
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                         if (files) {
-                            //console.log(files);
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -508,7 +497,6 @@ const Image = {
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                         if (files) {
-                            //console.log(files);
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -542,7 +530,6 @@ const Image = {
                         if (!imageIdGridfs) return 0;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                             if (files) {
-                                //console.log(files);
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -576,7 +563,6 @@ const Image = {
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                         if (files) {
-                            //console.log(files);
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -606,7 +592,6 @@ const Image = {
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                         if (files) {
-                            //console.log(files);
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -682,7 +667,7 @@ const Image = {
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                             if (files) {
-                                //console.log(files);
+                                
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -696,7 +681,7 @@ const Image = {
                     user.images = [];
                     // save user
                     await userDocument.updateOne({_id:user._id},{$set:user});
-                    //console.log("ussser",user)
+                    
                     return 1;
                     
                 }
@@ -718,7 +703,7 @@ const Image = {
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                             if (files) {
-                                //console.log(files);
+                                
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -752,7 +737,7 @@ const Image = {
                             if (!imageIdGridfs) continue;
                             await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                                 if (files) {
-                                    //console.log(files);
+                                   
                                     for (let file of files) {
 
                                         await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -787,7 +772,6 @@ const Image = {
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                             if (files) {
-                                //console.log(files);
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
@@ -816,7 +800,6 @@ const Image = {
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
                             if (files) {
-                                //console.log(files);
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });

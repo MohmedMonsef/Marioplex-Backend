@@ -393,7 +393,7 @@ router.get('/tracks/likes-per-day/:track_id', limiter, async(req, res) => {
         const month = req.query.month;
         const year = req.query.year;
         const num = await Track.getTrackLikesPerDay(trackId, day, month, year);
-        res.status(200).json({ "number of likes": num });
+        res.status(200).json({ "numberOfLikes": num });
     } catch (ex) {
         res.status(400).send({ "error": "error in making the request" });
     }
@@ -405,7 +405,7 @@ router.get('/tracks/likes-per-month/:track_id', limiter, async(req, res) => {
         const month = req.query.month;
         const year = req.query.year;
         const num = await Track.getTrackLikesPerMonth(trackId, month, year);
-        res.status(200).json({ "number of likes": num });
+        res.status(200).json({ "numberOfLikes": num });
     } catch (ex) {
         res.status(400).send({ "error": "error in making the request" });
     }
@@ -416,7 +416,7 @@ router.get('/tracks/likes-per-year/:track_id', limiter, async(req, res) => {
         const trackId = req.params.track_id;
         const year = req.query.year;
         const num = await Track.getTrackLikesPerYear(trackId, year);
-        res.status(200).json({ "number of likes": num });
+        res.status(200).json({ "numberOfLikes": num });
     } catch (ex) {
         res.status(400).send({ "error": "error in making the request" });
     }

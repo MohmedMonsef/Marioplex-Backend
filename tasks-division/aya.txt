@@ -1,0 +1,45 @@
+Team 3
+Name : Aya Samir Abohadima
+ID : 9180351
+ 
+
+Features:
+Track:
+	- track listeners statistics per day/month/year (new)
+Player: 
+	- create Queue by array of tracks are not in same album or playlist like (playing track from radio ratio in spotify )
+    -add track to queue (old)
+    - skip next (old)
+    -skip prev (old)
+    -shuffle user playback (old)
+    -repeate user playback (old)
+User:
+    -login (old)
+    - promote to Premium (confirm done by Nada) (new)
+    -become  free (new)
+    -update Premium information (new) 
+    -get user player data (new)
+playlist:
+    -create playlist 
+    -get playlist (new) 
+    -delete playlist (new)
+    -follow/unfollow playlist (new) 
+Artist:
+    - update artist information (new)
+    - delete album (new)
+Home page :
+    - get popular albums (old)
+    - get popular artists (old)
+    - get popular playlists (old)
+    - get recently playing (albums ,playlists ,artists) (new)
+    - get new releases albums (old)
+Browse:
+    - get playlists of genres (new)
+Other:
+    - intialize half of api documentation  before start project  (old)
+    - do environment variable (new)
+    - collection library/player/browse/Home (new)
+    - unit test library/player/browse (new)
+    - update in apidocumentation 
+    - store volume ,current timeStamp in playing track and repeat track flag when logout  (new)
+

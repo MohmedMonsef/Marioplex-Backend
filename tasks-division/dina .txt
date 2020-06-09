@@ -1,0 +1,47 @@
+Name: Dina Alaa Ahmed    ID: 9180534
+
+Old:
+
+Authentication and data base:
+-sign up
+-data base collection
+
+Library:
+-save album
+-unsave album
+
+Album:
+-get album by id
+-get albums
+-get albums tracks
+
+User:
+-get user profile public
+-get user profile private
+
+Search:
+-search for album, artist, track, playlist, profile
+
+New:
+
+User:
+-remove user account
+-update user account information
+-user follow artist 
+-user unfollow artist
+-check if user follow artist
+-get artists followed by a certain user
+
+Artist:
+artist statistics:
+-get number of followers for artist per day, month, year
+
+Album:
+album statistics:
+-get number of likes for album per day, month, year
+
+
+Category:
+-get categories
+-get category by id
+-get category playlists

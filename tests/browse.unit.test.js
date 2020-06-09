@@ -17,6 +17,7 @@ let user, user1;
 let playlist1, playlist2, playlist3, playlist4, playlist5, playlist6;
 let artist, artist2;
 let playlistId1;
+jest.setTimeout(100000);
 beforeAll(async() => {
     await dbHandler.connect();
 

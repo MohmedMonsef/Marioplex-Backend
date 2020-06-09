@@ -18,69 +18,69 @@ const limiter = rateLimit({
 });
 //request to log in the user
 router.post("/login", limiter, (req, res) => {
-    try{
-    // Form validation
+    try {
+        // Form validation
 
-    const { errors, isValid } = validateLoginInput(req.body);
+        const { errors, isValid } = validateLoginInput(req.body);
 
-    // Check validation
-    if (!isValid) {
-        return res.status(400).json(errors);
-    }
-    // get element and password from body of the request
-    const email = req.body.email;
-    const password = req.body.password;
-
-    // Find user by email
-    spotifySchema.user.findOne({ email: email }).exec().then(user => {
-        // Check if user exists
-        if (!user) {
-            return res.status(404).json({ emailnotfound: "Email not found" });
+        // Check validation
+        if (!isValid) {
+            return res.status(400).json(errors);
         }
-        if (!user.confirm || user.confirm == false) { return res.status(403).json({ emailnotconfirmed: "Please Confirm your account first" }); }
-        // Check password
-        bcrypt.compare(password, user.password).then(isMatch => {
-            if (isMatch) {
-                // User matched
-                // Create JWT Payload
-                var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
-                    expiresIn: '874024687898921h'
-                });
+        // get element and password from body of the request
+        const email = req.body.email;
+        const password = req.body.password;
 
-                // return the information including token as JSON
-                res.send({ token });
-            } else {
-                res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
+        // Find user by email
+        spotifySchema.user.findOne({ email: email }).exec().then(user => {
+            // Check if user exists
+            if (!user) {
+                return res.status(404).json({ emailnotfound: "Email not found" });
             }
+            if (!user.confirm || user.confirm == false) { return res.status(403).json({ emailnotconfirmed: "Please Confirm your account first" }); }
+            // Check password
+            bcrypt.compare(password, user.password).then(isMatch => {
+                if (isMatch) {
+                    // User matched
+                    // Create JWT Payload
+                    var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
+                        expiresIn: '874024687898921h'
+                    });
+
+                    // return the information including token as JSON
+                    res.send({ token });
+                } else {
+                    res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
+                }
+            });
         });
-    });
-}catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
-}
+    } catch (ex) {
+        res.status(400).send({ "error": "error in making the request" });
+    }
 });
 
 //Notification Token Set
 router.post("/notification/token", checkAuth, limiter, async(req, res) => {
-    try{
-    if (!req.body.fcmToken || req.body.fcmToken == "") { return res.status(404).send({ error: "FCM TOKEN IS NOT PROVIDED" }) }
-    let userId = req.user._id;
-    let user = await Users.getUserById(userId);
-    if (!user) { return res.status(404).send({ error: "User IS NOT FOUND" }) }
-    if (!user.fcmToken) {
-        user.fcmToken = "none";
+    try {
+        if (!req.body.fcmToken || req.body.fcmToken == "") { return res.status(404).send({ error: "FCM TOKEN IS NOT PROVIDED" }) }
+        let userId = req.user._id;
+        let user = await Users.getUserById(userId);
+        if (!user) { return res.status(404).send({ error: "User IS NOT FOUND" }) }
+        if (!user.fcmToken) {
+            user.fcmToken = "none";
+            await user.save();
+        }
+        user.fcmToken = req.body.fcmToken;
         await user.save();
-    }
-    user.fcmToken = req.body.fcmToken;
-    await user.save();
-    if (user.offlineNotifications && user.offlineNotifications.length > 0) {
-        console.log(user.fcmToken);
-        await Notifications.sendOfflineNotifications(user.offlineNotifications, user);
+        if (user.offlineNotifications && user.offlineNotifications.length > 0) {
+            //console.log(user.fcmToken);
+            await Notifications.sendOfflineNotifications(user.offlineNotifications, user);
 
+        }
+        return res.status(200).send({ Success: "Token is set successfully" })
+    } catch (ex) {
+        res.status(400).send({ "error": "error in making the request" });
     }
-    return res.status(200).send({ Success: "Token is set successfully" })
-}catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
-}
 });
 
 

@@ -15,7 +15,7 @@ const Library = {
     checkSavedAlbums: async function(albumsIds, userId) {
         try {
             //  console.log(albumsIds)
-            if (!CheckMonooseObjectId(albumsIds)) return 0;
+            if (!CheckMonooseObjectId(albumsIds)) throw new Error('not mongoose ids');
             if (!CheckMonooseObjectId([userId])) return 0;
             let checks = [];
             let found = false;
@@ -57,7 +57,7 @@ const Library = {
      */
     checkSavedTracks: async function(tracksIds, userId) {
         try {
-            if (!CheckMonooseObjectId([userId])) return 0;
+            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
             if (!CheckMonooseObjectId(tracksIds)) return 0;
             const user = await userDocument.findById(userId, (err, user) => {
                 if (err) return 0;
@@ -85,7 +85,7 @@ const Library = {
      */
     getSavedAlbums: async function(userId, limit, offset) {
         try {
-            if (!CheckMonooseObjectId([userId])) return 0;
+            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
             let albumsArray = [];
             let user = await userDocument.findById(userId);
             if (!user) return 0;
@@ -137,7 +137,7 @@ const Library = {
      */
     getSavedTracks: async function(userId, limit, offset) {
         try {
-            if (!CheckMonooseObjectId([userId])) return 0;
+            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
             let user = await userDocument.findById(userId);
             if (!user) return 0;
             if (!user['likesTracksPlaylist']) return 0;
@@ -168,25 +168,25 @@ const Library = {
                 let artist = await ArtistApi.getArtist(trackSlice[i].artistId)
                 tracks = {}
                 if (artist) {
-                    tracks["artistId"] = artist._id
-                    tracks["artistName"] = artist.Name
-                    tracks["artistimages"] = artist.images
-                    tracks["artistType"] = artist.type
+                    tracks['artistId'] = artist._id
+                    tracks['artistName'] = artist.Name
+                    tracks['artistimages'] = artist.images
+                    tracks['artistType'] = artist.type
                 }
                 let album = await Album.getAlbumById(trackSlice[i].albumId)
                 if (album) {
-                    tracks["albumId"] = album._id
-                    tracks["albumName"] = album.name
-                    tracks["albumImages"] = album.images
-                    tracks["albumType"] = album.type
+                    tracks['albumId'] = album._id
+                    tracks['albumName'] = album.name
+                    tracks['albumImages'] = album.images
+                    tracks['albumType'] = album.type
                 }
-                tracks["_id"] = trackSlice[i]._id
-                tracks["name"] = trackSlice[i].name
-                tracks["type"] = trackSlice[i].type
-                tracks["images"] = trackSlice[i].images
+                tracks['_id'] = trackSlice[i]._id
+                tracks['name'] = trackSlice[i].name
+                tracks['type'] = trackSlice[i].type
+                tracks['images'] = trackSlice[i].images
                 trackInfo.push(tracks);
             }
-            return { "tracks": trackInfo, "ownerName": user.displayName, playlistId: user['likestracksPlaylist'] };
+            return { 'tracks': trackInfo, 'ownerName': user.displayName, playlistId: user['likestracksPlaylist'] };
         } catch (ex) {
             return 0;
         }

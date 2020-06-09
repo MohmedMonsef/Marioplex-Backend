@@ -16,6 +16,7 @@
 <li>Sign up</li>
 <li>Froget you password</li>
 <li>Promoted to be premium user</li>
+<li>Updated your profile info</li>
 </ul>
  </li>
 <li> :moneybag: Privileges for our awesome premium users   </li>

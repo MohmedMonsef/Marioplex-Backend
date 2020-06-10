@@ -44,7 +44,7 @@ module.exports = async function(email, message, type) {
             from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
             to: email,
             subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
-            text: 'Please follow this URL to confirm your premium account http://100.25.194.8/premium/confirm?id=' + message
+            text: 'Please follow this URL to confirm your premium account http://100.25.194.8/confirm?id=' + message+'&type=premium'
 
         };
 

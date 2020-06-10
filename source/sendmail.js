@@ -26,7 +26,7 @@ module.exports = async function(email, message, type) {
             from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
             to: email,
             subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
-            text: 'Please follow this URL to confirm your account http://100.25.194.8/confirm?id=' + message
+            text: 'Please follow this URL to confirm your account http://100.25.194.8/confirm?id=' + message+'?type=signup'
 
         };
     }
@@ -35,7 +35,7 @@ module.exports = async function(email, message, type) {
             from: '"Spotify Contact" <' + String(process.env.SPOTIFY_EMAIL) + '>',
             to: email,
             subject: 'SPOTIFY SAMA has A Message FOR YOU ^^',
-            text: 'Please follow this URL to confirm updating your info http://100.25.194.8/confirmUpdate?id=' + message
+            text: 'Please follow this URL to confirm updating your info http://100.25.194.8/confirmUpdate?id=' + message+'?type=update'
 
         };
     }

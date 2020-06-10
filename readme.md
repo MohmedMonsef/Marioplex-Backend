@@ -35,7 +35,6 @@
 </ul>     
 </li>
 <li> :link: Customize every detail about your profile</li>
-<li> :bulb: Recommendations based on what you like and who you follow</li>
 <li> :mag_right: Search for your beloved track/artist/user/albums/playlist by using our fuzzy search engine and get the top results and best match possible</li>
 <li> :pensive: Deleted a playlist by mistake ? Don't worry my child you can always recover it from our deleted playlist</li>
 <li> :desktop_computer: Your homepage is specially customized for you and your taste with a spoon of the most populat tracks/artists in your area</li>

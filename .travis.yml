@@ -7,7 +7,13 @@ before_install:
   - docker push belalelhossany/backtest
 script:
   - docker run belalelhossany/backtest
-  
+  notifications:
+  email:
+    recipients:
+      - belalelhossany12@gmail.com
+      - mohmedmonsef70@gmail.com
+    on_success: never 
+    on_failure: always 
 after_success:
   - docker build -t belalelhossany/backend .
   # Log in to the docker CLI

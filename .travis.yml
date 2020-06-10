@@ -20,8 +20,8 @@ deploy:
   
   provider: elasticbeanstalk
   region: us-east-1
-  app: BackEnd
-  env: Backend-env
+  app: 	marioBack
+  env: Marioback-env
   bucket_name: marioback
   bucket_path: Back
   on:

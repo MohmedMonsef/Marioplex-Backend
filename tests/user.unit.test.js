@@ -186,7 +186,7 @@ test('update non mongoose user', async () => {
 
 test('get user', async () => {
     let user = await mockUser.getUserById(usersInDB[0]._id);
-    expect(user.displayName).toEqual( 'dai alaa');
+    expect(user.displayName).toEqual( 'dina alaa');
 })
 
 test('get user not fount', async () => {
@@ -194,7 +194,7 @@ test('get user not fount', async () => {
 })
 test('test me ', async () => {
 
-    expect((await mockUser.me(usersInDB[0]._id)).displayName).toEqual( 'dai alaa');
+    expect((await mockUser.me(usersInDB[0]._id)).displayName).toEqual( 'dina alaa');
 })
 test('bad test me ', async () => {
 
@@ -231,7 +231,7 @@ test('test GET user followed artist ', async () => {
 })
 
 test('test check email', async () => {
-    expect((await mockUser.checkmail('dinaalaaahmed@gmail.com')).displayName).toEqual( "dai alaa");
+    expect((await mockUser.checkmail('dinaalaaahmed@gmail.com')).displayName).toEqual( "dina alaa");
 })
 test('update password by forget password', async () => {
     expect(await mockUser.updateforgottenpassword(usersInDB[1],"123")).toEqual('123')
@@ -349,7 +349,7 @@ test("check if user follow non existing artist when he doesnt ",async ()=>{
 })
 test("check if non mongoose  user follow artist when he doesnt ",async ()=>{
     const following = await mockUser.checkIfUserFollowArtist("1",artists[0]._id);
-    expect(following).toBeFalsy();
+    expect(following).toEqual(-1);
 })
 test("user unfollow artist that he didnt follow before",async ()=>{
     const unfollow = await mockUser.userUnfollowArtist(usersInDB[1]._id,artists[0]._id);

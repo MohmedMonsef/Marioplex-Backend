@@ -589,7 +589,7 @@ const User = {
             }
             return false;
         } catch (ex) {
-            return 0;
+            return -1;
         }
     },
     //check if user email in db

@@ -22,7 +22,7 @@ deploy:
   region: us-east-1
   app: BackEnd
   env: Backend-env
-  bucket_name: marioplex
+  bucket_name: marioback
   bucket_path: Back
   on:
     branch: master

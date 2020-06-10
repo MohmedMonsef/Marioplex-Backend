@@ -22,7 +22,7 @@ deploy:
   region: us-east-1
   app: 	marioBack
   env: Marioback-env
-  bucket_name: marioback
+  bucket_name: backback
   bucket_path: Back
   on:
     branch: master

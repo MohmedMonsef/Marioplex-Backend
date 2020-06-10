@@ -1,7 +1,7 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 const checkMonooseObjectID = require('../validation/mongoose-objectid')
 var admin = require('firebase-admin');
-admin.initializeApp({
+let app1=admin.initializeApp({
     credential: admin.credential.cert({
         type:process.env.type,
         project_id:process.env.project_id,
@@ -15,6 +15,20 @@ admin.initializeApp({
         client_x509_cert_url:process.env.client_x509_cert_url
     })
 });
+let app2=admin.initializeApp({
+    credential: admin.credential.cert({
+        type:process.env.type,
+        project_id:process.env.android_project_id,
+        private_key_id:process.env.android_private_key_id,
+        private_key:process.env.android_private_key.replace(/\\n/g, '\n'),
+        client_email:process.env.android_client_email,
+        client_id:process.env.android_client_id,
+        auth_uri: process.env.android_auth_uri,
+        token_uri: process.env.android_token_uri,
+        auth_provider_x509_cert_url: process.env.android_auth_provider_x509_cert_url,
+        client_x509_cert_url:process.env.android_client_x509_cert_url
+    })
+},"android");
 
 
 const Notifications = {
@@ -22,7 +36,7 @@ const Notifications = {
   sendNotification: async function(registrationTokens,message) {
 
     const failedTokens = [];
-    admin.messaging().sendMulticast(message)
+    app1.messaging().sendMulticast(message)
     .then((response) => {
       if (response.failureCount > 0) {
         response.responses.forEach((resp, idx) => {
@@ -35,7 +49,19 @@ const Notifications = {
           console.log("Message has been sent successfully")
       }
     });
-
+    app2.messaging().sendMulticast(message)
+    .then((response) => {
+      if (response.failureCount > 0) {
+        response.responses.forEach((resp, idx) => {
+          if (!resp.success) {
+            failedTokens.push(registrationTokens[idx]);
+          }
+        });
+      }
+      else{
+          console.log("Message has been sent successfully")
+      }
+    });
   return failedTokens;
 },
     //the user profile notification
@@ -116,7 +142,11 @@ const Notifications = {
     //send many notifications to one user
      sendManyNotifications: async function(messages) {
         console.log(messages)
-        admin.messaging().sendAll(messages)
+        app1.messaging().sendAll(messages)
+        .then((response) => {
+          console.log(response.successCount + ' messages were sent successfully');
+        });
+        app2.messaging().sendAll(messages)
         .then((response) => {
           console.log(response.successCount + ' messages were sent successfully');
         });

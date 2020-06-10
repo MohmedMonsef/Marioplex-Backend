@@ -14,7 +14,7 @@ function limitOffset(limit, offset, specificAlbums) {
 
         }
     } else {
-        limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 5;
+        limit = Number(process.env.LIMIT) ? Number(process.env.LIMIT) : 20;
         if ((start + limit) > 0 && (start + limit) <= specificAlbums.length) {
             end = start + limit;
         }

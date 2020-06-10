@@ -27,7 +27,7 @@ Team no.: 3
    -sendmail with node mailer
    -claim user to artist
 new features :
-*Confirmation (signup - premium)
+*Confirmation (signup - premium - update Info)
 *Forget/Reset password
 *Restore deleted playlists
 *Notifications for :

@@ -7,7 +7,7 @@ const User = require('../source/user-api');
 const spotifySchema = require('../models/db');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const { auth: checkIfAuth } = require('../middlewares/check-if-auth');
-const rateLimit = require("express-rate-limit");
+const rateLimit = require('express-rate-limit');
 // add rate limiting
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -34,7 +34,7 @@ router.get('/users/:id', checkIfAuth, limiter, async(req, res) => {
         else res.status(200).json(user);
     }
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 })
 router.put('/me/promote', checkAuth, limiter, async(req, res) => {
@@ -55,29 +55,29 @@ router.put('/me/promote', checkAuth, limiter, async(req, res) => {
             const isPromote = await User.promoteToPremium(req.user._id, req.body.cardNumber, req.body.isMonth, req.body.expiresDate);
             if (isPromote) {
                 let user = await User.getUserById(req.user._id);
-                sendmail(user.email, String(user._id), "premium");
+                sendmail(user.email, String(user._id), 'premium');
                 res.status(200).send({ success: 'check your mail for confirmation ' });
             } else res.status(400).send({ error: 'can not promote' })
         }
     });
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 });
 router.post('/premium/confirm', limiter, async(req, res) => {
     try{
-    if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
+    if (!req.query.id || req.query.id == '') { return res.status(400).send('user id is not given'); }
     let user = await User.getUserById(req.query.id);
-    if(!user){ return res.status(400).send("user is not found"); }
+    if(!user){ return res.status(400).send('user is not found'); }
     let checkConfirm = await User.confirmPremium(user);
     if (checkConfirm) {
-        return res.status(200).send("user is confirmed");
+        return res.status(200).send('user is confirmed');
     } else {
-        return res.status(403).send("user is not confirmed");
+        return res.status(403).send('user is not confirmed');
     }
 
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 
 });
@@ -87,7 +87,7 @@ router.put('/me/free', checkAuth, limiter, async(req, res) => {
     if (isPromote) res.status(200).send({ success: 'become free ' });
     else res.status(400).send({ error: 'you are not a premium' })
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 });
 
@@ -119,7 +119,7 @@ router.get('/me-player', checkAuth, limiter, async(req, res) => {
     userOut[0].player['haveQueue'] = user[0].player['currentTrack'] && user[0].player['currentTrack'].trackId ? true : false;
     return res.status(200).send(userOut);
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 })
 
@@ -159,34 +159,34 @@ router.put('/me/update', checkAuth, limiter, (req, res) => {
                     const UserByEmail = await spotifySchema.user.findOne({ email: req.body.user.email });
                     if (!UserByEmail) mail = newUser.updatedInfo.email;
                 }
-                sendmail(mail, String(newUser._id), "confirmUpdate");
+                sendmail(mail, String(newUser._id), 'confirmUpdate');
                 res.status(200).json({
-                    "success": "Please check your mail and confirm to update your info"
+                    'success': 'Please check your mail and confirm to update your info'
                 });
             } else res.sendStatus(404);
         }
     })
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 })
 //confirmUpdatedData
 router.post('/me/confirmUpdate', limiter, async(req, res) => {
     try{
-    if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
+    if (!req.query.id || req.query.id == '') { return res.status(400).send('user id is not given'); }
         let user = await User.getUserById(req.query.id);
-        if(!user){ return res.status(400).send("user is not found"); }
+        if(!user){ return res.status(400).send('user is not found'); }
         let checkConfirm = await User.confirmUpdate(user);
         if(checkConfirm==true){
-            return res.status(200).send("user is updated");
+            return res.status(200).send('user is updated');
         }
         else{
-            return res.status(400).send("user cant be updated");
+            return res.status(400).send('user cant be updated');
 
         }
     }
     catch(err){
-        res.status(400).send({ "error": "error in making the request" });
+        res.status(400).send({ 'error': 'error in making the request' });
     }
 
 }),
@@ -208,7 +208,7 @@ router.get('/me', checkAuth, limiter, async(req, res) => {
         }
     });
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 })
 
@@ -218,29 +218,29 @@ router.delete('/remove', checkAuth, limiter, async(req, res) => {
     const userId = req.user._id; // get it from desierialize auth 
     const user = await User.deleteAccount(userId)
     if (user) {
-        res.status(200).json({ "success": "user deleted" });
+        res.status(200).json({ 'success': 'user deleted' });
     } else {
-        res.status(400).json({ "error": "delete failed" });
+        res.status(400).json({ 'error': 'delete failed' });
     }
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 })
 
 //User logs out
-router.post("/user/logout", limiter, checkAuth, async(req, res) => {
+router.post('/user/logout', limiter, checkAuth, async(req, res) => {
     try{
 
     let userId = req.user._id;
     let user = await User.getUserById(userId);
-    if (!user) { return res.status(404).send({ error: "User IS NOT FOUND" }) }
-    if (!user.fcmToken) user.fcmToken = "none";
-    user.fcmToken = "none";
+    if (!user) { return res.status(404).send({ error: 'User IS NOT FOUND' }) }
+    if (!user.fcmToken) user.fcmToken = 'none';
+    user.fcmToken = 'none';
     await user.save();
     User.updatePlayerInfoLogOut(user, req.body.currentTimeStampe, req.body.isRepeatTrack, req.body.volume);
-    return res.status(202).send({ Success: "Token is set successfully" })
+    return res.status(202).send({ Success: 'Token is set successfully' })
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 });
 //GET USER PRIVATE PROFILE INFORMATION
@@ -251,11 +251,11 @@ router.get('/me/notifications', checkAuth, limiter, async(req, res) => {
     let user =await User.getUserById(userId);
     let notifications=user.notifications;
     if(!notifications||notifications.length==0){
-        return res.status(404).send("No notifications");
+        return res.status(404).send('No notifications');
     }
     return res.status(200).send(notifications);
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 })
 module.exports = router;

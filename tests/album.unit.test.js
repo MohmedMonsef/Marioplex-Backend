@@ -23,20 +23,20 @@ let albumId;
 beforeAll(async() => {
     await dbHandler.connect();
 
-    user3 = await mockUser.createUser("samah", "123", "b@b.com", "male", "eg", "1/1/2020");
+    user3 = await mockUser.createUser('samah', '123', 'b@b.com', 'male', 'eg', '1/1/2020');
 
-    user = await mockUser.createUser("dina", "123", "b@b.com", "male", "eg", "1/1/2020");
-    user2 = await mockUser.createUser("nawal", "123", "b2@b.com", "male", "eg", "1/1/2020");
-    await mockUser.promoteToArtist(user._id, "artist info", "DINA", ["pop"]);
-    await mockUser.promoteToArtist(user3._id, "artist info", "samah", ["pop"]);
+    user = await mockUser.createUser('dina', '123', 'b@b.com', 'male', 'eg', '1/1/2020');
+    user2 = await mockUser.createUser('nawal', '123', 'b2@b.com', 'male', 'eg', '1/1/2020');
+    await mockUser.promoteToArtist(user._id, 'artist info', 'DINA', ['pop']);
+    await mockUser.promoteToArtist(user3._id, 'artist info', 'samah', ['pop']);
     artist = await mockArtist.findMeAsArtist(user._id);
-    album = await mockArtist.addAlbum(artist._id, "album gamed", "label1", ["eg"], "SINGLE", "1/1/2020", "pop");
-    album2 = await mockArtist.addAlbum(artist._id, "swswswsw", "label1", ["eg"], "SINGLE", "1/1/2020", "pop");
-    album3 = await mockArtist.addAlbum(artist._id, "alby", "label1", ["eg"], "SINGLE", "1/1/2020", "pop");
+    album = await mockArtist.addAlbum(artist._id, 'album gamed', 'label1', ['eg'], 'SINGLE', '1/1/2020', 'pop');
+    album2 = await mockArtist.addAlbum(artist._id, 'swswswsw', 'label1', ['eg'], 'SINGLE', '1/1/2020', 'pop');
+    album3 = await mockArtist.addAlbum(artist._id, 'alby', 'label1', ['eg'], 'SINGLE', '1/1/2020', 'pop');
 
-    track = await mockTrack.createTrack("", "alby etmnah", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["pop"]);
-    track2 = await mockTrack.createTrack("", "track2", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["pop"]);
-    track3 = await mockTrack.createTrack("", "track3", 12, ["eg"], artist._id, album._id, 100, "12", "13", ["pop"]);
+    track = await mockTrack.createTrack('', 'alby etmnah', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['pop']);
+    track2 = await mockTrack.createTrack('', 'track2', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['pop']);
+    track3 = await mockTrack.createTrack('', 'track3', 12, ['eg'], artist._id, album._id, 100, '12', '13', ['pop']);
 
 
     await mockArtist.addTrack(artist._id, track._id);
@@ -86,7 +86,7 @@ test('get album', async() => {
 })
 test('get album with id that does not exist', async() => {
 
-    expect((await mockAlbum.getAlbumById("1"))).toBeFalsy()
+    expect((await mockAlbum.getAlbumById('1'))).toBeFalsy()
 })
 test('get albums right', async() => {
     expect((await mockAlbum.getAlbums([album._id])).length).toEqual(1)
@@ -116,11 +116,11 @@ test('get tracks album no parameter', async() => {
 
 test('get tracks album right', async() => {
     let h = await mockAlbum.getTracksAlbum(album._id, user2);
-    expect((h[0]).name).toEqual("alby etmnah");
+    expect((h[0]).name).toEqual('alby etmnah');
 })
 
 test('get tracks album wrong id', async() => {
-    expect(await mockAlbum.getTracksAlbum("4")).toBeFalsy()
+    expect(await mockAlbum.getTracksAlbum('4')).toBeFalsy()
 })
 test('get album with artist right', async() => {
     let h = await mockAlbum.getAlbumArtist(album._id, user2._id);
@@ -212,10 +212,10 @@ test('user saves album that does not exist', async() => {
 })
 
 test('check if saves album with user does not exist', async() => {
-    expect(await mockAlbum.checkIfUserSaveAlbum("1", album._id)).toBeFalsy();
+    expect(await mockAlbum.checkIfUserSaveAlbum('1', album._id)).toBeFalsy();
 })
 test('check if saves album that does not exist', async() => {
-    expect(await mockAlbum.checkIfUserSaveAlbum(user2, "1")).toBeFalsy();
+    expect(await mockAlbum.checkIfUserSaveAlbum(user2, '1')).toBeFalsy();
 })
 test('user saves album', async() => {
     expect(await mockAlbum.saveAlbum(user2, [album._id])).toBeTruthy()
@@ -259,7 +259,7 @@ test('user saves album with undefined parameter', async() => {
     expect(await mockAlbum.saveAlbum(user2)).toEqual(2)
 })
 test('user saves album with id does not exist', async() => {
-    expect(await mockAlbum.saveAlbum(user2, ["1"])).toBeFalsy()
+    expect(await mockAlbum.saveAlbum(user2, ['1'])).toBeFalsy()
 })
 
 
@@ -267,7 +267,7 @@ test('user unsaves album', async() => {
     expect(await mockAlbum.unsaveAlbum(user2, [album._id])).toBeTruthy()
 })
 test('user unsaves album with id does not exist', async() => {
-    expect(await mockAlbum.unsaveAlbum(user2, ["1"])).toBeFalsy()
+    expect(await mockAlbum.unsaveAlbum(user2, ['1'])).toBeFalsy()
 })
 
 
@@ -295,7 +295,7 @@ test('get track index in album', async() => {
     expect(await mockAlbum.findIndexOfTrackInAlbum(mongoose.Types.ObjectId(), album)).toEqual(-1)
 })
 test('delete album with id does not exist', async() => {
-    expect(await mockAlbum.deleteAlbum("1", album._id)).toBeFalsy()
+    expect(await mockAlbum.deleteAlbum('1', album._id)).toBeFalsy()
 })
 
 test('get track liseners per year with wrong album  ', async() => {
@@ -355,5 +355,5 @@ test('delete album', async() => {
 })
 
 test('delete album with id does not exist', async() => {
-    expect(await mockAlbum.deleteAlbum(user._id, "1")).toBeFalsy()
+    expect(await mockAlbum.deleteAlbum(user._id, '1')).toBeFalsy()
 })

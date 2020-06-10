@@ -323,10 +323,12 @@ const Artist = {
      */
     getRelatedArtists: async function(artistId) {
         if (!checkMonooseObjectID([artistId])) return 0;
+           
         let artists;
         artistDocument.find({}, function(err, artistsAll) {
             artists = artistsAll;
         });
+     
         let artist = await this.getArtist(artistId);
         if (!artists) return 0;
         if (!artist) return 0;
@@ -345,6 +347,7 @@ const Artist = {
             }
         }
         //HANDLE MAX NUMBER TO RETURN
+        console.log(artistId);
         if (relatedArtists.length > 20) relatedArtists.slice(0, 20);
         return relatedArtists;
     },

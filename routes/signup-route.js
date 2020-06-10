@@ -7,7 +7,7 @@ var sendmail = require('../source/sendmail');
 const jwt = require('jsonwebtoken');
 const { auth: checkAuth } = require('../middlewares/is-me');
 const User = require('../source/user-api')
-const rateLimit = require("express-rate-limit");
+const rateLimit = require('express-rate-limit');
 // add rate limiting
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -53,7 +53,7 @@ router.post('/sign_up', limiter, async(req, res) => {
                             var token = jwt.sign({ _id: user._id, product: user.product, userType: user.userType }, jwtSeret.secret, {
                                 expiresIn: '9043809348h'
                             });
-                            sendmail(user.email, String(user._id), "confirm");
+                            sendmail(user.email, String(user._id), 'confirm');
                             res.status(201).json({
                                 token
                             });
@@ -69,24 +69,24 @@ router.post('/sign_up', limiter, async(req, res) => {
         }
     });
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 });
 
 router.post('/login/confirm', limiter, async(req, res) => {
     try{
-    if (!req.query.id || req.query.id == "") { return res.status(400).send("user id is not given"); }
+    if (!req.query.id || req.query.id == '') { return res.status(400).send('user id is not given'); }
     let user = await User.getUserById(req.query.id);
 
     let checkConfirm = await User.confirmEmail(user);
     if (checkConfirm) {
-        return res.status(200).send("user is confirmed");
+        return res.status(200).send('user is confirmed');
     } else {
-        return res.status(403).send("user is not confirmed");
+        return res.status(403).send('user is not confirmed');
     }
 
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 
 });
@@ -94,11 +94,11 @@ router.post('/login/confirm', limiter, async(req, res) => {
 router.post('/sendmail',checkAuth,limiter, async(req, res) => {
     try{
     const user = await User.getUserById(req.user._id);
-    if (!user) { return res.status(400).send("user is not found"); }
-    sendmail(user.email, String(user._id), "confirm");
-    return res.status(200).send("mail has been sent");
+    if (!user) { return res.status(400).send('user is not found'); }
+    sendmail(user.email, String(user._id), 'confirm');
+    return res.status(200).send('mail has been sent');
 }catch(ex){
-    res.status(400).send({ "error": "error in making the request" });
+    res.status(400).send({ 'error': 'error in making the request' });
 }
 });
 module.exports = router;

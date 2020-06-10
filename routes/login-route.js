@@ -4,12 +4,12 @@ const jwt = require('jsonwebtoken');
 const Users = require('../source/user-api');
 const Notifications = require('../source/notification-api');
 var express = require('express');
-const validateLoginInput = require("../validation/login");
-const bcrypt = require("bcrypt");
+const validateLoginInput = require('../validation/login');
+const bcrypt = require('bcrypt');
 const router = express.Router();
 const { auth: checkAuth } = require('../middlewares/is-me');
 User = spotifySchema.User
-const rateLimit = require("express-rate-limit");
+const rateLimit = require('express-rate-limit');
 // add rate limiting
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -17,7 +17,7 @@ const limiter = rateLimit({
 
 });
 //request to log in the user
-router.post("/login", limiter, (req, res) => {
+router.post('/login', limiter, (req, res) => {
     try {
         // Form validation
 
@@ -35,9 +35,9 @@ router.post("/login", limiter, (req, res) => {
         spotifySchema.user.findOne({ email: email }).exec().then(user => {
             // Check if user exists
             if (!user) {
-                return res.status(404).json({ emailnotfound: "Email not found" });
+                return res.status(404).json({ emailnotfound: 'Email not found' });
             }
-            if (!user.confirm || user.confirm == false) { return res.status(403).json({ emailnotconfirmed: "Please Confirm your account first" }); }
+            if (!user.confirm || user.confirm == false) { return res.status(403).json({ emailnotconfirmed: 'Please Confirm your account first' }); }
             // Check password
             bcrypt.compare(password, user.password).then(isMatch => {
                 if (isMatch) {
@@ -55,19 +55,19 @@ router.post("/login", limiter, (req, res) => {
             });
         });
     } catch (ex) {
-        res.status(400).send({ "error": "error in making the request" });
+        res.status(400).send({ 'error': 'error in making the request' });
     }
 });
 
 //Notification Token Set
-router.post("/notification/token", checkAuth, limiter, async(req, res) => {
+router.post('/notification/token', checkAuth, limiter, async(req, res) => {
     try {
-        if (!req.body.fcmToken || req.body.fcmToken == "") { return res.status(404).send({ error: "FCM TOKEN IS NOT PROVIDED" }) }
+        if (!req.body.fcmToken || req.body.fcmToken == '') { return res.status(404).send({ error: 'FCM TOKEN IS NOT PROVIDED' }) }
         let userId = req.user._id;
         let user = await Users.getUserById(userId);
-        if (!user) { return res.status(404).send({ error: "User IS NOT FOUND" }) }
+        if (!user) { return res.status(404).send({ error: 'User IS NOT FOUND' }) }
         if (!user.fcmToken) {
-            user.fcmToken = "none";
+            user.fcmToken = 'none';
             await user.save();
         }
         user.fcmToken = req.body.fcmToken;
@@ -77,9 +77,9 @@ router.post("/notification/token", checkAuth, limiter, async(req, res) => {
             await Notifications.sendOfflineNotifications(user.offlineNotifications, user);
 
         }
-        return res.status(200).send({ Success: "Token is set successfully" })
+        return res.status(200).send({ Success: 'Token is set successfully' })
     } catch (ex) {
-        res.status(400).send({ "error": "error in making the request" });
+        res.status(400).send({ 'error': 'error in making the request' });
     }
 });
 

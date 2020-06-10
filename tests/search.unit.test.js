@@ -22,22 +22,22 @@ let track2;
 beforeAll(async () => {
    await dbHandler.connect();
 
-   user = await mockUser.createUser("dina","123","b@b.com","male","eg","1/1/2020");
-   user2 = await mockUser.createUser("nawal","123","b2@b.com","male","eg","1/1/2020");
-   await mockUser.promoteToArtist(user._id,"artist info","DINA",["pop"]);
+   user = await mockUser.createUser('dina','123','b@b.com','male','eg','1/1/2020');
+   user2 = await mockUser.createUser('nawal','123','b2@b.com','male','eg','1/1/2020');
+   await mockUser.promoteToArtist(user._id,'artist info','DINA',['pop']);
    artist =  await mockArtist.findMeAsArtist(user._id);
-   album = await mockArtist.addAlbum(artist._id,"album gamed","label1",["eg"],"SINGLE","1/1/2020","pop");
-   album2 = await mockArtist.addAlbum(artist._id,"swswswsw","label1",["eg"],"SINGLE","1/1/2020","pop");
+   album = await mockArtist.addAlbum(artist._id,'album gamed','label1',['eg'],'SINGLE','1/1/2020','pop');
+   album2 = await mockArtist.addAlbum(artist._id,'swswswsw','label1',['eg'],'SINGLE','1/1/2020','pop');
 
-   track =  await mockTrack.createTrack("","alby etmnah",12,["eg"],artist._id,album._id,100,"12","13",["pop"]);
-   track2 =  await mockTrack.createTrack("","track2",12,["eg"],artist._id,album._id,100,"12","13",["pop"]);
+   track =  await mockTrack.createTrack('','alby etmnah',12,['eg'],artist._id,album._id,100,'12','13',['pop']);
+   track2 =  await mockTrack.createTrack('','track2',12,['eg'],artist._id,album._id,100,'12','13',['pop']);
    
 
    await mockArtist.addTrack(artist._id, track._id);
    await mockAlbum.addTrack(album._id, track);
    await mockArtist.addTrack(artist._id, track2._id);
    await mockAlbum.addTrack(album._id, track2);
-   playlist1=await mockUser.createdPlaylist(user._id,"hello kids","lili");
+   playlist1=await mockUser.createdPlaylist(user._id,'hello kids','lili');
    
    user = await mockUser.getUserById(user._id);
    user2 = await mockUser.getUserById(user2._id);
@@ -108,10 +108,10 @@ test('get track that does not exist',async () => {
 })
 
 test('get top of profile',async () => {
-    expect(await searchTest.getTopResults('nawal')).toHaveProperty("displayName", "nawal")
+    expect(await searchTest.getTopResults('nawal')).toHaveProperty('displayName', 'nawal')
 })
 test('get top of an artist',async () => {
-    expect(await searchTest.getTopResults('DINA')).toHaveProperty("name", "DINA")
+    expect(await searchTest.getTopResults('DINA')).toHaveProperty('name', 'DINA')
 })
 test('get tracks of artist',async () => {
     expect(await searchTest.getTrack('DINA')).toHaveLength(2)
@@ -142,10 +142,10 @@ test('get top results of artist',async () => {
 })
 
 test('get top results of album',async () => {
-    expect(await searchTest.getTopResults('gamed')).toHaveProperty("name", "album gamed")
+    expect(await searchTest.getTopResults('gamed')).toHaveProperty('name', 'album gamed')
 })
 test('get top results of playlist',async () => {
-    expect(await searchTest.getTopResults('hello')).toHaveProperty("name", "hello kids")
+    expect(await searchTest.getTopResults('hello')).toHaveProperty('name', 'hello kids')
 })
 test('get top results of name does not exist',async () => {
     expect(await searchTest.getTopResults('blablabla')).toBeFalsy()
@@ -158,7 +158,7 @@ test('get top of artist', async() => {
 })
 
 test('get top results of track',async () => {
-    expect(await searchTest.getTopResults('alby')).toHaveProperty("name", "alby etmnah")
+    expect(await searchTest.getTopResults('alby')).toHaveProperty('name', 'alby etmnah')
 })
 
 test('get user by name with empty array',async () => {
@@ -207,7 +207,7 @@ test('add to recentlySearch',async () => {
     expect(await searchTest.addToRecentlySearch(track._id,track,'track')).toBeFalsy()
 })
 test('add to recentlySearch',async () => {
-    expect(await searchTest.addToRecentlySearch("1",track,'track')).toBeFalsy()
+    expect(await searchTest.addToRecentlySearch('1',track,'track')).toBeFalsy()
 })
 test('add to recentlySearch',async () => {
     expect(await searchTest.addToRecentlySearch(mongoose.Types.ObjectId(),track._id,'track')).toBeFalsy()
@@ -244,7 +244,7 @@ test('getRecentlySearch',async () => {
     expect(await searchTest.getRecentlySearch(mongoose.Types.ObjectId())).toBeFalsy()
 })
 test('getRecentlySearch',async () => {
-    expect(await searchTest.getRecentlySearch("1")).toBeFalsy()
+    expect(await searchTest.getRecentlySearch('1')).toBeFalsy()
 })
 
  

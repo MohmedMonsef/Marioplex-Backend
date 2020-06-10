@@ -184,6 +184,7 @@ const Library = {
                 tracks['name'] = trackSlice[i].name
                 tracks['type'] = trackSlice[i].type
                 tracks['images'] = trackSlice[i].images
+                tracks['duration'] = trackSlice[i].duration
                 trackInfo.push(tracks);
             }
             return { 'tracks': trackInfo, 'ownerName': user.displayName, playlistId: user['likestracksPlaylist'] };

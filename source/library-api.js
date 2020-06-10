@@ -1,9 +1,9 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 
 const Album = require('./album-api');
-const ArtistApi = require('./artist-api');
+const Artist = require('./artist-api');
 const Playlist = require('../source/playlist-api');
-const CheckMonooseObjectId = require('../validation/mongoose-objectid');
+const checkMonooseObjectId = require('../validation/mongoose-objectid');
 /** @namespace */
 const Library = {
     /**
@@ -15,8 +15,8 @@ const Library = {
     checkSavedAlbums: async function(albumsIds, userId) {
         try {
             //  console.log(albumsIds)
-            if (!CheckMonooseObjectId(albumsIds)) throw new Error('not mongoose ids');
-            if (!CheckMonooseObjectId([userId])) return 0;
+            if (!checkMonooseObjectId(albumsIds)) throw new Error('not mongoose ids');
+            if (!checkMonooseObjectId([userId])) return 0;
             let checks = [];
             let found = false;
             const user = await userDocument.findById(userId, (err, user) => {
@@ -57,8 +57,8 @@ const Library = {
      */
     checkSavedTracks: async function(tracksIds, userId) {
         try {
-            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
-            if (!CheckMonooseObjectId(tracksIds)) return 0;
+            if (!checkMonooseObjectId([userId])) throw new Error('not mongoose ids');
+            if (!checkMonooseObjectId(tracksIds)) return 0;
             const user = await userDocument.findById(userId, (err, user) => {
                 if (err) return 0;
                 return user;
@@ -85,7 +85,7 @@ const Library = {
      */
     getSavedAlbums: async function(userId, limit, offset) {
         try {
-            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
+            if (!checkMonooseObjectId([userId])) throw new Error('not mongoose ids');
             let albumsArray = [];
             let user = await userDocument.findById(userId);
             if (!user) return 0;
@@ -137,7 +137,7 @@ const Library = {
      */
     getSavedTracks: async function(userId, limit, offset) {
         try {
-            if (!CheckMonooseObjectId([userId])) throw new Error('not mongoose ids');
+            if (!checkMonooseObjectId([userId])) throw new Error('not mongoose ids');
             let user = await userDocument.findById(userId);
             if (!user) return 0;
             if (!user['likesTracksPlaylist']) return 0;
@@ -165,7 +165,7 @@ const Library = {
             let trackSlice = tracksPlaylist.slice(start, end);
             trackInfo = []
             for (let i = 0; i < trackSlice.length; i++) {
-                let artist = await ArtistApi.getArtist(trackSlice[i].artistId)
+                let artist = await Artist.getArtist(trackSlice[i].artistId)
                 tracks = {}
                 if (artist) {
                     tracks['artistId'] = artist._id

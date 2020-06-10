@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const Browse = require('../source/browse-api');
-const RateLimit = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 // add rate limiting
-const limiter = RateLimit({
+const limiter = rateLimit({
     windowMs: 60 * 1000,
     max: 30
 

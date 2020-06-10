@@ -3,11 +3,11 @@ const Player = require('../source/player-api');
 const User = require('../source/user-api');
 const Track = require('../source/track-api')
 const { auth: checkAuth } = require('../middlewares/is-me');
-const CheckId = require('../validation/mongoose-objectid');
-const StateValidation = require('../validation/validate-boolean');
-const RateLimit = require('express-rate-limit');
+const checkId = require('../validation/mongoose-objectid');
+const stateValidation = require('../validation/validate-boolean');
+const rateLimit = require('express-rate-limit');
 // add rate limiting
-const limiter = RateLimit({
+const limiter = rateLimit({
     windowMs: 60 * 1000,
     max: 30
 
@@ -73,8 +73,8 @@ router.get('/me/player/prev-playing', checkAuth, limiter, async(req, res) => {
 // create queue fo player
 router.post('/createQueue/:source_id/:track_id', checkAuth, limiter, async(req, res) => {
     if (!req.body.tracksIds || !req.body.sourceType) {
-        if (!CheckId([req.params.source_id, req.params.track_id])) return res.status(400).send('Enter correct ids ');
-        if (!StateValidation(req.query.isPlaylist)) return res.status(400).send('isPlaylist is required');
+        if (!checkId([req.params.source_id, req.params.track_id])) return res.status(400).send('Enter correct ids ');
+        if (!stateValidation(req.query.isPlaylist)) return res.status(400).send('isPlaylist is required');
         const sourceId = req.params.source_id;
         const trackId = req.params.track_id;
         const isPlaylist = req.query.isPlaylist;
@@ -84,7 +84,7 @@ router.post('/createQueue/:source_id/:track_id', checkAuth, limiter, async(req, 
         if (createQueue) res.send(' Queue is created successfully');
         else res.status(403).send('can not create queue');
     } else {
-        if (!CheckId(req.body.tracksIds) || !CheckId([req.params.track_id]) || !req.body.sourceType) return res.status(403).send('Enter correct ids ');
+        if (!checkId(req.body.tracksIds) || !checkId([req.params.track_id]) || !req.body.sourceType) return res.status(403).send('Enter correct ids ');
         const userID = req.user._id;
         const createQueue = await User.updateUserPlayer(userID, undefined, undefined, req.params.track_id, req.body.tracksIds, req.body.sourceType)
         if (createQueue) res.send(' Queue is created successfully');
@@ -92,8 +92,8 @@ router.post('/createQueue/:source_id/:track_id', checkAuth, limiter, async(req, 
     }
 })
 router.post('/player/add-to-queue/:playlist_id/:track_id', checkAuth, limiter, async(req, res) => {
-    if (!CheckId([req.params.playlist_id, req.params.track_id])) return res.status(400).send('Enter correct ids');
-    if (!StateValidation(req.query.isPlaylist)) return res.status(400).send('isPlaylist is required');
+    if (!checkId([req.params.playlist_id, req.params.track_id])) return res.status(400).send('Enter correct ids');
+    if (!stateValidation(req.query.isPlaylist)) return res.status(400).send('isPlaylist is required');
     const trackId = req.params.track_id;
     const addToQueue = await User.addToQueue(req.user._id, trackId, req.query.isPlaylist, req.params.playlist_id);
     if (addToQueue == 0) res.status(403).send('can not add queue ! ');
@@ -142,7 +142,7 @@ router.get('/me/queue', checkAuth, limiter, async(req, res) => {
 //to repeat
 router.put('/player/repeat', checkAuth, limiter, async(req, res) => {
     const userId = req.user._id;
-    if (StateValidation(req.query.state)) {
+    if (stateValidation(req.query.state)) {
         const repeat = User.repreatPlaylist(userId, req.query.state);
         if (!repeat) res.status(403).json({ error: 'could not repeat playlist' });
         else res.status(200).json({ success: 'is_repeat playlist: ' + req.query.state })
@@ -167,7 +167,7 @@ router.put('/me/player/pause', checkAuth, limiter, async(req, res) => {
 
 //toggle shuffle
 router.put('/me/player/shuffle', checkAuth, limiter, async(req, res) => {
-    if (StateValidation(req.query.state)) {
+    if (stateValidation(req.query.state)) {
         const userId = req.user._id;
         const state = req.query.state;
         const isShuffle = await User.setShuffle(state, userId);
@@ -188,7 +188,7 @@ router.get('/me/player/recently-played', checkAuth, limiter, async(req, res) => 
 
 // add to recent played
 router.put('/me/player/recently-played/:source_id/:track_id', checkAuth, limiter, async(req, res) => {
-    if (!CheckId([req.params.track_id, req.params.source_id])) return res.status(400).send('Enter correct ids');
+    if (!checkId([req.params.track_id, req.params.source_id])) return res.status(400).send('Enter correct ids');
     const user = await User.getUserById(req.user._id);
     if (!user) return res.status(403).send('user is not correct');
     const playHistory = await Player.addRecentTrack(user, req.params.track_id, req.query.sourceType, req.params.source_id);

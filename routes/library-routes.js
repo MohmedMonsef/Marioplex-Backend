@@ -3,9 +3,9 @@ const Library = require('../source/library-api');
 const User = require('../source/user-api')
 const Notifications = require('../source/notification-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
-const RateLimit = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 // add rate limiting
-const limiter = RateLimit({
+const limiter = rateLimit({
     windowMs: 60 * 1000,
     max: 30
 

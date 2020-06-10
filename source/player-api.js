@@ -3,7 +3,7 @@ const Playlist = require('./playlist-api');
 const Album = require('./album-api');
 const Track = require('./track-api');
 const Artist = require('./artist-api')
-const CheckMonooseObjectId = require('../validation/mongoose-objectid')
+const checkMonooseObjectId = require('../validation/mongoose-objectid')
     /** @namespace */
 const Player = {
 
@@ -21,7 +21,7 @@ const Player = {
     setPlayerInstance: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
         try {
             if (!user) throw new Error('not user');
-            if ((!CheckMonooseObjectId([id]) && !CheckMonooseObjectId(tracksIds)) || !CheckMonooseObjectId([trackId])) throw new Error('not mongoose id');
+            if ((!checkMonooseObjectId([id]) && !checkMonooseObjectId(tracksIds)) || !checkMonooseObjectId([trackId])) throw new Error('not mongoose id');
             if (!user.player) user.player = {};
 
             user.player.nextTrack = {};
@@ -147,7 +147,7 @@ const Player = {
     addRecentTrack: async function(user, trackId, sourceType, sourceId) {
         try {
             if (!user) return 0;
-            if (!CheckMonooseObjectId([sourceId, trackId])) throw new Error('not mongoose id');
+            if (!checkMonooseObjectId([sourceId, trackId])) throw new Error('not mongoose id');
             if (user.playHistory) {
                 if (user.playHistory.length > 50) user.playHistory.pop();
                 user.playHistory.unshift({
@@ -205,11 +205,11 @@ const Player = {
     createQueue: async function(user, isPlaylist, id, trackId, tracksIds, sourceType) {
         try {
             if (!user) return 0;
-            if (!CheckMonooseObjectId([trackId])) throw new Error('not mongoose id');
+            if (!checkMonooseObjectId([trackId])) throw new Error('not mongoose id');
             const trackInfo = await Track.getTrack(trackId, user);
             if (!trackInfo || !trackInfo.playable) return 0;
             if (!tracksIds) {
-                if (!CheckMonooseObjectId([id])) return 0;
+                if (!checkMonooseObjectId([id])) return 0;
                 if (isPlaylist == 'true' || isPlaylist == true) {
                     const playlist = await Playlist.getPlaylist(id);
                     if (!playlist) return 0; // can not create queue becouse not found this playlist
@@ -276,7 +276,7 @@ const Player = {
                     return 1;
                 }
             } else {
-                if (!CheckMonooseObjectId(tracksIds)) return 0;
+                if (!checkMonooseObjectId(tracksIds)) return 0;
                 let newQueue = [];
                 let found = false;
                 for (let i = 0; i < tracksIds.length; i++) {
@@ -341,7 +341,7 @@ const Player = {
     addToQueue: async function(user, trackId, isPlaylist, playlistId) {
         try {
             if (!user) return 0;
-            if (!CheckMonooseObjectId([trackId, playlistId])) throw new Error('not mongoose ids');
+            if (!checkMonooseObjectId([trackId, playlistId])) throw new Error('not mongoose ids');
             trackInfo = await Track.getTrack(trackId, user);
             // if (!await Track.getTrack(trackId)) return 0;
             if (!trackInfo || !trackInfo.playable) return 0;

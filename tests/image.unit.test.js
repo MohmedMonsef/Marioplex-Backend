@@ -131,7 +131,7 @@ beforeAll(async () => {
     
 });
 afterEach(async () => {
-   // console.log("ddd")
+   // console.log('ddd')
     playlist = await playlistDocument.findById(playlist._id)
     await userDocument.find({},(err,files)=>{
         usersInDB = [];
@@ -180,7 +180,7 @@ let image = {
    writestream.on('close', async (file)=>{
     expect(uploadedImageId).toBeTruthy();
 done();
-   //console.log("ddd")
+   //console.log('ddd')
     
    });
 

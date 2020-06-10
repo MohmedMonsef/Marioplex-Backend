@@ -71,7 +71,7 @@ const Image = {
      */
     findMeAsArtist: async function(userId) {
         try{
-        if (!checkMonooseObjectID([userId])) throw new Error("not mongoose id");
+        if (!checkMonooseObjectID([userId])) throw new Error('not mongoose id');
         const artist = await artistDocument.findOne({ userId: userId }, (err, artist) => {
             if (err) return 0;
             return artist;
@@ -127,7 +127,7 @@ const Image = {
      */
     checkArtisthasAlbum: async function(artistId, albumId) {
         try{
-        if (!checkMonooseObjectID([artistId, albumId]))  throw new Error("not mongoose id");
+        if (!checkMonooseObjectID([artistId, albumId]))  throw new Error('not mongoose id');
         const album = await albumDocument.findById(albumId);
         if (album) {
             const artist = await artistDocument.findById(artistId);
@@ -152,7 +152,7 @@ const Image = {
      */
     uploadImage: async function(userId, sourceId, belongsTo, image) {
         try{
-        if (!checkMonooseObjectID([userId, sourceId])) throw new Error("not mongoose id");
+        if (!checkMonooseObjectID([userId, sourceId])) throw new Error('not mongoose id');
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -253,7 +253,7 @@ const Image = {
      */
     updateImage: async function(userId, sourceId, belongsTo, image) {
         try{
-        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error('not mongoose id');
         if (!belongsTo || !image) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -354,7 +354,7 @@ const Image = {
     },
     getImage: async function(sourceId, belongsTo) {
         try{
-        if (!checkMonooseObjectID([sourceId]))  throw new Error("not mongoose id");
+        if (!checkMonooseObjectID([sourceId]))  throw new Error('not mongoose id');
         if (!belongsTo) return 0;
 
 
@@ -436,7 +436,7 @@ const Image = {
         try{
         // remove image from database and from gridfs
         // check if user has access to delete image then delete the image
-        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error('not mongoose id');
         if (!belongsTo || !imageId) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -456,7 +456,7 @@ const Image = {
                     // save user
                     await userDocument.updateOne({_id:user._id},{$set:user});
                     // delete image from gridfs
-                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                    const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -464,7 +464,7 @@ const Image = {
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) })
                             }
                         }
                     })
@@ -492,7 +492,7 @@ const Image = {
                     // save playlist
                     await playlistDocument.updateOne({_id:playlist._id},{$set:playlist});
                     // delete image from gridfs
-                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                    const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -500,7 +500,7 @@ const Image = {
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) })
                             }
                         }
                     })
@@ -525,7 +525,7 @@ const Image = {
                         // save track
                         await trackDocument.updateOne({_id:track._id},{$set:track});
                         // delete image from gridfs
-                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                        const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) return 0;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -533,7 +533,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                    await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) })
                                 }
                             }
                         })
@@ -558,7 +558,7 @@ const Image = {
                     // save album
                     await albumDocument.updateOne({_id:album._id},{$set:album});
                     // delete image from gridfs
-                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                    const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -566,7 +566,7 @@ const Image = {
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) })
                             }
                         }
                     })
@@ -587,7 +587,7 @@ const Image = {
                     // save artist
                     await artistDocument.updateOne({_id:artist._id},{$set:artist});
                     // delete image from gridfs
-                    const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(imageId) });
+                    const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) });
                     const imageIdGridfs = imageFile ? imageFile._id : undefined;
                     if (!imageIdGridfs) return 0;
                     await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -595,7 +595,7 @@ const Image = {
                             for (let file of files) {
 
                                 await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(imageId) })
+                                await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(imageId) })
                             }
                         }
                     })
@@ -650,7 +650,7 @@ const Image = {
         try{
         // remove images from database and from gridfs
         // check if user has access to delete image then delete the image
-        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error("not mongoose id");
+        if (!checkMonooseObjectID([userId, sourceId]))  throw new Error('not mongoose id');
         if (!belongsTo) return 0;
         const user = await userDocument.findById(userId);
         if (!user) return 0;
@@ -662,7 +662,7 @@ const Image = {
                     if (!user.images) user.images = [];
                     // delete image from gridfs
                     for (let image of user.images) {
-                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -671,7 +671,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
+                                    await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })
@@ -698,7 +698,7 @@ const Image = {
                     if (!playlist.images) playlist.images = [];
                     // delete image from gridfs
                     for (let image of playlist.images) {
-                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -707,7 +707,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
+                                    await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })
@@ -732,7 +732,7 @@ const Image = {
                         if (!track.images) track.images = [];
                         // delete image from gridfs
                         for (let image of track.images) {
-                            const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                            const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) });
                             const imageIdGridfs = imageFile ? imageFile._id : undefined;
                             if (!imageIdGridfs) continue;
                             await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -741,7 +741,7 @@ const Image = {
                                     for (let file of files) {
 
                                         await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                        await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
+                                        await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) })
                                     }
                                 }
                             })
@@ -767,7 +767,7 @@ const Image = {
                     if (!album.images) album.images = [];
                     // delete image from gridfs
                     for (let image of album.images) {
-                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -775,7 +775,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
+                                    await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })
@@ -795,7 +795,7 @@ const Image = {
                     if (!artist.images) artist.images = [];
                     // delete image from gridfs
                     for (let image of artist.images) {
-                        const imageFile =  await gfsImages.files.findOne({ "metadata.imageId": mongoose.Types.ObjectId(image._id) });
+                        const imageFile =  await gfsImages.files.findOne({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) });
                         const imageIdGridfs = imageFile ? imageFile._id : undefined;
                         if (!imageIdGridfs) continue;
                         await gfsImages.files.find({ _id: imageIdGridfs }).toArray(async function(err, files) {
@@ -803,7 +803,7 @@ const Image = {
                                 for (let file of files) {
 
                                     await gfsImages.db.collection('images.chunks').remove({ files_id: mongoose.Types.ObjectId(file._id) });
-                                    await gfsImages.files.deleteMany({ "metadata.imageId": mongoose.Types.ObjectId(image._id) })
+                                    await gfsImages.files.deleteMany({ 'metadata.imageId': mongoose.Types.ObjectId(image._id) })
                                 }
                             }
                         })

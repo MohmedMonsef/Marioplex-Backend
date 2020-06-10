@@ -10,7 +10,7 @@ const Track = {
      */
     getTrackWithoutAuth: async function(trackId) {
         try {
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             const track = await trackDocument.findById(trackId);
             if (!track) return 0;
             return track;
@@ -28,7 +28,7 @@ const Track = {
         try {
             // connect to db and find track with the same id then return it as json file
             // if found return track else return 0
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             const track = await trackDocument.findById(trackId);
             if (!track) return 0;
             if (!user || user == undefined) return track;
@@ -81,7 +81,7 @@ const Track = {
      */
     getFullTrack: async function(trackId, user) {
         try {
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             const track = await this.getTrack(trackId, user);
             if (!track) return 0; //not found
             // get both album and artist of the track
@@ -108,7 +108,7 @@ const Track = {
      */
     getTracks: async function(trackIds, user) {
         try {
-            if (!checkMonooseObjectID(trackIds)) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID(trackIds)) throw new Error('not mongoose id');
             let tracks = [];
             for (let trackId of trackIds) {
                 let track = await this.getFullTrack(trackId, user);
@@ -128,7 +128,7 @@ const Track = {
      */
     getAudioFeaturesTrack: async function(trackId) {
         try {
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             const track = await this.getTrack(trackId);
             if (!track) return 0;
             const audioFeatures = {
@@ -159,7 +159,7 @@ const Track = {
      */
     getAudioFeaturesTracks: async function(trackIds) {
         try {
-            if (!checkMonooseObjectID(trackIds)) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID(trackIds)) throw new Error('not mongoose id');
             let audioFeatures = {};
             var count = 0;
             for (let trackId of trackIds) {
@@ -186,7 +186,7 @@ const Track = {
     checkIfUserLikeTrack: async function(user, trackId) {
         try {
             if (!user) return 0;
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             if (!user['likesTracksPlaylist']) return false;
             const playlist = await playlistDocument.findById(user['likesTracksPlaylist']);
             if (!playlist.snapshot) return false;
@@ -213,7 +213,7 @@ const Track = {
         try {
             // if not found then add track.track_id to user likes and return the updated user
             // else return 0 as he already like the track
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             const track = await this.getTrack(trackId);
             if (!track) return 0;
             if (!track.like) track.like = 0;
@@ -247,7 +247,7 @@ const Track = {
     unlikeTrack: async function(userId, trackId) {
         try {
             // else return 0 as he didn't like the 
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             const track = await this.getTrack(trackId);
             if (!track) return 0;
             if (!track.like) return 0;
@@ -282,7 +282,7 @@ const Track = {
     createTrack: async function(url, Name, trackNumber, availableMarkets, artistId, albumId, duration, key, keyId, genre) {
         try {
             if (!artistId || !albumId) return 0;
-            if (!checkMonooseObjectID([artistId, albumId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([artistId, albumId])) throw new Error('not mongoose id');
             if (!availableMarkets) availableMarkets = [];
             let track = new trackDocument({
                 url: url,
@@ -295,7 +295,7 @@ const Track = {
                 albumId: albumId,
                 discNumber: 1,
                 explicit: false,
-                type: "Track",
+                type: 'Track',
                 acousticness: Math.floor(Math.random() * 100),
                 danceability: Math.floor(Math.random() * 100),
                 energy: Math.floor(Math.random() * 100),
@@ -332,7 +332,7 @@ const Track = {
      */
     deleteTrack: async function(userId, trackId) {
         try {
-            if (!checkMonooseObjectID([userId, trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([userId, trackId])) throw new Error('not mongoose id');
             const user = await userDocument.findById(userId);
             if (!user) return 0;
             const track = await this.getTrack(trackId);
@@ -437,7 +437,7 @@ const Track = {
      */
     getRelatedTrack: async function(trackId) {
         try {
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
             const track = await this.getTrack(trackId);
             if (!track) return 0;
             if (!track.genre) return 0;
@@ -517,8 +517,8 @@ const Track = {
     checkPlayable: async function(user, trackId) {
         try {
             if (!user) return 0;
-            if (!checkMonooseObjectID([trackId])) throw new Error("not mongoose id");
-            if (user.product == "premium") return true;
+            if (!checkMonooseObjectID([trackId])) throw new Error('not mongoose id');
+            if (user.product == 'premium') return true;
             let track = await trackDocument.findById(trackId);
             if (!track) return 0;
             if (!track.availableMarkets) return 0;
@@ -540,7 +540,7 @@ const Track = {
      */
     updateTrack: async function(userId, trackId, body) {
         try {
-            if (!checkMonooseObjectID([userId, trackId])) throw new Error("not mongoose id");
+            if (!checkMonooseObjectID([userId, trackId])) throw new Error('not mongoose id');
             if (!body) return 0;
             const user = await userDocument.findById(userId);
             if (!user) return 0;
@@ -553,7 +553,7 @@ const Track = {
             if (String(artist._id) != String(track.artistId)) return 0;
             // if artist own the track then update the track and save it
             for (let key in body) {
-                if (key == "name" || key == "availableMarkets" || key == "duration" || key == "genre")
+                if (key == 'name' || key == 'availableMarkets' || key == 'duration' || key == 'genre')
                     track[key] = body[key];
             }
             await track.save();

@@ -7,7 +7,7 @@ before_install:
   - docker push belalelhossany/backtest
 script:
   - docker run belalelhossany/backtest
-  notifications:
+notifications:
   email:
     recipients:
       - belalelhossany12@gmail.com

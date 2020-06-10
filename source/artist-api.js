@@ -324,7 +324,7 @@ const Artist = {
     getRelatedArtists: async function(artistId) {
         if (!checkMonooseObjectID([artistId])) return 0;
         let artists;
-        artistDocument.find({}, function(err, artistsAll) {
+       await artistDocument.find({}, function(err, artistsAll) {
             artists = artistsAll;
         });
         let artist = await this.getArtist(artistId);

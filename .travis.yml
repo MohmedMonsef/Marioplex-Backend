@@ -1,13 +1,15 @@
 sudo: required
 services:
   - docker  
-before_install:
-  - docker build -t belalelhossany/backtest -f ./Dockerfile.dev ./
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  - docker push belalelhossany/backtest
 script:
-  - docker run belalelhossany/backtest
-  
+  - true
+notifications:
+  email:
+    recipients: 
+      - belalelhossany12@gmail.com
+      - mohmedmonsef70@gmail.com
+    on_success: never 
+    on_failure: always 
 after_success:
   - docker build -t belalelhossany/backend .
   # Log in to the docker CLI
@@ -18,9 +20,9 @@ deploy:
   
   provider: elasticbeanstalk
   region: us-east-1
-  app: BackEnd
-  env: Backend-env
-  bucket_name: marioplex
+  app: 	marioBack
+  env: Marioback-env
+  bucket_name: backback
   bucket_path: Back
   on:
     branch: master

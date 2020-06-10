@@ -22,7 +22,7 @@ router.get('/me/following/contains/:id', checkAuth, limiter, async(req, res) => 
     const userId = req.user._id;
     if (req.params.id == undefined) return res.sendStatus(400).json({ message: 'id is not defined' });
     const checks = await User.checkIfUserFollowArtist(userId, req.params.id);
-    if (!checks) return res.sendStatus(403).json({ message: 'not user or not artist' });
+    if (checks == -1) return res.sendStatus(403).json({ message: 'not user or not artist' });
     res.status(200).json({ 'follow': checks });
 
 });

@@ -192,6 +192,8 @@ const Search = {
      /**
      * get user by name
      * @param {string} name - user name
+     * @param {Number} limit -limit
+     * @param {Number} offset - offset 
      * @returns {Array<object>}
      */
     getUserByname: async function(name, limit, offset) {
@@ -204,6 +206,8 @@ const Search = {
      /**
      * get artist by name
      * @param {string} name - artist name
+     * @param {Number} limit -limit
+     * @param {Number} offset - offset 
      * @returns {Array<object>}
      */
     getArtistByname: async function(name, limit, offset) {
@@ -218,6 +222,8 @@ const Search = {
     /**
      * get top result by search name
     * @param {string} name - artist name
+    * @param {Number} limit -limit
+    * @param {Number} offset - offset 
     * @returns {object | Number}
     */
     getTop: async function(name, limit, offset) {
@@ -321,6 +327,8 @@ const Search = {
     /**
      * get all tracks with Name
      * @param {string} name - track name
+     * @param {Number} limit -limit
+     * @param {Number} offset - offset 
      * @returns {Array<object>}
      */
     getTrack: async function(name, limit, offset) {
@@ -372,6 +380,8 @@ const Search = {
     /**
      * get top results with Name with priority to artis -> track -> album -> playlist -> profile
      * @param {string} name - name of thing to search
+     * @param {Number} limit -limit
+     * @param {Number} offset - offset 
      * @returns {object}
      */
     getTopResults: async function(name, limit, offset) {
@@ -402,6 +412,8 @@ const Search = {
     /**
     * get all artist profile with name
     * @param {string} name - artist name
+    * @param {Number} limit -limit
+    * @param {Number} offset - offset 
     * @returns  {Array<object>}
     */
     getArtistProfile: async function(name, limit, offset) {
@@ -432,6 +444,8 @@ const Search = {
     /**
      * get all user profiles with name
      * @param {string} name - user name
+     * @param {Number} limit -limit
+     * @param {Number} offset - offset 
      * @returns {Array<object>}
      */
     getUserProfile: async function(name, limit, offset) {
@@ -463,6 +477,8 @@ const Search = {
     /**
      * get all playlists with name
      * @param {string} name - playlist name
+     * @param {Number} limit -limit
+     * @param {Number} offset - offset 
      * @returns {Array<object>}
      */
     getPlaylist: async function(name, limit, offset) {
@@ -517,6 +533,8 @@ function search(name, field, schema) {
  * use fuzzy search to search for field in schema with name
  * @param {string} name 
  * @param {string} field 
+ * @param {Number} limit -limit
+ * @param {Number} offset - offset 
  * @param {Array<object>} schema
  * @returns {Array<object>}  
  */
@@ -531,9 +549,8 @@ function Fuzzysearch(name, field, schema, limit, offset) {
         results = search(subName[i], field, schema);
         searchResults = searchResults.concat(results);
     }
-    
     searchResults = limitOffset(limit,offset,searchResults);
-    
+
     return removeDupliactes(searchResults);
 
 }

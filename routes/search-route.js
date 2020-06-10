@@ -19,12 +19,6 @@ router.get('/search', limiter, async(req, res, next) => {
     let limit = req.body.limit;
     let offset = req.body.offset;
     let searchResult = {};
-    if(limit==undefined){
-        limit = 5;
-    }
-    if(offset==undefined){
-        offset = 0;
-    }
     for (let i = 0; i < type.length; i++) {
         if (type[i] == 'top') {
             const artist = await Search.getTopResults(name, limit, offset).catch(next);
@@ -36,7 +30,7 @@ router.get('/search', limiter, async(req, res, next) => {
             else searchResult['track'] = artist
         } else if (type[i] == 'album') {
 
-            const albums = await Search.getAlbum(name, req.query.groups, req.query.country, req.query.limit, req.query.offset).catch(next);
+            const albums = await Search.getAlbum(name, req.query.groups, req.query.country, limit, offset).catch(next);
             if (albums.length == 0) searchResult['album'] = [] //not found
             else searchResult['album'] = albums
 

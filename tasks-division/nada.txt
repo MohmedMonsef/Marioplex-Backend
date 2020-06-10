@@ -39,4 +39,4 @@ new features :
 *store Offline Notifications when user is logged out & get them once he logged in again
 *Notifications History
 *Unprotected Authorization for Artist & Playlist routes
-*Album likes statistics
+*Playable Tracks (Available markets check) in premium/free

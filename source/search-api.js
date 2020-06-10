@@ -1,5 +1,7 @@
 const { user: userDocument, artist: artistDocument, album: albumDocument, track: trackDocument, playlist: playlistDocument, category: categoryDocument } = require('../models/db');
 var FuzzySearch = require('fuzzy-search');
+
+
 const limitOffset = require('../middlewares/limit-offset');
 
 // initialize db 
@@ -192,11 +194,11 @@ const Search = {
      * @param {string} name - user name
      * @returns {Array<object>}
      */
-    getUserByname: async function(name) {
+    getUserByname: async function(name, limit, offset) {
 
         const user = await this.getUsers();
         if (user.length == 0) return 0;
-        return Fuzzysearch(name, 'displayName', user);
+        return Fuzzysearch(name, 'displayName', user, limit, offset);
 
     },
      /**
@@ -204,11 +206,11 @@ const Search = {
      * @param {string} name - artist name
      * @returns {Array<object>}
      */
-    getArtistByname: async function(name) {
+    getArtistByname: async function(name, limit, offset) {
 
         const artist = await this.getArtists();
         if (artist.length == 0) return 0;
-        return Fuzzysearch(name, 'Name', artist);
+        return Fuzzysearch(name, 'Name', artist, limit, offset);
 
     },
 
@@ -218,9 +220,9 @@ const Search = {
     * @param {string} name - artist name
     * @returns {object | Number}
     */
-    getTop: async function(name) {
+    getTop: async function(name, limit, offset) {
 
-        const artist = await this.getArtistProfile(name);
+        const artist = await this.getArtistProfile(name, limit, offset);
         if (artist) {
             return artist[0]._id
         }
@@ -293,7 +295,7 @@ const Search = {
         } else {
             allalbum = await this.getAlbums();
             if (allalbum.length == 0) return allalbum;
-            allalbum = Fuzzysearch(albumName, 'name', allalbum);
+            allalbum = Fuzzysearch(albumName, 'name', allalbum, limit, offset);
 
         }
         if (!allalbum) allalbum = [];
@@ -305,10 +307,10 @@ const Search = {
                 album['_id'] = albums._id
                 album['name'] = albums.name
                 album['images'] = albums.images
+                album['type'] = 'Album';
                 album['artistId'] = albums.artistId;
                 album['artistName'] = albums.artistName;
-                album['type'] = 'album';
-
+                album['artistType'] = 'Artist';
                 albumsInfo.push(album);
             }
         }
@@ -330,11 +332,10 @@ const Search = {
 
             tracks = await Artist.getTracks(artist);
 
-        } 
-        else {
+        } else {
             const track = await this.getTracks();
             if (track == 0) return track;
-            tracks = Fuzzysearch(name, 'name', track);
+            tracks = Fuzzysearch(name, 'name', track, limit, offset);
         }
 
         trackInfo = []
@@ -345,19 +346,21 @@ const Search = {
             if (artist) {
                 trackValues['artistId'] = artist._id
                 trackValues['artistName'] = artist.Name
+                trackValues['artistimages'] = artist.images
+                trackValues['artistType'] = artist.type
             }
             let album = await Album.getAlbumById(tracks[i].albumId)
             if (album) {
                 trackValues['albumId'] = album._id
                 trackValues['albumName'] = album.name
-                trackValues["albumImages"] = album.images	
-
+                trackValues['albumImages'] = album.images
+                trackValues['albumType'] = album.type
             }
             trackValues['_id'] = tracks[i]._id
             trackValues['name'] = tracks[i].name
-            trackValues['images'] = tracks[i].images
+            trackValues['type'] = tracks[i].type
             trackValues['duration'] = tracks[i].duration
-            trackValues['type'] = 'track'
+            trackValues['images'] = tracks[i].images
             trackInfo.push(trackValues);
 
         }
@@ -371,25 +374,25 @@ const Search = {
      * @param {string} name - name of thing to search
      * @returns {object}
      */
-    getTopResults: async function(name) {
-        const artist = await this.getTop(name);
+    getTopResults: async function(name, limit, offset) {
+        const artist = await this.getTop(name, limit, offset);
         if (artist) {
-            let artist = await this.getArtistProfile(name)
+            let artist = await this.getArtistProfile(name, limit, offset)
             return artist[0]
         }
-        let track = await this.getTrack(name);
+        let track = await this.getTrack(name, limit, offset);
         if (track && track.length != 0) {
             return track[0];
         }
-        let album = await this.getAlbum(name);
+        let album = await this.getAlbum(name, limit, offset);
         if (album && album.length != 0) {
             return album[0];
         }
-        let playlist = await this.getPlaylist(name);
+        let playlist = await this.getPlaylist(name, limit, offset);
         if (playlist && playlist.length != 0) {
             return playlist[0];
         }
-        let profile = await this.getUserProfile(name);
+        let profile = await this.getUserProfile(name, limit, offset);
         if (profile && profile.length != 0) {
             return profile[0];
         }
@@ -404,7 +407,7 @@ const Search = {
     getArtistProfile: async function(name, limit, offset) {
 
         let artistsInfo = [];
-        let artist = await this.getArtistByname(name);
+        let artist = await this.getArtistByname(name, limit, offset);
         if (!artist) artist = [];
         if (artist.length == 0) return 0;
         else {
@@ -413,14 +416,15 @@ const Search = {
                 artistInfo['_id'] = artist[i]._id
                 artistInfo['name'] = artist[i].Name
                 artistInfo['images'] = artist[i].images
-                artistInfo['type'] = 'artist'
-
+                artistInfo['info'] = artist[i].info
+                artistInfo['type'] = artist[i].type
+                artistInfo['genre'] = artist[i].genre
                 artistsInfo.push(artistInfo);
 
             }
         }
         if (artistsInfo.length == 0) return 0;
-        return artistsInfo;
+        return  artistsInfo;
 
     },
 
@@ -433,7 +437,7 @@ const Search = {
     getUserProfile: async function(name, limit, offset) {
 
         usersInfo = []
-        let user = await this.getUserByname(name);
+        let user = await this.getUserByname(name, limit, offset);
         if (!user) user = [];
         if (user.length == 0) return user;
         else {
@@ -441,12 +445,12 @@ const Search = {
                 if (user[i].userType == 'Artist') {
                     continue;
                 } else {
+
                     userInfo = {}
                     userInfo['_id'] = user[i]._id
                     userInfo['displayName'] = user[i].displayName
                     userInfo['images'] = user[i].images
-                    userInfo['type'] = 'user'
-
+                    userInfo['type'] = user[i].type
                     usersInfo.push(userInfo)
                 }
             }
@@ -457,7 +461,7 @@ const Search = {
     },
 
     /**
-     * get all playlists with Name
+     * get all playlists with name
      * @param {string} name - playlist name
      * @returns {Array<object>}
      */
@@ -465,7 +469,7 @@ const Search = {
 
         let playlists = await this.getPlaylists();
         if (playlists && playlists.length == 0) return playlists;
-        playlists = Fuzzysearch(name, 'name', playlists);
+        playlists = Fuzzysearch(name, 'name', playlists, limit, offset);
         playlistInfo = []
         for (let i = 0; i < playlists.length; i++) {
             if (playlists[i].isPublic) {
@@ -474,13 +478,13 @@ const Search = {
                 if (user) {
                     playlist['ownerId'] = user._id
                     playlist['ownerName'] = user.displayName
-                    playlist["ownerImages"] = user.images	
-
+                    playlist['ownerImages'] = user.images
+                    playlist['ownerType'] = user.type
                 }
                 playlist['_id'] = playlists[i]._id
                 playlist['name'] = playlists[i].name
+                playlist['type'] = playlists[i].type
                 playlist['images'] = playlists[i].images
-                playlist['type'] = 'playlist'
                 playlistInfo.push(playlist)
 
             }
@@ -516,7 +520,7 @@ function search(name, field, schema) {
  * @param {Array<object>} schema
  * @returns {Array<object>}  
  */
-function Fuzzysearch(name, field, schema) {
+function Fuzzysearch(name, field, schema, limit, offset) {
 
     searchResults = []
     if (!name) name = '';
@@ -527,16 +531,14 @@ function Fuzzysearch(name, field, schema) {
         results = search(subName[i], field, schema);
         searchResults = searchResults.concat(results);
     }
-    results = removeDupliactes(searchResults);
-    if(results.length>=5){
-       results.splice(5, results.length-5);
-    }
-    return results;
+    
+    searchResults = limitOffset(limit,offset,searchResults);
+    
+    return removeDupliactes(searchResults);
 
 }
 
 /**
- * //https://www.geeksforgeeks.org/how-to-remove-duplicates-from-an-array-of-objects-using-javascript/
  * remove duplicates from array
  * @param {Array<object>} values - array of value to make duplicates removed from
  * @returns {Array<object>}
@@ -556,4 +558,3 @@ const removeDupliactes = (values) => {
     }
     return newArray;
 }
-

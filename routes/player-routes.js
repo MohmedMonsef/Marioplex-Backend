@@ -12,7 +12,7 @@ const limiter = rateLimit({
     max: 30
 
 });
-const nextLimiter = RateLimit({
+const nextLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     max: 300
 

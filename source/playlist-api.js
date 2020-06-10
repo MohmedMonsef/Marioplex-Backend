@@ -274,7 +274,6 @@ const Playlist = {
      * @returns {Object|0} - playlist object
      */
     addTrackToPlaylist: async function(playlistId, tracksIds) {
-        //console.log(tracksIds);
         if (!checkMonooseObjectId([playlistId])) return 0;
         if (!checkMonooseObjectId(tracksIds)) return 0;
         if (!tracksIds) tracksIds = [];

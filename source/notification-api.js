@@ -100,8 +100,6 @@ const Notifications = {
             catch(err){
                 console.log("cant send message now");
             }
-            console.log(checkFailed);
-            console.log(message);
 
         }
        if(token=="none"||checkFailed.length>0){
@@ -141,7 +139,6 @@ const Notifications = {
     },
     //send many notifications to one user
      sendManyNotifications: async function(messages) {
-        console.log(messages)
         app1.messaging().sendAll(messages)
         .then((response) => {
           console.log(response.successCount + ' messages were sent successfully');
@@ -200,8 +197,6 @@ const Notifications = {
                 catch(err){
                     console.log("cant send message now");
             }  
-            console.log(checkFailed);
-            console.log(messages);
 
         }
     return 1;
@@ -255,8 +250,6 @@ const Notifications = {
             catch(err){
                 console.log("cant send message now");
         }  
-          console.log(checkFailed);
-          console.log(messages);
 
       }
   return 1;
@@ -297,8 +290,6 @@ const Notifications = {
             catch(err){
                 console.log("cant send message now");
         }  
-        console.log(checkFailed);
-        console.log(message);
 
     }
    if(token=="none"||checkFailed.length>0){
@@ -348,8 +339,6 @@ sendUserFollowNotification:async function(currentUser,followedUser) {
             catch(err){
                 console.log("cant send message now");
         }  
-        console.log(checkFailed);
-        console.log(message);
 
     }
    if(token=="none"||checkFailed.length>0){

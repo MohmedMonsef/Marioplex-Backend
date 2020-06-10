@@ -347,7 +347,6 @@ const Artist = {
             }
         }
         //HANDLE MAX NUMBER TO RETURN
-        console.log(artistId);
         if (relatedArtists.length > 20) relatedArtists.slice(0, 20);
         return relatedArtists;
     },

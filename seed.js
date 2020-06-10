@@ -1,7 +1,6 @@
 const localhost = 'mongodb://localhost:27017/test';
-//String(process.env.CONNECTION_STRING)
 module.exports = {
-    "undefined": localhost,
+    "undefined": String(process.env.CONNECTION_STRING),
     "dev": "localhost/DEV_DB_NAME",
     "prod": "localhost/PROD_DB_NAME"
 }

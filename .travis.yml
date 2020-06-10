@@ -1,12 +1,8 @@
 sudo: required
 services:
   - docker  
-before_install:
-  - docker build -t belalelhossany/backtest -f ./Dockerfile.dev ./
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  - docker push belalelhossany/backtest
 script:
-  - docker run belalelhossany/backtest
+  - true
 notifications:
   email:
     recipients:

@@ -6,9 +6,9 @@ const User = require('../source/user-api');
 const Playlist = require('../source/playlist-api');
 const Browse = require('../source/browse-api');
 const { auth: checkAuth } = require('../middlewares/is-me');
-const RateLimit = require('express-rate-limit');
+const rateLimit = require('express-rate-limit');
 // add rate limiting
-const limiter = RateLimit({
+const limiter = rateLimit({
     windowMs: 60 * 1000,
     max: 30
 

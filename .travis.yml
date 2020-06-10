@@ -5,7 +5,7 @@ script:
   - true
 notifications:
   email:
-    recipients:
+    recipients: 
       - belalelhossany12@gmail.com
       - mohmedmonsef70@gmail.com
     on_success: never 

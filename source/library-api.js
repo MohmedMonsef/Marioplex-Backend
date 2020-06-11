@@ -180,7 +180,8 @@ const Library = {
                     tracks['albumImages'] = album.images
                     tracks['albumType'] = album.type
                 }
-                tracks['_id'] = trackSlice[i]._id
+                console.log(trackSlice)
+                tracks['_id'] = trackSlice[i].trackid
                 tracks['name'] = trackSlice[i].name
                 tracks['type'] = trackSlice[i].type
                 tracks['images'] = trackSlice[i].images

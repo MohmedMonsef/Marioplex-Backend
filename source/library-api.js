@@ -142,7 +142,7 @@ const Library = {
             if (!user) return 0;
             if (!user['likesTracksPlaylist']) return 0;
             let tracksPlaylist = await Playlist.getPlaylistTracks(user['likesTracksPlaylist'], true);
-            //console.log(tracksPlaylist);
+            console.log(tracksPlaylist);
             if (tracksPlaylist[0].tracks.length == 0 || !tracksPlaylist) return 0;
             tracksPlaylist = tracksPlaylist[0].tracks;
             let start = 0;
@@ -187,7 +187,7 @@ const Library = {
                 tracks['duration'] = trackSlice[i].duration
                 trackInfo.push(tracks);
             }
-            return { 'tracks': trackInfo, 'ownerName': user.displayName, playlistId: user['likestracksPlaylist'] };
+            return { 'tracks': trackInfo, 'ownerName': user.displayName, playlistId: user['likesTracksPlaylist'] };
         } catch (ex) {
             return 0;
         }

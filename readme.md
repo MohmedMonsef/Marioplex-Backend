@@ -97,5 +97,18 @@ Be sure to add your information in .env file
 ### to get more info about migrate-mongoose run
 > migrate -h
 
- 
+## to generate apidoc 
+>use npm install
+> or npm install -g apidoc
+
+### generate in folder ApiDocumentation (run in its path)
+>npx apidoc -i .\code -e node_modules -o .\Html 
+
+## to run unit test 
+### to run only for source file (in project path)
+>  jest -c  --coverage --collectCoverageFrom=source/*.js
+### to run for all files  (in project path)
+>  jest -c  --coverage 
+### can also use 
+> jest --runInBand ./tests --coverage
 

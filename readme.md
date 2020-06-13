@@ -74,7 +74,9 @@ day, month, and year. also we didn't forget to add our beloved artist statistics
 > node server.js
 
 ### environmental variables
-Be sure to add your information in .env file
+> Be sure to add your information in .env file
+#### .env file should have
+> CONNECTION_STRING,SPOTIFY_EMAIL,SPOTIFY_EMAIL_PASSWORD,SPOTIFY_PASSWORD_IN_APP,LIMIT,GENRE_LIMIT,FACEBOOK_APP_ID,FACEBOOK_APP_SECRET,google_drive_access_token,google_drive_refresh_token,google_drive_scope,google_drive_client_id,google_drive_project_id,google_drive_client_secret,type,project_id,private_key_id,private_key,client_email,client_id,auth_uri,token_uri,auth_provider_x509_cert_url,client_x509_cert_url,android_project_id,android_private_key_id,android_private_key,android_client_email,android_client_id,android_auth_uri,android_token_uri,android_auth_provider_x509_cert_url and android_client_x509_cert_url
 
 ## generate seeds
 ### first install node-mongo-seeds globally by running
@@ -111,4 +113,3 @@ Be sure to add your information in .env file
 >  jest -c  --coverage 
 ### can also use 
 > jest --runInBand ./tests --coverage
-
